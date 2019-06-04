@@ -55,7 +55,7 @@ public class SecretLarderRoom extends SecretRoom {
 		Painter.fill(level, c.x-1, c.y-1, 3, 3, Terrain.WATER);
 		Painter.set(level, c, Terrain.GRASS);
 		
-		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
+		if (!Challenges.NO_FOOD.enabled()) {
 			level.plant(new BlandfruitBush.Seed(), level.pointToCell(c));
 		}
 		

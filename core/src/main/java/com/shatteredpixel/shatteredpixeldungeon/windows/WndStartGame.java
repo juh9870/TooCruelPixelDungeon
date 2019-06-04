@@ -115,37 +115,30 @@ public class WndStartGame extends Window {
 		start.visible = false;
 		start.setRect(0, HEIGHT - 20, WIDTH, 20);
 		add(start);
-		
-		if (Badges.isUnlocked(Badges.Badge.VICTORY)){
-			IconButton challengeButton = new IconButton(
-					Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
-				@Override
-				protected void onClick() {
-					ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), true) {
-						public void onBackPressed() {
-							super.onBackPressed();
-							icon( Icons.get( SPDSettings.challenges() > 0 ?
-									Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF ) );
-						}
-					} );
-				}
-				
-				@Override
-				public void update() {
-					if( !visible && GamesInProgress.selectedClass != null){
-						visible = true;
+		IconButton challengeButton = new IconButton(
+				Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
+			@Override
+			public void onClick() {
+				ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), true) {
+					public void onBackPressed() {
+						super.onBackPressed();
+						icon( Icons.get( SPDSettings.challenges() > 0 ?
+								Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF ) );
 					}
-					super.update();
+				} );
+			}
+
+			@Override
+			public void update() {
+				if( !visible && GamesInProgress.selectedClass != null){
+					visible = true;
 				}
-			};
-			challengeButton.setRect(WIDTH - 20, HEIGHT - 20, 20, 20);
-			challengeButton.visible = false;
-			add(challengeButton);
-			
-		} else {
-			Dungeon.challenges = 0;
-			SPDSettings.challenges(0);
-		}
+				super.update();
+			}
+		};
+		challengeButton.setRect(WIDTH - 20, HEIGHT - 20, 20, 20);
+		challengeButton.visible = false;
+		add(challengeButton);
 		
 		resize(WIDTH, HEIGHT);
 		
@@ -240,7 +233,7 @@ public class WndStartGame extends Window {
 			
 			heroItem = new IconButton(){
 				@Override
-				protected void onClick() {
+				public void onClick() {
 					if (cl == null) return;
 					ShatteredPixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
 				}
@@ -250,7 +243,7 @@ public class WndStartGame extends Window {
 			
 			heroLoadout = new IconButton(){
 				@Override
-				protected void onClick() {
+				public void onClick() {
 					if (cl == null) return;
 					ShatteredPixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
 				}
@@ -260,7 +253,7 @@ public class WndStartGame extends Window {
 			
 			heroMisc = new IconButton(){
 				@Override
-				protected void onClick() {
+				public void onClick() {
 					if (cl == null) return;
 					ShatteredPixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
 				}
@@ -270,7 +263,7 @@ public class WndStartGame extends Window {
 			
 			heroSubclass = new IconButton(new ItemSprite(ItemSpriteSheet.MASTERY, null)){
 				@Override
-				protected void onClick() {
+				public void onClick() {
 					if (cl == null) return;
 					String msg = Messages.get(cl, cl.name() + "_desc_subclasses");
 					for (HeroSubClass sub : cl.subClasses()){

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -78,12 +79,13 @@ public class WndHero extends WndTabbed {
 				stats.visible = stats.active = selected;
 			};
 		} );
-		add( new LabeledTab( Messages.get(this, "buffs") ) {
-			protected void select( boolean value ) {
-				super.select( value );
-				buffs.visible = buffs.active = selected;
-			};
-		} );
+		if (!Challenges.ANALGESIA.enabled())
+			add( new LabeledTab( Messages.get(this, "buffs") ) {
+				protected void select( boolean value ) {
+					super.select( value );
+					buffs.visible = buffs.active = selected;
+				};
+			} );
 
 		layoutTabs();
 		
@@ -112,15 +114,28 @@ public class WndHero extends WndTabbed {
 
 			pos = title.bottom() + 2*GAP;
 
-			statSlot( Messages.get(this, "str"), hero.STR() );
-			if (hero.shielding() > 0) statSlot( Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT );
-			else statSlot( Messages.get(this, "health"), (hero.HP) + "/" + hero.HT );
-			statSlot( Messages.get(this, "exp"), hero.exp + "/" + hero.maxExp() );
+			if (Challenges.ANALGESIA.enabled()){
+				statSlot( Messages.get(this, "str"), "??" );
+				if (hero.shielding() > 0) statSlot( Messages.get(this, "health"), "??+??/??" );
+				else statSlot( Messages.get(this, "health"), "??/??" );
+				statSlot( Messages.get(this, "exp"), "??/??" );
+			} else {
+				statSlot( Messages.get(this, "str"), hero.STR() );
+				if (hero.shielding() > 0) statSlot( Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT );
+				else statSlot( Messages.get(this, "health"), (hero.HP) + "/" + hero.HT );
+				statSlot( Messages.get(this, "exp"), hero.exp + "/" + hero.maxExp() );
+			}
 
 			pos += GAP;
 
-			statSlot( Messages.get(this, "gold"), Statistics.goldCollected );
-			statSlot( Messages.get(this, "depth"), Statistics.deepestFloor );
+			if (Challenges.AMNESIA.enabled()){
+				statSlot(Messages.get(this, "gold"), "????");
+				statSlot(Messages.get(this, "depth"), "??");
+			} else {
+
+				statSlot(Messages.get(this, "gold"), Statistics.goldCollected);
+				statSlot(Messages.get(this, "depth"), Statistics.deepestFloor);
+			}
 
 			pos += GAP;
 		}

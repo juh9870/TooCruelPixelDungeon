@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.rings;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -230,7 +231,7 @@ public class Ring extends KindofMisc {
 		level(n);
 		
 		//30% chance to be cursed
-		if (Random.Float() < 0.3f) {
+		if (Random.Float() < 0.3f|| Challenges.CURSED.enabled()) {
 			cursed = true;
 		}
 		

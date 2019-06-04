@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Bones;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -97,6 +98,7 @@ public abstract class RegularLevel extends Level {
 		initRooms.add( roomExit = new ExitRoom());
 		
 		int standards = standardRooms();
+		if(Challenges.BIG_LEVELS.enabled())standards*=2;
 		for (int i = 0; i < standards; i++) {
 			StandardRoom s;
 			do {
@@ -108,8 +110,9 @@ public abstract class RegularLevel extends Level {
 		
 		if (Dungeon.shopOnLevel())
 			initRooms.add(new ShopRoom());
-		
+
 		int specials = specialRooms();
+		if(Challenges.BIG_LEVELS.enabled())specials*=1.5;
 		SpecialRoom.initForFloor();
 		for (int i = 0; i < specials; i++) {
 			SpecialRoom s = SpecialRoom.createRoom();
@@ -120,7 +123,7 @@ public abstract class RegularLevel extends Level {
 		int secrets = SecretRoom.secretsForFloor(Dungeon.depth);
 		for (int i = 0; i < secrets; i++)
 			initRooms.add(SecretRoom.createRoom());
-		
+
 		return initRooms;
 	}
 	
@@ -158,7 +161,7 @@ public abstract class RegularLevel extends Level {
 	}
 	
 	protected int nTraps() {
-		return Random.NormalIntRange( 1, 3+(Dungeon.depth/3) );
+		return (int)(Random.NormalIntRange( 1, 3+(Dungeon.depth/3) )*Challenges.nTrapsMultiplier());
 	}
 	
 	protected Class<?>[] trapClasses(){
@@ -174,9 +177,9 @@ public abstract class RegularLevel extends Level {
 		switch(Dungeon.depth) {
 			case 1:
 				//mobs are not randomly spawned on floor 1.
-				return 0;
+				return Challenges.RESURRECTION.enabled()?(int)(5*Challenges.nMobsMultiplier()):0;
 			default:
-				return 2 + Dungeon.depth % 5 + Random.Int(5);
+				return (int)((2 + Dungeon.depth % 5 + Random.Int(5))*Challenges.nMobsMultiplier());
 		}
 	}
 	
@@ -198,7 +201,7 @@ public abstract class RegularLevel extends Level {
 	@Override
 	protected void createMobs() {
 		//on floor 1, 10 rats are created so the player can get level 2.
-		int mobsToSpawn = Dungeon.depth == 1 ? 10 : nMobs();
+		int mobsToSpawn = Dungeon.depth == 1 ? (int)(10*Challenges.nMobsMultiplier()) : nMobs();
 
 		ArrayList<Room> stdRooms = new ArrayList<>();
 		for (Room room : rooms) {

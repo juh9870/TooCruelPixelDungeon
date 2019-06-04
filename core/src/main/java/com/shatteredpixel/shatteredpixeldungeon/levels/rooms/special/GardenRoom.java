@@ -41,7 +41,7 @@ public class GardenRoom extends SpecialRoom {
 		
 		entrance().set( Door.Type.REGULAR );
 
-		if (Dungeon.isChallenged(Challenges.NO_FOOD)) {
+		if (Challenges.NO_FOOD.enabled()) {
 			if (Random.Int(2) == 0){
 				level.plant(new Sungrass.Seed(), plantPos( level ));
 			}

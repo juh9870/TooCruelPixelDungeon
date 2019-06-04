@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -199,10 +200,9 @@ public class Imp extends NPC {
 				alternative = Random.Int( 2 ) == 0;
 				
 				given = false;
-				
-				do {
-					reward = (Ring)Generator.random( Generator.Category.RING );
-				} while (reward.cursed);
+
+				reward = (Ring)Generator.random( Generator.Category.RING );
+				reward.cursed=false;
 				reward.upgrade( 2 );
 				reward.cursed = true;
 			}

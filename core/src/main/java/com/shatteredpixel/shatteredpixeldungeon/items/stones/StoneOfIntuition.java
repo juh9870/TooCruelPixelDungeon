@@ -223,7 +223,7 @@ public class StoneOfIntuition extends InventoryStone {
 				final int j = i;
 				IconButton btn = new IconButton(){
 					@Override
-					protected void onClick() {
+					public void onClick() {
 						curGuess = all[j];
 						guess.visible = true;
 						guess.text( Messages.get(curGuess, "name") );

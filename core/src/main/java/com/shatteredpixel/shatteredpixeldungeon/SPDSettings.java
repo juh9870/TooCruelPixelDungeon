@@ -182,7 +182,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static int challenges() {
-		return getInt( KEY_CHALLENGES, 0, 0, Challenges.MAX_VALUE );
+		return getInt( KEY_CHALLENGES, 0, 0, (int)Math.pow(2,Challenges.values().length)-1 );
 	}
 	
 	//Audio

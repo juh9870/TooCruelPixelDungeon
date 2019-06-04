@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -208,7 +209,9 @@ public class Bestiary {
 	//switches out regular mobs for their alt versions when appropriate
 	private static void swapMobAlts(ArrayList<Class<?extends Mob>> rotation){
 		for (int i = 0; i < rotation.size(); i++){
-			if (Random.Int( 50 ) == 0) {
+			int max = 50;
+			if (Challenges.MUTAGEN.enabled())max=2;
+			if (Random.Int( max ) == 0) {
 				Class<? extends Mob> cl = rotation.get(i);
 				if (cl == Rat.class) {
 					cl = Albino.class;

@@ -82,7 +82,7 @@ public class WndSadGhost extends Window {
 		btnWeapon.setRect( 0, message.top() + message.height() + GAP, WIDTH, BTN_HEIGHT );
 		add( btnWeapon );
 
-		if (!Dungeon.isChallenged( Challenges.NO_ARMOR )) {
+		if (!Challenges.NO_ARMOR.enabled()) {
 			RedButton btnArmor = new RedButton( Messages.get(this, "armor") ) {
 				@Override
 				protected void onClick() {

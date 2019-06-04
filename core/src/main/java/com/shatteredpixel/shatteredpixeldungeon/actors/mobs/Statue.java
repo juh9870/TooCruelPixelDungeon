@@ -53,9 +53,9 @@ public class Statue extends Mob {
 	public Statue() {
 		super();
 		
-		do {
-			weapon = (MeleeWeapon) Generator.random(Generator.Category.WEAPON);
-		} while (weapon.cursed);
+
+		weapon = (MeleeWeapon) Generator.random(Generator.Category.WEAPON);
+		weapon.cursed=false;
 		
 		weapon.enchant( Enchantment.random() );
 		
@@ -144,6 +144,8 @@ public class Statue extends Mob {
 	@Override
 	public void die( Object cause ) {
 		weapon.identify();
+		weapon.cursed=true;
+		weapon.enchant(Enchantment.randomCurse());
 		Dungeon.level.drop( weapon, pos ).sprite.drop();
 		super.die( cause );
 	}

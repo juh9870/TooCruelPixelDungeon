@@ -116,7 +116,7 @@ public class PoolRoom extends SpecialRoom {
 			} else {
 				prize = Generator.randomArmor((Dungeon.depth / 5) + 1);
 			}
-		} while (prize.cursed || Challenges.isItemBlocked(prize));
+		} while ((prize.cursed&&!Challenges.CURSED.enabled()) || Challenges.isItemBlocked(prize));
 		prize.cursedKnown = true;
 		
 		//33% chance for an extra update.

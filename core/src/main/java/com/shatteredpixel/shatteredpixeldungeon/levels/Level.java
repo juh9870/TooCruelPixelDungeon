@@ -109,7 +109,10 @@ public abstract class Level implements Bundlable {
 	public boolean[] mapped;
 	public boolean[] discoverable;
 
-	public int viewDistance = Dungeon.isChallenged( Challenges.DARKNESS ) ? 2 : 8;
+	//Variable for Amnesia challenge
+	public boolean[] needUpdateFog;
+
+	public int viewDistance = Challenges.DARKNESS.enabled() ? 2 : 8;
 	
 	public boolean[] heroFOV;
 	
@@ -169,13 +172,13 @@ public abstract class Level implements Bundlable {
 		
 		if (!(Dungeon.bossLevel() || Dungeon.depth == 21) /*final shop floor*/) {
 
-			if (Dungeon.isChallenged(Challenges.NO_FOOD)){
+			if (Challenges.NO_FOOD.enabled()){
 				addItemToSpawn( new SmallRation() );
 			} else {
 				addItemToSpawn(Generator.random(Generator.Category.FOOD));
 			}
 
-			if (Dungeon.isChallenged(Challenges.DARKNESS)){
+			if (Challenges.DARKNESS.enabled()){
 				addItemToSpawn( new Torch() );
 			}
 
@@ -508,7 +511,9 @@ public abstract class Level implements Bundlable {
 	}
 	
 	public float respawnTime(){
-		if (Statistics.amuletObtained){
+		if(Challenges.RESURRECTION.enabled()){
+			return 1f;
+		} else if (Statistics.amuletObtained){
 			return TIME_TO_RESPAWN/2f;
 		} else if (Dungeon.level.feeling == Feeling.DARK){
 			return 2*TIME_TO_RESPAWN/3f;
@@ -698,7 +703,7 @@ public abstract class Level implements Bundlable {
 	
 	public Plant plant( Plant.Seed seed, int pos ) {
 		
-		if (Dungeon.isChallenged(Challenges.NO_HERBALISM)){
+		if (Challenges.NO_HERBALISM.enabled()){
 			return null;
 		}
 

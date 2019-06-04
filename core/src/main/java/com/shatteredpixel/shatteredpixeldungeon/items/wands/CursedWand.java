@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.wands;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -433,7 +434,7 @@ public class CursedWand {
 				do {
 					result = Generator.random(Random.oneOf(Generator.Category.WEAPON, Generator.Category.ARMOR,
 							Generator.Category.RING, Generator.Category.ARTIFACT));
-				} while (result.cursed);
+				} while (result.cursed && !Challenges.CURSED.enabled());
 				if (result.isUpgradable()) result.upgrade();
 				result.cursed = result.cursedKnown = true;
 				GLog.w( Messages.get(CursedWand.class, "transmogrify") );

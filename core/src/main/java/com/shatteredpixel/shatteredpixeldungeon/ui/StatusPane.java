@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -125,7 +126,7 @@ public class StatusPane extends Component {
 		level.hardlight( 0xFFEBA4 );
 		add( level );
 
-		depth = new BitmapText( Integer.toString( Dungeon.depth ), PixelScene.pixelFont);
+		depth = new BitmapText( Challenges.AMNESIA.enabled()?"??":Integer.toString(Dungeon.depth ), PixelScene.pixelFont);
 		depth.hardlight( 0xCACFC2 );
 		depth.measure();
 		add( depth );
@@ -161,6 +162,10 @@ public class StatusPane extends Component {
 		hp.x = shieldedHP.x = rawShielding.x = 30;
 		hp.y = shieldedHP.y = rawShielding.y = 3;
 
+		if (Challenges.ANALGESIA.enabled()){
+			hp.color(0x000000);
+		}
+
 		bossHP.setPos( 6 + (width - bossHP.width())/2, 20);
 
 		depth.x = width - 35.5f - depth.width() / 2f;
@@ -170,6 +175,7 @@ public class StatusPane extends Component {
 		danger.setPos( width - danger.width(), 20 );
 
 		buffs.setPos( 31, 9 );
+		if (Challenges.ANALGESIA.enabled())buffs.active=buffs.visible=false;
 
 		btnJournal.setPos( width - 42, 1 );
 
@@ -202,11 +208,19 @@ public class StatusPane extends Component {
 			avatar.resetColor();
 		}
 
-		hp.scale.x = Math.max( 0, (health-shield)/max);
-		shieldedHP.scale.x = health/max;
-		rawShielding.scale.x = shield/max;
+		if (!Challenges.ANALGESIA.enabled()) {
+			hp.scale.x = Math.max(0, (health - shield) / max);
+			shieldedHP.scale.x = health / max;
+			rawShielding.scale.x = shield / max;
 
-		exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
+			exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
+		} else {
+			hp.scale.x = 1;
+			shieldedHP.scale.x = 0;
+			rawShielding.scale.x = 0;
+
+			exp.scale.x = 0;
+		}
 
 		if (Dungeon.hero.lvl != lastLvl) {
 
@@ -219,6 +233,7 @@ public class StatusPane extends Component {
 
 			lastLvl = Dungeon.hero.lvl;
 			level.text( Integer.toString( lastLvl ) );
+			if (Challenges.ANALGESIA.enabled())level.text("??");
 			level.measure();
 			level.x = 27.5f - level.width() / 2f;
 			level.y = 28.0f - level.baseLine() / 2f;

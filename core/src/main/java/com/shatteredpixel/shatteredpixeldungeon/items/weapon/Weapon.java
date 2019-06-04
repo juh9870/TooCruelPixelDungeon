@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -258,7 +259,7 @@ abstract public class Weapon extends KindOfWeapon {
 		//30% chance to be cursed
 		//10% chance to be enchanted
 		float effectRoll = Random.Float();
-		if (effectRoll < 0.3f) {
+		if (effectRoll < 0.3f || Challenges.CURSED.enabled()) {
 			enchant(Enchantment.randomCurse());
 			cursed = true;
 		} else if (effectRoll >= 0.9f){

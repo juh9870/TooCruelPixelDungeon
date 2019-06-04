@@ -446,7 +446,7 @@ public class Dungeon {
 	public static boolean souNeeded() {
 		int souLeftThisSet;
 		//3 SOU each floor set, 1.5 (rounded) on forbidden runes challenge
-		if (isChallenged(Challenges.NO_SCROLLS)){
+		if (Challenges.NO_SCROLLS.enabled()){
 			souLeftThisSet = Math.round(1.5f - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 1.5f));
 		} else {
 			souLeftThisSet = 3 - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 3);
@@ -724,8 +724,8 @@ public class Dungeon {
 		hero.belongings.identify();
 
 		int chCount = 0;
-		for (int ch : Challenges.MASKS){
-			if ((challenges & ch) != 0) chCount++;
+		for (Challenges ch : Challenges.values()){
+			if ((challenges & ch.id) != 0) chCount++;
 		}
 		
 		if (chCount != 0) {
@@ -765,6 +765,13 @@ public class Dungeon {
 		for (int i = t; i <= b; i++) {
 			BArray.or( level.visited, level.heroFOV, pos, width, level.visited );
 			pos+=level.width();
+		}
+		if (Challenges.AMNESIA.enabled()) {
+
+			if (level.needUpdateFog!=null) {
+				level.needUpdateFog = BArray.and(BArray.not(level.heroFOV,null),BArray.or(level.visited, level.needUpdateFog, null),null);
+			} else level.needUpdateFog = BArray.and(level.visited,BArray.not(level.heroFOV,null),null);
+			level.visited = level.heroFOV;
 		}
 	
 		GameScene.updateFog(l, t, width, height);

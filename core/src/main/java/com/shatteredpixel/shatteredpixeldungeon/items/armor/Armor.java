@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.armor;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -469,7 +470,7 @@ public class Armor extends EquipableItem {
 		//30% chance to be cursed
 		//15% chance to be inscribed
 		float effectRoll = Random.Float();
-		if (effectRoll < 0.3f) {
+		if (effectRoll < 0.3f|| Challenges.CURSED.enabled()) {
 			inscribe(Glyph.randomCurse());
 			cursed = true;
 		} else if (effectRoll >= 0.85f){

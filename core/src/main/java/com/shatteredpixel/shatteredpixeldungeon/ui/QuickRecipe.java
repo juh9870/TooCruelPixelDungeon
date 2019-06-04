@@ -212,7 +212,7 @@ public class QuickRecipe extends Component {
 		}
 		
 		@Override
-		protected void onClick() {
+		public void onClick() {
 			super.onClick();
 			
 			//find the window this is inside of and close it

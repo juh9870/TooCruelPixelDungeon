@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -181,7 +182,7 @@ public class Artifact extends KindofMisc {
 		//always +0
 		
 		//30% chance to be cursed
-		if (Random.Float() < 0.3f) {
+		if (Random.Float() < 0.3f || Challenges.CURSED.enabled()) {
 			cursed = true;
 		}
 		return this;

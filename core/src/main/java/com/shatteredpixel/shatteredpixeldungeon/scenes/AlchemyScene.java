@@ -248,7 +248,7 @@ public class AlchemyScene extends PixelScene {
 		
 		IconButton btnGuide = new IconButton( new ItemSprite(ItemSpriteSheet.ALCH_PAGE, null)){
 			@Override
-			protected void onClick() {
+			public void onClick() {
 				super.onClick();
 				clearSlots();
 				updateState();
