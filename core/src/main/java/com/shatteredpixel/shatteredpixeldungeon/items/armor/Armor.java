@@ -97,7 +97,10 @@ public class Armor extends EquipableItem {
 	}
 	
 	public Augment augment = Augment.NONE;
+	
 	public Glyph glyph;
+	public boolean curseInfusionBonus = false;
+	
 	private BrokenSeal seal;
 	
 	public int tier;
@@ -113,6 +116,7 @@ public class Armor extends EquipableItem {
 	private static final String USES_LEFT_TO_ID = "uses_left_to_id";
 	private static final String AVAILABLE_USES  = "available_uses";
 	private static final String GLYPH			= "glyph";
+	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String SEAL            = "seal";
 	private static final String AUGMENT			= "augment";
 
@@ -122,6 +126,7 @@ public class Armor extends EquipableItem {
 		bundle.put( USES_LEFT_TO_ID, usesLeftToID );
 		bundle.put( AVAILABLE_USES, availableUsesToID );
 		bundle.put( GLYPH, glyph );
+		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( SEAL, seal);
 		bundle.put( AUGMENT, augment);
 	}
@@ -132,6 +137,7 @@ public class Armor extends EquipableItem {
 		usesLeftToID = bundle.getInt( USES_LEFT_TO_ID );
 		availableUsesToID = bundle.getInt( AVAILABLE_USES );
 		inscribe((Glyph) bundle.get(GLYPH));
+		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
 		seal = (BrokenSeal)bundle.get(SEAL);
 		
 		//pre-0.7.2 saves
@@ -140,8 +146,7 @@ public class Armor extends EquipableItem {
 			availableUsesToID = USES_TO_ID/2f;
 		}
 		
-		//pre-0.6.5 saves
-		if (bundle.contains(AUGMENT)) augment = bundle.getEnum(AUGMENT, Augment.class);
+		augment = bundle.getEnum(AUGMENT, Augment.class);
 	}
 
 	@Override
@@ -343,7 +348,12 @@ public class Armor extends EquipableItem {
 		
 		return stealth;
 	}
-
+	
+	@Override
+	public int level() {
+		return super.level() + (curseInfusionBonus ? 1 : 0);
+	}
+	
 	@Override
 	public Item upgrade() {
 		return upgrade( false );
@@ -512,6 +522,7 @@ public class Armor extends EquipableItem {
 	}
 
 	public Armor inscribe( Glyph glyph ) {
+		if (glyph == null || !glyph.curse()) curseInfusionBonus = false;
 		this.glyph = glyph;
 		updateQuickslot();
 		return this;

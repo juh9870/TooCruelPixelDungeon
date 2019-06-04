@@ -47,6 +47,7 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.ui.Button;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.DeviceCompat;
 
 public class WndStartGame extends Window {
 	

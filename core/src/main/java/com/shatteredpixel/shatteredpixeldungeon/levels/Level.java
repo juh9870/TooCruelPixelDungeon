@@ -41,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Shadows;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
@@ -67,7 +68,7 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTiledVisual;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
@@ -138,8 +139,8 @@ public abstract class Level implements Bundlable {
 	public HashMap<Class<? extends Blob>,Blob> blobs;
 	public SparseArray<Plant> plants;
 	public SparseArray<Trap> traps;
-	public HashSet<CustomTiledVisual> customTiles;
-	public HashSet<CustomTiledVisual> customWalls;
+	public HashSet<CustomTilemap> customTiles;
+	public HashSet<CustomTilemap> customWalls;
 	
 	protected ArrayList<Item> itemsToSpawn = new ArrayList<>();
 
@@ -304,8 +305,8 @@ public abstract class Level implements Bundlable {
 
 		version = bundle.getInt( VERSION );
 		
-		//saves from before 0.6.2e are not supported
-		if (version < ShatteredPixelDungeon.v0_6_2e){
+		//saves from before 0.6.5c are not supported
+		if (version < ShatteredPixelDungeon.v0_6_5c){
 			throw new RuntimeException("old save");
 		}
 
@@ -350,13 +351,13 @@ public abstract class Level implements Bundlable {
 
 		collection = bundle.getCollection( CUSTOM_TILES );
 		for (Bundlable p : collection) {
-			CustomTiledVisual vis = (CustomTiledVisual)p;
+			CustomTilemap vis = (CustomTilemap)p;
 			customTiles.add(vis);
 		}
 
 		collection = bundle.getCollection( CUSTOM_WALLS );
 		for (Bundlable p : collection) {
-			CustomTiledVisual vis = (CustomTiledVisual)p;
+			CustomTilemap vis = (CustomTilemap)p;
 			customWalls.add(vis);
 		}
 		
@@ -378,6 +379,12 @@ public abstract class Level implements Bundlable {
 		if (feeling == Feeling.DARK)
 			viewDistance = Math.round(viewDistance/2f);
 
+		if (bundle.contains( "mobs_to_spawn" )) {
+			for (Class<? extends Mob> mob : bundle.getClassArray("mobs_to_spawn")) {
+				if (mob != null) mobsToSpawn.add(mob);
+			}
+		}
+		
 		buildFlagMaps();
 		cleanWalls();
 	}
@@ -401,6 +408,7 @@ public abstract class Level implements Bundlable {
 		bundle.put( MOBS, mobs );
 		bundle.put( BLOBS, blobs.values() );
 		bundle.put( FEELING, feeling );
+		bundle.put( "mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
 	}
 	
 	public int tunnelTile() {
@@ -429,7 +437,19 @@ public abstract class Level implements Bundlable {
 	
 	abstract protected boolean build();
 	
-	abstract public Mob createMob();
+	private ArrayList<Class<?extends Mob>> mobsToSpawn = new ArrayList<>();
+	
+	public Mob createMob() {
+		if (mobsToSpawn == null || mobsToSpawn.isEmpty())
+			mobsToSpawn = Bestiary.getMobRotation(Dungeon.depth);
+		
+		try {
+			return mobsToSpawn.remove(0).newInstance();
+		} catch (Exception e) {
+			ShatteredPixelDungeon.reportException(e);
+			return null;
+		}
+	}
 
 	abstract protected void createMobs();
 
