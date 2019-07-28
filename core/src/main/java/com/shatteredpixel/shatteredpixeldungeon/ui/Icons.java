@@ -58,11 +58,6 @@ public enum Icons {
 	CHALLENGE_OFF,
 	CHALLENGE_ON,
 	RESUME,
-	ENTER,
-	GOLD,
-	RANKINGS,
-	BADGES,
-	CHANGES,
 	SHPX;
 
 	public Image get() {
@@ -150,8 +145,11 @@ public enum Icons {
 		case EXIT:
 			icon.frame( icon.texture.uvRect( 108, 0, 124, 16 ) );
 			break;
+		case NOTES:
+			icon.frame( icon.texture.uvRect( 79, 40, 94, 56 ) );
+			break;
 		case LANGS:
-			icon.frame( icon.texture.uvRect( 109, 16, 121, 25 ) );
+			icon.frame( icon.texture.uvRect( 95, 42, 107, 51 ) );
 			break;
 		case CHALLENGE_OFF:
 			icon.frame( icon.texture.uvRect( 78, 12, 92, 24 ) );
@@ -162,23 +160,8 @@ public enum Icons {
 		case RESUME:
 			icon.frame( icon.texture.uvRect( 13, 53, 24, 64 ) );
 			break;
-		case ENTER:
-			icon.frame( icon.texture.uvRect( 66, 26, 83, 43 ) );
-			break;
-		case GOLD:
-			icon.frame( icon.texture.uvRect( 83, 26, 100, 42 ) );
-			break;
-		case RANKINGS:
-			icon.frame( icon.texture.uvRect( 100, 26, 117, 43 ) );
-			break;
-		case BADGES:
-			icon.frame( icon.texture.uvRect( 66, 46, 83, 63 ) );
-			break;
-		case CHANGES:
-			icon.frame( icon.texture.uvRect( 83, 47, 100, 62 ) );
-			break;
 		case SHPX:
-			icon.frame( icon.texture.uvRect( 100, 46, 116, 62 ) );
+			icon.frame( icon.texture.uvRect( 64, 44, 80, 60 ) );
 			break;
 		}
 		return icon;

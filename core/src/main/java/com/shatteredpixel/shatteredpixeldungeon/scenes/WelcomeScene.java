@@ -21,19 +21,17 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Fireball;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
-import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Camera;
@@ -45,7 +43,7 @@ import com.watabou.utils.FileUtils;
 
 public class WelcomeScene extends PixelScene {
 
-	private static int LATEST_UPDATE = 356;
+	private static int LATEST_UPDATE = ShatteredPixelDungeon.v0_7_3;
 
 	@Override
 	public void create() {
@@ -66,9 +64,9 @@ public class WelcomeScene extends PixelScene {
 		Image title = BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON );
 		title.brightness(0.6f);
 		add( title );
-		
+
 		float topRegion = Math.max(title.height, h*0.45f);
-		
+
 		title.x = (w - title.width()) / 2f;
 		if (SPDSettings.landscape()) {
 			title.y = (topRegion - title.height()) / 2f;
@@ -96,8 +94,8 @@ public class WelcomeScene extends PixelScene {
 		signs.x = title.x + (title.width() - signs.width())/2f;
 		signs.y = title.y;
 		add( signs );
-		
-		StyledButton okay = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "continue")){
+
+		DarkRedButton okay = new DarkRedButton(Messages.get(this, "continue")){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -111,9 +109,8 @@ public class WelcomeScene extends PixelScene {
 			}
 		};
 
-		//FIXME these buttons are very low on 18:9 devices
 		if (previousVersion != 0){
-			StyledButton changes = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(TitleScene.class, "changes")){
+			DarkRedButton changes = new DarkRedButton(Messages.get(this, "changelist")){
 				@Override
 				protected void onClick() {
 					super.onClick();
@@ -121,16 +118,16 @@ public class WelcomeScene extends PixelScene {
 					ShatteredPixelDungeon.switchScene(ChangesScene.class);
 				}
 			};
-			okay.setRect(title.x, h-25, (title.width()/2)-2, 21);
+			okay.setRect(title.x, h-20, (title.width()/2)-2, 16);
+			okay.textColor(0xBBBB33);
 			add(okay);
 
-			changes.setRect(okay.right()+2, h-25, (title.width()/2)-2, 21);
-			changes.icon(Icons.get(Icons.CHANGES));
+			changes.setRect(okay.right()+2, h-20, (title.width()/2)-2, 16);
+			changes.textColor(0xBBBB33);
 			add(changes);
 		} else {
-			okay.text(Messages.get(TitleScene.class, "enter"));
-			okay.setRect(title.x, h-25, title.width(), 21);
-			okay.icon(Icons.get(Icons.ENTER));
+			okay.setRect(title.x, h-20, title.width(), 16);
+			okay.textColor(0xBBBB33);
 			add(okay);
 		}
 
@@ -162,7 +159,7 @@ public class WelcomeScene extends PixelScene {
 	}
 
 	private void updateVersion(int previousVersion){
-		
+
 		//update rankings, to update any data which may be outdated
 		if (previousVersion < LATEST_UPDATE){
 			try {
@@ -173,7 +170,7 @@ public class WelcomeScene extends PixelScene {
 				FileUtils.deleteFile( Rankings.RANKINGS_FILE );
 			}
 		}
-		
+
 		//give classes to people with saves that have previously unlocked them
 		if (previousVersion <= ShatteredPixelDungeon.v0_7_0c){
 			Badges.loadGlobal();
@@ -184,7 +181,7 @@ public class WelcomeScene extends PixelScene {
 			}
 			Badges.saveGlobal();
 		}
-		
+
 		if (previousVersion <= ShatteredPixelDungeon.v0_6_5c){
 			Journal.loadGlobal();
 			Document.ALCHEMY_GUIDE.addPage("Potions");
@@ -192,14 +189,29 @@ public class WelcomeScene extends PixelScene {
 			Document.ALCHEMY_GUIDE.addPage("Energy_Food");
 			Journal.saveGlobal();
 		}
-		
+
 		SPDSettings.version(ShatteredPixelDungeon.versionCode);
 	}
 
-	private void placeTorch( float x, float y ) {
-		Fireball fb = new Fireball();
-		fb.setPos( x, y );
-		add( fb );
+	private class DarkRedButton extends RedButton{
+		{
+			bg.brightness(0.4f);
+		}
+
+		DarkRedButton(String text){
+			super(text);
+		}
+
+		@Override
+		protected void onTouchDown() {
+			bg.brightness(0.5f);
+			Sample.INSTANCE.play( Assets.SND_CLICK );
+		}
+
+		@Override
+		protected void onTouchUp() {
+			super.onTouchUp();
+			bg.brightness(0.4f);
+		}
 	}
-	
 }

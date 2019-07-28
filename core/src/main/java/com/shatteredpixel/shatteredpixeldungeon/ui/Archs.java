@@ -74,7 +74,7 @@ public class Archs extends Component {
 		arcsFg.offsetTo( 0,  offsF );
 		add( arcsFg );
 
-		darkness= new Image(TextureCache.createGradient(0x00000000, 0x22000000, 0x55000000, 0x99000000, 0xEE000000));
+		darkness= new Image(TextureCache.createGradient(0x00440000, 0x22330000, 0x55220000, 0x99110000, 0xEE000000));
 		darkness.angle = 90;
 		add(darkness);
 	}
