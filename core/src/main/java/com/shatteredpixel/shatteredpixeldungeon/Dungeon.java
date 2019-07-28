@@ -355,7 +355,7 @@ public class Dungeon {
 		PathFinder.setMapSize(level.width(), level.height());
 		
 		Dungeon.level = level;
-		DriedRose.restoreGhostHero( level, pos );
+		Mob.restoreAllies( level, pos );
 		Actor.init();
 		
 		Actor respawner = level.respawner();

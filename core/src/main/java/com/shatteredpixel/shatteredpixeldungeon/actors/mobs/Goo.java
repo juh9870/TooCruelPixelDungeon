@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GooWarn;
@@ -33,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -40,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GooSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
+import com.shatteredpixel.shatteredpixeldungeon.ui.GameLog;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
@@ -109,6 +112,10 @@ public class Goo extends Mob {
 				((GooSprite)sprite).spray(false);
 			}
 			HP++;
+		}
+		
+		if (state != SLEEPING){
+			Dungeon.level.seal();
 		}
 
 		return super.act();
@@ -202,12 +209,6 @@ public class Goo extends Mob {
 		pumpedUp = 0;
 		return super.getCloser( target );
 	}
-	
-	@Override
-	public void move( int step ) {
-		Dungeon.level.seal();
-		super.move( step );
-	}
 
 	@Override
 	public void damage(int dmg, Object src) {
@@ -251,8 +252,16 @@ public class Goo extends Mob {
 	@Override
 	public void notice() {
 		super.notice();
-		BossHealthBar.assignBoss(this);
-		yell( Messages.get(this, "notice") );
+		if (!BossHealthBar.isAssigned()) {
+			BossHealthBar.assignBoss(this);
+			yell(Messages.get(this, "notice"));
+			for (Char ch : Actor.chars()){
+				if (ch instanceof DriedRose.GhostHero){
+					GLog.n("\n");
+					((DriedRose.GhostHero) ch).sayBoss();
+				}
+			}
+		}
 	}
 
 	private final String PUMPEDUP = "pumpedup";

@@ -7,3 +7,25 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.4.1'
     }
 }
+
+allprojects {
+
+    ext {
+        appName = 'Shattered Pixel Dungeon'
+        appPackageName = 'com.shatteredpixel.shatteredpixeldungeon'
+
+        appVersionCode = 356
+        appVersionName = '0.7.4'
+
+        appAndroidCompileSDK = 28
+        appAndroidMinSDK = 9
+        appAndroidTargetSDK = 28
+    }
+    version = appVersionName
+
+    repositories {
+        google()
+        jcenter()
+    }
+
+}

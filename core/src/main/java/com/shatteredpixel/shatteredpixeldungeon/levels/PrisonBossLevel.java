@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.MazeRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.EmptyRoom;
@@ -276,12 +277,18 @@ public class PrisonBossLevel extends Level {
 	private void clearEntities(Room safeArea){
 		for (Heap heap : heaps.values()){
 			if (safeArea == null || !safeArea.inside(cellToPoint(heap.pos))){
-				for (Item item : heap.items)
-					storedItems.add(item);
+				storedItems.addAll(heap.items);
 				heap.destroy();
 			}
 		}
-		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[Dungeon.level.mobs.size()])){
+		
+		for (HeavyBoomerang.CircleBack b : Dungeon.hero.buffs(HeavyBoomerang.CircleBack.class)){
+			if (safeArea == null || !safeArea.inside(cellToPoint(b.returnPos()))){
+				storedItems.add(b.cancel());
+			}
+		}
+		
+		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
 			if (mob != tengu && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
 				mob.destroy();
 				if (mob.sprite != null)
@@ -311,7 +318,7 @@ public class PrisonBossLevel extends Level {
 
 				for (Mob m : mobs){
 					//bring the first ally with you
-					if (m.alignment == Char.Alignment.ALLY){
+					if (m.alignment == Char.Alignment.ALLY && !m.properties().contains(Char.Property.IMMOVABLE)){
 						m.pos = ARENA_DOOR; //they should immediately walk out of the door
 						m.sprite.place(m.pos);
 						break;
@@ -408,7 +415,7 @@ public class PrisonBossLevel extends Level {
 				//remove all mobs, but preserve allies
 				ArrayList<Mob> allies = new ArrayList<>();
 				for(Mob m : mobs.toArray(new Mob[0])){
-					if (m.alignment == Char.Alignment.ALLY){
+					if (m.alignment == Char.Alignment.ALLY && !m.properties().contains(Char.Property.IMMOVABLE)){
 						allies.add(m);
 						mobs.remove(m);
 					}
