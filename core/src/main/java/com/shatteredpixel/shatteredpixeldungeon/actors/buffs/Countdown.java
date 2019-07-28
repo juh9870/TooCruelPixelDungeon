@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -13,9 +14,12 @@ public class Countdown extends FlavourBuff implements Hero.Doom {
         type = Buff.buffType.NEUTRAL;
     }
 
+    public static final float DESCEND_TIME = 300;
+    public static final float ASCEND_TIME = 150;
+
     @Override
     public boolean act() {
-        target.damage(Dungeon.depth/5+1, this);
+        target.damage((Statistics.deepestFloor/5+1)*3, this);
 //        BuffIndicator.refreshHero();
         spend( TICK );
         return true;

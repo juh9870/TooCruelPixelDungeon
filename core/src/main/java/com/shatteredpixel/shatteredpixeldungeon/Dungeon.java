@@ -25,6 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Countdown;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -227,12 +229,20 @@ public class Dungeon {
 		
 		depth++;
 		if (depth > Statistics.deepestFloor) {
+			if (Challenges.COUNTDOWN.enabled()){
+				Buff.prolong(Dungeon.hero, Countdown.class,Countdown.DESCEND_TIME*(Challenges.BIG_LEVELS.enabled()?1.5f:1));
+			}
 			Statistics.deepestFloor = depth;
 			
 			if (Statistics.qualifiedForNoKilling) {
 				Statistics.completedWithNoKilling = true;
 			} else {
 				Statistics.completedWithNoKilling = false;
+			}
+		} else if(Statistics.amuletObtained&&depth<Statistics.amuletHighestFloor){
+			Statistics.amuletHighestFloor=depth;
+			if (Challenges.COUNTDOWN.enabled()){
+				Buff.prolong(Dungeon.hero, Countdown.class,Countdown.ASCEND_TIME *(Challenges.BIG_LEVELS.enabled()?1.5f:1));
 			}
 		}
 		

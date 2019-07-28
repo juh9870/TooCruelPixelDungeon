@@ -44,6 +44,7 @@ public class Statistics {
 	public static boolean completedWithNoKilling = false;
 	
 	public static boolean amuletObtained = false;
+	public static int amuletHighestFloor;
 	
 	public static void reset() {
 		
@@ -64,6 +65,7 @@ public class Statistics {
 		qualifiedForNoKilling = false;
 		
 		amuletObtained = false;
+		amuletHighestFloor = 26;
 		
 	}
 	
@@ -82,6 +84,7 @@ public class Statistics {
 	private static final String DURATION	= "duration";
 	
 	private static final String AMULET		= "amuletObtained";
+	private static final String AMULETFLOOR	= "amuletFloor";
 	
 	public static void storeInBundle( Bundle bundle ) {
 		bundle.put( GOLD,		goldCollected );
@@ -99,6 +102,7 @@ public class Statistics {
 		bundle.put( DURATION,	duration );
 		
 		bundle.put( AMULET,		amuletObtained );
+		bundle.put( AMULETFLOOR,amuletHighestFloor );
 	}
 	
 	public static void restoreFromBundle( Bundle bundle ) {
@@ -115,8 +119,9 @@ public class Statistics {
 		thrownAssists   = bundle.getInt( THROWN );
 		
 		duration		= bundle.getFloat( DURATION );
-		
+
 		amuletObtained	= bundle.getBoolean( AMULET );
+		amuletHighestFloor = bundle.getInt( AMULETFLOOR );
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ){

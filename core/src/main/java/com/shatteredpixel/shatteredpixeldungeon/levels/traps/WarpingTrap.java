@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -43,6 +44,14 @@ public class WarpingTrap extends Trap {
 	{
 		color = TEAL;
 		shape = STARS;
+	}
+
+	@Override
+	public Trap hide() {
+		//cannot hide this trap with countdown challenge
+		if (Challenges.COUNTDOWN.enabled())
+			return reveal();
+		return super.hide();
 	}
 
 	@Override

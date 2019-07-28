@@ -79,19 +79,28 @@ public class WndHero extends WndTabbed {
 				stats.visible = stats.active = selected;
 			};
 		} );
-		if (!Challenges.ANALGESIA.enabled())
-			add( new LabeledTab( Messages.get(this, "buffs") ) {
-				protected void select( boolean value ) {
-					super.select( value );
-					buffs.visible = buffs.active = selected;
-				};
-			} );
+		add( new LabeledTab( Messages.get(this, "buffs") ) {
+			protected void select( boolean value ) {
+				super.select( value );
+				buffs.visible = buffs.active = selected;
+			};
+		} );
 
 		layoutTabs();
+		if (Challenges.COUNTDOWN.enabled()) {
+			tabs.get(1).bg.tint(0,0.5f);
+		}
+
 		
 		select( 0 );
 	}
-	
+
+	@Override
+	public void select(Tab tab) {
+		if(Challenges.ANALGESIA.enabled()&&tabs.indexOf(tab)==1)return;
+		super.select(tab);
+	}
+
 	private class StatsTab extends Group {
 		
 		private static final int GAP = 5;
@@ -105,7 +114,7 @@ public class WndHero extends WndTabbed {
 			IconTitle title = new IconTitle();
 			title.icon( HeroSprite.avatar(hero.heroClass, hero.tier()) );
 			if (hero.givenName().equals(hero.className()))
-				title.label( Messages.get(this, "title", hero.lvl, hero.className() ).toUpperCase( Locale.ENGLISH ) );
+				title.label( Messages.get(this, "title", Challenges.ANALGESIA.enabled()?"??":hero.lvl, hero.className() ).toUpperCase( Locale.ENGLISH ) );
 			else
 				title.label((hero.givenName() + "\n" + Messages.get(this, "title", hero.lvl, hero.className())).toUpperCase(Locale.ENGLISH));
 			title.color(Window.SHPX_COLOR);

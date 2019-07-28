@@ -62,7 +62,7 @@ public enum Challenges {
 					&& ((Blandfruit) item).potionAttrib instanceof PotionOfHealing){
 				return true;
 			}
-			return true;
+			return false;
 		}
 	},
 	NO_HERBALISM("no_herbalism"){

@@ -22,7 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -186,11 +188,19 @@ public class StartScene extends PixelScene {
 					
 					classIcon.copy(Icons.get(info.heroClass));
 				}
-				
-				depth.text(Integer.toString(info.depth));
+
+				if ((info.challenges&Challenges.AMNESIA.id)!=0){
+					depth.text("??");
+				} else {
+					depth.text(Integer.toString(info.depth));
+				}
 				depth.measure();
-				
-				level.text(Integer.toString(info.level));
+
+				if ((info.challenges&Challenges.ANALGESIA.id)!=0){
+					level.text("??");
+				} else {
+					level.text(Integer.toString(info.level));
+				}
 				level.measure();
 				
 				if (info.challenges > 0){

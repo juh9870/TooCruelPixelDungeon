@@ -109,6 +109,9 @@ public enum HeroClass {
 		
 		new ScrollOfIdentify().identify();
 
+		new ScrollOfMagicMapping().identify().collect();
+		new PotionOfMindVision().identify().collect();
+
 	}
 
 	public Badges.Badge masteryBadge() {
