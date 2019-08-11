@@ -74,6 +74,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Banner;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BusyIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.CharHealthIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.GameLog;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.LootIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ResumeIndicator;
@@ -86,15 +87,18 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag.Mode;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndGame;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndHardNotification;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoCell;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoItem;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoMob;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoPlant;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoTrap;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndList;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Camera;
@@ -229,9 +233,8 @@ public class GameScene extends PixelScene {
 		heaps = new Group();
 		add( heaps );
 		
-		int size = Dungeon.level.heaps.size();
-		for (int i=0; i < size; i++) {
-			addHeapSprite( Dungeon.level.heaps.valueAt( i ) );
+		for ( Heap heap : Dungeon.level.heaps.values() ) {
+			addHeapSprite( heap );
 		}
 		
 		emitters = new Group();
@@ -342,6 +345,11 @@ public class GameScene extends PixelScene {
 		counter.color( 0x808080, true );
 		counter.camera = uiCamera;
 		counter.show(this, busy.center(), 0f);
+		
+		if(Dungeon.challengesInform){
+			add(new WndHardNotification(Icons.CHALLENGE_ON.get(),Messages.get(this,"notification"),Messages.get(this,"challenges_info"),Messages.get(this,"thanks"),0));
+			Dungeon.challengesInform=false;
+		}
 		
 		switch (InterlevelScene.mode) {
 		case RESURRECT:

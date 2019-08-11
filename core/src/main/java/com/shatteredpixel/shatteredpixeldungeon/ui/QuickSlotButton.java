@@ -97,11 +97,11 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 				return QuickSlotButton.this.onLongClick();
 			}
 			@Override
-			protected void onTouchDown() {
+			protected void onPointerDown() {
 				icon.lightness( 0.7f );
 			}
 			@Override
-			protected void onTouchUp() {
+			protected void onPointerUp() {
 				icon.resetColor();
 			}
 		};
@@ -227,7 +227,7 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 	}
 	
 	public static void target( Char target ) {
-		if (target != Dungeon.hero) {
+		if (target != null && target.alignment != Char.Alignment.ALLY) {
 			lastTarget = target;
 			
 			TargetHealthIndicator.instance.target( target );

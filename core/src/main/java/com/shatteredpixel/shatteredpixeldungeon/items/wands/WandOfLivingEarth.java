@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.wands;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -53,19 +54,19 @@ public class WandOfLivingEarth extends DamageWand {
 	
 	@Override
 	public int min(int lvl) {
-		return 2 + lvl;
+		return 3 + lvl;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return 4 + 2*lvl;
+		return 6 + 2*lvl;
 	}
 	
 	@Override
 	protected void onZap(Ballistica bolt) {
 		Char ch = Actor.findChar(bolt.collisionPos);
 		int damage = damageRoll();
-		int armorToAdd = Math.round(damage*1.33f);
+		int armorToAdd = damage;
 
 		EarthGuardian guardian = null;
 		for (Mob m : Dungeon.level.mobs){
@@ -188,13 +189,15 @@ public class WandOfLivingEarth extends DamageWand {
 				break;
 			}
 		}
+		
+		int armor = Math.round(damage*0.25f);
 
 		if (guardian != null){
 			guardian.sprite.centerEmitter().burst(MagicMissile.EarthParticle.ATTRACT, 8 + level() / 2);
-			guardian.setInfo(Dungeon.hero, level(), damage);
+			guardian.setInfo(Dungeon.hero, level(), armor);
 		} else {
 			attacker.sprite.centerEmitter().burst(MagicMissile.EarthParticle.ATTRACT, 8 + level() / 2);
-			Buff.affect(attacker, RockArmor.class).addArmor(level(), damage);
+			Buff.affect(attacker, RockArmor.class).addArmor(level(), armor);
 		}
 	}
 	
@@ -219,13 +222,14 @@ public class WandOfLivingEarth extends DamageWand {
 		private int wandLevel;
 		private int armor;
 
-		private void addArmor( int wandLevel, int armor ){
+		private void addArmor( int wandLevel, int toAdd ){
 			this.wandLevel = Math.max(this.wandLevel, wandLevel);
-			this.armor += armor;
+			armor += toAdd;
+			armor = Math.min(armor, 2*armorToGuardian());
 		}
 
 		private int armorToGuardian(){
-			return 10 + wandLevel*5;
+			return 8 + wandLevel*4;
 		}
 
 		public int absorb( int damage ) {
@@ -294,7 +298,7 @@ public class WandOfLivingEarth extends DamageWand {
 		private void setInfo(Hero hero, int wandLevel, int healthToAdd){
 			if (wandLevel > this.wandLevel) {
 				this.wandLevel = wandLevel;
-				HT = 20 + 10 * wandLevel;
+				HT = 16 + 8 * wandLevel;
 			}
 			HP = Math.min(HT, HP + healthToAdd);
 			//half of hero's evasion
@@ -315,17 +319,26 @@ public class WandOfLivingEarth extends DamageWand {
 
 		@Override
 		public int damageRoll() {
-			return Random.NormalIntRange(2 + Dungeon.depth/6, 6 + Dungeon.depth/2);
+			return Random.NormalIntRange(3 + Dungeon.depth/4, 6 + Dungeon.depth/2);
 		}
 
 		@Override
 		public int drRoll() {
-			return Random.NormalIntRange(wandLevel, 3 + 3*wandLevel);
+			if (Challenges.NO_ARMOR.enabled()){
+				return Random.NormalIntRange(wandLevel, 2 + wandLevel);
+			} else {
+				return Random.NormalIntRange(wandLevel, 3 + 3 * wandLevel);
+			}
 		}
 
 		@Override
 		public String description() {
-			return Messages.get(this, "desc", wandLevel, 3 + 3*wandLevel);
+			if (Challenges.NO_ARMOR.enabled()){
+				return Messages.get(this, "desc", wandLevel, 2 + wandLevel);
+			} else {
+				return Messages.get(this, "desc", wandLevel, 3 + 3*wandLevel);
+			}
+			
 		}
 
 		private static final String DEFENSE = "defense";

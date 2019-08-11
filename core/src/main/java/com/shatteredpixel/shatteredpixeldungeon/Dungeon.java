@@ -39,7 +39,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
@@ -147,6 +146,7 @@ public class Dungeon {
 	}
 
 	public static int challenges;
+	public static boolean challengesInform;
 
 	public static Hero hero;
 	public static Level level;
@@ -169,6 +169,11 @@ public class Dungeon {
 
 		version = Game.versionCode;
 		challenges = SPDSettings.challenges();
+		challengesInform = false;
+		if(challenges==0){
+			challenges=Challenges.randomChallenges();
+			challengesInform=true;
+		}
 
 		seed = DungeonSeed.randomSeed();
 

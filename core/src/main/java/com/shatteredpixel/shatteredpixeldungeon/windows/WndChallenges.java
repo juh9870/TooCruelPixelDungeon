@@ -38,8 +38,8 @@ import java.util.ArrayList;
 
 public class WndChallenges extends Window {
 
-	private static final int WIDTH		= 120;
-	private static final int HEIGHT		= 140;
+	private static final int WIDTH		= 130;
+	private static final int HEIGHT		= 160;
 	private static final int TTL_HEIGHT    = 12;
 	private static final int BTN_HEIGHT    = 18;
 	private static final int GAP        = 1;
@@ -74,8 +74,8 @@ public class WndChallenges extends Window {
                     for (int i = 0; i < size; i++) {
                         if (boxes.get(i).inside(x, y)) {
                             boxes.get(i).checked(!boxes.get(i).checked());
-                            boxes.get(i).onTouchDown();
-                            boxes.get(i).onTouchUp();
+                            boxes.get(i).onPointerDown();
+                            boxes.get(i).onPointerUp();
                             break;
                         }
                     }
@@ -84,8 +84,8 @@ public class WndChallenges extends Window {
 				for (int i=0; i < size; i++) {
 					if (infos.get( i ).inside(x,y)) {
 						infos.get(i).onClick();
-						infos.get(i).onTouchDown();
-						infos.get(i).onTouchUp();
+						infos.get(i).onPointerDown();
+						infos.get(i).onPointerUp();
 						break;
 					}
 				}

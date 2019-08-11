@@ -52,13 +52,13 @@ public class IconButton extends Button {
 	}
 	
 	@Override
-	public void onTouchDown() {
+	public void onPointerDown() {
 		if (icon != null) icon.brightness( 1.5f );
 		Sample.INSTANCE.play( Assets.SND_CLICK );
 	}
 	
 	@Override
-	public void onTouchUp() {
+	public void onPointerUp() {
 		if (icon != null) icon.resetColor();
 	}
 	

@@ -60,7 +60,7 @@ An APK (Android PacKage) is a file used to distribute Android applications. The 
 
 Note that APKs must be signed with a signing key. If you are making a small personal modification to Too Cruel Pixel Dungeon then your signing key is not important, but if you intend to distribute your modification to other people and want them to be able to receive updates, then your signing key is critical. The Android studio website has [a guide on signing keys.](https://developer.android.com/studio/publish/app-signing.html#opt-out)
 
-Additionally, note that by default Too Cruel Pixel Dungeon uses R8 on release builds. R8 is a code optimizer which decreases the size of the APK and improves performance, but also makes error reports more difficult to read. You can disable R8 by setting minifyEnabled to false in 'core/build.grade'. If you wish to keep R8 enabled, you can learn more about it [here.](https://developer.android.com/studio/build/shrink-code)
+Additionally, note that by default Shattered Pixel Dungeon uses R8 on release builds. R8 is a code optimizer which decreases the size of the APK and improves performance, but also makes error reports more difficult to read. You can disable R8 by setting minifyEnabled to false in 'android/build.grade'. If you wish to keep R8 enabled, you can learn more about it [here.](https://developer.android.com/studio/build/shrink-code)
 
 #### 6. Distributing Your APK
 
@@ -68,4 +68,4 @@ The Android Studio website includes [a guide for ways to distribute your app.](h
 
 Note that by distributing your modification of Too Cruel Pixel Dungeon, you are bound by the terms of the GPLv3 license, which requires that you make any modifications you have made open-source. If you followed this guide and are using version control, that is already set up for you as your forked repository is publicly hosted on GitHub.
 
-If you intend to make your version of the game available on Google Play **PLEASE CONTACT ME AT THE FOLLOWING EMAIL ADDRESS:** Evan@ShatteredPixel.com . There are various aspects of Google's Developer Policies that go beyond the scope of a simple 'how to compile' guide. If you do not take necessary precautions before attempting to publish on Google Play, your version of the game will almost certainly be taken down for impersonating Shattered Pixel Dungeon or Pixel Dungeon.
+If you intend to make your version of the game available on Google Play **PLEASE CONTACT ME AT THE FOLLOWING EMAIL ADDRESS:** juh9870@ukr.net . There are various aspects of Google's Developer Policies that go beyond the scope of a simple 'how to compile' guide. If you do not take necessary precautions before attempting to publish on Google Play, your version of the game will almost certainly be taken down for impersonating Too Cruel Pixel Dungeon or Pixel Dungeon.

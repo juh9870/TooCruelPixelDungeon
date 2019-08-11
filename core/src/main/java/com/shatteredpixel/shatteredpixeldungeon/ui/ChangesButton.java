@@ -56,13 +56,13 @@ public class ChangesButton extends Button {
     }
 
     @Override
-    protected void onTouchDown() {
+    protected void onPointerDown() {
         image.brightness( 1.5f );
         Sample.INSTANCE.play( Assets.SND_CLICK );
     }
 
     @Override
-    protected void onTouchUp() {
+    protected void onPointerUp() {
         image.resetColor();
     }
 

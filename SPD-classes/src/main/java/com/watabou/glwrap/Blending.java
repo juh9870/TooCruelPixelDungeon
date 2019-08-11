@@ -21,9 +21,7 @@
 
 package com.watabou.glwrap;
 
-import android.opengl.GLES20;
-
-import javax.microedition.khronos.opengles.GL10;
+import com.badlogic.gdx.Gdx;
 
 public class Blending {
 	
@@ -33,21 +31,21 @@ public class Blending {
 	}
 	
 	public static void enable(){
-		GLES20.glEnable( GL10.GL_BLEND );
+		Gdx.gl.glEnable( Gdx.gl.GL_BLEND );
 	}
 	
 	public static void disable(){
-		GLES20.glDisable( GL10.GL_BLEND );
+		Gdx.gl.glDisable( Gdx.gl.GL_BLEND );
 	}
 	
 	//in this mode colors overwrite eachother, based on alpha value
 	public static void setNormalMode(){
-		GLES20.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
+		Gdx.gl.glBlendFunc( Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA );
 	}
 	
 	//in this mode colors add to eachother, eventually reaching pure white
 	public static void setLightMode(){
-		GLES20.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE );
+		Gdx.gl.glBlendFunc( Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE );
 	}
 	
 }

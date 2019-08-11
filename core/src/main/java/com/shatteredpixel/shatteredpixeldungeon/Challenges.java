@@ -33,6 +33,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
+import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public enum Challenges {
 	NO_FOOD("no_food"){
@@ -163,6 +166,20 @@ public enum Challenges {
 				if (m.buff(Extermanation.class)!=null)left++;
 			}
 		return left;
+	}
+	
+	public static int randomChallenges(){
+		Challenges[] values = Challenges.values();
+		
+		Random.shuffle(values);
+		
+		int result = 0;
+		
+		for (int i=0;i<Random.Int(1,values.length);i++){
+			result |= values[i].id;
+		}
+		
+		return result;
 	}
 
 }

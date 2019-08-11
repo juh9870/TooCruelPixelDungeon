@@ -62,13 +62,13 @@ public class CheckBox extends RedButton {
 	}
 
 	@Override
-	public void onTouchDown() {
-		super.onTouchDown();
+	public void onPointerDown() {
+		super.onPointerDown();
 	}
 
 	@Override
-	public void onTouchUp() {
-		super.onTouchUp();
+	public void onPointerUp() {
+		super.onPointerUp();
 	}
 
 	@Override

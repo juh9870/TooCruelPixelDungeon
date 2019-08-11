@@ -62,8 +62,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Recycle;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.WildEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.TippedDart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AlchemyScene;
@@ -124,10 +122,10 @@ public class QuickRecipe extends Component {
 		}
 		
 		if (cost > 0) {
-			arrow = new arrow(Icons.get(Icons.RESUME), cost);
+			arrow = new arrow(Icons.get(Icons.ARROW), cost);
 			arrow.hardlightText(0x00CCFF);
 		} else {
-			arrow = new arrow(Icons.get(Icons.RESUME));
+			arrow = new arrow(Icons.get(Icons.ARROW));
 		}
 		if (hasInputs) {
 			arrow.icon.tint(1, 1, 0, 1);

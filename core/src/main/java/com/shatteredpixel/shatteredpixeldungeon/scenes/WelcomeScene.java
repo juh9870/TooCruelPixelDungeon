@@ -30,15 +30,16 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndHardNotification;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 
 public class WelcomeScene extends PixelScene {
@@ -101,7 +102,13 @@ public class WelcomeScene extends PixelScene {
 				super.onClick();
 				if (previousVersion == 0){
 					SPDSettings.version(ShatteredPixelDungeon.versionCode);
-					WelcomeScene.this.add(new WndStartGame(1));
+					WelcomeScene.this.add(new WndHardNotification(Icons.INFO.get(),Messages.get(WelcomeScene.class,"warning"),Messages.get(WelcomeScene.class,"moon_info"),Messages.get(WelcomeScene.class,"continue"),2){
+						@Override
+						public void hide() {
+							super.hide();
+							WelcomeScene.this.add(new WndStartGame(1));
+						}
+					});
 				} else {
 					updateVersion(previousVersion);
 					ShatteredPixelDungeon.switchScene(TitleScene.class);
@@ -143,7 +150,7 @@ public class WelcomeScene extends PixelScene {
 				//TODO: change the messages here in accordance with the type of patch.
 				message = Messages.get(this, "patch_intro");
 				message += "\n";
-				//message += "\n" + Messages.get(this, "patch_balance");
+				message += "\n" + Messages.get(this, "patch_balance");
 				message += "\n" + Messages.get(this, "patch_bugfixes");
 				message += "\n" + Messages.get(this, "patch_translations");
 
@@ -203,14 +210,14 @@ public class WelcomeScene extends PixelScene {
 		}
 
 		@Override
-		protected void onTouchDown() {
+		protected void onPointerDown() {
 			bg.brightness(0.5f);
 			Sample.INSTANCE.play( Assets.SND_CLICK );
 		}
 
 		@Override
-		protected void onTouchUp() {
-			super.onTouchUp();
+		protected void onPointerUp() {
+			super.onPointerUp();
 			bg.brightness(0.4f);
 		}
 	}

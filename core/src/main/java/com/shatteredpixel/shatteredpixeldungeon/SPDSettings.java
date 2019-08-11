@@ -58,12 +58,7 @@ public class SPDSettings extends GameSettings {
 	public static void fullscreen( boolean value ) {
 		put( KEY_FULLSCREEN, value );
 		
-		ShatteredPixelDungeon.instance.runOnUiThread( new Runnable() {
-			@Override
-			public void run() {
-				ShatteredPixelDungeon.updateSystemUI();
-			}
-		} );
+		ShatteredPixelDungeon.updateSystemUI();
 	}
 	
 	public static boolean fullscreen() {
@@ -79,6 +74,14 @@ public class SPDSettings extends GameSettings {
 	//there should be an option to check for landscape the setting, and actual screen size
 	public static boolean landscape() {
 		return getBoolean(KEY_LANDSCAPE, Game.dispWidth > Game.dispHeight);
+	}
+	
+	public static Boolean landscapeFromSettings(){
+		if (contains(KEY_LANDSCAPE)){
+			return getBoolean(KEY_LANDSCAPE, false);
+		} else {
+			return null;
+		}
 	}
 	
 	public static void powerSaver( boolean value ){

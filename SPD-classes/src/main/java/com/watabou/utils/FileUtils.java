@@ -21,11 +21,10 @@
 
 package com.watabou.utils;
 
-import com.watabou.noosa.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,82 +34,41 @@ public class FileUtils {
 	// Files
 	
 	public static boolean fileExists( String name ){
-		File file = new File(Game.instance.getFilesDir(), name);
+		FileHandle file = Gdx.files.local(name);
 		return file.exists() && !file.isDirectory();
 	}
 	
-	public static File getFile( String name ){
-		return getFile( Game.instance.getFilesDir(), name);
-	}
-	
-	public static File getFile( File base, String name ){
-		File file = new File(base, name);
-		if (!file.exists() || !file.isDirectory()){
-			return file;
-		}
-		return null;
-	}
-	
 	public static boolean deleteFile( String name ){
-		return Game.instance.deleteFile( name );
+		return Gdx.files.local(name).delete();
 	}
-	
-	public static boolean deleteFile( File file ){
-		return !file.isDirectory() && file.delete();
-	}
-	
 	
 	// Directories
 	
 	public static boolean dirExists( String name ){
-		File dir = new File(Game.instance.getFilesDir(), name);
+		FileHandle dir = Gdx.files.local( name );
 		return dir.exists() && dir.isDirectory();
 	}
 	
-	//base directory
-	public static File getDir( String name ){
-		return getDir( Game.instance.getFilesDir(), name);
-	}
-	
-	public static File getDir( File base, String name ){
-		File dir = new File(base, name);
-		if (!dir.exists() && dir.mkdirs()){
-			return dir;
-		} else if (dir.isDirectory()){
-			return dir;
-		}
-		return null;
-	}
-	
 	public static boolean deleteDir( String name ){
-		return deleteDir(getDir(name));
-	}
-	
-	public static boolean deleteDir( File dir ){
+		FileHandle dir = Gdx.files.local( name );
+		
 		if (dir == null || !dir.isDirectory()){
 			return false;
+		} else {
+			return dir.deleteDirectory();
 		}
-		
-		for (File f : dir.listFiles()){
-			if (f.isDirectory()){
-				if (!deleteDir(f)) return false;
-			} else {
-				if (!deleteFile(f)) return false;
-			}
-		}
-		
-		return dir.delete();
 	}
 	
 	// bundle reading
 	
 	//only works for base path
 	public static Bundle bundleFromFile( String fileName ) throws IOException{
-		return bundleFromStream(Game.instance.openFileInput( fileName ));
-	}
-	
-	public static Bundle bundleFromFile( File file ) throws IOException{
-		return bundleFromStream(new FileInputStream(file));
+		FileHandle file = Gdx.files.local(fileName);
+		if (!file.exists()){
+			throw new FileNotFoundException("file not found: " + file.path());
+		} else {
+			return bundleFromStream(file.read());
+		}
 	}
 	
 	private static Bundle bundleFromStream( InputStream input ) throws IOException{
@@ -123,11 +81,7 @@ public class FileUtils {
 	
 	//only works for base path
 	public static void bundleToFile( String fileName, Bundle bundle ) throws IOException{
-		bundleToStream( Game.instance.openFileOutput( fileName, Game.MODE_PRIVATE ), bundle);
-	}
-	
-	public static void bundleToFile( File file, Bundle bundle ) throws IOException{
-		bundleToStream( new FileOutputStream(file), bundle);
+		bundleToStream( Gdx.files.local(fileName).write(false), bundle);
 	}
 	
 	private static void bundleToStream( OutputStream output, Bundle bundle ) throws IOException{

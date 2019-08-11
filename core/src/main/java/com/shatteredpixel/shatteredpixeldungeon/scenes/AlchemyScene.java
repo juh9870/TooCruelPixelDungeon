@@ -166,7 +166,7 @@ public class AlchemyScene extends PixelScene {
 			protected void createChildren() {
 				super.createChildren();
 				
-				arrow = Icons.get(Icons.RESUME);
+				arrow = Icons.get(Icons.ARROW);
 				add(arrow);
 			}
 			
@@ -499,12 +499,12 @@ public class AlchemyScene extends PixelScene {
 			
 			slot = new ItemSlot() {
 				@Override
-				protected void onTouchDown() {
+				protected void onPointerDown() {
 					bg.brightness( 1.2f );
 					Sample.INSTANCE.play( Assets.SND_CLICK );
 				};
 				@Override
-				protected void onTouchUp() {
+				protected void onPointerUp() {
 					bg.resetColor();
 				}
 				@Override

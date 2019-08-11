@@ -210,7 +210,12 @@ public class PrisonBossLevel extends Level {
 
 	@Override
 	public int randomRespawnCell() {
-		return 5+2*32 + PathFinder.NEIGHBOURS8[Random.Int(8)]; //random cell adjacent to the entrance.
+		int pos = 5+2*32; //random cell adjacent to the entrance.
+		int cell;
+		do {
+			cell = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+		} while (!passable[cell] || Actor.findChar(cell) != null);
+		return cell;
 	}
 	
 	@Override
@@ -427,13 +432,13 @@ public class PrisonBossLevel extends Level {
 					do{
 						m.pos = randomTenguArenaCell();
 					} while (findMob(m.pos) != null);
-					m.sprite().place(m.pos);
+					if (m.sprite != null) m.sprite.place(m.pos);
 					mobs.add(m);
 				}
 
 				tengu.die(Dungeon.hero);
 				
-				clearEntities((Room) new EmptyRoom().set(3, 26, 7, 30)); //arena is safe
+				clearEntities((Room) new EmptyRoom().set(2, 25, 8, 31)); //arena is safe
 
 				for (Item item : storedItems)
 					drop(item, randomTenguArenaCell());

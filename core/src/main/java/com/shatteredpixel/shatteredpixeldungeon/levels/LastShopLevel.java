@@ -127,7 +127,11 @@ public class LastShopLevel extends RegularLevel {
 	
 	@Override
 	public int randomRespawnCell() {
-		return pointToCell( roomEntrance.random() );
+		int cell;
+		do {
+			cell = pointToCell( roomEntrance.random() );
+		} while (!passable[cell] || Actor.findChar(cell) != null);
+		return cell;
 	}
 	
 	@Override

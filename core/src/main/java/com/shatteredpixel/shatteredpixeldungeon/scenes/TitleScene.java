@@ -227,13 +227,13 @@ public class TitleScene extends PixelScene {
 		}
 
 		@Override
-		protected void onTouchDown() {
+		protected void onPointerDown() {
 			image.brightness( 1.5f );
 			Sample.INSTANCE.play( Assets.SND_CLICK, 1, 1, 0.8f );
 		}
 
 		@Override
-		protected void onTouchUp() {
+		protected void onPointerUp() {
 			image.resetColor();
 		}
 	}
