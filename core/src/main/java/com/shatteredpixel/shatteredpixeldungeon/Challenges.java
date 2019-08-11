@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -106,6 +108,8 @@ public enum Challenges {
 		protected float _nTrapsMult() {
 			return 4;
 		}
+	},
+	EXTERMINATION("extermination"){
 	};
 
 	public int id;
@@ -151,6 +155,14 @@ public enum Challenges {
 			if (ch.enabled()&&ch._isItemBlocked(item))return true;
 		}
 		return false;
+	}
+	public static int exterminatorsLeft(){
+		int left = 0;
+		if (EXTERMINATION.enabled())
+			for (Mob m : Dungeon.level.mobs){
+				if (m.buff(Extermanation.class)!=null)left++;
+			}
+		return left;
 	}
 
 }

@@ -87,7 +87,7 @@ public class WndHero extends WndTabbed {
 		} );
 
 		layoutTabs();
-		if (Challenges.COUNTDOWN.enabled()) {
+		if (Challenges.ANALGESIA.enabled()) {
 			tabs.get(1).bg.tint(0,0.5f);
 		}
 

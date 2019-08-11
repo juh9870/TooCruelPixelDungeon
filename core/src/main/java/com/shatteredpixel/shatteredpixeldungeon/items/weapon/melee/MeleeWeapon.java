@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -71,14 +72,14 @@ public class MeleeWeapon extends Weapon {
 
 		if (levelKnown) {
 			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
-			if (STRReq() > Dungeon.hero.STR()) {
+			if (STRReq() > Dungeon.hero.STR()  && !Challenges.ANALGESIA.enabled()) {
 				info += " " + Messages.get(Weapon.class, "too_heavy");
-			} else if (Dungeon.hero.STR() > STRReq()){
+			} else if (Dungeon.hero.STR() > STRReq() && !Challenges.ANALGESIA.enabled()){
 				info += " " + Messages.get(Weapon.class, "excess_str", Dungeon.hero.STR() - STRReq());
 			}
 		} else {
 			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", tier, min(0), max(0), STRReq(0));
-			if (STRReq(0) > Dungeon.hero.STR()) {
+			if (STRReq(0) > Dungeon.hero.STR() && !Challenges.ANALGESIA.enabled()) {
 				info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
 			}
 		}

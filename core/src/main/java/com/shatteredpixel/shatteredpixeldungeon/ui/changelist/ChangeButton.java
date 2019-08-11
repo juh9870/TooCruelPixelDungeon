@@ -48,6 +48,10 @@ public class ChangeButton extends Component {
 		layout();
 	}
 	
+	public ChangeButton(Item item, String name, String message ){
+		this( new ItemSprite(item), name, message);
+	}
+	
 	public ChangeButton(Item item, String message ){
 		this( new ItemSprite(item), item.name(), message);
 	}

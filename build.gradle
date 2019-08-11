@@ -11,10 +11,10 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'Shattered Pixel Dungeon'
-        appPackageName = 'com.shatteredpixel.shatteredpixeldungeon'
+        appName = 'Too Cruel Pixel Dungeon'
+        appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
 
-        appVersionCode = 1
+        appVersionCode = 400
         appVersionName = '0.0.1'
 
         appAndroidCompileSDK = 28

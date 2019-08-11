@@ -82,7 +82,8 @@ public class Heap implements Bundlable {
 	public ItemSprite sprite;
 	public boolean seen = false;
 	public boolean haunted = false;
-	
+	public boolean paid = false;
+
 	public LinkedList<Item> items = new LinkedList<Item>();
 	
 	public int image() {
@@ -140,15 +141,18 @@ public class Heap implements Bundlable {
 		}
 
 		if (type != Type.MIMIC) {
-			type = Type.HEAP;
-			ArrayList<Item> bonus = RingOfWealth.tryForBonusDrop(hero, 1);
-			if (bonus != null && !bonus.isEmpty()) {
-				items.addAll(0, bonus);
-				if (RingOfWealth.latestDropWasRare){
-					new Flare(8, 48).color(0xAA00FF, true).show(sprite, 2f);
-					RingOfWealth.latestDropWasRare = false;
-				} else {
-					new Flare(8, 24).color(0xFFFFFF, true).show(sprite, 2f);
+			if(paid)type=Type.FOR_SALE;
+			else {
+				type = Type.HEAP;
+				ArrayList<Item> bonus = RingOfWealth.tryForBonusDrop(hero, 1);
+				if (bonus != null && !bonus.isEmpty()) {
+					items.addAll(0, bonus);
+					if (RingOfWealth.latestDropWasRare) {
+						new Flare(8, 48).color(0xAA00FF, true).show(sprite, 2f);
+						RingOfWealth.latestDropWasRare = false;
+					} else {
+						new Flare(8, 24).color(0xFFFFFF, true).show(sprite, 2f);
+					}
 				}
 			}
 			sprite.link();
@@ -445,7 +449,8 @@ public class Heap implements Bundlable {
 	private static final String TYPE	= "type";
 	private static final String ITEMS	= "items";
 	private static final String HAUNTED	= "haunted";
-	
+	private static final String PAID	= "paid";
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
@@ -466,7 +471,8 @@ public class Heap implements Bundlable {
 		}
 		
 		haunted = bundle.getBoolean( HAUNTED );
-		
+		paid 	= bundle.getBoolean( PAID );
+
 	}
 
 	@Override
@@ -476,6 +482,7 @@ public class Heap implements Bundlable {
 		bundle.put( TYPE, type.toString() );
 		bundle.put( ITEMS, items );
 		bundle.put( HAUNTED, haunted );
+		bundle.put( PAID, paid );
 	}
 	
 }

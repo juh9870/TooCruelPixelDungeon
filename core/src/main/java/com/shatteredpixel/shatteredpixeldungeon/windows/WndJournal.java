@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -130,9 +131,18 @@ public class WndJournal extends WndTabbed {
 			add( tab );
 		}
 		
+		if (Challenges.AMNESIA.enabled()) {
+			this.tabs.get(2).bg.tint(0,0.5f);
+		}
+		
 		layoutTabs();
 		
 		select(last_index);
+	}
+	
+	public void select(Tab tab) {
+		if(Challenges.AMNESIA.enabled()&&tabs.indexOf(tab)==2)return;
+		super.select(tab);
 	}
 	
 	private static class ListItem extends Component {

@@ -32,8 +32,10 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.ShieldHalo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
 import com.shatteredpixel.shatteredpixeldungeon.effects.TorchHalo;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SnowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -79,7 +81,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected float shadowOffset    = 0.25f;
 
 	public enum State {
-		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED
+		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, EXTERMINATING
 	}
 	
 	protected Animation idle;
@@ -98,6 +100,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected Emitter marked;
 	protected Emitter levitation;
 	protected Emitter healing;
+	protected Emitter exterminating;
 	
 	protected IceBlock iceBlock;
 	protected DarkBlock darkBlock;
@@ -364,6 +367,10 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			case SHIELDED:
 				GameScene.effect( shield = new ShieldHalo( this ));
 				break;
+			case EXTERMINATING:
+				exterminating = emitter();
+				exterminating.pour( ElmoParticle.FACTORY, 0.5f );
+				break;
 		}
 	}
 	
@@ -432,6 +439,12 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 					shield.putOut();
 				}
 				break;
+			case EXTERMINATING:
+				if (exterminating != null) {
+					exterminating.on = false;
+					exterminating = null;
+				}
+				break;
 		}
 	}
 	
@@ -463,6 +476,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 		if (marked != null) {
 			marked.visible = visible;
+		}
+		if (exterminating != null) {
+			exterminating.visible = visible;
 		}
 		if (sleeping) {
 			showSleep();

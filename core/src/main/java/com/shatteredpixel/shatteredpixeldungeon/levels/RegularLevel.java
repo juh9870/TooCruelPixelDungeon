@@ -26,6 +26,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -40,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.PitRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.ShopRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -110,6 +113,9 @@ public abstract class RegularLevel extends Level {
 		
 		if (Dungeon.shopOnLevel())
 			initRooms.add(new ShopRoom());
+		if(Challenges.BLACKJACK.enabled() && !Dungeon.bossLevel() && Dungeon.depth!=21){
+			initRooms.add(new BlackjackRoom());
+		}
 
 		int specials = specialRooms();
 		if(Challenges.BIG_LEVELS.enabled())specials*=1.5;
@@ -209,6 +215,9 @@ public abstract class RegularLevel extends Level {
 
 			if (findMob(mob.pos) == null && passable[mob.pos] && mob.pos != exit) {
 				mobsToSpawn--;
+				if (Challenges.EXTERMINATION.enabled()){
+					Buff.affect(mob, Extermanation.class);
+				}
 				mobs.add(mob);
 
 				//TODO: perhaps externalize this logic into a method. Do I want to make mobs more likely to clump deeper down?
@@ -218,6 +227,9 @@ public abstract class RegularLevel extends Level {
 
 					if (findMob(mob.pos)  == null && passable[mob.pos] && mob.pos != exit) {
 						mobsToSpawn--;
+						if (Challenges.EXTERMINATION.enabled()){
+							Buff.affect(mob, Extermanation.class);
+						}
 						mobs.add(mob);
 					}
 				}
@@ -389,7 +401,15 @@ public abstract class RegularLevel extends Level {
 	public ArrayList<Room> rooms() {
 		return new ArrayList<>(rooms);
 	}
-	
+
+	@Override
+	protected BlackjackRoom getBlackjackRoom() {
+		for (Room r : rooms){
+			if (r instanceof BlackjackRoom) return (BlackjackRoom) r;
+		}
+		return null;
+	}
+
 	//FIXME pit rooms shouldn't be problematic enough to warrant this
 	public boolean hasPitRoom(){
 		for (Room r : rooms) {

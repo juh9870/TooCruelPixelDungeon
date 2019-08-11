@@ -30,9 +30,10 @@ public class BannerSprites {
 		PIXEL_DUNGEON,
 		BOSS_SLAIN,
 		GAME_OVER,
+		LEVEL_CLEARED,
 		SELECT_YOUR_HERO,
 		PIXEL_DUNGEON_SIGNS
-	};
+	}
 
 	public static Image get( Type type ) {
 		Image icon = new Image( Assets.BANNERS );
@@ -45,6 +46,9 @@ public class BannerSprites {
 				break;
 			case GAME_OVER:
 				icon.frame( icon.texture.uvRect( 0, 125, 128, 160 ) );
+				break;
+			case LEVEL_CLEARED:
+				icon.frame( icon.texture.uvRect( 0, 184, 128, 211 ) );
 				break;
 			case SELECT_YOUR_HERO:
 				icon.frame( icon.texture.uvRect( 0, 160, 128, 181 ) );

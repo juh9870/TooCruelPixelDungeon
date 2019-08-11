@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -209,6 +210,8 @@ public class ItemSlot extends Button {
 				topRight.text( Messages.format( TXT_STRENGTH, str ) );
 				if (str > Dungeon.hero.STR()) {
 					topRight.hardlight( DEGRADED );
+				} else if(Challenges.ANALGESIA.enabled()){
+					topRight.hardlight( WARNING );
 				} else {
 					topRight.resetColor();
 				}

@@ -899,6 +899,16 @@ public class GameScene extends PixelScene {
 		}
 	}
 	
+	public static void levelCleared() {
+		if (Dungeon.hero.isAlive()) {
+			Banner cleared = new Banner( BannerSprites.get( BannerSprites.Type.LEVEL_CLEARED ) );
+			cleared.show( 0xFFFFFF, 0.3f, 2.5f );
+			scene.showBanner( cleared );
+			
+			Sample.INSTANCE.play( Assets.SND_BOSS );
+		}
+	}
+	
 	public static void handleCell( int cell ) {
 		cellSelector.select( cell );
 	}

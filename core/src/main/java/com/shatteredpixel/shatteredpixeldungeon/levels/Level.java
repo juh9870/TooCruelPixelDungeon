@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
@@ -62,6 +63,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.HighGrass;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -90,7 +92,7 @@ import java.util.HashSet;
 
 public abstract class Level implements Bundlable {
 	
-	public static enum Feeling {
+	public enum Feeling {
 		NONE,
 		CHASM,
 		WATER,
@@ -171,7 +173,7 @@ public abstract class Level implements Bundlable {
 	public void create() {
 
 		Random.seed( Dungeon.seedCurDepth() );
-		
+
 		if (!(Dungeon.bossLevel() || Dungeon.depth == 21) /*final shop floor*/) {
 
 			if (Challenges.NO_FOOD.enabled()){
@@ -261,6 +263,9 @@ public abstract class Level implements Bundlable {
 		
 		createMobs();
 		createItems();
+		if ((!(Dungeon.bossLevel() || Dungeon.depth == 21))&&Challenges.BLACKJACK.enabled()){
+			blackjackHeaps();
+		}
 
 		Random.seed();
 	}
@@ -455,6 +460,54 @@ public abstract class Level implements Bundlable {
 	abstract protected void createMobs();
 
 	abstract protected void createItems();
+
+	protected BlackjackRoom getBlackjackRoom() {
+		return null;
+	}
+
+	protected void blackjackHeaps(){
+
+		BlackjackRoom room = getBlackjackRoom();
+		if(room==null) return;
+		Heap h;
+		for(int c = 0;c<length;c++){
+			h=heaps.get(c);
+			if(h!=null){
+				if(h.type == Heap.Type.FOR_SALE)continue;
+				int goldCount=0;
+				for(Item i : h.items){
+					if(i.price()>0){
+						goldCount += (int) Math.ceil( i.price() * Random.NormalFloat(0.25f,1f) );
+						switch (h.type){
+							case LOCKED_CHEST:
+								room.chestItems.add(i);
+								break;
+							case CRYSTAL_CHEST:
+								room.crystalItems.add(i);
+								break;
+							default:
+								room.sellItems.add(i);
+						}
+						h.items.remove(i);
+					}
+				}
+				if(h.items.size()==0){
+					heaps.remove(c);
+				}
+				if(goldCount>0){
+					Heap gold = drop(new Gold(goldCount),c);
+					gold.haunted=h.haunted;
+					if (h.type == Heap.Type.SKELETON
+							|| h.type == Heap.Type.REMAINS
+							|| h.type == Heap.Type.CHEST
+							|| h.type == Heap.Type.TOMB
+							|| h.type == Heap.Type.MIMIC){
+						gold.type=h.type;
+					}
+				}
+			}
+		}
+	}
 
 	public void seal(){
 		if (!locked) {
