@@ -78,9 +78,9 @@ public class Cruel_Changes {
 		changeInfos.add(changes);
 		
 		changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Developer Commentary",
-				"_-_ Released August 11th, 2019\n" +
+				"_-_ Released August 12th, 2019\n" +
 						"_-_ First release\n" +
-						"_-_ 3 days after final commit to Shattered Pixel Dungeon's sourcecode v0.7.4b" +
+						"_-_ 25 ays after Shattered Pixel Dungeon v0.7.4" +
 						"\n" +
 						"Dev commentary will be added here in the future."));
 		
