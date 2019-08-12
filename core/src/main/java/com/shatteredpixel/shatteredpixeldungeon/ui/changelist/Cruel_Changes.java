@@ -73,7 +73,7 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 		
-		changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"),false,null);
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"),false,null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 		
@@ -87,7 +87,7 @@ public class Cruel_Changes {
 		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "Challenges",
 				"_-_ Added 11 new challenges\n" +
 						"_-_ Challenges are unlocked by default"));
-		changes.addButton(new ChangeButton(new Image(Assets.HUNTRESS, 0, 90, 12, 15),"Huntress","Huntress is unlocked by default"));
+		changes.addButton(new ChangeButton(new Image(Assets.HUNTRESS, 0, 90, 12, 15),"Huntress","All hero classes are unlocked by default"));
 		
 		changes = new ChangeInfo("Challenges",false,null);
 		changes.hardlight( Window.TITLE_COLOR );

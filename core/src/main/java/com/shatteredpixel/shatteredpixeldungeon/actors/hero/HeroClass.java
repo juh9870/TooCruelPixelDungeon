@@ -259,7 +259,10 @@ public enum HeroClass {
 		//always unlock on debug builds
 		if (DeviceCompat.isDebug()) return true;
 		
-		switch (this){
+		//always unlocked in Too Cruel Pixel Dungeon
+		return true;
+		
+		/*switch (this){
 			case WARRIOR: default:
 				return true;
 			case MAGE:
@@ -268,7 +271,7 @@ public enum HeroClass {
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_ROGUE);
 			case HUNTRESS:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
-		}
+		}*/
 	}
 	
 	public String unlockMsg() {

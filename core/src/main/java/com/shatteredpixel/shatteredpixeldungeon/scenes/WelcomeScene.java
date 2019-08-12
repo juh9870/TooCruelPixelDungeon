@@ -180,13 +180,13 @@ public class WelcomeScene extends PixelScene {
 
 		//give classes to people with saves that have previously unlocked them
 		if (previousVersion <= ShatteredPixelDungeon.v0_7_0c){
-			Badges.loadGlobal();
+			/*Badges.loadGlobal();
 			Badges.addGlobal(Badges.Badge.UNLOCK_MAGE);
 			Badges.addGlobal(Badges.Badge.UNLOCK_ROGUE);
 			if (Badges.isUnlocked(Badges.Badge.BOSS_SLAIN_3)){
 				Badges.addGlobal(Badges.Badge.UNLOCK_HUNTRESS);
 			}
-			Badges.saveGlobal();
+			Badges.saveGlobal();*/
 		}
 
 		if (previousVersion <= ShatteredPixelDungeon.v0_6_5c){

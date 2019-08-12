@@ -119,9 +119,11 @@ public class Badges {
 		MASTERY_MAGE,
 		MASTERY_ROGUE,
 		MASTERY_HUNTRESS,
+		/*
 		UNLOCK_MAGE( 65 ),
 		UNLOCK_ROGUE( 66 ),
 		UNLOCK_HUNTRESS( 67 ),
+		*/
 		ITEM_LEVEL_1( 48 ),
 		ITEM_LEVEL_2( 49 ),
 		ITEM_LEVEL_3( 50 ),
@@ -685,6 +687,7 @@ public class Badges {
 		}
 	}
 	
+	/*
 	public static void validateMageUnlock(){
 		if (Statistics.upgradesUsed >= 2 && !global.contains(Badge.UNLOCK_MAGE)){
 			displayBadge( Badge.UNLOCK_MAGE );
@@ -701,7 +704,7 @@ public class Badges {
 		if (Statistics.thrownAssists >= 20 && !global.contains(Badge.UNLOCK_HUNTRESS)){
 			displayBadge( Badge.UNLOCK_HUNTRESS );
 		}
-	}
+	}*/
 	
 	public static void validateMasteryCombo( int n ) {
 		if (!local.contains( Badge.MASTERY_COMBO ) && n == 10) {

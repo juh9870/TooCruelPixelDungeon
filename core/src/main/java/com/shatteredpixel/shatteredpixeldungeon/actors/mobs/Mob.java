@@ -522,7 +522,7 @@ public abstract class Mob extends Char {
 		if ((!enemySeen || enemy.invisible > 0)
 				&& enemy == Dungeon.hero && Dungeon.hero.canSurpriseAttack()) {
 			Statistics.sneakAttacks++;
-			Badges.validateRogueUnlock();
+//			Badges.validateRogueUnlock();
 			if (enemy.buff(Preparation.class) != null) {
 				Wound.hit(this);
 			} else {
@@ -610,7 +610,7 @@ public abstract class Mob extends Char {
 		
 		if (hitWithRanged){
 			Statistics.thrownAssists++;
-			Badges.validateHuntressUnlock();
+//			Badges.validateHuntressUnlock();
 		}
 		
 		if (cause == Chasm.class){
