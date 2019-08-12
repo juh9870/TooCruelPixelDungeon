@@ -5,7 +5,7 @@ Based on the source code of Shattered Pixel Dungeon, by Evan.
 
 Look below for compilation instructions.
 
-Source code of Shattered Pixel Dungeon (adapted to use newer build tools):
+Source code of Shattered Pixel Dungeon:
 https://github.com/00-Evan/shattered-pixel-dungeon/
 
 Source code of original Pixel Dungeon (adapted to use newer build tools):
