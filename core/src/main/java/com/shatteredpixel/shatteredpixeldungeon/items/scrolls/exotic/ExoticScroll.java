@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
@@ -38,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,6 +97,7 @@ public abstract class ExoticScroll extends Scroll {
 	
 	@Override
 	public void setKnown() {
+		if (Challenges.AMNESIA.hell())return;
 		if (!isKnown()) {
 			handler.know(exoToReg.get(this.getClass()));
 			updateQuickslot();
@@ -107,6 +110,10 @@ public abstract class ExoticScroll extends Scroll {
 		if (handler != null && handler.contains(exoToReg.get(this.getClass()))) {
 			image = handler.image(exoToReg.get(this.getClass())) + 16;
 			rune = handler.label(exoToReg.get(this.getClass()));
+		}
+		if(Challenges.AMNESIA.hell()){
+			image = ItemSpriteSheet.SCROLL_UNKNOWN + 16;
+			rune = "unknown";
 		}
 	}
 	

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.watabou.noosa.Halo;
@@ -101,9 +102,15 @@ public class PrisonLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		return new float[]{ 8, 8, 8, 8, 8,
-				4, 4, 4,
-				2, 2, 2, 2 };
+		if(!Challenges.EXTREME_CAUTION.hell()) {
+			return new float[]{8, 8, 8, 8, 8,
+					4, 4, 4,
+					2, 2, 2, 2};
+		} else {
+			return new float[]{2, 4, 4, 4, 4,
+					4, 8, 8,
+					4, 2, 8, 4};
+		}
 	}
 
 	@Override

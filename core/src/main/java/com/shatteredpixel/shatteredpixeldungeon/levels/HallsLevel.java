@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.HallsPainter;
@@ -108,10 +109,17 @@ public class HallsLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		return new float[]{ 8, 8, 8, 8, 8,
-				4, 4, 4, 4, 4,
-				2, 2, 2, 2,
-				1, 1, 1 };
+		if(!Challenges.EXTREME_CAUTION.hell()) {
+			return new float[]{8, 8, 8, 8, 8,
+					4, 4, 4, 4, 4,
+					2, 2, 2, 2,
+					1, 1, 1};
+		} else {
+			return new float[]{2, 2, 2, 2, 2,
+					8, 8, 8, 8, 8,
+					6, 6, 6, 4,
+					3, 3, 2};
+		}
 	}
 	
 	@Override

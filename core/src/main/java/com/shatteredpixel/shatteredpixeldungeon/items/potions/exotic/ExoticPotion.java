@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -39,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,6 +98,7 @@ public class ExoticPotion extends Potion {
 	
 	@Override
 	public void setKnown() {
+		if (Challenges.AMNESIA.hell())return;
 		if (!isKnown()) {
 			handler.know(exoToReg.get(this.getClass()));
 			updateQuickslot();
@@ -112,6 +115,11 @@ public class ExoticPotion extends Potion {
 		if (handler != null && handler.contains(exoToReg.get(this.getClass()))) {
 			image = handler.image(exoToReg.get(this.getClass())) + 16;
 			color = handler.label(exoToReg.get(this.getClass()));
+		}
+		
+		if (Challenges.AMNESIA.hell()){
+			image = ItemSpriteSheet.POTION_SILVER + 16;
+			color = "unknown";
 		}
 	}
 	

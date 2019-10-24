@@ -160,9 +160,10 @@ public class SPDSettings extends GameSettings {
 	
 	//Game State
 	
-	public static final String KEY_LAST_CLASS	= "last_class";
-	public static final String KEY_CHALLENGES	= "challenges";
-	public static final String KEY_INTRO		= "intro";
+	public static final String KEY_LAST_CLASS		= "last_class";
+	public static final String KEY_CHALLENGES		= "challenges";
+	public static final String KEY_HELL_CHALLENGES	= "hell_challenges";
+	public static final String KEY_INTRO			= "intro";
 	
 	public static void intro( boolean value ) {
 		put( KEY_INTRO, value );
@@ -187,6 +188,15 @@ public class SPDSettings extends GameSettings {
 	public static int challenges() {
 		return getInt( KEY_CHALLENGES, 0, 0, (int)Math.pow(2,Challenges.values().length)-1 );
 	}
+	
+	public static void hellChallenges( int value ) {
+		put( KEY_HELL_CHALLENGES, value );
+	}
+	
+	public static int hellChallenges() {
+		return getInt( KEY_HELL_CHALLENGES, 0, 0, (int)Math.pow(2,Challenges.values().length)-1 );
+	}
+	
 	
 	//Audio
 	

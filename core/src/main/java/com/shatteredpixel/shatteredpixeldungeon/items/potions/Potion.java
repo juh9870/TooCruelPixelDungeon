@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Intoxication;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
@@ -211,6 +212,10 @@ public class Potion extends Item {
 			image = handler.image(this);
 			color = handler.label(this);
 		}
+		if (Challenges.AMNESIA.hell()){
+			image = ItemSpriteSheet.POTION_SILVER;
+			color = "unknown";
+		}
 		setAction();
 	}
 	
@@ -307,6 +312,11 @@ public class Potion extends Item {
 		hero.busy();
 		apply( hero );
 		
+		if(Challenges.NO_HEALING.hell()) {
+			if (this instanceof ExoticPotion)Buff.affect(hero, Intoxication.class).extend(Intoxication.EXOTIC_INTOXICATION);
+			else Buff.affect(hero, Intoxication.class).extend(Intoxication.POION_INTOXICATION);
+		}
+		
 		Sample.INSTANCE.play( Assets.SND_DRINK );
 		
 		hero.sprite.operate( hero.pos );
@@ -348,6 +358,7 @@ public class Potion extends Item {
 	}
 	
 	public void setKnown() {
+		if (Challenges.AMNESIA.hell())return;
 		if (!anonymous) {
 			if (!isKnown()) {
 				handler.know(this);
@@ -369,6 +380,10 @@ public class Potion extends Item {
 	@Override
 	public Item identify() {
 
+		if (Challenges.AMNESIA.hell()){
+			return this;
+		}
+		
 		setKnown();
 		return super.identify();
 	}

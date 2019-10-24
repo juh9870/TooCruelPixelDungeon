@@ -61,7 +61,7 @@ public class WndGame extends Window {
 				@Override
 				protected void onClick() {
 					hide();
-					GameScene.show( new WndChallenges( Dungeon.challenges, false ) );
+					GameScene.show( new WndChallenges( Dungeon.challenges, Dungeon.hellChallenges, false ) );
 				}
 			} );
 		}

@@ -146,6 +146,7 @@ public class Dungeon {
 	}
 
 	public static int challenges;
+	public static int hellChallenges;
 	public static boolean challengesInform;
 
 	public static Hero hero;
@@ -169,6 +170,7 @@ public class Dungeon {
 
 		version = Game.versionCode;
 		challenges = SPDSettings.challenges();
+		hellChallenges = SPDSettings.hellChallenges();
 		challengesInform = false;
 		if(challenges==0){
 			challenges=Challenges.randomChallenges();
@@ -225,6 +227,9 @@ public class Dungeon {
 
 	public static boolean isChallenged( int mask ) {
 		return (challenges & mask) != 0;
+	}
+	public static boolean isHellChallenged( int mask ) {
+		return (hellChallenges & mask) != 0;
 	}
 	
 	public static Level newLevel() {
@@ -479,6 +484,7 @@ public class Dungeon {
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
 	private static final String CHALLENGES	= "challenges";
+	private static final String HELL_CHALS	= "hell_challenges";
 	private static final String HERO		= "hero";
 	private static final String GOLD		= "gold";
 	private static final String DEPTH		= "depth";
@@ -498,6 +504,7 @@ public class Dungeon {
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );
 			bundle.put( CHALLENGES, challenges );
+			bundle.put( HELL_CHALS, hellChallenges );
 			bundle.put( HERO, hero );
 			bundle.put( GOLD, gold );
 			bundle.put( DEPTH, depth );
@@ -569,7 +576,7 @@ public class Dungeon {
 			saveGame( GamesInProgress.curSlot );
 			saveLevel( GamesInProgress.curSlot );
 
-			GamesInProgress.set( GamesInProgress.curSlot, depth, challenges, hero );
+			GamesInProgress.set( GamesInProgress.curSlot, depth, challenges, hellChallenges, hero );
 
 		}
 	}
@@ -592,6 +599,7 @@ public class Dungeon {
 		QuickSlotButton.reset();
 
 		Dungeon.challenges = bundle.getInt( CHALLENGES );
+		Dungeon.hellChallenges = bundle.getInt( HELL_CHALS );
 		
 		Dungeon.level = null;
 		Dungeon.depth = -1;
@@ -717,6 +725,7 @@ public class Dungeon {
 		info.depth = bundle.getInt( DEPTH );
 		info.version = bundle.getInt( VERSION );
 		info.challenges = bundle.getInt( CHALLENGES );
+		info.hellChallenges = bundle.getInt( HELL_CHALS );
 		Hero.preview( info, bundle.getBundle( HERO ) );
 		Statistics.preview( info, bundle );
 	}

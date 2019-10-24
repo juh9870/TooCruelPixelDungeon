@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -28,19 +29,23 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Surprise;
@@ -49,6 +54,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
@@ -61,6 +67,7 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
@@ -608,9 +615,30 @@ public abstract class Mob extends Char {
 	@Override
 	public void die( Object cause ) {
 		
+		if(Challenges.RESURRECTION.hell() && buff(Ascension.class)==null && Random.Float()<Challenges.ascendingChance()){
+			
+			Ascension buff = new Ascension();
+			
+			if(buff.attachTo(this)){
+				HT*=2;
+				HP=HT;
+				Sample.INSTANCE.play( Assets.SND_TELEPORT );
+				
+				PotionOfHealing.cure(this);
+				Buff.detach(this, Paralysis.class);
+				
+				new Flare(8, 32).color(0xFFFF66, true).show(sprite, 2f);
+				CellEmitter.get(this.pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+				
+				name = Messages.get(Mob.class,"ascended",name);
+				
+				return;
+			}
+			
+		}
+		
 		if (hitWithRanged){
 			Statistics.thrownAssists++;
-//			Badges.validateHuntressUnlock();
 		}
 		
 		if (cause == Chasm.class){
@@ -746,7 +774,7 @@ public abstract class Mob extends Char {
 
 				if ( Challenges.SWARM_INTELLIGENCE.enabled()) {
 					for (Mob mob : Dungeon.level.mobs) {
-						if (Dungeon.level.distance(pos, mob.pos) <= 8 && mob.state != mob.HUNTING) {
+						if (Challenges.SWARM_INTELLIGENCE.hell()||(Dungeon.level.distance(pos, mob.pos) <= 8 && mob.state != mob.HUNTING)) {
 							mob.beckon( target );
 						}
 					}
@@ -782,7 +810,7 @@ public abstract class Mob extends Char {
 
 				if (Challenges.SWARM_INTELLIGENCE.enabled()) {
 					for (Mob mob : Dungeon.level.mobs) {
-						if (Dungeon.level.distance(pos, mob.pos) <= 8 && mob.state != mob.HUNTING) {
+						if (Challenges.SWARM_INTELLIGENCE.hell()||(Dungeon.level.distance(pos, mob.pos) <= 8 && mob.state != mob.HUNTING)) {
 							mob.beckon( target );
 						}
 					}
@@ -825,6 +853,8 @@ public abstract class Mob extends Char {
 					state = WANDERING;
 					target = Dungeon.level.randomDestination();
 					return true;
+				} else if(Challenges.SWARM_INTELLIGENCE.hell() && enemy instanceof Hero){
+					target=Dungeon.hero.pos;
 				}
 				
 				int oldPos = pos;
@@ -835,7 +865,7 @@ public abstract class Mob extends Char {
 
 				} else {
 					spend( TICK );
-					if (!enemyInFOV) {
+					if (!enemyInFOV && !Challenges.SWARM_INTELLIGENCE.hell()) {
 						sprite.showLost();
 						state = WANDERING;
 						target = Dungeon.level.randomDestination();

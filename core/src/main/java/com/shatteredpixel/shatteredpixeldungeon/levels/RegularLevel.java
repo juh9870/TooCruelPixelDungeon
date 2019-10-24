@@ -165,7 +165,10 @@ public abstract class RegularLevel extends Level {
 	}
 	
 	protected int nTraps() {
-		return (int)(Random.NormalIntRange( 1, 3+(Dungeon.depth/3) )*Challenges.nTrapsMultiplier());
+		if(Challenges.EXTREME_CAUTION.hell()){
+			return (int)(Random.NormalIntRange( 1+(Dungeon.depth/6), 3+(Dungeon.depth/3) )*Challenges.nTrapsMultiplier());
+		} else
+			return (int)(Random.NormalIntRange( 1, 3+(Dungeon.depth/3) )*Challenges.nTrapsMultiplier());
 	}
 	
 	protected Class<?>[] trapClasses(){

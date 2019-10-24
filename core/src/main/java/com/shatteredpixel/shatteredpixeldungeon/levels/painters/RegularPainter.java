@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.painters;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -350,6 +351,11 @@ public abstract class RegularPainter extends Painter {
 		
 		//no more than one trap every 5 valid tiles.
 		nTraps = Math.min(nTraps, validCells.size()/5);
+		
+		if(Challenges.EXTREME_CAUTION.enabled()){
+			//or 2 with Extreme Caution
+			nTraps = Math.min(nTraps, validCells.size()/2);
+		}
 		
 		for (int i = 0; i < nTraps; i++) {
 			

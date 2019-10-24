@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Ripple;
@@ -88,7 +89,7 @@ public class SewerLevel extends RegularLevel {
 	
 	@Override
 	protected Class<?>[] trapClasses() {
-		return Dungeon.depth == 1 ?
+		return (Dungeon.depth == 1 && !Challenges.EXTREME_CAUTION.hell()) ?
 				new Class<?>[]{ WornDartTrap.class } :
 				new Class<?>[]{ ChillingTrap.class, ShockingTrap.class, ToxicTrap.class, WornDartTrap.class,
 						AlarmTrap.class, OozeTrap.class,
@@ -97,11 +98,17 @@ public class SewerLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		return Dungeon.depth == 1 ?
-				new float[]{1} :
-				new float[]{8, 8, 8, 8,
-						4, 4,
-						2, 2, 2, 2};
+		if(!Challenges.EXTREME_CAUTION.hell()) {
+			return Dungeon.depth == 1 ?
+					new float[]{1} :
+					new float[]{8, 8, 8, 8,
+							4, 4,
+							2, 2, 2, 2};
+		} else {
+			return new float[]{2, 4, 4, 2,
+					8, 8,
+					2, 2, 8, 4};
+		}
 	}
 	
 	@Override

@@ -180,9 +180,22 @@ public abstract class Plant implements Bundlable {
 
 		@Override
 		public String desc() {
+			if (Challenges.AMNESIA.hell())return "";
 			return Messages.get(plantClass, "desc");
 		}
-
+		
+		@Override
+		public int image() {
+			if (Challenges.AMNESIA.hell())return ItemSpriteSheet.SEED_SUNGRASS;
+			return super.image();
+		}
+		
+		@Override
+		public String name() {
+			if (Challenges.AMNESIA.hell())return Messages.get(PlaceHolder.class,"name");
+			return super.name();
+		}
+		
 		@Override
 		public String info() {
 			return Messages.get( Seed.class, "info", desc() );

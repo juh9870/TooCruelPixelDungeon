@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
@@ -51,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -157,6 +159,10 @@ public abstract class Scroll extends Item {
 			image = handler.image(this);
 			rune = handler.label(this);
 		}
+		if(Challenges.AMNESIA.hell()){
+			image = ItemSpriteSheet.SCROLL_UNKNOWN;
+			rune = "unknown";
+		}
 	};
 	
 	@Override
@@ -206,6 +212,7 @@ public abstract class Scroll extends Item {
 	}
 	
 	public void setKnown() {
+		if (Challenges.AMNESIA.hell())return;
 		if (!anonymous) {
 			if (!isKnown()) {
 				handler.know(this);
@@ -220,6 +227,7 @@ public abstract class Scroll extends Item {
 	
 	@Override
 	public Item identify() {
+		if (Challenges.AMNESIA.hell())return this;
 		setKnown();
 		return super.identify();
 	}

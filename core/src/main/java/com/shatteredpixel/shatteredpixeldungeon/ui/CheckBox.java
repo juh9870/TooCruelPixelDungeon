@@ -60,17 +60,7 @@ public class CheckBox extends RedButton {
 			icon.copy( Icons.get( checked ? Icons.CHECKED : Icons.UNCHECKED ) );
 		}
 	}
-
-	@Override
-	public void onPointerDown() {
-		super.onPointerDown();
-	}
-
-	@Override
-	public void onPointerUp() {
-		super.onPointerUp();
-	}
-
+	
 	@Override
 	protected void onClick() {
 		super.onClick();

@@ -117,14 +117,17 @@ public class WndStartGame extends Window {
 		start.setRect(0, HEIGHT - 20, WIDTH, 20);
 		add(start);
 		IconButton challengeButton = new IconButton(
-				Icons.get( SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF)){
+				Icons.get( SPDSettings.hellChallenges() > 0 ? Icons.CHALLENGE_NIGHTMARE_GOLD : (SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF))){
 			@Override
 			public void onClick() {
-				ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), true) {
+				ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), SPDSettings.hellChallenges(), true) {
 					public void onBackPressed() {
 						super.onBackPressed();
-						icon( Icons.get( SPDSettings.challenges() > 0 ?
-								Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF ) );
+						icon( Icons.get( SPDSettings.hellChallenges() > 0 ?
+								Icons.CHALLENGE_NIGHTMARE_GOLD :
+								(SPDSettings.challenges() > 0 ?
+										Icons.CHALLENGE_ON :
+										Icons.CHALLENGE_OFF)) );
 					}
 				} );
 			}

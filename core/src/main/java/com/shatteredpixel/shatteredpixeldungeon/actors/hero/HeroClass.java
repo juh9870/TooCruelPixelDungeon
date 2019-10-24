@@ -107,10 +107,13 @@ public enum HeroClass {
 			new SmallRation().collect();
 		}
 		
-		new ScrollOfIdentify().identify();
-
-		new ScrollOfMagicMapping().identify().collect();
-		new PotionOfMindVision().identify().collect();
+		if (DeviceCompat.isDebug()) {
+			new ScrollOfIdentify().identify();
+			
+			new ScrollOfMagicMapping().quantity(10).identify().collect();
+			new PotionOfMindVision().quantity(10).identify().collect();
+			new PotionOfInvisibility().quantity(10).identify().collect();
+		}
 
 	}
 

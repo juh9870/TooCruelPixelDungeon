@@ -174,6 +174,7 @@ public abstract class Char extends Actor {
 	protected static final String TAG_HT    = "HT";
 	protected static final String TAG_SHLD  = "SHLD";
 	protected static final String BUFFS	    = "buffs";
+	protected static final String NAME	    = "name";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -184,6 +185,7 @@ public abstract class Char extends Actor {
 		bundle.put( TAG_HP, HP );
 		bundle.put( TAG_HT, HT );
 		bundle.put( BUFFS, buffs );
+		bundle.put( NAME, name );
 	}
 	
 	@Override
@@ -194,6 +196,7 @@ public abstract class Char extends Actor {
 		pos = bundle.getInt( POS );
 		HP = bundle.getInt( TAG_HP );
 		HT = bundle.getInt( TAG_HT );
+		name = bundle.getString( NAME );
 		
 		for (Bundlable b : bundle.getCollection( BUFFS )) {
 			if (b != null) {

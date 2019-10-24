@@ -30,9 +30,11 @@ public enum Icons {
 	//button icons
 	CHECKED,
 	UNCHECKED,
+	RED_CHECKED,
 	INFO,
 	CHALLENGE_OFF,
 	CHALLENGE_ON,
+	CHALLENGE_NIGHTMARE_GOLD,
 	PREFS,
 	LANGS,
 	EXIT,
@@ -87,6 +89,9 @@ public enum Icons {
 			case UNCHECKED:
 				icon.frame( icon.texture.uvRect( 16, 0, 28, 12 ) );
 				break;
+			case RED_CHECKED:
+				icon.frame( icon.texture.uvRect( 80, 16, 92, 28 ) );
+				break;
 			case INFO:
 				icon.frame( icon.texture.uvRect( 32, 0, 46, 14 ) );
 				break;
@@ -95,6 +100,9 @@ public enum Icons {
 				break;
 			case CHALLENGE_OFF:
 				icon.frame( icon.texture.uvRect( 64, 0, 78, 12 ) );
+				break;
+			case CHALLENGE_NIGHTMARE_GOLD:
+				icon.frame( icon.texture.uvRect( 64, 16, 78, 28 ) );
 				break;
 			case PREFS:
 				icon.frame( icon.texture.uvRect( 80, 0, 92, 12 ) );

@@ -58,7 +58,7 @@ public enum Challenges {
 			return false;
 		}
 	},
-	NO_HEALING("no_healing"){
+	NO_HEALING("no_healing", true){
 		@Override
 		protected boolean _isItemBlocked(Item item) {
 			if (item instanceof PotionOfHealing){
@@ -79,13 +79,13 @@ public enum Challenges {
 			return false;
 		}
 	},
-	SWARM_INTELLIGENCE("swarm_intelligence"),
-	DARKNESS("darkness"),
+	SWARM_INTELLIGENCE("swarm_intelligence",true),
+	DARKNESS("darkness",true),
 	NO_SCROLLS("no_scrolls"),
-	AMNESIA("amnesia"),
+	AMNESIA("amnesia",true),
 	CURSED("cursed"),
 	BLACKJACK("blackjack"),
-	HORDE("horde"){
+	HORDE("horde",true){
 		@Override
 		protected float _nMobsMult(){
 			return 2;
@@ -104,23 +104,27 @@ public enum Challenges {
 			return 2;
 		}
 	},
-	MUTAGEN("mutagen"),
-	RESURRECTION("resurrection"),
-	EXTREME_CAUTION("extreme_caution"){
+	MUTAGEN("mutagen",true),
+	RESURRECTION("resurrection",true),
+	EXTREME_CAUTION("extreme_caution",true){
 		@Override
 		protected float _nTrapsMult() {
 			return 4;
 		}
 	},
-	EXTERMINATION("extermination"){
-	};
-
+	EXTERMINATION("extermination");
 	public int id;
 	public String name;
+	public boolean hell_enabled;
 
 	Challenges(String name){
 		id = (int) Math.pow(2,this.ordinal());
 		this.name=name;
+	}
+	
+	Challenges(String name, boolean hell_enabled){
+		this(name);
+		this.hell_enabled=hell_enabled;
 	}
 
 	protected float _nMobsMult(){
@@ -134,11 +138,19 @@ public enum Challenges {
 	public boolean enabled(){
 		return Dungeon.isChallenged(this.id);
 	}
+	public boolean hell(){
+		return Dungeon.isHellChallenged(this.id);
+	}
 
 	protected boolean _isItemBlocked( Item item ){
 		return false;
 	}
 
+	public static float ascendingChance(){
+		if(Statistics.amuletObtained)return .66f;
+		return .33f;
+	}
+	
 	public static float nMobsMultiplier(){
 		float mult = 1;
 		for (Challenges ch : values()){

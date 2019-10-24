@@ -477,7 +477,7 @@ public abstract class Level implements Bundlable {
 				int goldCount=0;
 				for(Item i : h.items){
 					if(i.price()>0){
-						goldCount += (int) Math.ceil( i.price() * Random.NormalFloat(0.25f,1f) );
+						goldCount += (int) Math.ceil( i.price() * 5 * (Dungeon.depth / 5 + 1) * Random.NormalFloat(0.25f,1f) );
 						switch (h.type){
 							case LOCKED_CHEST:
 								room.chestItems.add(i);

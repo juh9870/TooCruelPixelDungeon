@@ -211,6 +211,7 @@ public class Bestiary {
 		for (int i = 0; i < rotation.size(); i++){
 			int max = 50;
 			if (Challenges.MUTAGEN.enabled())max=2;
+			if(Challenges.MUTAGEN.hell())max=0;
 			if (Random.Int( max ) == 0) {
 				Class<? extends Mob> cl = rotation.get(i);
 				if (cl == Rat.class) {

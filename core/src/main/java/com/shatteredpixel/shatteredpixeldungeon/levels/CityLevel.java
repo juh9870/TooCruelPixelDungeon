@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.CityPainter;
@@ -96,10 +97,17 @@ public class CityLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		return new float[]{ 8, 8, 8, 8, 8,
-				4, 4, 4, 4, 4,
-				2, 2, 2,
-				1, 1 };
+		if(!Challenges.EXTREME_CAUTION.hell()) {
+			return new float[]{8, 8, 8, 8, 8,
+					4, 4, 4, 4, 4,
+					2, 2, 2,
+					1, 1};
+		} else {
+			return new float[]{4, 4, 4, 4, 4,
+					6, 6, 6, 6, 6,
+					8, 8, 8,
+					3, 3};
+		}
 	}
 	
 	@Override
