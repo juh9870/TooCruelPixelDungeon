@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.ChangesButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.LanguageButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.PrefsButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
@@ -191,7 +192,7 @@ public class TitleScene extends PixelScene {
 		private static final int IMAGE_SIZE	= 32;
 
 		private Image image;
-		private RenderedText label;
+		private RenderedTextBlock label;
 
 		public DashboardItem( String text, int index ) {
 			super();
@@ -209,7 +210,8 @@ public class TitleScene extends PixelScene {
 			image = new Image( Assets.DASHBOARD );
 			add( image );
 
-			label = renderText( 9 );
+			label = renderTextBlock( 9 );
+			label.nLines=1;
 			add( label );
 		}
 
@@ -221,8 +223,8 @@ public class TitleScene extends PixelScene {
 			image.y = y;
 			align(image);
 
-			label.x = x + (width - label.width()) / 2;
-			label.y = image.y + image.height() +2;
+			
+			label.setPos(x + (width - label.width()) / 2, image.y + image.height() +2);
 			align(label);
 		}
 

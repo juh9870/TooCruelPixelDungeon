@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Camera;
@@ -96,7 +97,7 @@ public class HeroSprite extends CharSprite {
 	@Override
 	public void place( int p ) {
 		super.place( p );
-		Camera.main.target = this;
+		Camera.main.panTo(center(), 5f);
 	}
 
 	@Override
@@ -105,7 +106,7 @@ public class HeroSprite extends CharSprite {
 		if (ch.flying) {
 			play( fly );
 		}
-		Camera.main.target = this;
+		Camera.main.panFollow(this, 20f);
 	}
 
 	@Override

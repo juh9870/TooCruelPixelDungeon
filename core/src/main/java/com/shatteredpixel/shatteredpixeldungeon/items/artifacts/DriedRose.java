@@ -55,7 +55,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
@@ -63,8 +63,10 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBlacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndItem;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -131,7 +133,7 @@ public class DriedRose extends Artifact {
 			else if (charge != chargeCap)   GLog.i( Messages.get(this, "no_charge") );
 			else if (cursed)                GLog.i( Messages.get(this, "cursed") );
 			else {
-				ArrayList<Integer> spawnPoints = new ArrayList<Integer>();
+				ArrayList<Integer> spawnPoints = new ArrayList<>();
 				for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
 					int p = hero.pos + PathFinder.NEIGHBOURS8[i];
 					if (Actor.findChar(p) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
@@ -145,6 +147,8 @@ public class DriedRose extends Artifact {
 					ghost.pos = Random.element(spawnPoints);
 
 					GameScene.add(ghost, 1f);
+					Dungeon.level.occupyCell(ghost);
+					
 					CellEmitter.get(ghost.pos).start( ShaftParticle.FACTORY, 0.3f, 4 );
 					CellEmitter.get(ghost.pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
 
@@ -217,10 +221,15 @@ public class DriedRose extends Artifact {
 	@Override
 	public String status() {
 		if (ghost == null && ghostID != 0){
-			Actor a = Actor.findById(ghostID);
-			if (a != null){
-				ghost = (GhostHero)a;
-			} else {
+			try {
+				Actor a = Actor.findById(ghostID);
+				if (a != null) {
+					ghost = (GhostHero) a;
+				} else {
+					ghostID = 0;
+				}
+			} catch ( ClassCastException e ){
+				ShatteredPixelDungeon.reportException(e);
 				ghostID = 0;
 			}
 		}
@@ -366,7 +375,7 @@ public class DriedRose extends Artifact {
 				}
 			} else if (cursed && Random.Int(100) == 0) {
 
-				ArrayList<Integer> spawnPoints = new ArrayList<Integer>();
+				ArrayList<Integer> spawnPoints = new ArrayList<>();
 
 				for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
 					int p = target.pos + PathFinder.NEIGHBOURS8[i];
@@ -438,6 +447,8 @@ public class DriedRose extends Artifact {
 
 		{
 			stackable = true;
+			dropsDownHeap = true;
+			
 			image = ItemSpriteSheet.PETAL;
 		}
 
@@ -690,7 +701,12 @@ public class DriedRose extends Artifact {
 			updateRose();
 			if (rose != null && !rose.talkedTo){
 				rose.talkedTo = true;
-				GameScene.show(new WndQuest(this, Messages.get(this, "introduce") ));
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show(new WndQuest(GhostHero.this, Messages.get(GhostHero.this, "introduce") ));
+					}
+				});
 				return false;
 			} else {
 				return super.interact();
@@ -874,8 +890,8 @@ public class DriedRose extends Artifact {
 			titlebar.setRect( 0, 0, WIDTH, 0 );
 			add( titlebar );
 			
-			RenderedTextMultiline message =
-					PixelScene.renderMultiline(Messages.get(this, "desc", rose.ghostStrength()), 6);
+			RenderedTextBlock message =
+					PixelScene.renderTextBlock(Messages.get(this, "desc", rose.ghostStrength()), 6);
 			message.maxWidth( WIDTH );
 			message.setPos(0, titlebar.bottom() + GAP);
 			add( message );

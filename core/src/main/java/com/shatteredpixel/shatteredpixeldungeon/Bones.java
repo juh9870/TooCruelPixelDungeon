@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWea
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ public class Bones {
 
 			Iterator<Item> iterator = hero.belongings.backpack.iterator();
 			Item curItem;
-			ArrayList<Item> items = new ArrayList<Item>();
+			ArrayList<Item> items = new ArrayList<>();
 			while (iterator.hasNext()){
 				curItem = iterator.next();
 				if (curItem.bones)
@@ -145,18 +146,19 @@ public class Bones {
 				//Enforces artifact uniqueness
 				if (item instanceof Artifact){
 					if (Generator.removeArtifact(((Artifact)item).getClass())) {
-						try {
-							//generates a new artifact of the same type, always +0
-							Artifact artifact = (Artifact)item.getClass().newInstance();
-
-							artifact.cursed = true;
-							artifact.cursedKnown = true;
-
-							return artifact;
-						} catch (Exception e) {
-							ShatteredPixelDungeon.reportException(e);
+						
+						//generates a new artifact of the same type, always +0
+						Artifact artifact = Reflection.newInstance(((Artifact)item).getClass());
+						
+						if (artifact == null){
 							return new Gold(item.price());
 						}
+
+						artifact.cursed = true;
+						artifact.cursedKnown = true;
+
+						return artifact;
+						
 					} else {
 						return new Gold(item.price());
 					}

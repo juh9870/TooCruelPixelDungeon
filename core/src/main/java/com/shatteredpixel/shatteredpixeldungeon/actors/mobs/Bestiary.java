@@ -43,25 +43,28 @@ public class Bestiary {
 			
 			// Sewers
 			case 1: default:
-				//10x rat
-				return new ArrayList<Class<? extends Mob>>(Arrays.asList(
-						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class,
-						Rat.class, Rat.class, Rat.class, Rat.class, Rat.class));
+				//3x rat, 1x snake
+				return new ArrayList<>(Arrays.asList(
+						Rat.class, Rat.class, Rat.class,
+						Snake.class));
 			case 2:
-				//3x rat, 3x gnoll
-				return new ArrayList<>(Arrays.asList(Rat.class, Rat.class, Rat.class,
-						Gnoll.class, Gnoll.class, Gnoll.class));
-			case 3:
-				//2x rat, 4x gnoll, 1x crab, 1x swarm
+				//2x rat, 1x snake, 2x gnoll
 				return new ArrayList<>(Arrays.asList(Rat.class, Rat.class,
-						Gnoll.class, Gnoll.class, Gnoll.class, Gnoll.class,
-						Crab.class, Swarm.class));
-			case 4: case 5:
-				//1x rat, 2x gnoll, 3x crab, 1x swarm
+						Snake.class,
+						Gnoll.class, Gnoll.class));
+			case 3:
+				//1x rat, 1x snake, 3x gnoll, 1x swarm, 1x crab
 				return new ArrayList<>(Arrays.asList(Rat.class,
-						Gnoll.class, Gnoll.class,
-						Crab.class, Crab.class, Crab.class,
-						Swarm.class));
+						Snake.class,
+						Gnoll.class, Gnoll.class, Gnoll.class,
+						Swarm.class,
+						Crab.class));
+			case 4: case 5:
+				//1x gnoll, 1x swarm, 2x crab, 2x slime
+				return new ArrayList<>(Arrays.asList(Gnoll.class,
+						Swarm.class,
+						Crab.class, Crab.class,
+						Slime.class, Slime.class));
 				
 			// Prison
 			case 6:
@@ -76,17 +79,19 @@ public class Bestiary {
 						Shaman.class,
 						Guard.class));
 			case 8:
-				//3x skeleton, 1x thief, 2x shaman, 2x guard
-				return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class, Skeleton.class,
+				//2x skeleton, 1x thief, 2x shaman, 2x guard, 1x necromancer
+				return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class,
 						Thief.class,
 						Shaman.class, Shaman.class,
-						Guard.class, Guard.class));
+						Guard.class, Guard.class,
+						Necromancer.class));
 			case 9: case 10:
-				//3x skeleton, 1x thief, 2x shaman, 3x guard
-				return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class, Skeleton.class,
+				//1x skeleton, 1x thief, 2x shaman, 2x guard, 2x necromancer
+				return new ArrayList<>(Arrays.asList(Skeleton.class,
 						Thief.class,
 						Shaman.class, Shaman.class,
-						Guard.class, Guard.class, Guard.class));
+						Guard.class, Guard.class,
+						Necromancer.class, Necromancer.class));
 				
 			// Caves
 			case 11:
@@ -168,40 +173,38 @@ public class Bestiary {
 	//has a chance to add a rarely spawned mobs to the rotation
 	public static void addRareMobs( int depth, ArrayList<Class<?extends Mob>> rotation ){
 		
+		int rareMod = Challenges.HORDE.hell()?5:1;
+		
 		switch (depth){
 			
 			// Sewers
 			default:
 				return;
 			case 4:
-				if (Random.Float() < 0.01f) rotation.add(Skeleton.class);
-				if (Random.Float() < 0.01f) rotation.add(Thief.class);
+				if (Random.Float() < 0.025f * rareMod) rotation.add(Thief.class);
 				return;
 				
 			// Prison
-			case 6:
-				if (Random.Float() < 0.2f)  rotation.add(Shaman.class);
-				return;
 			case 8:
-				if (Random.Float() < 0.02f) rotation.add(Bat.class);
+				if (Random.Float() < 0.02f * rareMod) rotation.add(Bat.class);
 				return;
 			case 9:
-				if (Random.Float() < 0.02f) rotation.add(Bat.class);
-				if (Random.Float() < 0.01f) rotation.add(Brute.class);
+				if (Random.Float() < 0.02f * rareMod) rotation.add(Bat.class);
+				if (Random.Float() < 0.01f * rareMod) rotation.add(Brute.class);
 				return;
 				
 			// Caves
 			case 13:
-				if (Random.Float() < 0.02f) rotation.add(Elemental.class);
+				if (Random.Float() < 0.02f * rareMod) rotation.add(Elemental.class);
 				return;
 			case 14:
-				if (Random.Float() < 0.02f) rotation.add(Elemental.class);
-				if (Random.Float() < 0.01f) rotation.add(Monk.class);
+				if (Random.Float() < 0.02f * rareMod) rotation.add(Elemental.class);
+				if (Random.Float() < 0.01f * rareMod) rotation.add(Monk.class);
 				return;
 				
 			// City
 			case 19:
-				if (Random.Float() < 0.02f) rotation.add(Succubus.class);
+				if (Random.Float() < 0.02f * rareMod) rotation.add(Succubus.class);
 				return;
 		}
 	}
@@ -216,6 +219,8 @@ public class Bestiary {
 				Class<? extends Mob> cl = rotation.get(i);
 				if (cl == Rat.class) {
 					cl = Albino.class;
+				} else if (cl == Slime.class) {
+					cl = CausticSlime.class;
 				} else if (cl == Thief.class) {
 					cl = Bandit.class;
 				} else if (cl == Brute.class) {

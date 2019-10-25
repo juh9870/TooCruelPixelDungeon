@@ -28,7 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class WndItem extends Window {
 
 		int width = WIDTH_MIN;
 		
-		RenderedTextMultiline info = PixelScene.renderMultiline( item.info(), 6 );
+		RenderedTextBlock info = PixelScene.renderTextBlock( item.info(), 6 );
 		info.maxWidth(width);
 		
 		//info box can go out of the screen on landscape, so widen it
@@ -99,7 +99,7 @@ public class WndItem extends Window {
 						hide();
 						if (owner != null && owner.parent != null) owner.hide();
 						if (Dungeon.hero.isAlive()) item.execute( Dungeon.hero, action );
-					};
+					}
 				};
 				btn.setSize( btn.reqWidth(), BUTTON_HEIGHT );
 				if (x + btn.width() > width || line.size() == 3) {

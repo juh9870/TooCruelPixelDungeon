@@ -21,111 +21,43 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
-import android.opengl.GLSurfaceView;
-import android.os.Build;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
+import android.view.Gravity;
+import android.widget.TextView;
 
-import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.audio.Music;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeType;
+import com.badlogic.gdx.utils.GdxNativesLoader;
 
-public class AndroidLauncher extends AndroidApplication {
+public class AndroidLauncher extends Activity {
 	
-	public static AndroidApplication instance;
-	protected static GLSurfaceView view;
-	
-	private AndroidPlatformSupport support;
-	
+	@SuppressLint("SetTextI18n")
 	@Override
-	protected void onCreate (Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		instance = this;
-		
 		try {
-			Game.version = getPackageManager().getPackageInfo( getPackageName(), 0 ).versionName;
-		} catch (PackageManager.NameNotFoundException e) {
-			Game.version = "???";
+			GdxNativesLoader.load();
+			FreeType.initFreeType();
+			
+			Intent intent = new Intent(this, AndroidGame.class);
+			startActivity(intent);
+			finish();
+		} catch (Exception e){
+			TextView text = new TextView(this);
+			text.setText("Shattered Pixel Dungeon cannot start because some of its code is missing!\n\n" +
+					"This usually happens when the Google Play version of the game is installed from somewhere outside of Google Play.\n\n" +
+					"If you're unsure of how to fix this, please email the developer (Evan@ShatteredPixel.com), and include this error message:\n\n" +
+					e.getMessage());
+			text.setTextSize(16);
+			text.setTextColor(0xFFFFFFFF);
+			text.setTypeface(Typeface.createFromAsset(getAssets(), "pixel_font.ttf"));
+			text.setGravity(Gravity.CENTER_VERTICAL);
+			text.setPadding(10, 10, 10, 10);
+			setContentView(text);
 		}
-		try {
-			Game.versionCode = getPackageManager().getPackageInfo( getPackageName(), 0 ).versionCode;
-		} catch (PackageManager.NameNotFoundException e) {
-			Game.versionCode = 0;
-		}
-		
-		// grab preferences directly using our instance first
-		// so that we don't need to rely on Gdx.app, which isn't initialized yet.
-		SPDSettings.setPrefsFromInstance(instance);
-		
-		//set desired orientation (if it exists) before initializing the app.
-		if (SPDSettings.landscapeFromSettings() != null) {
-			if (SPDSettings.landscapeFromSettings()){
-				instance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-			} else {
-				instance.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-			}
-		}
-		
-		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		config.depth = 0;
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-			//use rgb888 on more modern devices for better visuals
-			config.r = config.g = config.b = 8;
-		} else {
-			//and rgb565 (default) on older ones for better performance
-		}
-		
-		config.useCompass = false;
-		config.useAccelerometer = false;
-		
-		support = new AndroidPlatformSupport();
-		
-		support.updateSystemUI();
-		
-		initialize(new ShatteredPixelDungeon(support), config);
-		
-		view = (GLSurfaceView)graphics.getView();
-		
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			TelephonyManager mgr =
-					(TelephonyManager) instance.getSystemService(Activity.TELEPHONY_SERVICE);
-			mgr.listen(new PhoneStateListener(){
-				
-				@Override
-				public void onCallStateChanged(int state, String incomingNumber)
-				{
-					if( state == TelephonyManager.CALL_STATE_RINGING ) {
-						Music.INSTANCE.pause();
-						
-					} else if( state == TelephonyManager.CALL_STATE_IDLE ) {
-						if (!Game.instance.isPaused()) {
-							Music.INSTANCE.resume();
-						}
-					}
-					
-					super.onCallStateChanged(state, incomingNumber);
-				}
-			}, PhoneStateListener.LISTEN_CALL_STATE);
-		}
-	}
-	
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		support.updateSystemUI();
-	}
-	
-	@Override
-	public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
-		super.onMultiWindowModeChanged(isInMultiWindowMode);
-		support.updateSystemUI();
 	}
 }

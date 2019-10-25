@@ -91,7 +91,7 @@ public enum Challenges {
 			return 2;
 		}
 	},
-	COUNTDOWN("countdown"),
+	COUNTDOWN("countdown",true),
 	ANALGESIA("analgesia"),
 	BIG_LEVELS("big_levels"){
 		@Override

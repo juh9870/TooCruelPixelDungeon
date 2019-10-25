@@ -47,6 +47,10 @@ public final class ShadowCaster {
 	}
 	
 	public static void castShadow( int x, int y, boolean[] fieldOfView, boolean[] blocking, int distance ) {
+		
+		if (distance >= MAX_DISTANCE){
+			distance = MAX_DISTANCE;
+		}
 
 		BArray.setFalse(fieldOfView);
 
@@ -69,8 +73,6 @@ public final class ShadowCaster {
 		}
 
 	}
-	
-	//TODO this is slightly less permissive that the previous algorithm, decide if that's okay
 	
 	//scans a single 45 degree octant of the FOV.
 	//This can add up to a whole FOV by mirroring in X(mX), Y(mY), and X=Y(mXY)

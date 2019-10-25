@@ -74,6 +74,7 @@ import com.watabou.utils.Random;
 
 import java.util.HashMap;
 
+//TODO need to consider other balance adjustments here. Might want to put more emphasis into debuffs rather than less
 public class WandOfCorruption extends Wand {
 
 	{
@@ -84,7 +85,7 @@ public class WandOfCorruption extends Wand {
 	// This is because the wand of corruption considers them to be a certain level of harmful
 	// for the purposes of reducing resistance, but does not actually apply them itself
 	
-	private static final float MINOR_DEBUFF_WEAKEN = 4/5f;
+	private static final float MINOR_DEBUFF_WEAKEN = 7/8f;
 	private static final HashMap<Class<? extends Buff>, Float> MINOR_DEBUFFS = new HashMap<>();
 	static{
 		MINOR_DEBUFFS.put(Weakness.class,       2f);
@@ -102,7 +103,7 @@ public class WandOfCorruption extends Wand {
 		MINOR_DEBUFFS.put(Poison.class,         0f);
 	}
 	
-	private static final float MAJOR_DEBUFF_WEAKEN = 2/3f;
+	private static final float MAJOR_DEBUFF_WEAKEN = 4/5f;
 	private static final HashMap<Class<? extends Buff>, Float> MAJOR_DEBUFFS = new HashMap<>();
 	static{
 		MAJOR_DEBUFFS.put(Amok.class,           3f);
@@ -129,7 +130,7 @@ public class WandOfCorruption extends Wand {
 
 			Mob enemy = (Mob) ch;
 
-			float corruptingPower = 2 + level();
+			float corruptingPower = 3 + level()/2;
 			
 			//base enemy resistance is usually based on their exp, but in special cases it is based on other criteria
 			float enemyResist = 1 + enemy.EXP;
@@ -138,8 +139,8 @@ public class WandOfCorruption extends Wand {
 			} else if (ch instanceof Piranha || ch instanceof Bee) {
 				enemyResist = 1 + Dungeon.depth/2f;
 			} else if (ch instanceof Wraith) {
-				//this is so low because wraiths are always at max hp
-				enemyResist = 0.5f + Dungeon.depth/8f;
+				//divide by 3 as wraiths are always at full HP and are therefore ~3x harder to corrupt
+				enemyResist = (1f + Dungeon.depth/3f) / 3f;
 			} else if (ch instanceof Yog.BurningFist || ch instanceof Yog.RottingFist) {
 				enemyResist = 1 + 30;
 			} else if (ch instanceof Yog.Larva || ch instanceof King.Undead){
@@ -178,7 +179,7 @@ public class WandOfCorruption extends Wand {
 			processSoulMark(ch, chargesPerCast());
 			
 		} else {
-			Dungeon.level.press(bolt.collisionPos, null, true);
+			Dungeon.level.pressCell(bolt.collisionPos);
 		}
 	}
 	

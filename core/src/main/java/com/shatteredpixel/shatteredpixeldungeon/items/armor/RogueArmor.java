@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.armor;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -68,8 +69,8 @@ public class RogueArmor extends ClassArmor {
 
 				curUser.HP -= (curUser.HP / 3);
 				
-				for (Mob mob : Dungeon.level.mobs.toArray(new Mob[Dungeon.level.mobs.size()])) {
-					if (Dungeon.level.heroFOV[mob.pos]) {
+				for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
+					if (Dungeon.level.heroFOV[mob.pos] && mob.alignment != Char.Alignment.ALLY) {
 						Buff.prolong( mob, Blindness.class, 2 );
 						if (mob.state == mob.HUNTING) mob.state = mob.WANDERING;
 						mob.sprite.emitter().burst( Speck.factory( Speck.LIGHT ), 4 );
@@ -79,7 +80,7 @@ public class RogueArmor extends ClassArmor {
 				ScrollOfTeleportation.appear( curUser, target );
 				CellEmitter.get( target ).burst( Speck.factory( Speck.WOOL ), 10 );
 				Sample.INSTANCE.play( Assets.SND_PUFF );
-				Dungeon.level.press( target, curUser );
+				Dungeon.level.occupyCell(curUser );
 				Dungeon.observe();
 				GameScene.updateFog();
 				

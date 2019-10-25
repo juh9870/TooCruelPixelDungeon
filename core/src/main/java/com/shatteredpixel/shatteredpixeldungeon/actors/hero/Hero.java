@@ -52,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PermaBlind;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RacingTheDeath;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
@@ -109,6 +110,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
@@ -129,6 +131,7 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -192,8 +195,8 @@ public class Hero extends Char {
 		STR = STARTING_STR;
 
 		belongings = new Belongings( this );
-
-		visibleEnemies = new ArrayList<Mob>();
+		
+		visibleEnemies = new ArrayList<>();
 	}
 
 	public void updateHT( boolean boostHP ){
@@ -303,6 +306,9 @@ public class Hero extends Char {
 		}
 		if (Challenges.HORDE.hell()){
 			Buff.affect(this, Legion.class);
+		}
+		if (Challenges.COUNTDOWN.hell()){
+			Buff.affect(this, RacingTheDeath.class);
 		}
 	}
 
@@ -668,9 +674,14 @@ public class Hero extends Char {
 
 			ready();
 
-			Heap heap = Dungeon.level.heaps.get( dst );
+			final Heap heap = Dungeon.level.heaps.get( dst );
 			if (heap != null && heap.type == Type.FOR_SALE && heap.size() == 1) {
-				GameScene.show( new WndTradeItem( heap, true ) );
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show( new WndTradeItem( heap, true ) );
+					}
+				});
 			}
 
 			return false;
@@ -854,7 +865,7 @@ public class Hero extends Char {
 
 	private boolean actDescend( HeroAction.Descend action ) {
 		int stairs = action.dst;
-		if (pos == stairs && pos == Dungeon.level.exit) {
+		if (pos == stairs) {
 
 			int exterminators = Challenges.exterminatorsLeft();
 			if (exterminators>0){
@@ -889,12 +900,16 @@ public class Hero extends Char {
 
 	private boolean actAscend( HeroAction.Ascend action ) {
 		int stairs = action.dst;
-		if (pos == stairs && pos == Dungeon.level.entrance) {
-
+		if (pos == stairs) {
 			if (Dungeon.depth == 1) {
 
 				if (belongings.getItem( Amulet.class ) == null) {
-					GameScene.show( new WndMessage( Messages.get(this, "leave") ) );
+					Game.runOnRenderThread(new Callback() {
+						@Override
+						public void call() {
+							GameScene.show( new WndMessage( Messages.get(Hero.this, "leave") ) );
+						}
+					});
 					ready();
 				} else {
 					Badges.silentValidateHappyEnd();
@@ -1248,13 +1263,14 @@ public class Hero extends Char {
 		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT) {
 
 			curAction = new HeroAction.Unlock( cell );
-
-		} else if (cell == Dungeon.level.exit && Dungeon.depth < 26) {
-
+			
+		} else if ((cell == Dungeon.level.exit || Dungeon.level.map[cell] == Terrain.EXIT || Dungeon.level.map[cell] == Terrain.UNLOCKED_EXIT)
+				&& Dungeon.depth < 26) {
+			
 			curAction = new HeroAction.Descend( cell );
-
-		} else if (cell == Dungeon.level.entrance) {
-
+			
+		} else if (cell == Dungeon.level.entrance || Dungeon.level.map[cell] == Terrain.ENTRANCE) {
+			
 			curAction = new HeroAction.Ascend( cell );
 
 		} else  {
@@ -1323,11 +1339,13 @@ public class Hero extends Char {
 		}
 
 		if (levelUp) {
-
-			GLog.p( Messages.get(this, "new_level"), lvl );
-			sprite.showStatus( CharSprite.POSITIVE, Messages.get(Hero.class, "level_up") );
-			Sample.INSTANCE.play( Assets.SND_LEVELUP );
-
+			
+			if (sprite != null) {
+				GLog.p( Messages.get(this, "new_level"), lvl );
+				sprite.showStatus( CharSprite.POSITIVE, Messages.get(Hero.class, "level_up") );
+				Sample.INSTANCE.play( Assets.SND_LEVELUP );
+			}
+			
 			Item.updateQuickslot();
 
 			Badges.validateLevelReached();
@@ -1388,7 +1406,7 @@ public class Hero extends Char {
 	}
 
 	@Override
-	public void die( Object cause  ) {
+	public void die( final Object cause  ) {
 
 		curAction = null;
 
@@ -1440,8 +1458,13 @@ public class Hero extends Char {
 		} else {
 
 			Dungeon.deleteGame( GamesInProgress.curSlot, false );
-			GameScene.show( new WndResurrect( ankh, cause ) );
-
+			final Ankh finalAnkh = ankh;
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.show( new WndResurrect( finalAnkh, cause ) );
+				}
+			});
 		}
 	}
 
@@ -1474,7 +1497,7 @@ public class Hero extends Char {
 
 		int pos = Dungeon.hero.pos;
 
-		ArrayList<Integer> passable = new ArrayList<Integer>();
+		ArrayList<Integer> passable = new ArrayList<>();
 		for (Integer ofs : PathFinder.NEIGHBOURS8) {
 			int cell = pos + ofs;
 			if ((Dungeon.level.passable[cell] || Dungeon.level.avoid[cell]) && Dungeon.level.heaps.get( cell ) == null) {
@@ -1483,7 +1506,7 @@ public class Hero extends Char {
 		}
 		Collections.shuffle( passable );
 
-		ArrayList<Item> items = new ArrayList<Item>( Dungeon.hero.belongings.backpack.items );
+		ArrayList<Item> items = new ArrayList<>(Dungeon.hero.belongings.backpack.items);
 		for (Integer cell : passable) {
 			if (items.isEmpty()) {
 				break;
@@ -1564,33 +1587,45 @@ public class Hero extends Char {
 
 			int doorCell = ((HeroAction.Unlock)curAction).dst;
 			int door = Dungeon.level.map[doorCell];
-
-			if (door == Terrain.LOCKED_DOOR){
-				Notes.remove(new IronKey(Dungeon.depth));
-				Level.set( doorCell, Terrain.DOOR );
-			} else {
-				Notes.remove(new SkeletonKey(Dungeon.depth));
-				Level.set( doorCell, Terrain.UNLOCKED_EXIT );
+			
+			if (Dungeon.level.distance(pos, doorCell) <= 1) {
+				boolean hasKey = true;
+				if (door == Terrain.LOCKED_DOOR) {
+					hasKey = Notes.remove(new IronKey(Dungeon.depth));
+					if (hasKey) Level.set(doorCell, Terrain.DOOR);
+				} else {
+					hasKey = Notes.remove(new SkeletonKey(Dungeon.depth));
+					if (hasKey) Level.set(doorCell, Terrain.UNLOCKED_EXIT);
+				}
+				
+				if (hasKey) {
+					GameScene.updateKeyDisplay();
+					Level.set(doorCell, door == Terrain.LOCKED_DOOR ? Terrain.DOOR : Terrain.UNLOCKED_EXIT);
+					GameScene.updateMap(doorCell);
+					spend(Key.TIME_TO_UNLOCK);
+				}
 			}
-			GameScene.updateKeyDisplay();
-
-			Level.set( doorCell, door == Terrain.LOCKED_DOOR ? Terrain.DOOR : Terrain.UNLOCKED_EXIT );
-			GameScene.updateMap( doorCell );
-			spend( Key.TIME_TO_UNLOCK );
-
 		} else if (curAction instanceof HeroAction.OpenChest) {
-
+			
 			Heap heap = Dungeon.level.heaps.get( ((HeroAction.OpenChest)curAction).dst );
-			if (heap.type == Type.SKELETON || heap.type == Type.REMAINS) {
-				Sample.INSTANCE.play( Assets.SND_BONES );
-			} else if (heap.type == Type.LOCKED_CHEST){
-				Notes.remove(new GoldenKey(Dungeon.depth));
-			} else if (heap.type == Type.CRYSTAL_CHEST){
-				Notes.remove(new CrystalKey(Dungeon.depth));
+			
+			if (Dungeon.level.distance(pos, heap.pos) <= 1){
+				boolean hasKey = true;
+				if (heap.type == Type.SKELETON || heap.type == Type.REMAINS) {
+					Sample.INSTANCE.play( Assets.SND_BONES );
+				} else if (heap.type == Type.LOCKED_CHEST){
+					hasKey = Notes.remove(new GoldenKey(Dungeon.depth));
+				} else if (heap.type == Type.CRYSTAL_CHEST){
+					hasKey = Notes.remove(new CrystalKey(Dungeon.depth));
+				}
+				
+				if (hasKey) {
+					GameScene.updateKeyDisplay();
+					heap.open(this);
+					spend(Key.TIME_TO_UNLOCK);
+				}
 			}
-			GameScene.updateKeyDisplay();
-			heap.open( this );
-			spend( Key.TIME_TO_UNLOCK );
+			
 		}
 		curAction = null;
 
@@ -1651,7 +1686,12 @@ public class Hero extends Char {
 					}
 
 					if (Dungeon.level.secret[p]){
-
+						
+						Trap trap = Dungeon.level.traps.get( p );
+						if (trap != null && !trap.canBeSearched){
+							continue;
+						}
+						
 						float chance;
 						//intentional searches always succeed
 						if (intentional){

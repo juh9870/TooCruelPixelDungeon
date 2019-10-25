@@ -17,6 +17,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.WardSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -94,7 +95,7 @@ public class WandOfWarding extends Wand {
 			ward.pos = bolt.collisionPos;
 			ward.wandLevel = level();
 			GameScene.add(ward, 1f);
-			Dungeon.level.press(ward.pos, ward);
+			Dungeon.level.occupyCell(ward);
 			ward.sprite.emitter().burst(MagicMissile.WardParticle.UP, ward.tier);
 		} else {
 			GLog.w( Messages.get(this, "bad_location"));
@@ -103,11 +104,15 @@ public class WandOfWarding extends Wand {
 
 	@Override
 	protected void fx(Ballistica bolt, Callback callback) {
-		MagicMissile.boltFromChar(curUser.sprite.parent,
+		MagicMissile m = MagicMissile.boltFromChar(curUser.sprite.parent,
 				MagicMissile.WARD,
 				curUser.sprite,
 				bolt.collisionPos,
 				callback);
+		
+		if (bolt.dist > 10){
+			m.setSpeed(bolt.dist*20);
+		}
 		Sample.INSTANCE.play(Assets.SND_ZAP);
 	}
 
@@ -207,6 +212,7 @@ public class WandOfWarding extends Wand {
 				viewDistance++;
 				name = Messages.get(this, "name_" + tier );
 				updateSpriteState();
+				GameScene.updateFog(pos, viewDistance+1);
 			}
 		}
 
@@ -347,6 +353,7 @@ public class WandOfWarding extends Wand {
 		public void destroy() {
 			super.destroy();
 			Dungeon.observe();
+			GameScene.updateFog(pos, viewDistance+1);
 		}
 		
 		@Override
@@ -356,16 +363,20 @@ public class WandOfWarding extends Wand {
 
 		@Override
 		public boolean interact() {
-			GameScene.show(new WndOptions( Messages.get(this, "dismiss_title"),
-					Messages.get(this, "dismiss_body"),
-					Messages.get(this, "dismiss_confirm"),
-					Messages.get(this, "dismiss_cancel") ){
+			Game.runOnRenderThread(new Callback() {
 				@Override
-				protected void onSelect(int index) {
-					if (index == 0){
-						die(null);
-						Dungeon.observe();
-					}
+				public void call() {
+					GameScene.show(new WndOptions( Messages.get(Ward.this, "dismiss_title"),
+							Messages.get(Ward.this, "dismiss_body"),
+							Messages.get(Ward.this, "dismiss_confirm"),
+							Messages.get(Ward.this, "dismiss_cancel") ){
+						@Override
+						protected void onSelect(int index) {
+							if (index == 0){
+								die(null);
+							}
+						}
+					});
 				}
 			});
 			return true;

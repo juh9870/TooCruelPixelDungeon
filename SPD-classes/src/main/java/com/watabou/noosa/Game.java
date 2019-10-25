@@ -23,6 +23,7 @@ package com.watabou.noosa;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.watabou.glscripts.Script;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Blending;
@@ -31,8 +32,9 @@ import com.watabou.input.InputHandler;
 import com.watabou.input.KeyEvent;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PlatformSupport;
-import com.watabou.utils.SystemTime;
+import com.watabou.utils.Reflection;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -66,18 +68,14 @@ public class Game implements ApplicationListener {
 	// New scene class
 	protected static Class<? extends Scene> sceneClass;
 	
-	// Current time in milliseconds
-	protected long now;
-	// Milliseconds passed since previous update
-	protected long step;
-	
 	public static float timeScale = 1f;
 	public static float elapsed = 0f;
 	public static float timeTotal = 0f;
+	public static long realTime = 0;
 	
 	protected static InputHandler inputHandler;
 	
-	protected static PlatformSupport platform;
+	public static PlatformSupport platform;
 	
 	public Game(Class<? extends Scene> c, PlatformSupport platform) {
 		sceneClass = c;
@@ -107,13 +105,14 @@ public class Game implements ApplicationListener {
 		
 		//refreshes texture and vertex data stored on the gpu
 		TextureCache.reload();
-		RenderedText.reloadCache();
 		Vertexbuffer.refreshAllBuffers();
 	}
 	
 	@Override
 	public void resize(int width, int height) {
-		Gdx.gl.glViewport(0, 0, width, height);
+		Blending.useDefault();
+		TextureCache.reload();
+		Vertexbuffer.refreshAllBuffers();
 		
 		if (height != Game.height || width != Game.width) {
 			
@@ -134,11 +133,6 @@ public class Game implements ApplicationListener {
 		
 		Gdx.gl.glFlush();
 		
-		SystemTime.tick();
-		long rightNow = SystemTime.now;
-		step = (now == 0 ? 0 : rightNow - now);
-		now = rightNow;
-		
 		step();
 	}
 	
@@ -156,8 +150,6 @@ public class Game implements ApplicationListener {
 	@Override
 	public void resume() {
 		paused = false;
-		
-		now = 0;
 	}
 	
 	public void finish(){
@@ -198,14 +190,10 @@ public class Game implements ApplicationListener {
 		
 		if (requestedReset) {
 			requestedReset = false;
-
-			try {
-				requestedScene = sceneClass.newInstance();
+			
+			requestedScene = Reflection.newInstance(sceneClass);
+			if (requestedScene != null){
 				switchScene();
-			} catch (InstantiationException e){
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
 			}
 
 		}
@@ -236,8 +224,10 @@ public class Game implements ApplicationListener {
 	}
 
 	protected void update() {
-		Game.elapsed = Game.timeScale * step * 0.001f;
+		Game.elapsed = Game.timeScale * Gdx.graphics.getDeltaTime();
 		Game.timeTotal += Game.elapsed;
+		
+		Game.realTime = TimeUtils.millis();
 
 		inputHandler.processAllEvents();
 		
@@ -255,6 +245,15 @@ public class Game implements ApplicationListener {
 		tr.printStackTrace(pw);
 		pw.flush();
 		Gdx.app.error("GAME", sw.toString());
+	}
+	
+	public static void runOnRenderThread(Callback c){
+		Gdx.app.postRunnable(new Runnable() {
+			@Override
+			public void run() {
+				c.call();
+			}
+		});
 	}
 	
 	public static void vibrate( int milliseconds ) {

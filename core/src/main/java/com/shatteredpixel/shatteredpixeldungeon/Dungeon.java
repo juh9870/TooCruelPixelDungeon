@@ -55,7 +55,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.HallsLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LastShopLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.NewPrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
@@ -92,7 +92,7 @@ public class Dungeon {
 		//Health potion sources
 		//enemies
 		SWARM_HP,
-		GUARD_HP,
+		NECRO_HP,
 		BAT_HP,
 		WARLOCK_HP,
 		SCORPIO_HP,
@@ -208,7 +208,7 @@ public class Dungeon {
 		for (LimitedDrops a : LimitedDrops.values())
 			a.count = 0;
 		
-		chapters = new HashSet<Integer>();
+		chapters = new HashSet<>();
 		
 		Ghost.Quest.reset();
 		Wandmaker.Quest.reset();
@@ -274,7 +274,7 @@ public class Dungeon {
 			level = new PrisonLevel();
 			break;
 		case 10:
-			level = new PrisonBossLevel();
+			level = new NewPrisonBossLevel();
 			break;
 		case 11:
 		case 12:
@@ -353,7 +353,6 @@ public class Dungeon {
 		return depth == 5 || depth == 10 || depth == 15 || depth == 20 || depth == 25;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public static void switchLevel( final Level level, int pos ) {
 		
 		if (pos == -2){
@@ -433,9 +432,9 @@ public class Dungeon {
 
 	public static void dropToChasm( Item item ) {
 		int depth = Dungeon.depth + 1;
-		ArrayList<Item> dropped = (ArrayList<Item>)Dungeon.droppedItems.get( depth );
+		ArrayList<Item> dropped = Dungeon.droppedItems.get( depth );
 		if (dropped == null) {
-			Dungeon.droppedItems.put( depth, dropped = new ArrayList<Item>() );
+			Dungeon.droppedItems.put( depth, dropped = new ArrayList<>() );
 		}
 		dropped.add( item );
 	}
@@ -496,7 +495,7 @@ public class Dungeon {
 	private static final String QUESTS		= "quests";
 	private static final String BADGES		= "badges";
 	
-	public static void saveGame( int save ) throws IOException {
+	public static void saveGame( int save ) {
 		try {
 			Bundle bundle = new Bundle();
 
@@ -614,7 +613,7 @@ public class Dungeon {
 			
 			LimitedDrops.restore( bundle.getBundle(LIMDROPS) );
 
-			chapters = new HashSet<Integer>();
+			chapters = new HashSet<>();
 			int ids[] = bundle.getIntArray( CHAPTERS );
 			if (ids != null) {
 				for (int id : ids) {
@@ -739,14 +738,16 @@ public class Dungeon {
 	public static void win( Class cause ) {
 
 		hero.belongings.identify();
-
+		
 		int chCount = 0;
+		int hellCount = 0;
 		for (Challenges ch : Challenges.values()){
 			if ((challenges & ch.id) != 0) chCount++;
+			if ((hellChallenges & ch.id) != 0) hellCount++;
 		}
 		
 		if (chCount != 0) {
-			Badges.validateChampion(chCount);
+			Badges.validateChampion(chCount,hellCount);
 		}
 
 		Rankings.INSTANCE.submit( true, cause );
@@ -804,7 +805,7 @@ public class Dungeon {
 		}
 		
 		if (hero.buff(Awareness.class) != null){
-			for (Heap h : level.heaps.values()){
+			for (Heap h : level.heaps.valueList()){
 				BArray.or( level.visited, level.heroFOV, h.pos - 1 - level.width(), 3, level.visited );
 				BArray.or( level.visited, level.heroFOV, h.pos - 1, 3, level.visited );
 				BArray.or( level.visited, level.heroFOV, h.pos - 1 + level.width(), 3, level.visited );

@@ -73,13 +73,13 @@ public class WarriorArmor extends ClassArmor {
 					@Override
 					public void call() {
 						curUser.move(dest);
-						Dungeon.level.press(dest, curUser, true);
+						Dungeon.level.occupyCell(curUser);
 						Dungeon.observe();
 						GameScene.updateFog();
 
 						for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
 							Char mob = Actor.findChar(curUser.pos + PathFinder.NEIGHBOURS8[i]);
-							if (mob != null && mob != curUser) {
+							if (mob != null && mob != curUser && mob.alignment != Char.Alignment.ALLY) {
 								Buff.prolong(mob, Paralysis.class, SHOCK_TIME);
 							}
 						}

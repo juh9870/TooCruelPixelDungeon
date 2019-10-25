@@ -22,13 +22,13 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class AttackIndicator extends Tag {
 	private CharSprite sprite = null;
 	
 	private static Mob lastTarget;
-	private ArrayList<Mob> candidates = new ArrayList<Mob>();
+	private ArrayList<Mob> candidates = new ArrayList<>();
 	
 	public AttackIndicator() {
 		super( DangerIndicator.COLOR );
@@ -134,21 +134,16 @@ public class AttackIndicator extends Tag {
 			sprite = null;
 		}
 		
-		try {
-			sprite = lastTarget.spriteClass.newInstance();
-			active = true;
-			sprite.linkVisuals(lastTarget);
-			sprite.idle();
-			sprite.paused = true;
-			add( sprite );
+		sprite = Reflection.newInstance(lastTarget.spriteClass);
+		active = true;
+		sprite.linkVisuals(lastTarget);
+		sprite.idle();
+		sprite.paused = true;
+		add( sprite );
 
-			sprite.x = x + (width - sprite.width()) / 2 + 1;
-			sprite.y = y + (height - sprite.height()) / 2;
-			PixelScene.align(sprite);
-			
-		} catch (Exception e) {
-			ShatteredPixelDungeon.reportException(e);
-		}
+		sprite.x = x + (width - sprite.width()) / 2 + 1;
+		sprite.y = y + (height - sprite.height()) / 2;
+		PixelScene.align(sprite);
 	}
 	
 	private boolean enabled = true;

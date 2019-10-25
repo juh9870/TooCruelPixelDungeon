@@ -22,7 +22,7 @@ public class Legion extends Buff {
 		if(!Dungeon.bossLevel()&&Dungeon.depth!=21) {
 			turnsToNextWave -= TICK * Random.Float(.8f, 1.2f);
 			
-			GLog.i(Math.floor(turnsToNextWave)+"");
+//			GLog.i(Math.floor(turnsToNextWave)+"");
 			
 			if (turnsToNextWave <= 0) {
 				turnsToNextWave = WAVE_DELAY;

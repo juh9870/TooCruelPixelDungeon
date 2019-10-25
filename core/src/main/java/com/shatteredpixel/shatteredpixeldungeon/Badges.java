@@ -139,7 +139,11 @@ public class Badges {
 		GAMES_PLAYED_1( 60, true ),
 		GAMES_PLAYED_2( 61, true ),
 		GAMES_PLAYED_3( 62, true ),
-		GAMES_PLAYED_4( 63, true );
+		GAMES_PLAYED_4( 63, true ),
+		CHAMPION_4( 68, true ),
+		CHAMPION_5( 69, true ),
+		CHAMPION_6( 70, true ),
+		CHAMPION_7( 71, true );
 
 		public boolean meta;
 
@@ -164,7 +168,7 @@ public class Badges {
 	}
 	
 	private static HashSet<Badge> global;
-	private static HashSet<Badge> local = new HashSet<Badges.Badge>();
+	private static HashSet<Badge> local = new HashSet<>();
 	
 	private static boolean saveNeeded = false;
 
@@ -235,7 +239,7 @@ public class Badges {
 				global = restore( bundle );
 				
 			} catch (IOException e) {
-				global = new HashSet<Badge>();
+				global = new HashSet<>();
 			}
 		}
 	}
@@ -794,7 +798,7 @@ public class Badges {
 		displayBadge( Badge.HAPPY_END );
 	}
 
-	public static void validateChampion( int challenges ) {
+	public static void validateChampion( int challenges, int hell ) {
 		Badge badge = null;
 		if (challenges >= 1) {
 			badge = Badge.CHAMPION_1;
@@ -804,6 +808,18 @@ public class Badges {
 		}
 		if (challenges >= 6){
 			badge = Badge.CHAMPION_3;
+		}
+		if (challenges >= 9 && hell >= 1){
+			badge = Badge.CHAMPION_4;
+		}
+		if (challenges >= 12 && hell >= 3){
+			badge = Badge.CHAMPION_5;
+		}
+		if (challenges >= 15 && hell >= 6){
+			badge = Badge.CHAMPION_6;
+		}
+		if (challenges >= 18 && hell >= 9){
+			badge = Badge.CHAMPION_7;
 		}
 		displayBadge( badge );
 	}
@@ -858,7 +874,7 @@ public class Badges {
 	
 	public static List<Badge> filtered( boolean global ) {
 		
-		HashSet<Badge> filtered = new HashSet<Badge>( global ? Badges.global : Badges.local );
+		HashSet<Badge> filtered = new HashSet<>(global ? Badges.global : Badges.local);
 
 		Iterator<Badge> iterator = filtered.iterator();
 		while (iterator.hasNext()) {
@@ -890,9 +906,9 @@ public class Badges {
 		leaveBest( filtered, Badge.ALL_POTIONS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED );
 		leaveBest( filtered, Badge.ALL_SCROLLS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED );
 		leaveBest( filtered, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4 );
-		leaveBest( filtered, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3 );
+		leaveBest( filtered, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3, Badge.CHAMPION_4, Badge.CHAMPION_5, Badge.CHAMPION_6, Badge.CHAMPION_7 );
 		
-		ArrayList<Badge> list = new ArrayList<Badge>( filtered );
+		ArrayList<Badge> list = new ArrayList<>(filtered);
 		Collections.sort( list );
 		
 		return list;

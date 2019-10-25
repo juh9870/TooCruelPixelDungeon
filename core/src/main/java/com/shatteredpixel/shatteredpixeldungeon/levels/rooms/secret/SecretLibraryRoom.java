@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
@@ -38,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.HashMap;
 
@@ -91,14 +91,9 @@ public class SecretLibraryRoom extends SecretRoom {
 				pos = level.pointToCell(random());
 			} while (level.map[pos] != Terrain.EMPTY_SP || level.heaps.get( pos ) != null);
 			
-			try{
-				Class<?extends Scroll> scrollCls = Random.chances(chances);
-				chances.put(scrollCls, 0f);
-				level.drop( scrollCls.newInstance(), pos );
-			} catch (Exception e){
-				ShatteredPixelDungeon.reportException(e);
-			}
-			
+			Class<?extends Scroll> scrollCls = Random.chances(chances);
+			chances.put(scrollCls, 0f);
+			level.drop( Reflection.newInstance(scrollCls), pos );
 		}
 	}
 	

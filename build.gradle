@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.android.tools.build:gradle:3.5.1'
     }
 }
 
@@ -14,12 +14,12 @@ allprojects {
         appName = 'Too Cruel Pixel Dungeon'
         appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
 
-        appVersionCode = 361
-        appVersionName = '0.1.0'
+        appVersionCode = 380
+        appVersionName = '0.2.0'
 
-        appAndroidCompileSDK = 28
+        appAndroidCompileSDK = 29
         appAndroidMinSDK = 9
-        appAndroidTargetSDK = 28
+        appAndroidTargetSDK = 29
 
         gdxVersion = '1.9.10'
     }

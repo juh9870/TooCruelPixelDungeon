@@ -72,7 +72,7 @@ public class Swiftthistle extends Plant {
 		}
 		
 		private float left;
-		ArrayList<Integer> presses = new ArrayList<Integer>();
+		ArrayList<Integer> presses = new ArrayList<>();
 		
 		@Override
 		public int icon() {
@@ -116,7 +116,7 @@ public class Swiftthistle extends Plant {
 		
 		private void triggerPresses(){
 			for (int cell : presses)
-				Dungeon.level.press(cell, null, true);
+				Dungeon.level.pressCell(cell);
 			
 			presses = new ArrayList<>();
 		}

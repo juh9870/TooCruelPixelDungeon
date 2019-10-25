@@ -21,12 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HealthBar;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
@@ -38,7 +39,7 @@ public class IconTitle extends Component {
 	private static final float GAP = 2;
 
 	protected Image imIcon;
-	protected RenderedTextMultiline tfLabel;
+	protected RenderedTextBlock tfLabel;
 	protected HealthBar health;
 
 	private float healthLvl = Float.NaN;
@@ -53,6 +54,13 @@ public class IconTitle extends Component {
 		label( Messages.titleCase( item.toString() ) );
 		icon.view( item );
 	}
+	
+	public IconTitle( Heap heap ){
+		ItemSprite icon = new ItemSprite();
+		icon( icon );
+		label( Messages.titleCase( heap.toString() ) );
+		icon.view( heap );
+	}
 
 	public IconTitle( Image icon, String label ) {
 		super();
@@ -66,8 +74,9 @@ public class IconTitle extends Component {
 		imIcon = new Image();
 		add( imIcon );
 
-		tfLabel = PixelScene.renderMultiline( (int)FONT_SIZE );
+		tfLabel = PixelScene.renderTextBlock( (int)FONT_SIZE );
 		tfLabel.hardlight( Window.TITLE_COLOR );
+		tfLabel.setHightlighting(false);
 		add( tfLabel );
 
 		health = new HealthBar();
@@ -87,9 +96,8 @@ public class IconTitle extends Component {
 		int imHeight = (int)Math.max(imIcon.height(), 16);
 
 		tfLabel.maxWidth((int)(width - (imWidth + GAP)));
-		tfLabel.setPos(x + imWidth + GAP, imHeight > tfLabel.height() ?
-						y +(imHeight - tfLabel.height()) / 2 :
-						y);
+		tfLabel.setPos(x + imWidth + GAP,
+						imHeight > tfLabel.height() ? y +(imHeight - tfLabel.height()) / 2 : y);
 		PixelScene.align(tfLabel);
 
 		if (health.visible) {

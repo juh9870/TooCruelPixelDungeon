@@ -76,7 +76,7 @@ public class Ankh extends Item {
 
 			DewVial vial = hero.belongings.getItem(DewVial.class);
 			if (vial != null){
-				blessed = true;
+				bless();
 				vial.empty();
 				GLog.p( Messages.get(this, "bless") );
 				hero.spend( 1f );
@@ -88,6 +88,11 @@ public class Ankh extends Item {
 				hero.sprite.operate( hero.pos );
 			}
 		}
+	}
+	
+	public Ankh bless(){
+		blessed = true;
+		return this;
 	}
 	
 	@Override

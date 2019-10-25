@@ -25,22 +25,23 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.glwrap.Blending;
 import com.watabou.input.PointerEvent;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.BitmapText.Font;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Gizmo;
-import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.Scene;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.BitmapCache;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 
@@ -62,11 +63,8 @@ public class PixelScene extends Scene {
 
 	public static Camera uiCamera;
 
-	//stylized pixel font
+	//stylized 3x5 bitmapped pixel font. Only latin characters supported.
 	public static BitmapText.Font pixelFont;
-	//These represent various mipmaps of the same font
-	public static BitmapText.Font font1x;
-	public static BitmapText.Font font2x;
 
 	@Override
 	public void create() {
@@ -114,24 +112,26 @@ public class PixelScene extends Scene {
 				BitmapCache.get( Assets.PIXELFONT), 0x00000000, BitmapText.Font.LATIN_FULL );
 			pixelFont.baseLine = 6;
 			pixelFont.tracking = -1;
-
-			//Fonts disabled to save memory (~1mb of texture data just sitting there unused)
-			//uncomment if you wish to enable these again.
 			
-			// 9x15 (18)
-			/*font1x = Font.colorMarked(
-					BitmapCache.get( Assets.FONT1X), 22, 0x00000000, BitmapText.Font.LATIN_FULL );
-			font1x.baseLine = 17;
-			font1x.tracking = -2;
-			font1x.texture.filter(Texture.LINEAR, Texture.LINEAR);
-
-			//font1x double scaled
-			font2x = Font.colorMarked(
-					BitmapCache.get( Assets.FONT2X), 44, 0x00000000, BitmapText.Font.LATIN_FULL );
-			font2x.baseLine = 38;
-			font2x.tracking = -4;
-			font2x.texture.filter(Texture.LINEAR, Texture.NEAREST);*/
 		}
+		
+		//set up the texture size which rendered text will use for any new glyphs.
+		int renderedTextPageSize;
+		if (defaultZoom <= 3){
+			renderedTextPageSize = 256;
+		} else if (defaultZoom <= 8){
+			renderedTextPageSize = 512;
+		} else {
+			renderedTextPageSize = 1024;
+		}
+		//asian languages have many more unique characters, so increase texture size to anticipate that
+		if (Messages.lang() == Languages.KOREAN ||
+				Messages.lang() == Languages.CHINESE ||
+				Messages.lang() == Languages.JAPANESE){
+			renderedTextPageSize *= 2;
+		}
+		Game.platform.setupFontGenerators(renderedTextPageSize, SPDSettings.systemFont());
+		
 	}
 	
 	//FIXME this system currently only works for a subset of windows
@@ -152,7 +152,7 @@ public class PixelScene extends Scene {
 		if (getClass().equals(savedClass)){
 			for (Class<?extends Window> w : savedWindows){
 				try{
-					add(w.newInstance());
+					add(Reflection.newInstanceUnhandled(w));
 				} catch (Exception e){
 					//window has no public zero-arg constructor, just eat the exception
 				}
@@ -167,79 +167,12 @@ public class PixelScene extends Scene {
 		PointerEvent.clearListeners();
 	}
 
-	public static BitmapText.Font font;
-	public static float scale;
-
-	public static void chooseFont( float size ) {
-		chooseFont( size, defaultZoom );
+	public static RenderedTextBlock renderTextBlock(int size ){
+		return renderTextBlock("", size);
 	}
 
-	public static void chooseFont( float size, float zoom ) {
-
-		float pt = size * zoom;
-
-		if (pt >= 25) {
-
-			font = font2x;
-			scale = pt / 38f;
-
-		} else if (pt >= 12) {
-
-			font = font1x;
-			scale = pt / 19f;
-
-		} else {
-			font = pixelFont;
-			scale = 1f;
-		}
-
-		scale /= zoom;
-	}
-	
-	public static BitmapText createText( float size ) {
-		return createText( null, size );
-	}
-	
-	public static BitmapText createText( String text, float size ) {
-		
-		chooseFont( size );
-		
-		BitmapText result = new BitmapText( text, font );
-		result.scale.set( scale );
-		
-		return result;
-	}
-	
-	public static BitmapTextMultiline createMultiline( float size ) {
-		return createMultiline( null, size );
-	}
-	
-	public static BitmapTextMultiline createMultiline( String text, float size ) {
-		
-		chooseFont( size );
-		
-		BitmapTextMultiline result = new BitmapTextMultiline( text, font );
-		result.scale.set( scale );
-		
-		return result;
-	}
-
-	public static RenderedText renderText( int size ) {
-		return renderText("", size);
-	}
-
-	public static RenderedText renderText( String text, int size ) {
-		RenderedText result = new RenderedText( text, size*defaultZoom);
-		result.scale.set(1/(float)defaultZoom);
-		return result;
-	}
-
-	public static RenderedTextMultiline renderMultiline( int size ){
-		return renderMultiline("", size);
-	}
-
-	public static RenderedTextMultiline renderMultiline( String text, int size ){
-		RenderedTextMultiline result = new RenderedTextMultiline( text, size*defaultZoom);
+	public static RenderedTextBlock renderTextBlock(String text, int size ){
+		RenderedTextBlock result = new RenderedTextBlock( text, size*defaultZoom);
 		result.zoom(1/(float)defaultZoom);
 		return result;
 	}

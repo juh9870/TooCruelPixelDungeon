@@ -36,7 +36,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +46,7 @@ public class Bundle {
 
 	private static final String CLASS_NAME = "__className";
 	
-	private static HashMap<String,String> aliases = new HashMap<String, String>();
+	private static HashMap<String,String> aliases = new HashMap<>();
 	
 	private JSONObject data;
 	
@@ -92,18 +91,13 @@ public class Bundle {
 	}
 
 	public Class getClass( String key ) {
-		String clName =  getString(key).replace("class ", "");;
+		String clName =  getString(key).replace("class ", "");
 		if (!clName.equals("")){
 			if (aliases.containsKey( clName )) {
 				clName = aliases.get( clName );
 			}
-			try {
-				Class cl = Class.forName( clName );
-				return cl;
-			} catch (ClassNotFoundException e) {
-				Game.reportException(e);
-				return null;
-			}
+			
+			return Reflection.forName( clName );
 		}
 		return null;
 	}
@@ -114,30 +108,24 @@ public class Bundle {
 	
 	private Bundlable get() {
 		if (data == null) return null;
-		try {
-			String clName = getString( CLASS_NAME );
-			if (aliases.containsKey( clName )) {
-				clName = aliases.get( clName );
-			}
-			
-			Class<?> cl = Class.forName( clName );
-			if (cl != null && (!cl.isMemberClass() || Modifier.isStatic(cl.getModifiers()))) {
-				Bundlable object = (Bundlable)cl.newInstance();
-				object.restoreFromBundle( this );
-				return object;
-			} else {
-				return null;
-			}
-		} catch (ClassNotFoundException e ) {
-			Game.reportException(e);
-			return null;
-		} catch (InstantiationException e ) {
-			Game.reportException(e);
-			return null;
-		} catch (IllegalAccessException e ) {
-			Game.reportException(e);
-			return null;
+		
+		String clName = getString( CLASS_NAME );
+		if (aliases.containsKey( clName )) {
+			clName = aliases.get( clName );
 		}
+		
+		Class<?> cl = Reflection.forName( clName );
+		//Skip none-static inner classes as they can't be instantiated through bundle restoring
+		//Classes which make use of none-static inner classes must manage instantiation manually
+		if (cl != null && (!Reflection.isMemberClass(cl) || Reflection.isStatic(cl))) {
+			Bundlable object = (Bundlable) Reflection.newInstance(cl);
+			if (object != null) {
+				object.restoreFromBundle(this);
+				return object;
+			}
+		}
+		
+		return null;
 	}
 	
 	public Bundlable get( String key ) {
@@ -148,6 +136,9 @@ public class Bundle {
 		try {
 			return Enum.valueOf( enumClass, data.getString( key ) );
 		} catch (JSONException e) {
+			Game.reportException(e);
+			return enumClass.getEnumConstants()[0];
+		} catch (IllegalArgumentException e) {
 			Game.reportException(e);
 			return enumClass.getEnumConstants()[0];
 		}
@@ -223,13 +214,8 @@ public class Bundle {
 				if (aliases.containsKey( clName )) {
 					clName = aliases.get( clName );
 				}
-				try {
-					Class cl = Class.forName( clName );
-					result[i] = cl;
-				} catch (ClassNotFoundException e) {
-					Game.reportException(e);
-					result[i] = null;
-				}
+				Class cl = Reflection.forName( clName );
+				result[i] = cl;
 			}
 			return result;
 		} catch (JSONException e) {
@@ -240,7 +226,7 @@ public class Bundle {
 	
 	public Collection<Bundlable> getCollection( String key ) {
 		
-		ArrayList<Bundlable> list = new ArrayList<Bundlable>();
+		ArrayList<Bundlable> list = new ArrayList<>();
 		
 		try {
 			JSONArray array = data.getJSONArray( key );
@@ -401,7 +387,7 @@ public class Bundle {
 			//Classes which make use of none-static inner classes must manage instantiation manually
 			if (object != null) {
 				Class cl = object.getClass();
-				if (!cl.isMemberClass() || Modifier.isStatic(cl.getModifiers())) {
+				if ((!Reflection.isMemberClass(cl) || Reflection.isStatic(cl))) {
 					Bundle bundle = new Bundle();
 					bundle.put(CLASS_NAME, cl.getName());
 					object.storeInBundle(bundle);

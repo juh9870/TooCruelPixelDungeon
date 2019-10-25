@@ -32,6 +32,8 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ShopkeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
+import com.watabou.noosa.Game;
+import com.watabou.utils.Callback;
 
 public class Shopkeeper extends NPC {
 
@@ -71,7 +73,7 @@ public class Shopkeeper extends NPC {
 	@Override
 	public void destroy() {
 		super.destroy();
-		for (Heap heap: Dungeon.level.heaps.values()) {
+		for (Heap heap: Dungeon.level.heaps.valueList()) {
 			if (heap.type == Heap.Type.FOR_SALE) {
 				CellEmitter.get( heap.pos ).burst( ElmoParticle.FACTORY, 4 );
 				heap.destroy();
@@ -100,7 +102,12 @@ public class Shopkeeper extends NPC {
 
 	@Override
 	public boolean interact() {
-		sell();
+		Game.runOnRenderThread(new Callback() {
+			@Override
+			public void call() {
+				sell();
+			}
+		});
 		return false;
 	}
 }

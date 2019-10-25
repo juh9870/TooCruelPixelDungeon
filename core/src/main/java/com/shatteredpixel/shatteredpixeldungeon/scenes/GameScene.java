@@ -234,7 +234,7 @@ public class GameScene extends PixelScene {
 		heaps = new Group();
 		add( heaps );
 		
-		for ( Heap heap : Dungeon.level.heaps.values() ) {
+		for ( Heap heap : Dungeon.level.heaps.valueList() ) {
 			addHeapSprite( heap );
 		}
 		
@@ -423,7 +423,17 @@ public class GameScene extends PixelScene {
 
 		Dungeon.hero.next();
 
-		Camera.main.target = hero;
+		switch (InterlevelScene.mode){
+			case FALL: case DESCEND: case CONTINUE:
+				Camera.main.snapTo(hero.center().x, hero.center().y - DungeonTilemap.SIZE * (defaultZoom/Camera.main.zoom));
+				break;
+			case ASCEND:
+				Camera.main.snapTo(hero.center().x, hero.center().y + DungeonTilemap.SIZE * (defaultZoom/Camera.main.zoom));
+				break;
+			default:
+				Camera.main.snapTo(hero.center().x, hero.center().y);
+		}
+		Camera.main.panTo(hero.center(), 2.5f);
 
 		if (InterlevelScene.mode != InterlevelScene.Mode.NONE) {
 			if (Dungeon.depth == Statistics.deepestFloor
@@ -466,8 +476,10 @@ public class GameScene extends PixelScene {
 
 			InterlevelScene.mode = InterlevelScene.Mode.NONE;
 
-			fadeIn();
+			
 		}
+		
+		fadeIn();
 
 	}
 	
@@ -537,6 +549,8 @@ public class GameScene extends PixelScene {
 				if (Runtime.getRuntime().availableProcessors() == 1) {
 					actorThread.setPriority(Thread.NORM_PRIORITY - 1);
 				}
+				actorThread.setName("SHPD Actor Thread");
+				Thread.currentThread().setName("SHPD Render Thread");
 				actorThread.start();
 			} else {
 				synchronized (actorThread) {
@@ -585,9 +599,9 @@ public class GameScene extends PixelScene {
 		float tagLeft = SPDSettings.flipTags() ? 0 : uiCamera.width - scene.attack.width();
 
 		if (SPDSettings.flipTags()) {
-			scene.log.setRect(scene.attack.width(), scene.toolbar.top(), uiCamera.width - scene.attack.width(), 0);
+			scene.log.setRect(scene.attack.width(), scene.toolbar.top()-2, uiCamera.width - scene.attack.width(), 0);
 		} else {
-			scene.log.setRect(0, scene.toolbar.top(), uiCamera.width - scene.attack.width(),  0 );
+			scene.log.setRect(0, scene.toolbar.top()-2, uiCamera.width - scene.attack.width(),  0 );
 		}
 
 		float pos = scene.toolbar.top();
@@ -752,6 +766,15 @@ public class GameScene extends PixelScene {
 	
 	public static void add( CharHealthIndicator indicator ){
 		if (scene != null) scene.healthIndicators.add(indicator);
+	}
+	
+	public static void add( CustomTilemap t, boolean wall ){
+		if (scene == null) return;
+		if (wall){
+			scene.addCustomWall(t);
+		} else {
+			scene.addCustomTile(t);
+		}
 	}
 	
 	public static void effect( Visual effect ) {

@@ -26,36 +26,15 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
-import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemistsToolkit;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellbook;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
-import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gauntlet;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Shuriken;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Tomahawk;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AlbinoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlackjackkeeperSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Image;
@@ -65,11 +44,48 @@ import java.util.ArrayList;
 public class Cruel_Changes {
 	
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add_v0_2_0_Changes(changeInfos);
 		add_v0_1_0_Changes(changeInfos);
 	}
-
+	
+	public static void add_v0_2_0_Changes(ArrayList<ChangeInfo> changeInfos){
+		ChangeInfo changes = new ChangeInfo( "v0.2.0", true, "");
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+		
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"),false,null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+		
+		changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Developer Commentary",
+				"_-_ Released 26.10.2019\n" +
+						"_-_ 75 days after v0.1.0" +
+						"\n" +
+						"Dev commentary will be added here in the future."));
+		
+		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_NIGHTMARE_GOLD), "Challenges",
+				"_-_ Added nightmare version to 9 challenges"
+		));
+		changes.addButton( new ChangeButton(BadgeBanner.image(Badges.Badge.CHAMPION_4.image),"Badges",
+				"Added 4 new badges for winning with 9 challenges + 1 nightmare, 12 challenges + 3 nightmare, 15 challenges + 6 nightmare and 18 challenges + 9 nightmare"
+				));
+		changes = new ChangeInfo("Challenges",false,null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+		
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER),Messages.get(Challenges.class,"no_healing_hell"),Messages.get(Challenges.class,"no_healing_desc_hell")));
+		changes.addButton(new ChangeButton(new RotHeartSprite(),Messages.get(Challenges.class,"swarm_intelligence_hell"),Messages.get(Challenges.class,"swarm_intelligence_hell_desc")));
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TORCH),Messages.get(Challenges.class,"darkness_hell"),Messages.get(Challenges.class,"darkness_hell_desc")));
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_NIGHTMARE_GOLD.get(),Messages.get(Challenges.class,"amnesia_hell"),Messages.get(Challenges.class,"amnesia_hell_desc")));
+		changes.addButton(new ChangeButton(new SwarmSprite(),Messages.get(Challenges.class,"horde_hell"),Messages.get(Challenges.class,"horde_hell_desc")));
+		changes.addButton(new ChangeButton(new Image(Assets.BUFFS_LARGE, 224, 32, 16, 16),Messages.get(Challenges.class,"countdown_hell"),Messages.get(Challenges.class,"countdown_hell_desc")));
+		changes.addButton(new ChangeButton(new AlbinoSprite(),Messages.get(Challenges.class,"mutagen_hell"),Messages.get(Challenges.class,"mutagen_hell_desc")));
+		changes.addButton(new ChangeButton(new Ankh().bless(),Messages.get(Challenges.class,"resurrection_hell"),Messages.get(Challenges.class,"resurrection_hell_desc")));
+		changes.addButton(new ChangeButton(new Image(Assets.TERRAIN_FEATURES, 112, 96, 16, 16),Messages.get(Challenges.class,"extreme_caution_hell"),Messages.get(Challenges.class,"extreme_caution_hell_desc")));
+	}
+	
 	public static void add_v0_1_0_Changes(ArrayList<ChangeInfo> changeInfos){
-		ChangeInfo changes = new ChangeInfo( "0.1.0 - release", true, "");
+		ChangeInfo changes = new ChangeInfo( "v0.1.0 - release", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 		
@@ -80,7 +96,7 @@ public class Cruel_Changes {
 		changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Developer Commentary",
 				"_-_ Released August 12th, 2019\n" +
 						"_-_ First release\n" +
-						"_-_ 25 ays after Shattered Pixel Dungeon v0.7.4" +
+						"_-_ 25 days after Shattered Pixel Dungeon v0.7.4" +
 						"\n" +
 						"Dev commentary will be added here in the future."));
 		

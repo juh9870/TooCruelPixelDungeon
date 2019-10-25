@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
@@ -41,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -126,12 +126,7 @@ public class ExoticPotion extends Potion {
 	@Override
 	//20 gold more than its none-exotic equivalent
 	public int price() {
-		try {
-			return (exoToReg.get(getClass()).newInstance().price() + 20) * quantity;
-		} catch (Exception e){
-			ShatteredPixelDungeon.reportException(e);
-			return 0;
-		}
+		return (Reflection.newInstance(exoToReg.get(getClass())).price() + 20) * quantity;
 	}
 	
 	public static class PotionToExotic extends Recipe{
@@ -164,11 +159,7 @@ public class ExoticPotion extends Potion {
 			for (Item i : ingredients){
 				i.quantity(i.quantity()-1);
 				if (regToExo.containsKey(i.getClass())) {
-					try {
-						result = regToExo.get(i.getClass()).newInstance();
-					} catch (Exception e) {
-						ShatteredPixelDungeon.reportException(e);
-					}
+					result = Reflection.newInstance(regToExo.get(i.getClass()));
 				}
 			}
 			return result;
@@ -178,11 +169,7 @@ public class ExoticPotion extends Potion {
 		public Item sampleOutput(ArrayList<Item> ingredients) {
 			for (Item i : ingredients){
 				if (regToExo.containsKey(i.getClass())) {
-					try {
-						return regToExo.get(i.getClass()).newInstance();
-					} catch (Exception e) {
-						ShatteredPixelDungeon.reportException(e);
-					}
+					return Reflection.newInstance(regToExo.get(i.getClass()));
 				}
 			}
 			return null;

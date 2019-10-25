@@ -101,7 +101,7 @@ public class ScrollOfTeleportation extends Scroll {
 		}
 		
 		appear( hero, pos );
-		if (!hero.flying) Dungeon.level.press( pos, hero );
+		Dungeon.level.occupyCell(hero );
 		Dungeon.observe();
 		GameScene.updateFog();
 		
@@ -109,6 +109,11 @@ public class ScrollOfTeleportation extends Scroll {
 	
 	public static void teleportHero( Hero  hero ) {
 
+		if (Dungeon.bossLevel()){
+			GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
+			return;
+		}
+		
 		int count = 10;
 		int pos;
 		do {
@@ -118,7 +123,7 @@ public class ScrollOfTeleportation extends Scroll {
 			}
 		} while (pos == -1);
 		
-		if (pos == -1 || Dungeon.bossLevel()) {
+		if (pos == -1) {
 			
 			GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
 			
@@ -127,7 +132,7 @@ public class ScrollOfTeleportation extends Scroll {
 			GLog.i( Messages.get(ScrollOfTeleportation.class, "tele") );
 			
 			appear( hero, pos );
-			if (!hero.flying) Dungeon.level.press( pos, hero );
+			Dungeon.level.occupyCell(hero );
 			Dungeon.observe();
 			GameScene.updateFog();
 			
@@ -192,7 +197,7 @@ public class ScrollOfTeleportation extends Scroll {
 			}
 			GLog.i( Messages.get(ScrollOfTeleportation.class, "tele") );
 			appear( hero, pos );
-			if (!hero.flying) Dungeon.level.press( pos, hero );
+			Dungeon.level.occupyCell(hero );
 			if (secretDoor && level.map[doorPos] == Terrain.SECRET_DOOR){
 				Sample.INSTANCE.play( Assets.SND_SECRET );
 				int oldValue = Dungeon.level.map[doorPos];

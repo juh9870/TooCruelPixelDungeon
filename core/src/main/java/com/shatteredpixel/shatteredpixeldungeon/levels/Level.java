@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Sheep;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -82,6 +83,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 import com.watabou.utils.SparseArray;
 
 import java.util.ArrayList;
@@ -406,9 +408,9 @@ public abstract class Level implements Bundlable {
 		bundle.put( ENTRANCE, entrance );
 		bundle.put( EXIT, exit );
 		bundle.put( LOCKED, locked );
-		bundle.put( HEAPS, heaps.toList() );
-		bundle.put( PLANTS, plants.toList() );
-		bundle.put( TRAPS, traps.toList() );
+		bundle.put( HEAPS, heaps.valueList() );
+		bundle.put( PLANTS, plants.valueList() );
+		bundle.put( TRAPS, traps.valueList() );
 		bundle.put( CUSTOM_TILES, customTiles );
 		bundle.put( CUSTOM_WALLS, customWalls );
 		bundle.put( MOBS, mobs );
@@ -446,15 +448,11 @@ public abstract class Level implements Bundlable {
 	private ArrayList<Class<?extends Mob>> mobsToSpawn = new ArrayList<>();
 	
 	public Mob createMob() {
-		if (mobsToSpawn == null || mobsToSpawn.isEmpty())
+		if (mobsToSpawn == null || mobsToSpawn.isEmpty()) {
 			mobsToSpawn = Bestiary.getMobRotation(Dungeon.depth);
-		
-		try {
-			return mobsToSpawn.remove(0).newInstance();
-		} catch (Exception e) {
-			ShatteredPixelDungeon.reportException(e);
-			return null;
 		}
+		
+		return Reflection.newInstance(mobsToSpawn.remove(0));
 	}
 
 	abstract protected void createMobs();
@@ -770,7 +768,7 @@ public abstract class Level implements Bundlable {
 		}
 		
 		if (Dungeon.level != null) {
-			press( cell, null, true );
+			pressCell( cell );
 		}
 		
 		return heap;
@@ -843,25 +841,36 @@ public abstract class Level implements Bundlable {
 		return result;
 	}
 	
-	//characters which are not the hero 'soft' press cells by default
-	public void press( int cell, Char ch){
-		press( cell, ch, ch == Dungeon.hero);
+	public void occupyCell( Char ch ){
+		if (!ch.flying){
+			
+			if (pit[ch.pos]){
+				if (ch == Dungeon.hero) {
+					Chasm.heroFall(ch.pos);
+				} else if (ch instanceof Mob) {
+					Chasm.mobFall( (Mob)ch );
+				}
+				return;
+			}
+			
+			//characters which are not the hero or a sheep 'soft' press cells
+			pressCell( ch.pos, ch instanceof Hero || ch instanceof Sheep);
+		} else {
+			if (map[ch.pos] == Terrain.DOOR){
+				Door.enter( ch.pos );
+			}
+		}
+	}
+	
+	//public method for forcing the hard press of a cell. e.g. when an item lands on it
+	public void pressCell( int cell ){
+		pressCell( cell, true );
 	}
 	
 	//a 'soft' press ignores hidden traps
 	//a 'hard' press triggers all things
-	//generally a 'hard' press should be forced is something is moving forcefully (e.g. thrown)
-	public void press( int cell, Char ch, boolean hard ) {
+	private void pressCell( int cell, boolean hard ) {
 
-		if (ch != null && pit[cell] && !ch.flying) {
-			if (ch == Dungeon.hero) {
-				Chasm.heroFall(cell);
-			} else if (ch instanceof Mob) {
-				Chasm.mobFall( (Mob)ch );
-			}
-			return;
-		}
-		
 		Trap trap = null;
 		
 		switch (map[cell]) {
@@ -879,7 +888,7 @@ public abstract class Level implements Bundlable {
 			
 		case Terrain.HIGH_GRASS:
 		case Terrain.FURROWED_GRASS:
-			HighGrass.trample( this, cell, ch );
+			HighGrass.trample( this, cell);
 			break;
 			
 		case Terrain.WELL:
@@ -917,7 +926,7 @@ public abstract class Level implements Bundlable {
 				
 			} else {
 
-				if (ch == Dungeon.hero) {
+				if (Dungeon.hero.pos == cell) {
 					Dungeon.hero.interrupt();
 				}
 
@@ -1030,7 +1039,7 @@ public abstract class Level implements Bundlable {
 			}
 			
 			if (c.buff( Awareness.class ) != null) {
-				for (Heap heap : heaps.values()) {
+				for (Heap heap : heaps.valueList()) {
 					int p = heap.pos;
 					for (int i : PathFinder.NEIGHBOURS9)
 						fieldOfView[p+i] = true;
@@ -1055,7 +1064,7 @@ public abstract class Level implements Bundlable {
 		}
 
 		if (c == Dungeon.hero) {
-			for (Heap heap : heaps.values())
+			for (Heap heap : heaps.valueList())
 				if (!heap.seen && fieldOfView[heap.pos])
 					heap.seen = true;
 		}

@@ -32,7 +32,8 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextMultiline;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHardNotification;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.glwrap.Blending;
@@ -44,7 +45,7 @@ import com.watabou.utils.FileUtils;
 
 public class WelcomeScene extends PixelScene {
 
-	private static int LATEST_UPDATE = ShatteredPixelDungeon.v0_7_3;
+	private static int LATEST_UPDATE = ShatteredPixelDungeon.v0_7_5;
 
 	@Override
 	public void create() {
@@ -138,7 +139,7 @@ public class WelcomeScene extends PixelScene {
 			add(okay);
 		}
 
-		RenderedTextMultiline text = PixelScene.renderMultiline(6);
+		RenderedTextBlock text = PixelScene.renderTextBlock(6);
 		String message;
 		if (previousVersion == 0) {
 			message = Messages.get(this, "welcome_msg");
@@ -200,7 +201,7 @@ public class WelcomeScene extends PixelScene {
 		SPDSettings.version(ShatteredPixelDungeon.versionCode);
 	}
 
-	private class DarkRedButton extends RedButton{
+	private class DarkRedButton extends RedButton {
 		{
 			bg.brightness(0.4f);
 		}

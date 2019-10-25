@@ -44,6 +44,8 @@ public class MagicMissile extends Emitter {
 	
 	private Callback callback;
 	
+	private PointF to;
+	
 	private float sx;
 	private float sy;
 	private float time;
@@ -89,6 +91,8 @@ public class MagicMissile extends Emitter {
 		this.callback = callback;
 		
 		revive();
+		
+		this.to = to;
 		
 		x = from.x;
 		y = from.y;
@@ -160,15 +164,24 @@ public class MagicMissile extends Emitter {
 		y -= size / 2;
 		width = height = size;
 	}
+	
+	public void setSpeed( float newSpeed ){
+		PointF d = PointF.diff( to, new PointF(x, y) );
+		PointF speed = new PointF( d ).normalize().scale( newSpeed );
+		sx = speed.x;
+		sy = speed.y;
+		time = d.length() / newSpeed;
+	}
 
 	//convenience method for the common case of a bolt going from a character to a tile or enemy
-	public static void boltFromChar(Group group, int type, Visual sprite, int to, Callback callback){
+	public static MagicMissile boltFromChar(Group group, int type, Visual sprite, int to, Callback callback){
 		MagicMissile missile = ((MagicMissile)group.recycle( MagicMissile.class ));
 		if (Actor.findChar(to) != null){
 			missile.reset(type, sprite.center(), Actor.findChar(to).sprite.destinationCenter(), callback);
 		} else {
 			missile.reset(type, sprite, to, callback);
 		}
+		return missile;
 	}
 	
 	@Override
@@ -195,7 +208,7 @@ public class MagicMissile extends Emitter {
 			@Override
 			public boolean lightMode() {
 				return true;
-			};
+			}
 		};
 
 		public static final Emitter.Factory ATTRACTING = new Factory() {
@@ -206,7 +219,7 @@ public class MagicMissile extends Emitter {
 			@Override
 			public boolean lightMode() {
 				return true;
-			};
+			}
 		};
 		
 		public MagicParticle() {
@@ -323,7 +336,7 @@ public class MagicMissile extends Emitter {
 			@Override
 			public boolean lightMode() {
 				return true;
-			};
+			}
 		};
 		
 		public WhiteParticle() {
@@ -363,7 +376,7 @@ public class MagicMissile extends Emitter {
 			@Override
 			public boolean lightMode() {
 				return true;
-			};
+			}
 		};
 		
 		public SlowParticle() {

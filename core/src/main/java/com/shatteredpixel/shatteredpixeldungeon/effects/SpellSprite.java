@@ -42,7 +42,7 @@ public class SpellSprite extends Image {
 	
 	private enum Phase {
 		FADE_IN, STATIC, FADE_OUT
-	};
+	}
 	
 	private static final float FADE_IN_TIME		= 0.2f;
 	private static final float STATIC_TIME		= 0.8f;
@@ -56,7 +56,7 @@ public class SpellSprite extends Image {
 	private float duration;
 	private float passed;
 	
-	private static HashMap<Char,SpellSprite> all = new HashMap<Char, SpellSprite>();
+	private static HashMap<Char,SpellSprite> all = new HashMap<>();
 	
 	public SpellSprite() {
 		super( Assets.SPELL_ICONS );

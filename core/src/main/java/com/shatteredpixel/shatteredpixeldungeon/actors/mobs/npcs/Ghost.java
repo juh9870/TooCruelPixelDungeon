@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
@@ -42,7 +41,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Shortsword;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -51,9 +49,12 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSadGhost;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 public class Ghost extends NPC {
 
@@ -115,20 +116,30 @@ public class Ghost extends NPC {
 		if (Quest.given) {
 			if (Quest.weapon != null) {
 				if (Quest.processed) {
-					GameScene.show(new WndSadGhost(this, Quest.type));
+					Game.runOnRenderThread(new Callback() {
+						@Override
+						public void call() {
+							GameScene.show(new WndSadGhost(Ghost.this, Quest.type));
+						}
+					});
 				} else {
-					switch (Quest.type) {
-						case 1:
-						default:
-							GameScene.show(new WndQuest(this, Messages.get(this, "rat_2")));
-							break;
-						case 2:
-							GameScene.show(new WndQuest(this, Messages.get(this, "gnoll_2")));
-							break;
-						case 3:
-							GameScene.show(new WndQuest(this, Messages.get(this, "crab_2")));
-							break;
-					}
+					Game.runOnRenderThread(new Callback() {
+						@Override
+						public void call() {
+							switch (Quest.type) {
+								case 1:
+								default:
+									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "rat_2")));
+									break;
+								case 2:
+									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "gnoll_2")));
+									break;
+								case 3:
+									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "crab_2")));
+									break;
+							}
+						}
+					});
 
 					int newPos = -1;
 					for (int i = 0; i < 10; i++) {
@@ -166,9 +177,14 @@ public class Ghost extends NPC {
 
 			if (questBoss.pos != -1) {
 				GameScene.add(questBoss);
-				GameScene.show( new WndQuest( this, txt_quest ) );
 				Quest.given = true;
 				Notes.add( Notes.Landmark.GHOST );
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show( new WndQuest( Ghost.this, txt_quest ) );
+					}
+				});
 			}
 
 		}
@@ -287,15 +303,9 @@ public class Ghost extends NPC {
 					wepTier = 5;
 					armor = new PlateArmor();
 				}
-
-				try {
-					do {
-						weapon = (Weapon) Generator.wepTiers[wepTier - 1].classes[Random.chances(Generator.wepTiers[wepTier - 1].probs)].newInstance();
-					} while (!(weapon instanceof MeleeWeapon));
-				} catch (Exception e){
-					ShatteredPixelDungeon.reportException(e);
-					weapon = new Shortsword();
-				}
+				
+				Generator.Category c = Generator.wepTiers[wepTier - 1];
+				weapon = (MeleeWeapon) Reflection.newInstance(c.classes[Random.chances(c.probs)]);
 
 				//50%:+0, 30%:+1, 15%:+2, 5%:+3
 				float itemLevelRoll = Random.Float();

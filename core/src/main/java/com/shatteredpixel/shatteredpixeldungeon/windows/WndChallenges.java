@@ -32,10 +32,9 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
-import com.watabou.noosa.Image;
-import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 
 import java.util.ArrayList;
 
@@ -43,7 +42,7 @@ public class WndChallenges extends Window {
 
 	private static final int WIDTH		= 130;
 	private static final int HEIGHT		= 150;
-	private static final int TTL_HEIGHT    = 12;
+	private static final int TTL_HEIGHT    = 18;
 	private static final int BTN_HEIGHT    = 18;
 	private static final int GAP        = 1;
 
@@ -57,10 +56,12 @@ public class WndChallenges extends Window {
 
 		this.editable = editable;
 
-		RenderedText title = PixelScene.renderText( Messages.get(this, "title"), 9 );
+		RenderedTextBlock title = PixelScene.renderTextBlock( Messages.get(this, "title"), 12 );
 		title.hardlight( TITLE_COLOR );
-		title.x = (WIDTH - title.width()) / 2;
-		title.y = (TTL_HEIGHT - title.height()) / 2;
+		title.setPos(
+				(WIDTH - title.width()) / 2,
+				(TTL_HEIGHT - title.height()) / 2
+		);
 		PixelScene.align(title);
 		add( title );
 
@@ -243,7 +244,7 @@ public class WndChallenges extends Window {
 			
 			hotArea.width=hotArea.height=0;
 			
-			float margin = (height - text.baseLine()) / 2;
+			float margin = hellCheckbox.width()/4;
 			
 			hellCheckbox.setRect(icon.x-hellCheckbox.width()-margin,icon.y,icon.width,icon.height);
 			
