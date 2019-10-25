@@ -14,7 +14,7 @@ allprojects {
         appName = 'Too Cruel Pixel Dungeon'
         appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
 
-        appVersionCode = 380
+        appVersionCode = 382
         appVersionName = '0.2.0'
 
         appAndroidCompileSDK = 29
