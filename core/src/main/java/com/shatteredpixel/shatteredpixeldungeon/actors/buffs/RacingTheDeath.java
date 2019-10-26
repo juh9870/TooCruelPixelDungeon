@@ -1,10 +1,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SacrificialParticle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -12,6 +14,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PointF;
@@ -96,7 +99,7 @@ public class RacingTheDeath extends Buff {
 		}
 	}
 	
-	Emitter.Factory particles = SacrificialParticle.FACTORY;
+	Emitter.Factory particles = PurpleParticle.BURST;
 	
 	private void burst(int pos, int amount){
 		if(trail==null)return;
@@ -110,6 +113,8 @@ public class RacingTheDeath extends Buff {
 		
 		emitter.burst(particles,amount);
 		
+		Sample.INSTANCE.play(Assets.SND_LIGHTNING);
+		
 	}
 	
 	private void resetTrail(){
@@ -117,6 +122,11 @@ public class RacingTheDeath extends Buff {
 		for (int i=0;i<TRAIL_LENGTH;i++){
 			trailCells.add(0);
 		}
+		//to make buff create first piece of trail right away
+		spend(-1);
+		//To make sure that buff wont proc multiple times in function called more than once
+		postpone(-1);
+		
 		createTrail();
 	}
 	
@@ -146,8 +156,8 @@ public class RacingTheDeath extends Buff {
 			eraseTrail();
 		
 		if(Dungeon.depth!=lastDepth){
-			resetTrail();
 			lastDepth=Dungeon.depth;
+			resetTrail();
 			return;
 		}
 		trail = new ArrayList<>();
