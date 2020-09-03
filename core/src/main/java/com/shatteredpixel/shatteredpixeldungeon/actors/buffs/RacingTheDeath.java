@@ -7,11 +7,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SacrificialParticle;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RacingTheDeath extends Buff {
+public class RacingTheDeath extends Buff implements Hero.Doom {
 	{
 		type = buffType.NEUTRAL;
 		resetTrail();
@@ -35,6 +36,8 @@ public class RacingTheDeath extends Buff {
 	
 	private int lastDepth = -1;
 	
+	private boolean fx=false;
+	
 	private static final int TRAIL_LENGTH = 10;
 	
 	@Override
@@ -45,7 +48,6 @@ public class RacingTheDeath extends Buff {
 	@Override
 	public boolean attachTo(Char target) {
 		if(target instanceof Hero) {
-			lastDepth=Dungeon.depth;
 			return super.attachTo(target);
 		}
 		return false;
@@ -59,24 +61,23 @@ public class RacingTheDeath extends Buff {
 			lastDepth=Dungeon.depth;
 		}
 		
-		int baseDMG = (Statistics.deepestFloor/5+1)*3;
+		int damage = (Statistics.deepestFloor/5+1)*3;
 		
 		trailCells.remove(TRAIL_LENGTH - 1);
 		
 		if(trailCells.contains(target.pos) && trailCells.indexOf(target.pos)!=0){
 			
 			if(trailCells.get(3)==target.pos){
-				target.damage(baseDMG*4, Countdown.class);
+				damage=damage*4;
 				burst(target.pos,30);
 			} else {
-				target.damage(baseDMG*2, Countdown.class);
+				damage=damage*2;
 				burst(target.pos,15);
 			}
 		} else {
 			int frequency = Collections.frequency(trailCells,target.pos);
-			int damage = (frequency-3)*baseDMG*3/2;
+			damage = (frequency-3)*damage*3/2;
 			if (damage>0) {
-				target.damage(damage, Countdown.class);
 				burst(target.pos,7*(frequency-3));
 			}
 		}
@@ -86,12 +87,17 @@ public class RacingTheDeath extends Buff {
 		
 		updateTrail();
 		
+		if (damage>0) {
+			target.damage(damage, this);
+		}
+		
 		spend(TICK);
 		return true;
 	}
 	
 	@Override
 	public void fx(boolean on) {
+		fx=on;
 		if(on){
 			createTrail();
 		} else {
@@ -152,6 +158,8 @@ public class RacingTheDeath extends Buff {
 	}
 	
 	private void createTrail(){
+		if(!fx)return;
+		
 		if(trail!=null)
 			eraseTrail();
 		
@@ -252,5 +260,12 @@ public class RacingTheDeath extends Buff {
 		}
 		
 		lastDepth=bundle.getInt(DEPTH);
+	}
+	
+	
+	@Override
+	public void onDeath() {
+		Dungeon.fail( getClass() );
+		GLog.n( Messages.get(this, "ondeath") );
 	}
 }
