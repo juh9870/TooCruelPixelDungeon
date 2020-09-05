@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import java.text.DecimalFormat;
 
 public class Chill extends FlavourBuff {
+
+	public static final float DURATION = 10f;
 
 	{
 		type = buffType.NEGATIVE;
@@ -56,6 +58,11 @@ public class Chill extends FlavourBuff {
 	@Override
 	public int icon() {
 		return BuffIndicator.FROST;
+	}
+
+	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
 	}
 
 	@Override

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ public class ChaliceOfBlood extends Artifact {
 		if (damage <= 0){
 			damage = 1;
 		} else {
-			Sample.INSTANCE.play(Assets.SND_CURSED);
+			Sample.INSTANCE.play(Assets.Sounds.CURSED);
 			hero.sprite.emitter().burst( ShadowParticle.CURSE, 4+(damage/10) );
 		}
 
@@ -167,7 +167,7 @@ public class ChaliceOfBlood extends Artifact {
 	}
 
 	public class chaliceRegen extends ArtifactBuff {
-
+		//see Regeneration.class for effect
 	}
 
 }

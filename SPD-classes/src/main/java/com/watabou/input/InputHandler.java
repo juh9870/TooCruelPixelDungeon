@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,18 @@
 
 package com.watabou.input;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.watabou.noosa.Game;
 import com.watabou.utils.PointF;
 
 public class InputHandler extends InputAdapter {
+	
+	public InputHandler( Input input ){
+		input.setInputProcessor( this );
+		input.setCatchKey( Input.Keys.BACK, true);
+		input.setCatchKey( Input.Keys.MENU, true);
+	}
 	
 	public void processAllEvents(){
 		PointerEvent.processPointerEvents();
@@ -79,24 +86,22 @@ public class InputHandler extends InputAdapter {
 	
 	@Override
 	public synchronized boolean keyDown( int keyCode ) {
-		
-		if (keyCode != KeyEvent.BACK && keyCode != KeyEvent.MENU) {
+		if (KeyBindings.isKeyBound( keyCode )) {
+			KeyEvent.addKeyEvent( new KeyEvent( keyCode, true ) );
+			return true;
+		} else {
 			return false;
 		}
-		
-		KeyEvent.addKeyEvent( new KeyEvent(keyCode, true) );
-		return true;
 	}
 	
 	@Override
 	public synchronized boolean keyUp( int keyCode ) {
-		
-		if (keyCode != KeyEvent.BACK && keyCode != KeyEvent.MENU) {
+		if (KeyBindings.isKeyBound( keyCode )) {
+			KeyEvent.addKeyEvent( new KeyEvent( keyCode, false ) );
+			return true;
+		} else {
 			return false;
 		}
-		
-		KeyEvent.addKeyEvent( new KeyEvent(keyCode, false) );
-		return true;
 	}
 	
 	// ********************

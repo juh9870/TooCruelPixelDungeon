@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.mechanics;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +39,10 @@ public class Ballistica {
 	public Integer dist = 0;
 
 	//parameters to specify the colliding cell
-	public static final int STOP_TARGET = 1; //ballistica will stop at the target cell
-	public static final int STOP_CHARS = 2; //ballistica will stop on first char hit
-	public static final int STOP_TERRAIN = 4; //ballistica will stop on terrain(LOS blocking, impassable, etc.)
+	public static final int STOP_TARGET = 1;    //ballistica will stop at the target cell
+	public static final int STOP_CHARS = 2;     //ballistica will stop on first char hit
+	public static final int STOP_TERRAIN = 4;   //ballistica will stop on solid terrain
+	public static final int IGNORE_DOORS = 8;   //ballistica will ignore doors instead of colliding
 
 	public static final int PROJECTILE =  	STOP_TARGET	| STOP_CHARS	| STOP_TERRAIN;
 
@@ -51,7 +53,12 @@ public class Ballistica {
 
 	public Ballistica( int from, int to, int params ){
 		sourcePos = from;
-		build(from, to, (params & STOP_TARGET) > 0, (params & STOP_CHARS) > 0, (params & STOP_TERRAIN) > 0);
+		build(from, to,
+				(params & STOP_TARGET) > 0,
+				(params & STOP_CHARS) > 0,
+				(params & STOP_TERRAIN) > 0,
+				(params & IGNORE_DOORS) > 0);
+
 		if (collisionPos != null) {
 			dist = path.indexOf(collisionPos);
 		} else if (!path.isEmpty()) {
@@ -63,7 +70,7 @@ public class Ballistica {
 		}
 	}
 
-	private void build( int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain ) {
+	private void build( int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain, boolean ignoreDoors ) {
 		int w = Dungeon.level.width();
 
 		int x0 = from % w;
@@ -117,7 +124,9 @@ public class Ballistica {
 			if ((stopTerrain && cell != sourcePos && Dungeon.level.solid[cell])
 					|| (cell != sourcePos && stopChars && Actor.findChar( cell ) != null)
 					|| (cell == to && stopTarget)){
-				collide(cell);
+				if (!ignoreDoors || Dungeon.level.map[cell] != Terrain.DOOR) {
+					collide(cell); //only collide if this isn't a door, or we aren't ignoring doors
+				}
 			}
 
 			cell += stepA;

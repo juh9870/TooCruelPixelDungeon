@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ public class DewVial extends Item {
 				hero.spend( TIME_TO_DRINK );
 				hero.busy();
 
-				Sample.INSTANCE.play( Assets.SND_DRINK );
+				Sample.INSTANCE.play( Assets.Sounds.DRINK );
 				hero.sprite.operate( hero.pos );
 
 				updateQuickslot();

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -31,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.StatueSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -72,6 +74,11 @@ public class Statue extends Mob {
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
 		weapon = (Weapon)bundle.get( WEAPON );
+	}
+	
+	@Override
+	public boolean canAscend() {
+		return false;
 	}
 	
 	@Override
@@ -120,7 +127,12 @@ public class Statue extends Mob {
 	@Override
 	public int attackProc( Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
-		return weapon.proc( this, enemy, damage );
+		damage = weapon.proc( this, enemy, damage );
+		if (!enemy.isAlive() && enemy == Dungeon.hero){
+			Dungeon.fail(getClass());
+			GLog.n( Messages.capitalize(Messages.get(Char.class, "kill", name())) );
+		}
+		return damage;
 	}
 	
 	@Override
@@ -142,7 +154,12 @@ public class Statue extends Mob {
 		Notes.remove( Notes.Landmark.STATUE );
 		super.destroy();
 	}
-	
+
+	@Override
+	public float spawningWeight() {
+		return 0f;
+	}
+
 	@Override
 	public boolean reset() {
 		state = PASSIVE;
@@ -156,6 +173,14 @@ public class Statue extends Mob {
 	
 	{
 		resistances.add(Grim.class);
+	}
+
+	public static Statue random(){
+		if (Random.Int(10) == 0 && Challenges.NO_ARMOR.enabled()){
+			return new ArmoredStatue();
+		} else {
+			return new Statue();
+		}
 	}
 	
 }

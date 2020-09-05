@@ -119,7 +119,7 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 		
 		emitter.burst(particles,amount);
 		
-		Sample.INSTANCE.play(Assets.SND_LIGHTNING);
+		Sample.INSTANCE.play(Assets.Sounds.LIGHTNING);
 		
 	}
 	

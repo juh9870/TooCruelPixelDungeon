@@ -32,7 +32,7 @@ public class BlackjackkeeperSprite extends MobSprite {
 	public BlackjackkeeperSprite() {
 		super();
 		
-		texture( Assets.BJ_KEEPER );
+		texture( Assets.Sprites.BJ_KEEPER );
 		TextureFilm film = new TextureFilm( texture, 14, 14 );
 		
 		idle = new Animation( 10, true );

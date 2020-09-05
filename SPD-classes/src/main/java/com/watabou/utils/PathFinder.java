@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,18 @@ public class PathFinder {
 	//performance-light shortcuts for some common pathfinder cases
 	//they are in array-access order for increased memory performance
 	public static int[] NEIGHBOURS4;
+	public static int[] NEIGHBOURS5;
 	public static int[] NEIGHBOURS8;
+	public static int[] NEIGHBOURS8_UNCHANGED;
 	public static int[] NEIGHBOURS9;
+	public static int[] NEIGHBOURS9_UNCHANGED;
 
 	//similar to their equivalent neighbour arrays, but the order is clockwise.
 	//Useful for some logic functions, but is slower due to lack of array-access order.
 	public static int[] CIRCLE4;
 	public static int[] CIRCLE8;
+	
+	public static boolean noDiagonals = false;
 	
 	public static void setMapSize( int width, int height ) {
 		
@@ -65,11 +70,22 @@ public class PathFinder {
 		dirLR = new int[]{-1-width, -1, -1+width, -width, +width, +1-width, +1, +1+width};
 
 		NEIGHBOURS4 = new int[]{-width, -1, +1, +width};
-		NEIGHBOURS8 = new int[]{-width-1, -width, -width+1, -1, +1, +width-1, +width, +width+1};
-		NEIGHBOURS9 = new int[]{-width-1, -width, -width+1, -1, 0, +1, +width-1, +width, +width+1};
-
+		NEIGHBOURS5 = new int[]{-width, -1, 0, +1, +width};
+		NEIGHBOURS8=NEIGHBOURS8_UNCHANGED = new int[]{-width-1, -width, -width+1, -1, +1, +width-1, +width, +width+1};
+		NEIGHBOURS9=NEIGHBOURS9_UNCHANGED = new int[]{-width-1, -width, -width+1, -1, 0, +1, +width-1, +width, +width+1};
+		
 		CIRCLE4 = new int[]{-width, +1, +width, -1};
 		CIRCLE8 = new int[]{-width-1, -width, -width+1, +1, +width+1, +width, +width-1, -1};
+		
+		if(noDiagonals){
+			
+			dir=new int[]{-1,+1,-width,+width};
+			dirLR=new int[]{-1, -width, +width, +1};
+			
+			NEIGHBOURS8=NEIGHBOURS4;
+			NEIGHBOURS9=NEIGHBOURS5;
+			CIRCLE8=CIRCLE4;
+		}
 	}
 
 	public static Path find( int from, int to, boolean[] passable ) {
@@ -80,7 +96,8 @@ public class PathFinder {
 		
 		Path result = new Path();
 		int s = from;
-
+		int olds = -1;
+		
 		// From the starting position we are moving downwards,
 		// until we reach the ending point
 		do {
@@ -97,8 +114,9 @@ public class PathFinder {
 					mins = n;
 				}
 			}
+			olds = s;
 			s = mins;
-			result.add( s );
+			result.add(s);
 		} while (s != to);
 		
 		return result;
@@ -129,7 +147,7 @@ public class PathFinder {
 	
 	public static int getStepBack( int cur, int from, boolean[] passable ) {
 
-		int d = buildEscapeDistanceMap( cur, from, 2f, passable );
+		int d = buildEscapeDistanceMap( cur, from, 5, passable );
 		for (int i=0; i < size; i++) {
 			goals[i] = distance[i] == d;
 		}
@@ -285,7 +303,7 @@ public class PathFinder {
 		return pathFound;
 	}
 	
-	private static int buildEscapeDistanceMap( int cur, int from, float factor, boolean[] passable ) {
+	private static int buildEscapeDistanceMap( int cur, int from, int lookAhead, boolean[] passable ) {
 		
 		System.arraycopy(maxVal, 0, distance, 0, maxVal.length);
 		
@@ -311,7 +329,7 @@ public class PathFinder {
 			}
 			
 			if (step == cur) {
-				destDist = (int)(dist * factor) + 1;
+				destDist = dist + lookAhead;
 			}
 			
 			int nextDistance = dist + 1;

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,8 @@ public class ChangeButton extends Component {
 	protected void layout() {
 		super.layout();
 		
-		icon.x = x + (width - icon.width) / 2f;
-		icon.y = y + (height - icon.height) / 2f;
+		icon.x = x + (width - icon.width()) / 2f;
+		icon.y = y + (height - icon.height()) / 2f;
 		PixelScene.align(icon);
 	}
 }

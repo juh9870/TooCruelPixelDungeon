@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,20 +112,15 @@ public abstract class ExoticScroll extends Scroll {
 			rune = handler.label(exoToReg.get(this.getClass()));
 		}
 		if(Challenges.AMNESIA.hell()){
-			image = ItemSpriteSheet.SCROLL_UNKNOWN + 16;
+			image = ItemSpriteSheet.EXOTIC_UNKNOWN;
 			rune = "unknown";
 		}
 	}
 	
 	@Override
-	public void empoweredRead() {
-	
-	}
-	
-	@Override
 	//20 gold more than its none-exotic equivalent
-	public int price() {
-		return (Reflection.newInstance(exoToReg.get(getClass())).price() + 20) * quantity;
+	public int value() {
+		return (Reflection.newInstance(exoToReg.get(getClass())).value() + 20) * quantity;
 	}
 	
 	public static class ScrollToExotic extends Recipe {

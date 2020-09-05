@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,10 @@ public class Bag extends Item implements Iterable<Item> {
 	public Char owner;
 	
 	public ArrayList<Item> items = new ArrayList<>();
-	
-	public int size = 1;
+
+	public int capacity(){
+		return 20; // default container size
+	}
 	
 	@Override
 	public void execute( Hero hero, String action ) {
@@ -67,18 +69,7 @@ public class Bag extends Item implements Iterable<Item> {
 	@Override
 	public boolean collect( Bag container ) {
 
-		for (Item item : container.items.toArray( new Item[0] )) {
-			if (grab( item )) {
-				int slot = Dungeon.quickslot.getSlot(item);
-				item.detachAll(container);
-				if (!item.collect(this)) {
-					item.collect(container);
-				}
-				if (slot != -1) {
-					Dungeon.quickslot.setSlot(slot, item);
-				}
-			}
-		}
+		grabItems(container);
 
 		if (super.collect( container )) {
 			
@@ -98,6 +89,27 @@ public class Bag extends Item implements Iterable<Item> {
 		for (Item item : items)
 			Dungeon.quickslot.clearItem(item);
 		updateQuickslot();
+	}
+
+	public void grabItems(){
+		if (owner != null && owner instanceof Hero && this != ((Hero) owner).belongings.backpack) {
+			grabItems(((Hero) owner).belongings.backpack);
+		}
+	}
+
+	public void grabItems( Bag container ){
+		for (Item item : container.items.toArray( new Item[0] )) {
+			if (canHold( item )) {
+				int slot = Dungeon.quickslot.getSlot(item);
+				item.detachAll(container);
+				if (!item.collect(this)) {
+					item.collect(container);
+				}
+				if (slot != -1) {
+					Dungeon.quickslot.setSlot(slot, item);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -146,8 +158,17 @@ public class Bag extends Item implements Iterable<Item> {
 		}
 		return false;
 	}
-	
-	public boolean grab( Item item ) {
+
+	public boolean canHold( Item item ){
+		if (items.contains(item) || item instanceof Bag || items.size() < capacity()){
+			return true;
+		} else if (item.stackable) {
+			for (Item i : items) {
+				if (item.isSimilar( i )) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -240,7 +239,7 @@ public class AlchemyScene extends PixelScene {
 		
 		ExitButton btnExit = new ExitButton(){
 			@Override
-			protected void onClick() {
+			public void onClick() {
 				Game.switchScene(GameScene.class);
 			}
 		};
@@ -258,7 +257,7 @@ public class AlchemyScene extends PixelScene {
 					{
 						WndJournal.AlchemyTab t = new WndJournal.AlchemyTab();
 						int w, h;
-						if (SPDSettings.landscape()) {
+						if (landscape()) {
 							w = WndJournal.WIDTH_L; h = WndJournal.HEIGHT_L;
 						} else {
 							w = WndJournal.WIDTH_P; h = WndJournal.HEIGHT_P;
@@ -397,7 +396,7 @@ public class AlchemyScene extends PixelScene {
 		if (result != null){
 			bubbleEmitter.start(Speck.factory( Speck.BUBBLE ), 0.01f, 100 );
 			smokeEmitter.burst(Speck.factory( Speck.WOOL ), 10 );
-			Sample.INSTANCE.play( Assets.SND_PUFF );
+			Sample.INSTANCE.play( Assets.Sounds.PUFF );
 			
 			output.item(result);
 			if (!(result instanceof AlchemistsToolkit)) {
@@ -508,7 +507,7 @@ public class AlchemyScene extends PixelScene {
 				@Override
 				protected void onPointerDown() {
 					bg.brightness( 1.2f );
-					Sample.INSTANCE.play( Assets.SND_CLICK );
+					Sample.INSTANCE.play( Assets.Sounds.CLICK );
 				}
 				@Override
 				protected void onPointerUp() {

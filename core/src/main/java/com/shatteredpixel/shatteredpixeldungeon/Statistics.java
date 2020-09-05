@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ public class Statistics {
 	public static int upgradesUsed;
 	public static int sneakAttacks;
 	public static int thrownAssists;
+
+	public static int spawnersAlive;
 	
 	public static float duration;
 	
@@ -59,6 +61,8 @@ public class Statistics {
 		upgradesUsed    = 0;
 		sneakAttacks    = 0;
 		thrownAssists   = 0;
+
+		spawnersAlive   = 0;
 		
 		duration	= 0;
 		
@@ -80,6 +84,8 @@ public class Statistics {
 	private static final String UPGRADES	= "upgradesUsed";
 	private static final String SNEAKS		= "sneakAttacks";
 	private static final String THROWN		= "thrownAssists";
+
+	private static final String SPAWNERS	= "spawnersAlive";
 	
 	private static final String DURATION	= "duration";
 	
@@ -98,6 +104,8 @@ public class Statistics {
 		bundle.put( UPGRADES,   upgradesUsed );
 		bundle.put( SNEAKS,		sneakAttacks );
 		bundle.put( THROWN,		thrownAssists );
+
+		bundle.put( SPAWNERS,	spawnersAlive );
 		
 		bundle.put( DURATION,	duration );
 		
@@ -117,6 +125,8 @@ public class Statistics {
 		upgradesUsed    = bundle.getInt( UPGRADES );
 		sneakAttacks    = bundle.getInt( SNEAKS );
 		thrownAssists   = bundle.getInt( THROWN );
+
+		spawnersAlive   = bundle.getInt( SPAWNERS );
 		
 		duration		= bundle.getFloat( DURATION );
 

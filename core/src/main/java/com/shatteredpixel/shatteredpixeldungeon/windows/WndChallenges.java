@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,53 +39,58 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import java.util.ArrayList;
 
 public class WndChallenges extends Window {
-
-	private static final int WIDTH		= 130;
-	private static final int HEIGHT		= 150;
-	private static final int TTL_HEIGHT    = 18;
-	private static final int BTN_HEIGHT    = 18;
-	private static final int GAP        = 1;
-
+	
+	private static final int WIDTH = 130;
+	private static final int HEIGHT = 150;
+	private static final int TTL_HEIGHT = 18;
+	private static final int BTN_HEIGHT = 18;
+	private static final int GAP = 1;
+	
 	private boolean editable;
 	private ArrayList<ChallengeButton> boxes;
 	private ArrayList<IconButton> infos;
-
-	public WndChallenges(int checked, int hell, final boolean editable ) {
-
+	
+	public WndChallenges(int checked, int hell, int hell2, final boolean editable) {
+		this(checked, new int[]{hell, hell2}, editable);
+	}
+	
+	public WndChallenges(int checked, int[] hell, final boolean editable) {
 		super();
-
+		
 		this.editable = editable;
-
-		RenderedTextBlock title = PixelScene.renderTextBlock( Messages.get(this, "title"), 12 );
-		title.hardlight( TITLE_COLOR );
+		
+		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12);
+		title.hardlight(TITLE_COLOR);
 		title.setPos(
 				(WIDTH - title.width()) / 2,
 				(TTL_HEIGHT - title.height()) / 2
 		);
 		PixelScene.align(title);
-		add( title );
-
-		resize(WIDTH,HEIGHT);
-
+		add(title);
+		
+		resize(WIDTH, HEIGHT);
+		
 		boxes = new ArrayList<>();
 		infos = new ArrayList<>();
-
-		ScrollPane pane = new ScrollPane(new Component()){
+		
+		ScrollPane pane = new ScrollPane(new Component()) {
 			@Override
 			public void onClick(float x, float y) {
 				int size = boxes.size();
 				if (editable) {
-                    for (int i = 0; i < size; i++) {
-						if(boxes.get(i).onClick(x, y))break;
-                    }
-                }
+					for (int i = 0; i < size; i++) {
+						if (boxes.get(i).onClick(x, y)) break;
+					}
+				}
 				size = infos.size();
-				for (int i=0; i < size; i++) {
-					if (infos.get( i ).inside(x,y)) {
+				for (int i = 0; i < size; i++) {
+					if (infos.get(i).inside(x, y)) {
 						
-						String message = Messages.get(Challenges.class, Challenges.values()[i].name+"_desc");
+						String message = Messages.get(Challenges.class, Challenges.values()[i].name + "_desc");
 						if (boxes.get(i).hellChecked())
-							message += "\n\n"+Messages.get(Challenges.class, Challenges.values()[i].name+"_hell_desc");
+							message += "\n\n" + Messages.get(Challenges.class, Challenges.values()[i].name + "_hell_desc");
+						if (boxes.get(i).hell2Checked())
+							message += "\n\n" + Messages.get(Challenges.class, Challenges.values()[i].name + "_hell2_desc");
 						ShatteredPixelDungeon.scene().add(
 								new WndMessage(message)
 						);
@@ -96,40 +101,40 @@ public class WndChallenges extends Window {
 			}
 		};
 		add(pane);
-		pane.setRect(0,TTL_HEIGHT,WIDTH,HEIGHT-TTL_HEIGHT);
+		pane.setRect(0, TTL_HEIGHT, WIDTH, HEIGHT - TTL_HEIGHT);
 		Component content = pane.content();
 		
 		ArrayList<ChallengeButton> disabled = new ArrayList<>();
 		ArrayList<IconButton> disabledInfos = new ArrayList<>();
-
+		
 		float pos = 0;
-		for (int i=0; i < Challenges.values().length; i++) {
+		for (int i = 0; i < Challenges.values().length; i++) {
 			final int id = i;
 			
-			ChallengeButton cb = new ChallengeButton( Challenges.values()[i] );
-			cb.updateState(checked,hell);
+			ChallengeButton cb = new ChallengeButton(Challenges.values()[i]);
+			cb.updateState(checked, hell);
 			cb.active = editable;
-
+			
 			if (i > 0) {
 				pos += GAP;
 			}
-			cb.setRect( 0, pos, WIDTH-16, BTN_HEIGHT );
-
-			content.add( cb );
-			boxes.add( cb );
+			cb.setRect(0, pos, WIDTH - 16, BTN_HEIGHT);
 			
-			IconButton info = new IconButton(Icons.get(Icons.INFO)){
+			content.add(cb);
+			boxes.add(cb);
+			
+			IconButton info = new IconButton(Icons.get(Icons.INFO)) {
 				@Override
 				protected void layout() {
 					super.layout();
-					hotArea.y=-5000;
+					hotArea.y = -5000;
 				}
 			};
 			info.setRect(cb.right(), pos, 16, BTN_HEIGHT);
 			content.add(info);
 			infos.add(info);
 			
-			if(editable || cb.checked()) {
+			if (editable || cb.checked()) {
 				pos = cb.bottom();
 			} else {
 				disabled.add(cb);
@@ -140,82 +145,103 @@ public class WndChallenges extends Window {
 			}
 		}
 		
-		if(!editable){
-			for (int i=0; i<disabled.size(); i++){
+		if (!editable) {
+			for (int i = 0; i < disabled.size(); i++) {
 				pos += GAP;
 				
-				disabled.get(i).setPos(0,pos);
+				disabled.get(i).setPos(0, pos);
 				disabledInfos.get(i).setRect(disabled.get(i).right(), pos, 16, BTN_HEIGHT);
 				
 				pos = disabled.get(i).bottom();
 			}
 		}
-		content.setSize(WIDTH,pos);
+		content.setSize(WIDTH, pos);
 
 //		resize( WIDTH, (int)pos );
 	}
-
+	
 	@Override
 	public void onBackPressed() {
-
+		
 		if (editable) {
 			int value = 0;
 			int hell = 0;
-			for (int i=0; i < boxes.size(); i++) {
-				if (boxes.get( i ).checked()) {
+			int hell2 = 0;
+			for (int i = 0; i < boxes.size(); i++) {
+				if (boxes.get(i).checked()) {
 					value |= Challenges.values()[i].id;
 				}
-				if (boxes.get( i ).hellChecked()) {
+				if (boxes.get(i).hellChecked()) {
 					hell |= Challenges.values()[i].id;
 				}
+				if (boxes.get(i).hell2Checked()) {
+					hell2 |= Challenges.values()[i].id;
+				}
 			}
-			SPDSettings.challenges( value );
-			SPDSettings.hellChallenges( hell );
+			SPDSettings.challenges(value);
+			SPDSettings.hellChallenges(0, hell);
+			SPDSettings.hellChallenges(1, hell2);
 		}
-
+		
 		super.onBackPressed();
 	}
 	
 	private static class ChallengeButton extends CheckBox {
 		
 		IconCheckBox hellCheckbox;
+		IconCheckBox hell2Checkbox;
 		Challenges challenge;
 		
-		public ChallengeButton(Challenges challenge){
+		public ChallengeButton(Challenges challenge) {
 			super(Messages.get(Challenges.class, challenge.name));
-			this.challenge=challenge;
-			hellCheckbox.visible=hellCheckbox.active=challenge.hell_enabled;
+			this.challenge = challenge;
+			hellCheckbox.visible = hellCheckbox.active = challenge.hellLevel > 0;
+			hell2Checkbox.visible = hell2Checkbox.active = challenge.hellLevel > 1;
 		}
 		
 		@Override
 		protected void createChildren() {
 			super.createChildren();
-			hellCheckbox = new IconCheckBox();
+			hellCheckbox = new IconCheckBox(Icons.DIAMOND_CHECKED);
 			add(hellCheckbox);
+			hell2Checkbox = new IconCheckBox(Icons.RED_CHECKED);
+			add(hell2Checkbox);
 		}
 		
-		public boolean hellChecked(){
+		public boolean hellChecked() {
 			return hellCheckbox.checked();
 		}
 		
+		public boolean hell2Checked() {
+			return hell2Checkbox.checked();
+		}
+		
 		protected boolean onClick(float x, float y) {
-			if (!inside(x,y))return false;
+			if (!inside(x, y)) return false;
 			
-			Sample.INSTANCE.play( Assets.SND_CLICK );
+			Sample.INSTANCE.play(Assets.Sounds.CLICK);
 			
-			if(checked()&&hellCheckbox.active&&hellCheckbox.inside(x,y)){
-				hellCheck(!hellCheckbox.checked());
-				
+			if (checked() && hellCheckbox.active && hellCheckbox.inside(x, y)) {
+				hellCheckbox.checked(!hellCheckbox.checked());
+				if (!hellCheckbox.checked()) hell2Checkbox.checked(false);
+			} else if (checked() && hell2Checkbox.active && hell2Checkbox.inside(x, y)) {
+				if (!hellChecked()) hellCheckbox.checked(true);
+				else hell2Checkbox.checked(!hell2Checkbox.checked());
 			} else
 				super.onClick();
+			updateText();
 			
 			return true;
 		}
 		
-		private void hellCheck(boolean checked){
-			hellCheckbox.checked(checked);
-			if(hellCheckbox.checked()){
-				text(Messages.get(Challenges.class, challenge.name+"_hell"));
+		private void updateText() {
+			if (hell2Checkbox.checked()) {
+				text(Messages.get(Challenges.class, challenge.name + "_hell2"));
+//				text.hardlight(0xb33636);
+				text.hardlight(0xff0000);
+//				text.invert();
+			} else if (hellCheckbox.checked()) {
+				text(Messages.get(Challenges.class, challenge.name + "_hell"));
 				text.hardlight(0x79e3d2);
 //				text.invert();
 			} else {
@@ -227,43 +253,52 @@ public class WndChallenges extends Window {
 		@Override
 		public void checked(boolean value) {
 			super.checked(value);
-			if(!checked()){
-				hellCheck(false);
+			if (!checked()) {
+				hellCheckbox.checked(false);
+				hell2Checkbox.checked(false);
 			}
+			updateText();
 		}
 		
-		public void updateState(int challenges, int hell){
-			checked((challenge.id & challenges)!=0);
+		public void updateState(int challenges, int[] hell) {
+			checked((challenge.id & challenges) != 0);
 			if (hellCheckbox.active)
-				hellCheck((challenge.id & hell)!=0);
+				hellCheckbox.checked((challenge.id & hell[0]) != 0);
+			if (hell2Checkbox.active)
+				hell2Checkbox.checked((challenge.id & hell[1]) != 0);
+			updateText();
 		}
 		
 		@Override
 		protected void layout() {
 			super.layout();
 			
-			hotArea.width=hotArea.height=0;
+			hotArea.width = hotArea.height = 0;
 			
-			float margin = hellCheckbox.width()/4;
+			float margin = hellCheckbox.width() / 4;
 			
-			hellCheckbox.setRect(icon.x-hellCheckbox.width()-margin,icon.y,icon.width,icon.height);
-			
+			hellCheckbox.setRect(icon.x - hellCheckbox.width() - margin, icon.y, icon.width, icon.height);
+			hell2Checkbox.setRect(hellCheckbox.left() - hell2Checkbox.width() - margin, icon.y, icon.width, icon.height);
 		}
 	}
+	
 	private static class IconCheckBox extends IconButton {
 		private boolean checked = false;
-		public IconCheckBox(){
+		private Icons checkedIcon;
+		
+		public IconCheckBox(Icons icon) {
 			super(Icons.UNCHECKED.get());
+			this.checkedIcon = icon;
 		}
 		
-		public boolean checked(){
+		public boolean checked() {
 			return checked;
 		}
 		
-		public void checked(boolean checked){
-			this.checked=checked;
-			if (checked){
-				icon(Icons.RED_CHECKED.get());
+		public void checked(boolean checked) {
+			this.checked = checked;
+			if (checked) {
+				icon(checkedIcon.get());
 			} else {
 				icon(Icons.UNCHECKED.get());
 			}
@@ -273,7 +308,7 @@ public class WndChallenges extends Window {
 		protected void layout() {
 			super.layout();
 			
-			hotArea.width=hotArea.height=0;
+			hotArea.width = hotArea.height = 0;
 		}
 		
 		@Override

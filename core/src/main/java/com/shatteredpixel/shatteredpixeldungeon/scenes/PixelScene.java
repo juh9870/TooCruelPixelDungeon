@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ public class PixelScene extends Scene {
 		GameScene.scene = null;
 
 		float minWidth, minHeight;
-		if (SPDSettings.landscape()) {
+		if (landscape()) {
 			minWidth = MIN_WIDTH_L;
 			minHeight = MIN_HEIGHT_L;
 		} else {
@@ -109,7 +109,7 @@ public class PixelScene extends Scene {
 
 			// 3x5 (6)
 			pixelFont = Font.colorMarked(
-				BitmapCache.get( Assets.PIXELFONT), 0x00000000, BitmapText.Font.LATIN_FULL );
+				BitmapCache.get( Assets.Fonts.PIXELFONT), 0x00000000, BitmapText.Font.LATIN_FULL );
 			pixelFont.baseLine = 6;
 			pixelFont.tracking = -1;
 			
@@ -138,7 +138,9 @@ public class PixelScene extends Scene {
 	private static ArrayList<Class<?extends Window>> savedWindows = new ArrayList<>();
 	private static Class<?extends PixelScene> savedClass = null;
 	
-	public void saveWindows(){
+	public synchronized void saveWindows(){
+		if (members == null) return;
+
 		savedWindows.clear();
 		savedClass = getClass();
 		for (Gizmo g : members.toArray(new Gizmo[0])){
@@ -148,7 +150,7 @@ public class PixelScene extends Scene {
 		}
 	}
 	
-	public void restoreWindows(){
+	public synchronized void restoreWindows(){
 		if (getClass().equals(savedClass)){
 			for (Class<?extends Window> w : savedWindows){
 				try{

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ public enum HeroClass {
 				initHuntress( hero );
 				break;
 		}
-		
+
 	}
 
 	private static void initCommon( Hero hero ) {
@@ -114,6 +114,8 @@ public enum HeroClass {
 			new PotionOfMindVision().quantity(10).identify().collect();
 			new PotionOfInvisibility().quantity(10).identify().collect();
 		}
+
+		new ScrollOfIdentify().identify();
 
 	}
 
@@ -140,17 +142,17 @@ public enum HeroClass {
 		if (hero.belongings.armor != null){
 			hero.belongings.armor.affixSeal(new BrokenSeal());
 		}
-		
+
 		new PotionBandolier().collect();
 		Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
-		
+
 		new PotionOfHealing().identify();
 		new ScrollOfRage().identify();
 	}
 
 	private static void initMage( Hero hero ) {
 		MagesStaff staff;
-		
+
 		staff = new MagesStaff(new WandOfMagicMissile());
 
 		(hero.belongings.weapon = staff).identify();
@@ -160,7 +162,7 @@ public enum HeroClass {
 
 		new ScrollHolder().collect();
 		Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
-		
+
 		new ScrollOfUpgrade().identify();
 		new PotionOfLiquidFlame().identify();
 	}
@@ -169,8 +171,8 @@ public enum HeroClass {
 		(hero.belongings.weapon = new Dagger()).identify();
 
 		CloakOfShadows cloak = new CloakOfShadows();
-		(hero.belongings.misc1 = cloak).identify();
-		hero.belongings.misc1.activate( hero );
+		(hero.belongings.artifact = cloak).identify();
+		hero.belongings.artifact.activate( hero );
 
 		ThrowingKnife knives = new ThrowingKnife();
 		knives.quantity(3).collect();
@@ -180,7 +182,7 @@ public enum HeroClass {
 
 		new VelvetPouch().collect();
 		Dungeon.LimitedDrops.VELVET_POUCH.drop();
-		
+
 		new ScrollOfMagicMapping().identify();
 		new PotionOfInvisibility().identify();
 	}
@@ -195,29 +197,42 @@ public enum HeroClass {
 
 		new VelvetPouch().collect();
 		Dungeon.LimitedDrops.VELVET_POUCH.drop();
-		
+
 		new PotionOfMindVision().identify();
 		new ScrollOfLullaby().identify();
 	}
-	
+
 	public String title() {
 		return Messages.get(HeroClass.class, title);
 	}
-	
+
 	public HeroSubClass[] subClasses() {
 		return subClasses;
 	}
-	
+
 	public String spritesheet() {
 		switch (this) {
 			case WARRIOR: default:
-				return Assets.WARRIOR;
+				return Assets.Sprites.WARRIOR;
 			case MAGE:
-				return Assets.MAGE;
+				return Assets.Sprites.MAGE;
 			case ROGUE:
-				return Assets.ROGUE;
+				return Assets.Sprites.ROGUE;
 			case HUNTRESS:
-				return Assets.HUNTRESS;
+				return Assets.Sprites.HUNTRESS;
+		}
+	}
+
+	public String splashArt(){
+		switch (this) {
+			case WARRIOR: default:
+				return Assets.Splashes.WARRIOR;
+			case MAGE:
+				return Assets.Splashes.MAGE;
+			case ROGUE:
+				return Assets.Splashes.ROGUE;
+			case HUNTRESS:
+				return Assets.Splashes.HUNTRESS;
 		}
 	}
 	

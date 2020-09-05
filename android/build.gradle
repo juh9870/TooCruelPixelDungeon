@@ -1,28 +1,13 @@
-/*
- * Pixel Dungeon
- * Copyright (C) 2012-2015 Oleg Dolya
- *
- * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- */
-
 apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion appAndroidCompileSDK
+    compileOptions {
+        targetCompatibility = 1.8
+    }
+    compileOptions.sourceCompatibility = compileOptions.targetCompatibility = appJavaCompatibility
+
+    sourceSets.main.assets.srcDirs = [new File(project(':core').projectDir, "/src/main/assets")]
 
     defaultConfig {
         manifestPlaceholders = [appName:appName]
@@ -43,6 +28,10 @@ android {
         debug {
             applicationIdSuffix ".indev"
             versionNameSuffix '-INDEV'
+            dependencies {
+                debugImplementation project(':services:updates:debugUpdates')
+                debugImplementation project(':services:news:debugNews')
+            }
         }
         release {
 
@@ -53,6 +42,11 @@ android {
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            dependencies {
+                releaseImplementation project(':services:updates:githubUpdates')
+                releaseImplementation project(':services:news:shatteredNews')
+            }
         }
     }
 
@@ -94,7 +88,7 @@ task copyAndroidNatives() {
     file("libs/x86_64/").mkdirs()
     file("libs/x86/").mkdirs()
 
-    configurations.natives.files.each { jar ->
+    configurations.natives.copy().files.each { jar ->
         def outputDir = null
         if(jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
         if(jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")

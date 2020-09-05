@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +132,12 @@ public class Rect {
 	
 	public boolean inside( Point p ) {
 		return p.x >= left && p.x < right && p.y >= top && p.y < bottom;
+	}
+
+	public Point center() {
+		return new Point(
+				(left + right) / 2 + (((right - left) % 2) == 0 ? Random.Int( 2 ) : 0),
+				(top + bottom) / 2 + (((bottom - top) % 2) == 0 ? Random.Int( 2 ) : 0) );
 	}
 	
 	public Rect shrink( int d ) {

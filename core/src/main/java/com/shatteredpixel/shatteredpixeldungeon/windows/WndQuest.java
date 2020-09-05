@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 public class WndQuest extends WndTitledMessage {
 
 	public WndQuest( NPC questgiver, String text ) {
-		super( questgiver.sprite(), Messages.titleCase( questgiver.name ), text );
+		super( questgiver.sprite(), Messages.titleCase( questgiver.name() ), text );
 	}
 }

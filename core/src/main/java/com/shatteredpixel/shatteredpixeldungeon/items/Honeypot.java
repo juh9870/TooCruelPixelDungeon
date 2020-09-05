@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ public class Honeypot extends Item {
 	public Item shatter( Char owner, int pos ) {
 		
 		if (Dungeon.level.heroFOV[pos]) {
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
+			Sample.INSTANCE.play( Assets.Sounds.SHATTER );
 			Splash.at( pos, 0xffd500, 5 );
 		}
 		
@@ -126,7 +126,7 @@ public class Honeypot extends Item {
 			bee.sprite.alpha( 0 );
 			bee.sprite.parent.add( new AlphaTweener( bee.sprite, 1, 0.15f ) );
 			
-			Sample.INSTANCE.play( Assets.SND_BEE );
+			Sample.INSTANCE.play( Assets.Sounds.BEE );
 			return new ShatteredPot();
 		} else {
 			return this;
@@ -144,7 +144,7 @@ public class Honeypot extends Item {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		return 30 * quantity;
 	}
 
@@ -187,6 +187,12 @@ public class Honeypot extends Item {
 		public void dropPot( Char holder, int dropPos ){
 			for (Bee bee : findBees(holder)){
 				updateBee(bee, dropPos, null);
+			}
+		}
+
+		public void destroyPot( int potPos ){
+			for (Bee bee : findBees(potPos)){
+				updateBee(bee, -1, null);
 			}
 		}
 
@@ -236,7 +242,7 @@ public class Honeypot extends Item {
 		}
 		
 		@Override
-		public int price() {
+		public int value() {
 			return 5 * quantity;
 		}
 	}

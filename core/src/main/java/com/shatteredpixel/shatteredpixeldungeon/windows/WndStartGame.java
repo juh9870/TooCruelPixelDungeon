@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -47,7 +48,6 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Button;
 import com.watabou.noosa.ui.Component;
-import com.watabou.utils.DeviceCompat;
 
 public class WndStartGame extends Window {
 	
@@ -117,21 +117,16 @@ public class WndStartGame extends Window {
 		start.setRect(0, HEIGHT - 20, WIDTH, 20);
 		add(start);
 		IconButton challengeButton = new IconButton(
-				Icons.get( SPDSettings.hellChallenges() > 0 ? Icons.CHALLENGE_NIGHTMARE_GOLD : (SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF))){
+				Icons.get(Challenges.icon())){
 			@Override
 			public void onClick() {
 				ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), SPDSettings.hellChallenges(), true) {
 					public void onBackPressed() {
 						super.onBackPressed();
-						icon( Icons.get( SPDSettings.hellChallenges() > 0 ?
-								Icons.CHALLENGE_NIGHTMARE_GOLD :
-								(SPDSettings.challenges() > 0 ?
-										Icons.CHALLENGE_ON :
-										Icons.CHALLENGE_OFF)) );
+						icon( Icons.get( Challenges.icon() ) );
 					}
 				} );
 			}
-
 			@Override
 			public void update() {
 				if( !visible && GamesInProgress.selectedClass != null){
@@ -161,17 +156,8 @@ public class WndStartGame extends Window {
 			super();
 			
 			this.cl = cl;
-			
-			if (cl == HeroClass.WARRIOR){
-				hero = new Image(Assets.WARRIOR, 0, 90, 12, 15);
-			} else if (cl == HeroClass.MAGE){
-				hero = new Image(Assets.MAGE, 0, 90, 12, 15);
-			} else if (cl == HeroClass.ROGUE){
-				hero = new Image(Assets.ROGUE, 0, 90, 12, 15);
-			} else if (cl == HeroClass.HUNTRESS){
-				hero = new Image(Assets.HUNTRESS, 0, 90, 12, 15);
-			}
-			add(hero);
+
+			add(hero = new Image(cl.spritesheet(), 0, 90, 12, 15));
 			
 		}
 		
@@ -204,8 +190,7 @@ public class WndStartGame extends Window {
 			super.onClick();
 			
 			if( !cl.isUnlocked() ){
-				ShatteredPixelDungeon.scene().add(
-						new WndMessage(cl.unlockMsg()));
+				ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
 			} else {
 				GamesInProgress.selectedClass = cl;
 			}
@@ -231,7 +216,7 @@ public class WndStartGame extends Window {
 		protected void createChildren() {
 			super.createChildren();
 			
-			avatar = new Image(Assets.AVATARS);
+			avatar = new Image(Assets.Sprites.AVATARS);
 			avatar.scale.set(2f);
 			add(avatar);
 			
@@ -239,7 +224,7 @@ public class WndStartGame extends Window {
 				@Override
 				public void onClick() {
 					if (cl == null) return;
-					ShatteredPixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_item")));
 				}
 			};
 			heroItem.setSize(BTN_SIZE, BTN_SIZE);
@@ -249,7 +234,7 @@ public class WndStartGame extends Window {
 				@Override
 				public void onClick() {
 					if (cl == null) return;
-					ShatteredPixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_loadout")));
 				}
 			};
 			heroLoadout.setSize(BTN_SIZE, BTN_SIZE);
@@ -259,7 +244,7 @@ public class WndStartGame extends Window {
 				@Override
 				public void onClick() {
 					if (cl == null) return;
-					ShatteredPixelDungeon.scene().add(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(cl, cl.name() + "_desc_misc")));
 				}
 			};
 			heroMisc.setSize(BTN_SIZE, BTN_SIZE);
@@ -273,7 +258,7 @@ public class WndStartGame extends Window {
 					for (HeroSubClass sub : cl.subClasses()){
 						msg += "\n\n" + sub.desc();
 					}
-					ShatteredPixelDungeon.scene().add(new WndMessage(msg));
+					ShatteredPixelDungeon.scene().addToFront(new WndMessage(msg));
 				}
 			};
 			heroSubclass.setSize(BTN_SIZE, BTN_SIZE);
@@ -334,7 +319,7 @@ public class WndStartGame extends Window {
 						case HUNTRESS:
 							heroItem.icon(new ItemSprite(ItemSpriteSheet.SPIRIT_BOW, null));
 							heroLoadout.icon(new ItemSprite(ItemSpriteSheet.GLOVES, null));
-							heroMisc.icon(new Image(Assets.TILES_SEWERS, 112, 96, 16, 16 ));
+							heroMisc.icon(new Image(Assets.Environment.TILES_SEWERS, 112, 96, 16, 16 ));
 							break;
 					}
 					

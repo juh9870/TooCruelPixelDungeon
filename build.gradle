@@ -4,7 +4,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.1'
+        //FIXME the version of R8 coming with gradle plugin 4.0.0 causes serious problems
+        //noinspection GradleDependency
+        classpath 'com.android.tools.build:gradle:3.6.4'
     }
 }
 
@@ -14,12 +16,14 @@ allprojects {
         appName = 'Too Cruel Pixel Dungeon'
         appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
 
-        appVersionCode = 382
-        appVersionName = '0.2.0'
+        appVersionCode = 463
+        appVersionName = '0.3.0'
 
-        appAndroidCompileSDK = 29
+        appJavaCompatibility = JavaVersion.VERSION_1_8
+
+        appAndroidCompileSDK = 30
         appAndroidMinSDK = 9
-        appAndroidTargetSDK = 29
+        appAndroidTargetSDK = 30
 
         gdxVersion = '1.9.10'
     }

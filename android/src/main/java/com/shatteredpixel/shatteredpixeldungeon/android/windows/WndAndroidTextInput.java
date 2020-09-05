@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,14 +71,14 @@ public class WndAndroidTextInput extends Window {
 		super();
 
 		//need to offset to give space for the soft keyboard
-		if (SPDSettings.landscape()) {
+		if (PixelScene.landscape()) {
 			offset( multiLine ? -45 : -45 );
 		} else {
 			offset( multiLine ? -60 : -45 );
 		}
 
 		final int width;
-		if (SPDSettings.landscape() && multiLine){
+		if (PixelScene.landscape() && multiLine){
 			width = W_LAND_MULTI; //more editing space for landscape users
 		} else {
 			width = WIDTH;
@@ -120,7 +120,7 @@ public class WndAndroidTextInput extends Window {
 				textInput = new EditText((AndroidApplication)Gdx.app);
 				textInput.setText( initialValue );
 				if (!SPDSettings.systemFont()){
-					textInput.setTypeface( Typeface.createFromAsset(AndroidGame.instance.getAssets(), "pixel_font.ttf") );
+					textInput.setTypeface( Typeface.createFromAsset(AndroidGame.instance.getAssets(), "fonts/pixel_font.ttf") );
 				}
 				textInput.setFilters(new InputFilter[]{new InputFilter.LengthFilter(maxLength)});
 				textInput.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES );

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,14 @@ public class ScrollArea extends PointerArea {
 	private Signal.Listener<ScrollEvent> scrollListener = new Signal.Listener<ScrollEvent>() {
 		@Override
 		public boolean onSignal(ScrollEvent event) {
-			if (event != null && target.overlapsScreenPoint( (int)event.pos.x, (int)event.pos.y )){
+
+			boolean hit = event != null && target.overlapsScreenPoint( (int)event.pos.x, (int)event.pos.y );
+
+			if (!isActive()) {
+				return (hit && blockWhenInactive);
+			}
+
+			if (hit){
 				onScroll( event );
 				return true;
 			}

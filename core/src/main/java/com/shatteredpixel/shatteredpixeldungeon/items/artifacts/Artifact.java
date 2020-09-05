@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ public class Artifact extends KindofMisc {
 	@Override
 	public boolean doEquip( final Hero hero ) {
 
-		if ((hero.belongings.misc1 != null && hero.belongings.misc1.getClass() == this.getClass())
-				|| (hero.belongings.misc2 != null && hero.belongings.misc2.getClass() == this.getClass())){
+		if ((hero.belongings.artifact != null && hero.belongings.artifact.getClass() == this.getClass())
+				|| (hero.belongings.misc != null && hero.belongings.misc.getClass() == this.getClass())){
 
 			GLog.w( Messages.get(Artifact.class, "cannot_wear_two") );
 			return false;
@@ -116,6 +116,17 @@ public class Artifact extends KindofMisc {
 	@Override
 	public int visiblyUpgraded() {
 		return levelKnown ? Math.round((level()*10)/(float)levelCap): 0;
+	}
+
+	@Override
+	public int buffedVisiblyUpgraded() {
+		return visiblyUpgraded();
+	}
+
+	@Override
+	public int buffedLvl() {
+		//level isn't affected by buffs/debuffs
+		return level();
 	}
 
 	//transfers upgrades from another artifact, transfer level will equal the displayed level
@@ -178,7 +189,7 @@ public class Artifact extends KindofMisc {
 	}
 
 	@Override
-	public int price() {
+	public int value() {
 		int price = 100;
 		if (level() > 0)
 			price += 20*visiblyUpgraded();

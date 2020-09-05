@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
@@ -48,9 +49,6 @@ public class Blackjackkeeper extends NPC {
 
 	@Override
 	protected boolean act() {
-
-		throwItem();
-
 		if(Dungeon.level instanceof RegularLevel) {
 			Room r = ((RegularLevel) Dungeon.level).room(pos);
 			if (r instanceof BlackjackRoom && ((BlackjackRoom) r).sealed) {
@@ -86,10 +84,12 @@ public class Blackjackkeeper extends NPC {
 	public boolean reset() {
 		return true;
 	}
-
-
+	
 	@Override
-	public boolean interact() {
+	public boolean interact(Char c) {
+		if (c != Dungeon.hero) {
+			return true;
+		}
 		if(Dungeon.level instanceof RegularLevel){
 			Room r = ((RegularLevel) Dungeon.level).room(pos);
 			if (r instanceof BlackjackRoom){

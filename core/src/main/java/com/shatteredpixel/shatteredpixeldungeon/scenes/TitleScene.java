@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,24 @@ import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Fireball;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdateData;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ChangesButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
-import com.shatteredpixel.shatteredpixeldungeon.ui.LanguageButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.PrefsButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -43,7 +53,10 @@ import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
+import com.watabou.utils.ColorMath;
 import com.watabou.utils.DeviceCompat;
+
+import java.util.Date;
 
 public class TitleScene extends PixelScene {
 
@@ -52,7 +65,7 @@ public class TitleScene extends PixelScene {
 
 		super.create();
 
-		Music.INSTANCE.play( Assets.THEME, true );
+		Music.INSTANCE.play( Assets.Music.THEME, true );
 
 		uiCamera.visible = false;
 
@@ -66,14 +79,10 @@ public class TitleScene extends PixelScene {
 		Image title = BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON );
 		add( title );
 
-		float topRegion = Math.max(title.height, h*0.45f);
+		float topRegion = Math.max(title.height - 6, h*0.45f);
 
 		title.x = (w - title.width()) / 2f;
-		if (SPDSettings.landscape()) {
-			title.y = (topRegion - title.height()) / 2f;
-		} else {
-			title.y = 20 + (topRegion - title.height() - 20) / 2f;
-		}
+		title.y = 2 + (topRegion - title.height()) / 2f;
 
 		align(title);
 
@@ -116,7 +125,9 @@ public class TitleScene extends PixelScene {
 			@Override
 			protected void onClick() {
 				if (GamesInProgress.checkAll().size() == 0){
-					TitleScene.this.add( new WndStartGame(1) );
+					GamesInProgress.selectedClass = null;
+					GamesInProgress.curSlot = 1;
+					ShatteredPixelDungeon.switchScene(HeroSelectScene.class);
 				} else {
 					ShatteredPixelDungeon.switchNoFade( StartScene.class );
 				}
@@ -126,7 +137,9 @@ public class TitleScene extends PixelScene {
 			protected boolean onLongClick() {
 				//making it easier to start runs quickly while debugging
 				if (DeviceCompat.isDebug()) {
-					TitleScene.this.add( new WndStartGame(1) );
+					GamesInProgress.selectedClass = null;
+					GamesInProgress.curSlot = 1;
+					ShatteredPixelDungeon.switchScene(HeroSelectScene.class);
 					return true;
 				}
 				return super.onLongClick();
@@ -142,7 +155,7 @@ public class TitleScene extends PixelScene {
 		};
 		add( btnRankings );
 
-		if (SPDSettings.landscape()) {
+		if (w>h) {
 			btnRankings     .setPos( w / 2 - btnRankings.width(), topRegion );
 			btnBadges       .setPos( w / 2, topRegion );
 			btnPlay         .setPos( btnRankings.left() - btnPlay.width(), topRegion );
@@ -174,9 +187,9 @@ public class TitleScene extends PixelScene {
 
 		pos += btnPrefs.width();
 
-		LanguageButton btnLang = new LanguageButton();
+		/*LanguageButton btnLang = new LanguageButton();
 		btnLang.setRect(pos, 0, 16, 20);
-		add( btnLang );
+		add( btnLang );*/
 
 		ExitButton btnExit = new ExitButton();
 		btnExit.setPos( w - btnExit.width(), 0 );
@@ -207,7 +220,7 @@ public class TitleScene extends PixelScene {
 		protected void createChildren() {
 			super.createChildren();
 
-			image = new Image( Assets.DASHBOARD );
+			image = new Image( Assets.Interfaces.DASHBOARD );
 			add( image );
 
 			label = renderTextBlock( 9 );
@@ -231,7 +244,7 @@ public class TitleScene extends PixelScene {
 		@Override
 		protected void onPointerDown() {
 			image.brightness( 1.5f );
-			Sample.INSTANCE.play( Assets.SND_CLICK, 1, 1, 0.8f );
+			Sample.INSTANCE.play( Assets.Sounds.CLICK, 1, 1, 0.8f );
 		}
 
 		@Override

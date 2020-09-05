@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ public class StyledButton extends Button {
 	@Override
 	protected void onPointerDown() {
 		bg.brightness( 1.2f );
-		Sample.INSTANCE.play( Assets.SND_CLICK );
+		Sample.INSTANCE.play( Assets.Sounds.CLICK );
 	}
 	
 	@Override
@@ -103,6 +103,10 @@ public class StyledButton extends Button {
 	public void text( String value ) {
 		text.text( value );
 		layout();
+	}
+
+	public String text(){
+		return text.text();
 	}
 	
 	public void textColor( int value ) {
@@ -122,6 +126,12 @@ public class StyledButton extends Button {
 	
 	public Image icon(){
 		return icon;
+	}
+
+	public void alpha(float value){
+		if (icon != null) icon.alpha(value);
+		if (bg != null)   bg.alpha(value);
+		if (text != null) text.alpha(value);
 	}
 	
 	public float reqWidth() {

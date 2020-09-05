@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -85,7 +86,7 @@ public class SandalsOfNature extends Artifact {
 			if (!isEquipped( hero )) GLog.i( Messages.get(Artifact.class, "need_to_equip") );
 			else if (charge == 0)    GLog.i( Messages.get(this, "no_charge") );
 			else {
-				Buff.prolong(hero, Roots.class, 5);
+				Buff.prolong(hero, Roots.class, Roots.DURATION);
 				Buff.affect(hero, Earthroot.Armor.class).level(charge);
 				CellEmitter.bottom(hero.pos).start(EarthParticle.FACTORY, 0.05f, 8);
 				Camera.main.shake(1, 0.4f);
@@ -103,6 +104,12 @@ public class SandalsOfNature extends Artifact {
 	@Override
 	public void charge(Hero target) {
 		target.buff(Naturalism.class).charge();
+	}
+
+	@Override
+	public String name() {
+		if (level() == 0)   return super.name();
+		else                return Messages.get(this, "name_" + level());
 	}
 
 	@Override
@@ -134,8 +141,15 @@ public class SandalsOfNature extends Artifact {
 		else if (level() == 0)  image = ItemSpriteSheet.ARTIFACT_SHOES;
 		else if (level() == 1)  image = ItemSpriteSheet.ARTIFACT_BOOTS;
 		else if (level() >= 2)  image = ItemSpriteSheet.ARTIFACT_GREAVES;
-		name = Messages.get(this, "name_" + (level()+1));
 		return super.upgrade();
+	}
+
+	public static boolean canUseSeed(Item item){
+		if (item instanceof Plant.Seed){
+			return !(curItem instanceof SandalsOfNature) ||
+					!((SandalsOfNature) curItem).seeds.contains(item.getClass());
+		}
+		return false;
 	}
 
 
@@ -150,7 +164,6 @@ public class SandalsOfNature extends Artifact {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
-		if (level() > 0) name = Messages.get(this, "name_" + level());
 		if (bundle.contains(SEEDS))
 			Collections.addAll(seeds , bundle.getClassArray(SEEDS));
 		if (level() == 1)  image = ItemSpriteSheet.ARTIFACT_SHOES;
@@ -162,7 +175,13 @@ public class SandalsOfNature extends Artifact {
 		public void charge() {
 			if (level() > 0 && charge < target.HT){
 				//gain 1+(1*level)% of the difference between current charge and max HP.
-				charge+= (Math.round( (target.HT-charge) * (.01+ level()*0.01) ));
+				float chargeGain = (target.HT-charge) * (.01f+ level()*0.01f);
+				chargeGain *= RingOfEnergy.artifactChargeMultiplier(target);
+				partialCharge += Math.max(0, chargeGain);
+				while (partialCharge > 1){
+					charge++;
+					partialCharge--;
+				}
 				updateQuickslot();
 			}
 		}
@@ -179,7 +198,7 @@ public class SandalsOfNature extends Artifact {
 
 					Hero hero = Dungeon.hero;
 					hero.sprite.operate( hero.pos );
-					Sample.INSTANCE.play( Assets.SND_PLANT );
+					Sample.INSTANCE.play( Assets.Sounds.PLANT );
 					hero.busy();
 					hero.spend( 2f );
 					if (seeds.size() >= 3+(level()*3)){

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ public class Charm extends FlavourBuff {
 
 	private static final String OBJECT    = "object";
 
+	public static final float DURATION = 10f;
+
 	{
 		type = buffType.NEGATIVE;
 		announced = true;
@@ -52,6 +54,11 @@ public class Charm extends FlavourBuff {
 	public int icon() {
 		return BuffIndicator.HEART;
 	}
+
+	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
+	}
 	
 	@Override
 	public String toString() {
@@ -67,8 +74,14 @@ public class Charm extends FlavourBuff {
 	public String desc() {
 		return Messages.get(this, "desc", dispTurns());
 	}
-	
+
+	public boolean ignoreNextHit = false;
+
 	public void recover() {
+		if (ignoreNextHit){
+			ignoreNextHit = false;
+			return;
+		}
 		spend(-5f);
 		if (cooldown() <= 0){
 			detach();

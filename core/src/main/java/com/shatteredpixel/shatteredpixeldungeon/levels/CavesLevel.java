@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,6 @@ public class CavesLevel extends RegularLevel {
 	{
 		color1 = 0x534f3e;
 		color2 = 0xb9d661;
-
-		viewDistance = Math.min(6, viewDistance);
 	}
 	
 	@Override
@@ -87,34 +85,33 @@ public class CavesLevel extends RegularLevel {
 	
 	@Override
 	public String tilesTex() {
-		return Assets.TILES_CAVES;
+		return Assets.Environment.TILES_CAVES;
 	}
 	
 	@Override
 	public String waterTex() {
-		return Assets.WATER_CAVES;
+		return Assets.Environment.WATER_CAVES;
 	}
 	
 	@Override
 	protected Class<?>[] trapClasses() {
-		return new Class[]{ BurningTrap.class, PoisonDartTrap.class, FrostTrap.class, StormTrap.class, CorrosionTrap.class,
+		return new Class[]{
+				BurningTrap.class, PoisonDartTrap.class, FrostTrap.class, StormTrap.class, CorrosionTrap.class,
 				GrippingTrap.class, ExplosiveTrap.class, RockfallTrap.class,  GuardianTrap.class,
-				ConfusionTrap.class, SummoningTrap.class, WarpingTrap.class,
-				PitfallTrap.class };
+				ConfusionTrap.class, SummoningTrap.class, WarpingTrap.class, PitfallTrap.class };
 	}
 
 	@Override
 	protected float[] trapChances() {
 		if(!Challenges.EXTREME_CAUTION.hell()) {
-			return new float[]{8, 8, 8, 8, 8,
-					4, 4, 4, 4,
-					2, 2, 2,
-					1};
+			return new float[]{
+					4, 4, 4, 4, 4,
+					2, 0, 2, 2,
+					1, 1, 1, 1};
 		} else {
 			return new float[]{4, 2, 2, 4, 4,
 					8, 8, 8, 8,
-					4, 8, 4,
-					3};
+					4, 8, 4, 3};
 		}
 	}
 	

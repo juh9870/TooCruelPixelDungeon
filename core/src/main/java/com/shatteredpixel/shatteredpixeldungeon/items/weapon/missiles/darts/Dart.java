@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
@@ -34,6 +35,8 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -41,6 +44,8 @@ public class Dart extends MissileWeapon {
 
 	{
 		image = ItemSpriteSheet.DART;
+		hitSound = Assets.Sounds.HIT_ARROW;
+		hitSoundPitch = 1.3f;
 		
 		tier = 1;
 		
@@ -59,18 +64,17 @@ public class Dart extends MissileWeapon {
 	
 	@Override
 	public void execute(Hero hero, String action) {
-		if (action.equals(AC_TIP)){
-			GameScene.selectItem(itemSelector, WndBag.Mode.SEED, "select a seed");
-		}
-		
 		super.execute(hero, action);
+		if (action.equals(AC_TIP)){
+			GameScene.selectItem(itemSelector, WndBag.Mode.SEED, Messages.get(this, "prompt"));
+		}
 	}
 	
 	@Override
 	public int min(int lvl) {
 		if (bow != null){
-			return  4 +                 //4 base
-					bow.level() + lvl;  //+1 per level or bow level
+			return  4 +                    //4 base
+					bow.buffedLvl() + lvl; //+1 per level or bow level
 		} else {
 			return  1 +     //1 base, down from 2
 					lvl;    //scaling unchanged
@@ -80,8 +84,8 @@ public class Dart extends MissileWeapon {
 	@Override
 	public int max(int lvl) {
 		if (bow != null){
-			return  12 +                    //12 base
-					3*bow.level() + 2*lvl;  //+3 per bow level, +2 per level (default scaling +2)
+			return  12 +                       //12 base
+					3*bow.buffedLvl() + 2*lvl; //+3 per bow level, +2 per level (default scaling +2)
 		} else {
 			return  2 +     //2 base, down from 5
 					2*lvl;  //scaling unchanged
@@ -122,6 +126,16 @@ public class Dart extends MissileWeapon {
 		updateCrossbow();
 		super.onThrow(cell);
 	}
+
+	@Override
+	public void throwSound() {
+		updateCrossbow();
+		if (bow != null) {
+			Sample.INSTANCE.play(Assets.Sounds.ATK_CROSSBOW, 1, Random.Float(0.87f, 1.15f));
+		} else {
+			super.throwSound();
+		}
+	}
 	
 	@Override
 	public String info() {
@@ -135,8 +149,8 @@ public class Dart extends MissileWeapon {
 	}
 	
 	@Override
-	public int price() {
-		return super.price()/2; //half normal value
+	public int value() {
+		return super.value()/2; //half normal value
 	}
 	
 	private final WndBag.Listener itemSelector = new WndBag.Listener() {

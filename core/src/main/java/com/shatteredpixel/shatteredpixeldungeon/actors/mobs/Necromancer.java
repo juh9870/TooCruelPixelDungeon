@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public class Necromancer extends Mob {
 		spriteClass = NecromancerSprite.class;
 		
 		HP = HT = 35;
-		defenseSkill = 11;
+		defenseSkill = 13;
 		
 		EXP = 7;
 		maxLvl = 14;
@@ -71,7 +71,16 @@ public class Necromancer extends Mob {
 	
 	private NecroSkeleton mySkeleton;
 	private int storedSkeletonID = -1;
-	
+
+	@Override
+	protected boolean act() {
+		if (summoning && state != HUNTING){
+			summoning = false;
+			updateSpriteState();
+		}
+		return super.act();
+	}
+
 	@Override
 	public void updateSpriteState() {
 		super.updateSpriteState();
@@ -80,6 +89,9 @@ public class Necromancer extends Mob {
 			summoningEmitter = CellEmitter.get( summoningPos );
 			summoningEmitter.pour(Speck.factory(Speck.RATTLE), 0.2f);
 			sprite.zap( summoningPos );
+		} else if (!summoning && summoningEmitter != null){
+			summoningEmitter.on = false;
+			summoningEmitter = null;
 		}
 	}
 	
@@ -115,7 +127,7 @@ public class Necromancer extends Mob {
 		}
 		
 		if (summoningEmitter != null){
-			summoningEmitter.killAndErase();
+			summoningEmitter.on = false;
 			summoningEmitter = null;
 		}
 		
@@ -160,16 +172,20 @@ public class Necromancer extends Mob {
 		
 		//heal skeleton first
 		if (mySkeleton.HP < mySkeleton.HT){
-			
-			sprite.parent.add(new Beam.HealthRay(sprite.center(), mySkeleton.sprite.center()));
+
+			if (sprite.visible || mySkeleton.sprite.visible) {
+				sprite.parent.add(new Beam.HealthRay(sprite.center(), mySkeleton.sprite.center()));
+			}
 			
 			mySkeleton.HP = Math.min(mySkeleton.HP + 5, mySkeleton.HT);
 			mySkeleton.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
 			
 			//otherwise give it adrenaline
 		} else if (mySkeleton.buff(Adrenaline.class) == null) {
-			
-			sprite.parent.add(new Beam.HealthRay(sprite.center(), mySkeleton.sprite.center()));
+
+			if (sprite.visible || mySkeleton.sprite.visible) {
+				sprite.parent.add(new Beam.HealthRay(sprite.center(), mySkeleton.sprite.center()));
+			}
 			
 			Buff.affect(mySkeleton, Adrenaline.class, 3f);
 		}
@@ -224,7 +240,7 @@ public class Necromancer extends Mob {
 				mySkeleton.pos = summoningPos;
 				GameScene.add( mySkeleton );
 				Dungeon.level.occupyCell( mySkeleton );
-				Sample.INSTANCE.play(Assets.SND_BONES);
+				Sample.INSTANCE.play(Assets.Sounds.BONES);
 				summoningEmitter.burst( Speck.factory( Speck.RATTLE ), 5 );
 				sprite.idle();
 				
@@ -344,7 +360,12 @@ public class Necromancer extends Mob {
 			//20/25 health to start
 			HP = 20;
 		}
-		
+
+		@Override
+		public float spawningWeight() {
+			return 0;
+		}
+
 		private void teleportSpend(){
 			spend(TICK);
 		}

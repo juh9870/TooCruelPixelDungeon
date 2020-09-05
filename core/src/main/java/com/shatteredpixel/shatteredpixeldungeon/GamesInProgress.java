@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,8 +102,8 @@ public class GamesInProgress {
 				info.slot = slot;
 				Dungeon.preview(info, bundle);
 				
-				//saves from before 0.6.5c are not supported
-				if (info.version < ShatteredPixelDungeon.v0_6_5c) {
+				//saves from before v0.7.3b are not supported
+				if (info.version < ShatteredPixelDungeon.v0_7_3b) {
 					info = null;
 				}
 
@@ -120,7 +120,7 @@ public class GamesInProgress {
 		}
 	}
 
-	public static void set(int slot, int depth, int challenges, int hellChallenges,
+	public static void set(int slot, int depth, int challenges, int[] hellChallenges,
 	                       Hero hero) {
 		Info info = new Info();
 		info.slot = slot;
@@ -141,7 +141,7 @@ public class GamesInProgress {
 		
 		info.goldCollected = Statistics.goldCollected;
 		info.maxDepth = Statistics.deepestFloor;
-		
+
 		slotStates.put( slot, info );
 	}
 	
@@ -159,7 +159,7 @@ public class GamesInProgress {
 		public int depth;
 		public int version;
 		public int challenges;
-		public int hellChallenges;
+		public int[] hellChallenges;
 		
 		public int level;
 		public int str;

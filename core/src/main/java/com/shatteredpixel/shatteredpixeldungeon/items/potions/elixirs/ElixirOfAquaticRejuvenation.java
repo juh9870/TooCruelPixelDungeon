@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
@@ -49,7 +48,7 @@ public class ElixirOfAquaticRejuvenation extends Elixir {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		//prices of ingredients
 		return quantity * (30 + 50);
 	}
@@ -87,9 +86,6 @@ public class ElixirOfAquaticRejuvenation extends Elixir {
 				detach();
 			} else {
 				spend(TICK);
-				if (left <= target.HT/4f){
-					BuffIndicator.refreshHero();
-				}
 			}
 			return true;
 		}
@@ -98,10 +94,16 @@ public class ElixirOfAquaticRejuvenation extends Elixir {
 		public int icon() {
 			return BuffIndicator.HEALING;
 		}
-		
+
 		@Override
 		public void tintIcon(Image icon) {
-			FlavourBuff.greyIcon(icon, target.HT/4f, left);
+			icon.hardlight(0, 0.75f, 0.75f);
+		}
+
+		@Override
+		public float iconFadePercent() {
+			float max = Math.round(target.HT * 1.5f);
+			return Math.max(0, (max - left) / max);
 		}
 		
 		@Override

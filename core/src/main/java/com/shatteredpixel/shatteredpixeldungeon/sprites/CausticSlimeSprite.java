@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public class CausticSlimeSprite extends MobSprite {
 	public CausticSlimeSprite() {
 		super();
 		
-		texture( Assets.SLIME );
+		texture( Assets.Sprites.SLIME );
 		
 		TextureFilm frames = new TextureFilm( texture, 14, 12 );
 		
@@ -41,8 +41,8 @@ public class CausticSlimeSprite extends MobSprite {
 		run = new Animation( 10, true );
 		run.frames( frames, c+0, c+2, c+3, c+3, c+2, c+0 );
 		
-		attack = new Animation( 10, false );
-		attack.frames( frames, c+2, c+3, c+4, c+5, c+2 );
+		attack = new Animation( 15, false );
+		attack.frames( frames, c+2, c+3, c+4, c+6, c+5 );
 		
 		die = new Animation( 10, false );
 		die.frames( frames, c+0, c+5, c+6, c+7 );

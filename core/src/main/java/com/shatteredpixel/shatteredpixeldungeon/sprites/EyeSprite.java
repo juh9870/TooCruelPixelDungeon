@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.TextureFilm;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 
 public class EyeSprite extends MobSprite {
@@ -41,7 +42,7 @@ public class EyeSprite extends MobSprite {
 	public EyeSprite() {
 		super();
 		
-		texture( Assets.EYE );
+		texture( Assets.Sprites.EYE );
 		
 		TextureFilm frames = new TextureFilm( texture, 16, 18 );
 		
@@ -50,11 +51,6 @@ public class EyeSprite extends MobSprite {
 
 		charging = new Animation( 12, true);
 		charging.frames( frames, 3, 4 );
-
-		chargeParticles = centerEmitter();
-		chargeParticles.autoKill = false;
-		chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
-		chargeParticles.on = false;
 		
 		run = new Animation( 12, true );
 		run.frames( frames, 5, 6 );
@@ -72,24 +68,49 @@ public class EyeSprite extends MobSprite {
 	@Override
 	public void link(Char ch) {
 		super.link(ch);
+		
+		chargeParticles = centerEmitter();
+		chargeParticles.autoKill = false;
+		chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
+		chargeParticles.on = false;
+		
 		if (((Eye)ch).beamCharged) play(charging);
 	}
 
 	@Override
 	public void update() {
 		super.update();
-		chargeParticles.pos(center());
-		chargeParticles.visible = visible;
+		if (chargeParticles != null){
+			chargeParticles.pos( center() );
+			chargeParticles.visible = visible;
+		}
+	}
+
+	@Override
+	public void die() {
+		super.die();
+		if (chargeParticles != null){
+			chargeParticles.on = false;
+		}
+	}
+
+	@Override
+	public void kill() {
+		super.kill();
+		if (chargeParticles != null){
+			chargeParticles.killAndErase();
+		}
 	}
 
 	public void charge( int pos ){
 		turnTo(ch.pos, pos);
 		play(charging);
+		if (visible) Sample.INSTANCE.play( Assets.Sounds.CHARGEUP );
 	}
 
 	@Override
 	public void play(Animation anim) {
-		chargeParticles.on = anim == charging;
+		if (chargeParticles != null) chargeParticles.on = anim == charging;
 		super.play(anim);
 	}
 

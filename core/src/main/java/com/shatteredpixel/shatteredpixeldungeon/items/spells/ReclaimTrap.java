@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public class ReclaimTrap extends TargetedSpell {
 			if (t != null && t.active && t.visible) {
 				t.disarm();
 				
-				Sample.INSTANCE.play(Assets.SND_LIGHTNING);
+				Sample.INSTANCE.play(Assets.Sounds.LIGHTNING);
 				ScrollOfRecharging.charge(hero);
 				storedTrap = t.getClass();
 				
@@ -113,7 +113,7 @@ public class ReclaimTrap extends TargetedSpell {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		//prices of ingredients, divided by output quantity
 		return Math.round(quantity * ((40 + 100) / 3f));
 	}

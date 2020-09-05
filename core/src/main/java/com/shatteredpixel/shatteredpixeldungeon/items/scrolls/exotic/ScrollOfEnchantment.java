@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Enchanting;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -30,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
@@ -38,7 +38,9 @@ import com.watabou.noosa.audio.Sample;
 public class ScrollOfEnchantment extends ExoticScroll {
 	
 	{
-		initials = 11;
+		icon = ItemSpriteSheet.Icons.SCROLL_ENCHANT;
+
+		unique = true;
 	}
 	
 	@Override
@@ -77,8 +79,7 @@ public class ScrollOfEnchantment extends ExoticScroll {
 							GLog.p(Messages.get(StoneOfEnchantment.class, "weapon"));
 							((ScrollOfEnchantment)curItem).readAnimation();
 							
-							Sample.INSTANCE.play( Assets.SND_READ );
-							Invisibility.dispel();
+							Sample.INSTANCE.play( Assets.Sounds.READ );
 							Enchanting.show(curUser, item);
 						}
 					}
@@ -114,8 +115,7 @@ public class ScrollOfEnchantment extends ExoticScroll {
 							GLog.p(Messages.get(StoneOfEnchantment.class, "armor"));
 							((ScrollOfEnchantment)curItem).readAnimation();
 							
-							Sample.INSTANCE.play( Assets.SND_READ );
-							Invisibility.dispel();
+							Sample.INSTANCE.play( Assets.Sounds.READ );
 							Enchanting.show(curUser, item);
 						}
 					}

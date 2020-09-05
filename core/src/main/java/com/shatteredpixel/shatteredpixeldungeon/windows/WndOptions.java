@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -38,20 +37,25 @@ public class WndOptions extends Window {
 	public WndOptions( String title, String message, String... options ) {
 		super();
 
-		int width = SPDSettings.landscape() ? WIDTH_L : WIDTH_P;
+		int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
 
-		RenderedTextBlock tfTitle = PixelScene.renderTextBlock( title, 9 );
-		tfTitle.hardlight( TITLE_COLOR );
-		tfTitle.setPos(MARGIN, MARGIN);
-		tfTitle.maxWidth(width - MARGIN * 2);
-		add( tfTitle );
+		float pos = MARGIN;
+		if (title != null) {
+			RenderedTextBlock tfTitle = PixelScene.renderTextBlock(title, 9);
+			tfTitle.hardlight(TITLE_COLOR);
+			tfTitle.setPos(MARGIN, pos);
+			tfTitle.maxWidth(width - MARGIN * 2);
+			add(tfTitle);
+
+			pos = tfTitle.bottom() + 3*MARGIN;
+		}
 		
 		RenderedTextBlock tfMesage = PixelScene.renderTextBlock( 6 );
 		tfMesage.text(message, width - MARGIN * 2);
-		tfMesage.setPos( MARGIN, tfTitle.top() + tfTitle.height() + 2*MARGIN );
+		tfMesage.setPos( MARGIN, pos );
 		add( tfMesage );
 		
-		float pos = tfMesage.bottom() + 2*MARGIN;
+		pos = tfMesage.bottom() + 2*MARGIN;
 		
 		for (int i=0; i < options.length; i++) {
 			final int index = i;
@@ -62,6 +66,7 @@ public class WndOptions extends Window {
 					onSelect( index );
 				}
 			};
+			btn.enable(enabled(i));
 			btn.setRect( MARGIN, pos, width - MARGIN * 2, BUTTON_HEIGHT );
 			add( btn );
 			
@@ -69,6 +74,10 @@ public class WndOptions extends Window {
 		}
 		
 		resize( width, (int)pos );
+	}
+
+	protected boolean enabled( int index ){
+		return true;
 	}
 	
 	protected void onSelect( int index ) {}

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.watabou.input.GameAction;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
@@ -45,6 +47,11 @@ public class DangerIndicator extends Tag {
 		setSize( 24, 16 );
 		
 		visible = false;
+	}
+	
+	@Override
+	public GameAction keyAction() {
+		return SPDAction.TAG_DANGER;
 	}
 	
 	@Override
@@ -100,13 +107,12 @@ public class DangerIndicator extends Tag {
 	protected void onClick() {
 		if (Dungeon.hero.visibleEnemies() > 0) {
 
-			Mob target = Dungeon.hero.visibleEnemy(enemyIndex++);
+			Mob target = Dungeon.hero.visibleEnemy(++enemyIndex);
 
-			TargetHealthIndicator.instance.target(target == TargetHealthIndicator.instance.target() ? null : target);
+			QuickSlotButton.target(target);
+			if (Dungeon.hero.canAttack(target)) AttackIndicator.target(target);
 
-			if (Dungeon.hero.curAction == null) {
-				Camera.main.panTo(target.sprite.center(), 5f);
-			}
+			if (Dungeon.hero.curAction == null) Camera.main.panTo(target.sprite.center(), 5f);
 		}
 	}
 }

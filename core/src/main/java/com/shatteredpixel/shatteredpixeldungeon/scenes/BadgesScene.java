@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -49,7 +48,7 @@ public class BadgesScene extends PixelScene {
 
 		super.create();
 
-		Music.INSTANCE.play( Assets.THEME, true );
+		Music.INSTANCE.play( Assets.Music.THEME, true );
 
 		uiCamera.visible = false;
 
@@ -83,8 +82,8 @@ public class BadgesScene extends PixelScene {
 		blankBadges = Math.max(0, blankBadges);
 
 		//guarantees a max of 5 rows in landscape, and 8 in portrait, assuming a max of 40 buttons
-		int nCols = SPDSettings.landscape() ? 7 : 4;
-		if (badges.size() + blankBadges > 32 && !SPDSettings.landscape())	nCols++;
+		int nCols = landscape() ? 7 : 4;
+		if (badges.size() + blankBadges > 32 && !landscape())	nCols++;
 
 		int nRows = 1 + (blankBadges + badges.size())/nCols;
 
@@ -135,7 +134,7 @@ public class BadgesScene extends PixelScene {
 			this.badge = badge;
 			active = (badge != null);
 
-			icon = active ? BadgeBanner.image(badge.image) : new Image( Assets.LOCKED );
+			icon = active ? BadgeBanner.image(badge.image) : new Image( Assets.Interfaces.LOCKED );
 			add(icon);
 
 			setSize( icon.width(), icon.height() );
@@ -160,7 +159,7 @@ public class BadgesScene extends PixelScene {
 
 		@Override
 		protected void onClick() {
-			Sample.INSTANCE.play( Assets.SND_CLICK, 0.7f, 0.7f, 1.2f );
+			Sample.INSTANCE.play( Assets.Sounds.CLICK, 0.7f, 0.7f, 1.2f );
 			Game.scene().add( new WndBadge( badge ) );
 		}
 	}

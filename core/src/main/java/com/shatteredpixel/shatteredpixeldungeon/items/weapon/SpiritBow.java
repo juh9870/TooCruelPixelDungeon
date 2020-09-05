@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,8 +166,11 @@ public class SpiritBow extends Weapon {
 					damage = Math.round(damage * 0.5f);
 					break;
 				case DAMAGE:
+					//as distance increases so does damage, capping at 3x:
+					//1.20x|1.35x|1.52x|1.71x|1.92x|2.16x|2.43x|2.74x|3.00x
 					int distance = Dungeon.level.distance(owner.pos, targetPos) - 1;
-					damage = Math.round(damage * (1f + 0.1f * distance));
+					float multiplier = Math.min(3f, 1.2f * (float)Math.pow(1.125f, distance));
+					damage = Math.round(damage * multiplier);
 					break;
 			}
 		}
@@ -193,14 +196,13 @@ public class SpiritBow extends Weapon {
 	
 	@Override
 	public int level() {
-		//need to check if hero is null for loading an upgraded bow from pre-0.7.0
-		return (Dungeon.hero == null ? 0 : Dungeon.hero.lvl/5)
-				+ (curseInfusionBonus ? 1 : 0);
+		return (Dungeon.hero == null ? 0 : Dungeon.hero.lvl/5) + (curseInfusionBonus ? 1 : 0);
 	}
-	
-	//for fetching upgrades from a boomerang from pre-0.7.1
-	public int spentUpgrades() {
-		return super.level() - (curseInfusionBonus ? 1 : 0);
+
+	@Override
+	public int buffedLvl() {
+		//level isn't affected by buffs/debuffs
+		return level();
 	}
 	
 	@Override
@@ -216,6 +218,8 @@ public class SpiritBow extends Weapon {
 		
 		{
 			image = ItemSpriteSheet.SPIRIT_ARROW;
+
+			hitSound = Assets.Sounds.HIT_ARROW;
 		}
 		
 		@Override
@@ -265,7 +269,12 @@ public class SpiritBow extends Weapon {
 				if (sniperSpecial && SpiritBow.this.augment != Augment.SPEED) sniperSpecial = false;
 			}
 		}
-		
+
+		@Override
+		public void throwSound() {
+			Sample.INSTANCE.play( Assets.Sounds.ATK_SPIRITBOW, 1, Random.Float(0.87f, 1.15f) );
+		}
+
 		int flurryCount = -1;
 		
 		@Override
@@ -289,7 +298,7 @@ public class SpiritBow extends Weapon {
 				
 				user.busy();
 				
-				Sample.INSTANCE.play( Assets.SND_MISS, 0.6f, 0.6f, 1.5f );
+				throwSound();
 				
 				((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).
 						reset(user.sprite,

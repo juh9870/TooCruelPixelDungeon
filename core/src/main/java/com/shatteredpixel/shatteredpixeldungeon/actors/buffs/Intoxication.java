@@ -1,6 +1,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
@@ -16,21 +19,24 @@ public class Intoxication extends Buff {
 	private static final float DANGER_4 = BASE *5f;
 	
 	public static void applyMajor(Char targ){
-		switch (Random.Int(5)){
+		switch (Random.Int(6)){
 			case 0:
 				Buff.affect(targ,Corrosion.class).set(targ.HT/15,targ.HT/20);
 				break;
 			case 1:
-				Buff.prolong(targ,Paralysis.class,10f);
+				Buff.prolong(targ,Paralysis.class,Random.NormalFloat(7,13));
 				break;
 			case 2:
-				Buff.prolong(targ, Weakness.class,20f);
+				Buff.prolong(targ, Weakness.class,Random.NormalFloat(15,25));
 				break;
 			case 3:
-				Buff.prolong(targ, Frost.class,20f);
+				Buff.prolong(targ, Frost.class,Random.NormalFloat(15,25));
 				break;
 			case 4:
-				Buff.prolong(targ, Slow.class,30f);
+				Buff.prolong(targ, Slow.class,Random.NormalFloat(20,35));
+				break;
+			case 5:
+				Buff.prolong(targ, Degrade.class,Random.NormalFloat(15,25));
 				break;
 		}
 		
@@ -41,19 +47,20 @@ public class Intoxication extends Buff {
 				Buff.affect(targ,Bleeding.class).set(targ.HT/10);
 				break;
 			case 1:
-				Buff.prolong(targ,Blindness.class,15);
+				Buff.prolong(targ,Blindness.class,Random.Int(9,15));
 				break;
 			case 2:
-				Buff.affect(targ,Ooze.class).set(10);
+				Buff.affect(targ,Ooze.class).set(Random.NormalIntRange(7,13));
 				break;
 			case 3:
-				Buff.prolong(targ,Vertigo.class,10);
+				if(Challenges.COUNTDOWN.hell()) applyMajor(targ);
+				else Buff.prolong(targ,Vertigo.class,Random.NormalFloat(7,13));
 				break;
 			case 4:
-				Buff.prolong(targ,Cripple.class,10);
+				Buff.prolong(targ,Cripple.class,Random.NormalFloat(7,13));
 				break;
 			case 5:
-				Buff.prolong(targ,Roots.class,5);
+				Buff.prolong(targ,Roots.class,Random.NormalFloat(7,13));
 				break;
 		}
 	}
@@ -85,6 +92,10 @@ public class Intoxication extends Buff {
 			}
 		}
 		int rnd = Random.Int(4,6);
+		
+		if(level<=DANGER_2)rnd*=1.6f;
+		else if(level<=DANGER_3)rnd*=1.2f;
+		
 		level-=rnd;
 		if(level<=0)detach();
 		spend(rnd);
@@ -130,6 +141,30 @@ public class Intoxication extends Buff {
 	
 	public void extend( float duration ) {
 		this.level += duration;
+	}
+	
+	public void processHit(int damage, Object source){
+		
+		if(damage<=0)return;
+		
+		if(source instanceof Hunger ||
+			source instanceof Viscosity.DeferedDamage ||
+			source instanceof Burning ||
+			source instanceof Blob ||
+			source instanceof Countdown ||
+			source instanceof RacingTheDeath)return;
+		
+		float power = 1f*damage/target.HT;
+		
+		//losing 33% hp equal to 1 base toxic level
+		power *= 3*BASE;
+		
+		power/=2;
+		
+		//extra intoxication equal to received damage
+		power += damage;
+		
+		extend(power);
 	}
 	
 	

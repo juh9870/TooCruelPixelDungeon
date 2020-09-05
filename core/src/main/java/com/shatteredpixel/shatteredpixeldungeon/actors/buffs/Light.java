@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.watabou.noosa.Image;
 
 public class Light extends FlavourBuff {
 	
@@ -34,7 +33,7 @@ public class Light extends FlavourBuff {
 		type = buffType.POSITIVE;
 	}
 
-	public static final float DURATION	= 300f;
+	public static final float DURATION	= 250f;
 	public static final int DISTANCE	= 6;
 	
 	@Override
@@ -56,6 +55,10 @@ public class Light extends FlavourBuff {
 		Dungeon.observe();
 		super.detach();
 	}
+
+	public void weaken( int amount ){
+		spend(-amount);
+	}
 	
 	@Override
 	public int icon() {
@@ -63,8 +66,8 @@ public class Light extends FlavourBuff {
 	}
 	
 	@Override
-	public void tintIcon(Image icon) {
-		greyIcon(icon, 20f, cooldown());
+	public float iconFadePercent() {
+		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
 	}
 
 	@Override

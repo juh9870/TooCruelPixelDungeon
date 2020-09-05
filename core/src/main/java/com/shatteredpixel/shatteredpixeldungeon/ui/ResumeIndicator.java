@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.watabou.input.GameAction;
 import com.watabou.noosa.Image;
 
 public class ResumeIndicator extends Tag {
@@ -36,6 +38,11 @@ public class ResumeIndicator extends Tag {
 
 		visible = false;
 
+	}
+	
+	@Override
+	public GameAction keyAction() {
+		return SPDAction.TAG_RESUME;
 	}
 
 	@Override

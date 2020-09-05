@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,16 +33,7 @@ public class DiamondGooRoom extends GooBossRoom {
 	public void paint(Level level) {
 		Painter.fill( level, this, Terrain.WALL );
 		
-		//we want the end width to be width()-2, and the width will grow by a total of (height()-4 - height()%2)
-		int diamondWidth = width()-2 - (height()-4 - height()%2);
-		//but starting width cannot be smaller than 2 on even width, 3 on odd width.
-		diamondWidth = Math.max(diamondWidth, width()%2 == 0 ? 2 : 3);
-		
-		for (int i = 1; i < height(); i++){
-			Painter.fill( level, left + (width() - diamondWidth)/2, top+i, diamondWidth, height()-2*i, Terrain.EMPTY);
-			diamondWidth += 2;
-			if (diamondWidth >= width()) break;
-		}
+		Painter.fillDiamond( level, this, 1, Terrain.EMPTY);
 		
 		for (Door door : connected.values()) {
 			door.set( Door.Type.REGULAR );

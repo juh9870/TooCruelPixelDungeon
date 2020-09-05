@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@ package com.watabou.noosa;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.GLVersion;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.watabou.glscripts.Script;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Blending;
 import com.watabou.glwrap.Vertexbuffer;
 import com.watabou.input.InputHandler;
-import com.watabou.input.KeyEvent;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -97,23 +97,31 @@ public class Game implements ApplicationListener {
 		dispHeight = Gdx.graphics.getDisplayMode().height;
 		dispWidth = Gdx.graphics.getDisplayMode().width;
 		
-		Blending.useDefault();
-		
-		inputHandler = new InputHandler();
-		Gdx.input.setInputProcessor(inputHandler);
-		Gdx.input.setCatchKey(KeyEvent.BACK, true);
-		Gdx.input.setCatchKey(KeyEvent.MENU, true);
+		inputHandler = new InputHandler( Gdx.input );
 		
 		//refreshes texture and vertex data stored on the gpu
+		versionContextRef = Gdx.graphics.getGLVersion();
+		Blending.useDefault();
 		TextureCache.reload();
 		Vertexbuffer.refreshAllBuffers();
 	}
+
+	private GLVersion versionContextRef;
 	
 	@Override
 	public void resize(int width, int height) {
-		Blending.useDefault();
-		TextureCache.reload();
-		Vertexbuffer.refreshAllBuffers();
+		if (width == 0 || height == 0){
+			return;
+		}
+
+		//If the EGL context was destroyed, we need to refresh some data stored on the GPU.
+		// This checks that by seeing if GLVersion has a new object reference
+		if (versionContextRef != Gdx.graphics.getGLVersion()) {
+			versionContextRef = Gdx.graphics.getGLVersion();
+			Blending.useDefault();
+			TextureCache.reload();
+			Vertexbuffer.refreshAllBuffers();
+		}
 		
 		if (height != Game.height || width != Game.width) {
 			
@@ -137,8 +145,8 @@ public class Game implements ApplicationListener {
 		Gdx.gl.glDisable(Gdx.gl.GL_SCISSOR_TEST);
 		Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
 		draw();
-		
-		Gdx.gl.glFlush();
+
+		Gdx.gl.glDisable( Gdx.gl.GL_SCISSOR_TEST );
 		
 		step();
 	}
@@ -161,10 +169,10 @@ public class Game implements ApplicationListener {
 	
 	public void finish(){
 		Gdx.app.exit();
+		
 	}
 	
-	@Override
-	public void dispose() {
+	public void destroy(){
 		if (scene != null) {
 			scene.destroy();
 			scene = null;
@@ -173,6 +181,11 @@ public class Game implements ApplicationListener {
 		sceneClass = null;
 		Music.INSTANCE.stop();
 		Sample.INSTANCE.reset();
+	}
+	
+	@Override
+	public void dispose() {
+		destroy();
 	}
 	
 	public static void resetScene() {
@@ -237,13 +250,23 @@ public class Game implements ApplicationListener {
 		Game.realTime = TimeUtils.millis();
 
 		inputHandler.processAllEvents();
-		
+
+		Sample.INSTANCE.update();
 		scene.update();
 		Camera.updateAll();
 	}
 	
 	public static void reportException( Throwable tr ) {
-		if (instance != null) instance.logException(tr);
+		if (instance != null) {
+			instance.logException(tr);
+		} else {
+			//fallback if error happened in initialization
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			tr.printStackTrace(pw);
+			pw.flush();
+			System.err.println(sw.toString());
+		}
 	}
 	
 	protected void logException( Throwable tr ){

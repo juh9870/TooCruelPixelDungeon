@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,132 +71,47 @@ public class v0_7_X_Changes {
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 		
-		changes = new ChangeInfo("", false, null);
-		changes.hardlight( Window.TITLE_COLOR );
-		changeInfos.add(changes);
-		
-		changes = new ChangeInfo("v0.7.5e", false, null);
-		changes.hardlight( Window.TITLE_COLOR );
-		changeInfos.add(changes);
-		
-		changes.addButton( new ChangeButton(new Image(Assets.SNAKE, 12, 0, 12, 11), "Snake adjustments",
-				"Snakes are doing a good job of filling their role as an enemy that demands being surprise attacked, but they are a bit annoying if the player gets unlucky and has to surprise them multiple times.\n\n" +
-				"I'm tweaking them so that they are much more likely to die from a single surprise hit, but their danger otherwise should be very similar:\n" +
-				"_-_ Snake health reduced to 4 from 6\n" +
-				"_-_ Snake evasion increased by 25%\n\n" +
-				"Snakes now also have an item drop! They will occasionally drop a random seed."));
-		
-		changes.addButton( new ChangeButton(new Image(Assets.TENGU, 0, 0, 14, 16), "Tengu Adjustments",
-				"Tengu is in a much better place balance-wise since the changes in 0.7.5b, but he's still ruining the rogue's day a bit too often.\n\n" +
-				"I'm buffing invisibility versus Tengu again, so that it completely avoids his regular attacks, but doesn't totally trivialize him:\n" +
-				"_-_ Tengu now cannot attack invisible heroes\n" +
-				"_-_ Tengu can now use his 3rd phase abilities against heroes he cannot see\n" +
-				"_-_ VFX for Tengu's abilities now triggers even if the player can't see them"));
-		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
-				"Fixed (existed prior to 0.7.5):\n" +
-				"_-_ Small amounts of stuttering when the hero moves\n" +
-				"_-_ Rare layout issues with buttons in item windows\n" +
-				"_-_ Bolts from wand of lightning not spreading in many cases where they should\n" +
-				"_-_ Various rare crash bugs"));
-		
-		changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),
-				"Updated Translations"));
-		
-		changes = new ChangeInfo("v0.7.5c&d", false, null);
-		changes.hardlight( Window.TITLE_COLOR );
-		changeInfos.add(changes);
-		
-		changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
-				"_-_ Made additional tweaks to camera movement speed when following hero, should be slightly faster in most cases."));
-		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
-				"Fixed (caused by 0.7.5):\n" +
-				"_-_ Various visual bugs on floor 10\n" +
-				"_-_ Text being highlighted when it shouldn't in specific cases\n" +
-				"_-_ Letters failing to render in various specific cases\n" +
-				"_-_ Camera moving slower than intended when zoomed in\n" +
-				"_-_ Camera jittering at low framerates\n" +
-				"_-_ Various rare crash bugs\n\n" +
-				"Fixed (existed prior to 0.7.5):\n" +
-				"_-_ Thrown weapons sticking to corrupted characters when they shouldn't"));
-		
-		changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),
-				"Updated Translations"));
-		
-		changes = new ChangeInfo("v0.7.5a&b", false, null);
-		changes.hardlight( Window.TITLE_COLOR );
-		changeInfos.add(changes);
-		
-		changes.addButton( new ChangeButton(Icons.get(Icons.LIBGDX), "LibGDX Text Rendering!",
-				"The game's text renderer is now using LibGDX freetype. This looks almost identical to the existing text but is slightly crisper, platform-independent, and much more efficient!\n\n" +
-				"Text rendering was the last bit of android-dependant code, so the game's core code modules (~98% of its code) are now being compiled as general code and not android-specific code!\n\n" +
-				"Also updated translations"));
-		
-		changes.addButton( new ChangeButton(new Image(Assets.TENGU, 0, 0, 14, 16), "Enemy Balance Adjustments",
-				"Tengu has been adjusted to be a bit less difficult for melee characters, in particular for the rogue:\n" +
-				"_-_ Tengu blink distance on phase 3 reduced by 1 tile\n" +
-				"_-_ Tengu accuracy reduced by 10%\n" +
-				"_-_ Tengu accuracy versus invisible characters reduced by 50%\n\n" +
-				"Additionally, some minor balance changes have been made to regular enemies:\n" +
-				"_-_ Snake damage down to 1-4 from 1-5\n" +
-				"_-_ Crab damage down to 1-7 from 1-8\n" +
-				"_-_ Slime damage down to 2-5 from 3-5\n" +
-				"_-_ Necromancer Skeleton HP on summon up to 20/25 from 15/25"));
-		
-		changes.addButton( new ChangeButton(new WandOfCorruption(),
-				"The nerfs to the wand of corruption in 0.7.5 had basically no effect on its winrate when upgraded, so I'm taking a different approach and buffing its base power but reducing its upgraded power. I'm also putting more emphasis on debuffs helping corruption chances:\n\n" +
-				"_-_ Corruption resistance reduction from minor debuffs up to 25% from 12.5% (was 20% prior to 0.7.5)\n" +
-				"_-_ Corruption resistance reduction from major debuffs up to 50% from 25% (was 33% prior to 0.7.5)\n" +
-				"_-_ Corruption power adjusted to 3+lvl/2 from 2+lvl\n\n" +
-				"_-_ Wraith corruption resistance reduced slightly, to put them into line with other uncommon enemies."));
-		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
-				"Fixed (caused by 0.7.5):\n" +
-				"_-_ Necromancers incorrectly only summoning skeletons at melee range\n" +
-				"_-_ Rare cases where doors would appear incorrectly on floor 5\n" +
-				"_-_ Doors not opening when they should in some cases\n" +
-				"_-_ Necromancers rarely healing skeletons after they die\n" +
-				"_-_ Various rare crash bugs\n\n" +
-				"Fixed (existed prior to 0.7.5):\n" +
-				"_-_ Black texture errors on older android devices\n" +
-				"_-_ Scenes not fading in when they should in certain cases"));
-		
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 		
 		changes.addButton( new ChangeButton(Icons.get(Icons.SHPX), "Developer Commentary",
 				"_-_ Released October 2nd, 2019\n" +
-				"_-_ 76 days after Shattered v0.7.4" +
+				"_-_ 76 days after Shattered v0.7.4\n" +
 				"\n" +
 				"Dev commentary will be added here in the future."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SNAKE, 12, 0, 12, 11), "Sewer Enemies",
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SNAKE, 12, 0, 12, 11), "Sewer Enemies",
 				"Two new enemies have been added to the sewers!\n\n" +
 				"_- Snakes_ are an evasive enemy which mainly shows up on early floors, they help teach the importance of surprise attacks.\n" +
 				"_- Slimes_ primarily appear on floor 4, and are an enemy type which rewards defense over damage.\n\n" +
 				"Goo's level has also received significant changes. It now uses a new unique level layout pattern, and Goo itself always spawns in a new unique room type.\n\n" +
 				"I have also made slight balance changes to the Goo fight itself. 1x1 pillars have been mostly removed from Goo's arena to reduce surprise-attack spam, but Goo's damage has been reduced by 20% to compensate."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.TENGU, 0, 0, 14, 16), "Prison Enemies",
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.TENGU, 0, 0, 14, 16), "Prison Enemies",
 				"_Necromancers_ have been added to the prison! These powerful enemies fight by summoning and buffing undead.\n\n" +
 				"The _Tengu_ boss fight has been totally reworked! The fight still takes place over 3 stages, and has a similar core theme, but I have totally ditched the tedious maze and chasing mechanics from stages 2&3, and have given Tengu several new abilities. Watch your step!\n\n" +
 				"As a part of this rework, Tengu's stats have also been adjusted:\n" +
 				"_-_ HP up to 160 from 120\n" +
 				"_-_ Evasion reduced by 25%\n" +
-				"_-_ Damage reduced by 30%"));
-		
+				"_-_ Damage reduced by 30%\n" +
+				"_-_ Accuracy reduced by 10%"));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.LIBGDX), "LibGDX Text Rendering!",
+				"The game's text renderer is now using LibGDX freetype. This looks almost identical to the existing text but is slightly crisper, platform-independent, and much more efficient!\n\n" +
+				"Text rendering was the last bit of android-dependant code, so the game's core code modules (~98% of its code) are now being compiled as general code and not android-specific code!"));
+
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
 		
-		changes.addButton( new ChangeButton(new Image(Assets.RAT, 0, 15, 16, 15), "Enemy Changes",
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.RAT, 0, 15, 16, 15), "Enemy Changes",
 				"_-_ Significantly improved the consistency of enemy spawns (large numbers of the same enemy and large enemy groups should be less common)\n\n" +
-				"_-_ Adjusted enemy spawn chances on floors 1-10 to make rooms for new enemies\n\n" +
+				"_-_ Adjusted enemy spawn chances on floors 1-10 to make room for new enemies\n\n" +
 				"_-_ Skeletons no longer rarely appear on floor 4\n\n" +
 				"_-_ Guards no longer drop healing potions, they are now dropped by necromancers\n" +
 				"_-_ Guards now grant 7 exp, up from 6\n\n" +
+				"_-_ Crabs now deal 1-7 damage, down from 1-8\n\n" +
 				"_-_ Albino rats now grant 2 exp, up from 1\n" +
 				"_-_ Albino rats now drop mystery meat"));
 		
@@ -206,14 +121,19 @@ public class v0_7_X_Changes {
 				"_-_ Various improvements to wording on the supporter menu for Google Play users.\n\n" +
 				"_-_ Various internal code improvements"));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ Various stability issues caused by the LibGDX conversion\n" +
+				"_-_ Bolts from wand of lightning not spreading in many cases where they should\n" +
+				"_-_ Thrown weapons sticking to corrupted characters when they shouldn't\n" +
 				"_-_ Area-based effects behaving oddly in rare cases\n" +
 				"_-_ Thieves not escaping when they should in many cases\n" +
-				"_-_ A rare crash bug involving boomerangs\n" +
 				"_-_ Sai and gauntlets giving 1 more defense than what their descriptions stated\n" +
-				"_-_ Players rarely opening containers/doors from a distance"));
+				"_-_ Players rarely being able to open containers/doors from a distance\n" +
+				"_-_ Black texture errors on older android devices\n" +
+				"_-_ Scenes not fading in when they should in certain cases\n" +
+				"_-_ Small amounts of stuttering when the hero moves\n" +
+				"_-_ Various rare crash bugs"));
 		
 		changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),
 				"Added new Language: Japanese!\n\n" +
@@ -246,15 +166,17 @@ public class v0_7_X_Changes {
 		changeInfos.add(changes);
 		
 		changes.addButton( new ChangeButton(new WandOfLivingEarth(),
-				"I'm continuing to adjust the wand of living earth to make it less able to stand on its own as a run-winning item. It should excel at providing defensive power, but shouldn't also give good offense.\n\n" +
+				"I'm adjusting the wand of living earth to make it less able to stand on its own as a run-winning item. It should excel at providing defensive power, but shouldn't also give good offense.\n\n" +
 				"_-_ Guardian average damage decreased by 33%\n" +
 				"_-_ Base wand damage up to 4-6 from 3-6\n" +
 				"_-_ Wand damage scaling down to 0-2 from 1-2"));
 		
 		changes.addButton( new ChangeButton(new WandOfCorruption(),
-				"Corruption is performing extremely well when invested in, so I'm adjusting debuff influence on corruption chance to make it more difficult to corrupt enemies.\n\n" +
-				"_-_ Corruption resistance reduction from minor debuffs reduced to 12.5% from 20%\n" +
-				"_-_ Corruption resistance reduction from major debuffs reduced to 25% from 33%"));
+				"Corruption is performing extremely well when invested in, so I'm buffing its base power but reducing its upgraded power. I'm also putting more emphasis on debuffs helping corruption chances:\n\n" +
+				"_-_ Corruption resistance reduction from minor debuffs up to 25% from 20%\n" +
+				"_-_ Corruption resistance reduction from major debuffs up to 50% from 33%\n" +
+				"_-_ Corruption base power adjusted to 3+lvl/2 from 2+lvl\n\n" +
+				"_-_ Wraith corruption resistance reduced slightly, to put them into line with other uncommon enemies."));
 		
 	}
 
@@ -269,7 +191,7 @@ public class v0_7_X_Changes {
 		
 		changes.addButton( new ChangeButton(Icons.get(Icons.SHPX), "Developer Commentary",
 				"_-_ Released July 18th, 2019\n" +
-				"_-_ 56 days after Shattered v0.7.3" +
+				"_-_ 56 days after Shattered v0.7.3\n" +
 				"\n" +
 				"Dev commentary will be added here in the future."));
 
@@ -308,7 +230,7 @@ public class v0_7_X_Changes {
 				"_-_ Shattered Pixel Dungeon now requires Android 2.3+ to run, up from Android 2.2+.\n" +
 				"_-_ Google Play Games and sharing gameplay data now requires android 4.1+, up from 4.0+."));
 
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ Talisman of foresight warn effect not being saved/loaded\n" +
 				"_-_ Level visuals (e.g. prison torches) rarely bugging out\n" +
@@ -364,7 +286,7 @@ public class v0_7_X_Changes {
 		changes.hardlight( CharSprite.NEGATIVE );
 		changeInfos.add(changes);
 		
-		changes.addButton( new ChangeButton( new Image(Assets.MAGE, 0, 90, 12, 15), "Subclass Adjustments",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.MAGE, 0, 90, 12, 15), "Subclass Adjustments",
 				"The Warlock is intended to require a source of physical damage in addition to a wand to be successful. Upgradeable ally wands are problematic for warlock as you can get magical power and physical damage in one item, which makes his abilities absurdly useful with them. The warlock should synergize with allies, but I have scaled the amount down to more reasonable levels:\n\n" +
 				"_-_ Soul mark healing increased to 40% of damage from 33%\n" +
 				"_-_ Soul mark is now 2/5 as effective when the damage-dealer isn't the hero.\n\n" +
@@ -395,7 +317,7 @@ public class v0_7_X_Changes {
 		
 		changes.addButton( new ChangeButton(Icons.get(Icons.SHPX), "Developer Commentary",
 				"_-_ Released May 23rd, 2019\n" +
-				"_-_ 66 days after Shattered v0.7.2" +
+				"_-_ 66 days after Shattered v0.7.2\n" +
 				"\n" +
 				"Dev commentary will be added here in the future."));
 		
@@ -437,7 +359,7 @@ public class v0_7_X_Changes {
 				"_-_ Scrolls of transmutation can now be used on thrown weapons.\n\n" +
 				"_-_ Improved the coloration of crystal keys. They should now be more distinct from iron keys."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ Prismatic images causing errors when falling into pits\n" +
 				"_-_ Secret rooms never spawning in the earlier parts of a region\n" +
@@ -457,7 +379,7 @@ public class v0_7_X_Changes {
 		changes.hardlight( CharSprite.POSITIVE );
 		changeInfos.add(changes);
 		
-		changes.addButton( new ChangeButton( new Image(Assets.WARRIOR, 0, 90, 12, 15), "Berserker & Gladiator",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.WARRIOR, 0, 90, 12, 15), "Berserker & Gladiator",
 				"Because of nerfs I have made to the scaling of the warrior's shield regen, I have some power budget to give to his subclasses!\n\n" +
 				"Berserker rate of rage loss decreased by 50%. It should now be easier to hold onto rage at higher health, but being injured will still help to retain it longer.\n\n" +
 				"Gladiator is now significantly more flexible:\n" +
@@ -493,11 +415,11 @@ public class v0_7_X_Changes {
 				"_-_ Tomahawk damage scaling increased to 2-4 per level, up from 2-2\n" +
 				"_-_ Tomahawk bleed damage now starts at 60% of damage, down from 100%"));
 		
-		changes.addButton( new ChangeButton( new Image(Assets.WARRIOR, 0, 15, 12, 15), "Warrior Nerfs",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.WARRIOR, 0, 15, 12, 15), "Warrior Nerfs",
 				"Warrior shielding regeneration scaling reduced. It is now a flat 1 shield every 30 turns. This is a very slight buff to the earlygame, and a significant nerf to the lategame.\n\n" +
 				"I made this change as too much of the warrior's power was put into his base class, and into a passive ability that players tend to ignore. By removing this power, I can put more power into the warrior's subclasses, which should make the warrior feel more fun and interesting without significantly nerfing him overall."));
 		
-		changes.addButton( new ChangeButton( new Image(Assets.TERRAIN_FEATURES, 16, 0, 16, 16), "Trap Adjustments!",
+		changes.addButton( new ChangeButton( new Image(Assets.Environment.TERRAIN_FEATURES, 16, 0, 16, 16), "Trap Adjustments!",
 				"Several traps have been slightly adjusted due to reclaim trap's new functionality:\n\n" +
 				"_-_ Disintegration trap no longer deals damage based on target HP\n" +
 				"_-_ Flock trap duration no longer scales with depth\n" +
@@ -577,7 +499,7 @@ public class v0_7_X_Changes {
 				"_-_ Meat Pie recipe cost reduced from 9 to 6, total healing reduced from 45 to 25\n\n" +
 				"_-_ Added a privacy policy link to the Google Play edition of Shattered."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ Various rare crash bugs\n" +
 				"_-_ Various minor visual bugs\n" +
@@ -609,7 +531,7 @@ public class v0_7_X_Changes {
 				"_-_ Improved how the game handles orientation changes and window resizing.\n" +
 				"_-_ Shocking enchantment no longer visually arcs lightning to the hero."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed (existed before 0.7.2):\n" +
 				"_-_ Cloak of Shadows very rarely consuming more charges than it should\n" +
 				"_-_ Assassin's blink not working on enemies standing on traps\n" +
@@ -685,14 +607,14 @@ public class v0_7_X_Changes {
 				"\n" +
 				"Dev commentary will be added here in the future."));
 		
-		changes.addButton( new ChangeButton( new Image(Assets.HUNTRESS, 0, 15, 12, 15), "Huntress Reworked!",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.HUNTRESS, 0, 15, 12, 15), "Huntress Reworked!",
 				"The Huntress has received a class overhaul!\n\n" +
 				"Her boomerang has been replaced with a bow. The bow has infinite uses, like the boomerang, but cannot be upgraded directly, instead it will grow stronger as the huntress levels up.\n\n" +
 				"Her knuckledusters have been replaced with studded gloves. This change is purely cosmetic.\n\n" +
 				"Those with runs in progress will have their boomerang turn into a bow, and will regain most of the scrolls of upgrade spent on the boomerang.\n\n" +
 				"The huntress can now also move through grass without trampling it (she 'furrows' it instead)."));
 		
-		changes.addButton( new ChangeButton( new Image(Assets.HUNTRESS, 0, 90, 12, 15), "Huntress Subclasses Reworked!",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.HUNTRESS, 0, 90, 12, 15), "Huntress Subclasses Reworked!",
 				"Huntress subclasses have also received overhauls:\n\n" +
 				"The Sniper can now see 50% further, penetrates armor with ranged attacks, and can perform a special attack with her bow.\n\n" +
 				"The Warden can now see through grass and gains a variety of bonuses to plant interaction."));
@@ -713,7 +635,7 @@ public class v0_7_X_Changes {
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
 		
-		changes.addButton( new ChangeButton(new Image(Assets.HUNTRESS, 0, 90, 12, 15), "Hero Class changes",
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.HUNTRESS, 0, 90, 12, 15), "Hero Class changes",
 				"All heroes except the warrior now need to be unlocked via new badges. The requirements are quite simple, with the goal of giving new players some early goals. Players who have already unlocked characters will not need to re-unlock them.\n\n" +
 				"To help accelerate item identification for alchemy, all heroes now start with 3 identified items: The scroll of identify, a potion, and another scroll."));
 		
@@ -724,7 +646,7 @@ public class v0_7_X_Changes {
 				"Added item stats to the item catalog.\n\n" +
 				"Dropping an item now takes 1 turn, up from 0.5 turns."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ various crash bugs\n" +
 				"_-_ various minor visual bugs\n" +
@@ -751,7 +673,7 @@ public class v0_7_X_Changes {
 		changes.hardlight( CharSprite.POSITIVE );
 		changeInfos.add(changes);
 		
-		changes.addButton( new ChangeButton( new Image(Assets.ROGUE, 0, 15, 12, 15), "Hero Buffs",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.ROGUE, 0, 15, 12, 15), "Hero Buffs",
 				"_-_ Rogue's cloak of shadows base charge speed increased by ~11%, scaling reduced to compensate.\n\n" +
 				"_-_ Warlock's soul mark base chance increased to 15% from 10%, scaling reduced to compensate.\n\n" +
 				"_-_ Warlock's soul mark hunger restoration increased by 100%, health restoration increased by 33%."));
@@ -772,7 +694,7 @@ public class v0_7_X_Changes {
 				"_-_ glyph of potential wand charge bonus increased by 20%\n\n" +
 				"_-_ glyph of stone evasion conversion efficiency increased to 75% from 60%"));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.KING, 1, 0, 14, 16), "Dwarf King",
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.KING, 1, 0, 14, 16), "Dwarf King",
 				"While I would like to make more extensive changes to Dwarf King in the future, I've made a couple smaller tweaks for now to make him harder to cheese:\n\n" +
 				"_-_ Dwarf King is now able to summon skeletons even if he cannot see the hero\n" +
 				"_-_ Dwarf King is now resistant to fire and toxic gas"));
@@ -781,7 +703,7 @@ public class v0_7_X_Changes {
 		changes.hardlight( CharSprite.NEGATIVE );
 		changeInfos.add(changes);
 		
-		changes.addButton( new ChangeButton( new Image(Assets.WARRIOR, 0, 15, 12, 15), "Warrior Nerfs",
+		changes.addButton( new ChangeButton( new Image(Assets.Sprites.WARRIOR, 0, 15, 12, 15), "Warrior Nerfs",
 				"_-_ Warrior's shielding regen scaling reduced by ~15%. This is primarily a lategame nerf."));
 		
 		changes.addButton( new ChangeButton( new ItemSprite(ItemSpriteSheet.RING_RUBY, null), "Ring Nerfs",
@@ -818,7 +740,7 @@ public class v0_7_X_Changes {
 				"\n" +
 				"Dev commentary will be added here in the future."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.TILES_SEWERS, 48, 96, 16, 16 ), "Alchemy Overhaul!",
+		changes.addButton( new ChangeButton(new Image(Assets.Environment.TILES_SEWERS, 48, 96, 16, 16 ), "Alchemy Overhaul!",
 				"The game's alchemy system has been entirely overhauled!\n\n" +
 				"Alchemy is now a full consumable crafting system which lets you create all kinds of new items.\n\n" +
 				"There is also a new resource: alchemical energy. Every alchemy pot has some energy within it. Some recipes require this energy, so make sure to use it wisely!\n\n" +
@@ -828,7 +750,7 @@ public class v0_7_X_Changes {
 				"The Alchemist's Toolkit returns!\n\n" +
 				"The toolkit can be found like any other artifact, and acts as a sort of horn of plenty for the new alchemical energy resource."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.TERRAIN_FEATURES, 32, 112, 16, 16), "New Consumables",
+		changes.addButton( new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 32, 112, 16, 16), "New Consumables",
 				"Added a new scroll, potion, and plant!\n\n" +
 				"_-_ Scroll of transmutation is a rare scroll which allows the user to change an item into another one of the same type. Note that it cannot be used to make scrolls of magical infusion.\n\n" +
 				"_-_ Potion of haste is an uncommon potion which grants a temporary burst of speed.\n\n" +
@@ -905,7 +827,7 @@ public class v0_7_X_Changes {
 				"_-_ Improved payment & sync functions on Google Play version.\n\n" +
 				"_-_ Adjusted bone pile functionality to make it more clear that a spawning wraith means an item is cursed."));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ Various rare crash and freeze bugs\n" +
 				"_-_ Various audio and visual bugs\n" +
@@ -927,7 +849,7 @@ public class v0_7_X_Changes {
 				"_-_ 'Faith is my armor' deleting class armors\n" +
 				"_-_ Various cases where the player can be ontop of enemies"));
 		
-		changes.addButton( new ChangeButton(new Image(Assets.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+		changes.addButton( new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 				"Fixed:\n" +
 				"_-_ Various screen layout issues in power saver mode\n" +
 				"_-_ Crashes when tengu is healed above 1/2 health\n" +

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
@@ -72,8 +71,8 @@ public class WndJournal extends WndTabbed {
 	
 	public WndJournal(){
 		
-		int width = SPDSettings.landscape() ? WIDTH_L : WIDTH_P;
-		int height = SPDSettings.landscape() ? HEIGHT_L : HEIGHT_P;
+		int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
+		int height = PixelScene.landscape() ? HEIGHT_L : HEIGHT_P;
 		
 		resize(width, height);
 		
@@ -194,6 +193,7 @@ public class WndJournal extends WndTabbed {
 		protected void layout() {
 			
 			icon.y = y + 1 + (height() - 1 - icon.height()) / 2f;
+			icon.x = x + (16 - icon.width())/2f;
 			PixelScene.align(icon);
 			
 			depth.x = icon.x + (icon.width - depth.width()) / 2f;
@@ -204,8 +204,8 @@ public class WndJournal extends WndTabbed {
 			line.x = 0;
 			line.y = y;
 			
-			label.maxWidth((int)(width - icon.width() - 8 - 1));
-			label.setPos(icon.x + icon.width() + 1, y + 1 + (height() - label.height()) / 2f);
+			label.maxWidth((int)(width - 16 - 1));
+			label.setPos(17, y + 1 + (height() - label.height()) / 2f);
 			PixelScene.align(label);
 		}
 	}
@@ -275,8 +275,7 @@ public class WndJournal extends WndTabbed {
 			private String page;
 			
 			public GuideItem( String page ){
-				super( new ItemSprite( ItemSpriteSheet.GUIDE_PAGE, null),
-						Messages.titleCase(Document.ADVENTURERS_GUIDE.pageTitle(page)), -1);
+				super( iconForPage(page), Messages.titleCase(Document.ADVENTURERS_GUIDE.pageTitle(page)));
 				
 				this.page = page;
 				found = Document.ADVENTURERS_GUIDE.hasPage(page);
@@ -291,10 +290,41 @@ public class WndJournal extends WndTabbed {
 			
 			public boolean onClick( float x, float y ) {
 				if (inside( x, y ) && found) {
-					GameScene.show( new WndStory( Document.ADVENTURERS_GUIDE.pageBody(page) ));
+					GameScene.show( new WndStory( iconForPage(page),
+							Document.ADVENTURERS_GUIDE.pageTitle(page),
+							Document.ADVENTURERS_GUIDE.pageBody(page) ));
 					return true;
 				} else {
 					return false;
+				}
+			}
+
+			//TODO might just want this to be part of the Document class
+			private static Image iconForPage( String page ){
+				if (!Document.ADVENTURERS_GUIDE.hasPage(page)){
+					return new ItemSprite( ItemSpriteSheet.GUIDE_PAGE );
+				}
+				switch (page){
+					case Document.GUIDE_INTRO_PAGE: default:
+						return new ItemSprite(ItemSpriteSheet.MASTERY);
+					case "Identifying":
+						return new ItemSprite( ItemSpriteSheet.SCROLL_ISAZ );
+					case Document.GUIDE_SEARCH_PAGE:
+						return new ItemSprite( ItemSpriteSheet.LOCKED_CHEST );
+					case "Strength":
+						return new ItemSprite( ItemSpriteSheet.ARMOR_SCALE );
+					case "Food":
+						return new ItemSprite( ItemSpriteSheet.PASTY );
+					case "Levelling":
+						return new ItemSprite( ItemSpriteSheet.POTION_MAGENTA );
+					case "Surprise_Attacks":
+						return new ItemSprite( ItemSpriteSheet.ASSASSINS_BLADE );
+					case "Dieing":
+						return new ItemSprite( ItemSpriteSheet.ANKH );
+					case "Looting":
+						return new ItemSprite( ItemSpriteSheet.CRYSTAL_KEY );
+					case "Magic":
+						return new ItemSprite( ItemSpriteSheet.WAND_LIGHTNING );
 				}
 			}
 			
@@ -352,7 +382,7 @@ public class WndJournal extends WndTabbed {
 		protected void layout() {
 			super.layout();
 			
-			if (SPDSettings.landscape()){
+			if (PixelScene.landscape()){
 				float buttonWidth = width()/pageButtons.length;
 				for (int i = 0; i < NUM_BUTTONS; i++) {
 					pageButtons[i].setRect(i*buttonWidth, 0, buttonWidth, ITEM_HEIGHT);
@@ -420,7 +450,7 @@ public class WndJournal extends WndTabbed {
 			ArrayList<QuickRecipe> toAdd = QuickRecipe.getRecipes(currentPageIdx);
 			
 			float left;
-			float top = body.bottom();
+			float top = body.bottom()+1;
 			int w;
 			ArrayList<QuickRecipe> toAddThisRow = new ArrayList<>();
 			while (!toAdd.isEmpty()){

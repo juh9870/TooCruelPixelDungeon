@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DarkGold;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.BlacksmithRoom;
@@ -61,14 +61,20 @@ public class Blacksmith extends NPC {
 	
 	@Override
 	protected boolean act() {
-		throwItem();
+		if (Dungeon.level.heroFOV[pos] && !Quest.reforged){
+			Notes.add( Notes.Landmark.TROLL );
+		}
 		return super.act();
 	}
 	
 	@Override
-	public boolean interact() {
+	public boolean interact(Char c) {
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo( pos, c.pos );
+
+		if (c != Dungeon.hero){
+			return true;
+		}
 		
 		if (!Quest.given) {
 			
@@ -95,8 +101,6 @@ public class Blacksmith extends NPC {
 					} );
 				}
 			});
-			
-			Notes.add( Notes.Landmark.TROLL );
 			
 		} else if (!Quest.completed) {
 			if (Quest.alternative) {
@@ -153,7 +157,7 @@ public class Blacksmith extends NPC {
 			
 		}
 
-		return false;
+		return true;
 	}
 	
 	private void tell( String text ) {
@@ -205,36 +209,42 @@ public class Blacksmith extends NPC {
 			second = item2;
 		}
 
-		Sample.INSTANCE.play( Assets.SND_EVOKE );
+		Sample.INSTANCE.play( Assets.Sounds.EVOKE );
 		ScrollOfUpgrade.upgrade( Dungeon.hero );
 		Item.evoke( Dungeon.hero );
-		
-		if (first.isEquipped( Dungeon.hero )) {
-			((EquipableItem)first).doUnequip( Dungeon.hero, true );
-		}
-		if (first instanceof MissileWeapon && first.quantity() > 1){
-			first = first.split(1);
-		}
-		first.level(first.level()+1); //prevents on-upgrade effects like enchant/glyph removal
-		if (first instanceof MissileWeapon && !Dungeon.hero.belongings.contains(first)) {
-			if (!first.collect()){
-				Dungeon.level.drop( first, Dungeon.hero.pos );
-			}
-		}
-		Dungeon.hero.spendAndNext( 2f );
-		Badges.validateItemLevelAquired( first );
-		
+
 		if (second.isEquipped( Dungeon.hero )) {
 			((EquipableItem)second).doUnequip( Dungeon.hero, false );
 		}
 		second.detach( Dungeon.hero.belongings.backpack );
-		
+
 		if (second instanceof Armor){
 			BrokenSeal seal = ((Armor) second).checkSeal();
 			if (seal != null){
 				Dungeon.level.drop( seal, Dungeon.hero.pos );
 			}
 		}
+		
+		if (first.isEquipped( Dungeon.hero )) {
+			((EquipableItem)first).doUnequip( Dungeon.hero, true );
+		}
+
+		//preserves enchant/glyphs if present
+		if (first instanceof Weapon && ((Weapon) first).hasGoodEnchant()){
+			((Weapon) first).upgrade(true);
+		} else if (first instanceof Armor && ((Armor) first).hasGoodGlyph()){
+			((Armor) first).upgrade(true);
+		} else {
+			first.upgrade();
+		}
+		if (!Dungeon.hero.belongings.contains(first)) {
+			if (!first.collect()){
+				Dungeon.level.drop( first, Dungeon.hero.pos );
+			}
+		}
+		Dungeon.hero.spendAndNext( 2f );
+		Badges.validateItemLevelAquired( first );
+		Item.updateQuickslot();
 		
 		Quest.reforged = true;
 		
@@ -243,7 +253,7 @@ public class Blacksmith extends NPC {
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return 100_000_000;
+		return INFINITE_EVASION;
 	}
 	
 	@Override

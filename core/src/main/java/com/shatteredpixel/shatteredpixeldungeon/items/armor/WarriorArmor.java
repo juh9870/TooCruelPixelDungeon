@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -40,7 +41,7 @@ import com.watabou.utils.PathFinder;
 public class WarriorArmor extends ClassArmor {
 	
 	private static int LEAP_TIME	= 1;
-	private static int SHOCK_TIME	= 3;
+	private static int SHOCK_TIME	= 5;
 
 	{
 		image = ItemSpriteSheet.ARMOR_WARRIOR;
@@ -51,7 +52,7 @@ public class WarriorArmor extends ClassArmor {
 		GameScene.selectCell( leaper );
 	}
 	
-	protected static CellSelector.Listener leaper = new  CellSelector.Listener() {
+	protected CellSelector.Listener leaper = new  CellSelector.Listener() {
 		
 		@Override
 		public void onSelect( Integer target ) {
@@ -64,8 +65,8 @@ public class WarriorArmor extends ClassArmor {
 				if (Actor.findChar( cell ) != null && cell != curUser.pos)
 					cell = route.path.get(route.dist-1);
 
-
-				curUser.HP -= (curUser.HP / 3);
+				charge -= 35;
+				updateQuickslot();
 
 				final int dest = cell;
 				curUser.busy();
@@ -87,6 +88,7 @@ public class WarriorArmor extends ClassArmor {
 						CellEmitter.center(dest).burst(Speck.factory(Speck.DUST), 10);
 						Camera.main.shake(2, 0.5f);
 
+						Invisibility.dispel();
 						curUser.spendAndNext(LEAP_TIME);
 					}
 				});

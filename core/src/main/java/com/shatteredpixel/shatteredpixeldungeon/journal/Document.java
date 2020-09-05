@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,11 +166,6 @@ public enum Document {
 				for (String page : pages){
 					if (doc.pages.containsKey(page)) {
 						doc.pages.put(page, true);
-					}
-					//pre-0.7.2 saves
-					else if (page.equals("Brews")){
-						doc.pages.put("Catalysts", true);
-						doc.pages.put("Brews_Elixirs", true);
 					}
 				}
 			}

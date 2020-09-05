@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -28,16 +29,20 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 abstract public class KindOfWeapon extends EquipableItem {
 	
 	protected static final float TIME_TO_EQUIP = 1f;
+
+	protected String hitSound = Assets.Sounds.HIT;
+	protected float hitSoundPitch = 1f;
 	
 	@Override
 	public boolean isEquipped( Hero hero ) {
-		return hero.belongings.weapon == this;
+		return hero.belongings.weapon == this || hero.belongings.stashedWeapon == this;
 	}
 	
 	@Override
@@ -83,11 +88,11 @@ abstract public class KindOfWeapon extends EquipableItem {
 	}
 
 	public int min(){
-		return min(level());
+		return min(buffedLvl());
 	}
 
 	public int max(){
-		return max(level());
+		return max(buffedLvl());
 	}
 
 	abstract public int min(int lvl);
@@ -130,6 +135,10 @@ abstract public class KindOfWeapon extends EquipableItem {
 	
 	public int proc( Char attacker, Char defender, int damage ) {
 		return damage;
+	}
+
+	public void hitSound( float pitch ){
+		Sample.INSTANCE.play(hitSound, 1, pitch * hitSoundPitch);
 	}
 	
 }

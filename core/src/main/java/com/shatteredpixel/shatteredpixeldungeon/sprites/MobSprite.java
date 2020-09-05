@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.noosa.tweeners.ScaleTweener;
 import com.watabou.utils.PointF;
@@ -49,7 +50,6 @@ public class MobSprite extends CharSprite {
 				@Override
 				protected void onComplete() {
 					MobSprite.this.killAndErase();
-					parent.erase( this );
 				}
 			} );
 		}
@@ -59,6 +59,13 @@ public class MobSprite extends CharSprite {
 		
 		origin.set( width / 2, height - DungeonTilemap.SIZE / 2 );
 		angularSpeed = Random.Int( 2 ) == 0 ? -720 : 720;
+		am = 1;
+
+		hideEmo();
+
+		if (health != null){
+			health.killAndErase();
+		}
 		
 		parent.add( new ScaleTweener( this, new PointF( 0, 0 ), FALL_TIME ) {
 			@Override
@@ -69,6 +76,7 @@ public class MobSprite extends CharSprite {
 			@Override
 			protected void updateValues( float progress ) {
 				super.updateValues( progress );
+				y += 12 * Game.elapsed;
 				am = 1 - progress;
 			}
 		} );

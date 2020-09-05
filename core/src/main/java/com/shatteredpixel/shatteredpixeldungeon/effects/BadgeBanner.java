@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public class BadgeBanner extends Image {
 	
 	private BadgeBanner( int index ) {
 		
-		super( Assets.BADGES );
+		super( Assets.Interfaces.BADGES );
 		
 		if (atlas == null) {
 			atlas = new TextureFilm( texture, 16, 16 );
@@ -67,7 +67,7 @@ public class BadgeBanner extends Image {
 		state = State.FADE_IN;
 		time = FADE_IN_TIME;
 		
-		Sample.INSTANCE.play( Assets.SND_BADGE );
+		Sample.INSTANCE.play( Assets.Sounds.BADGE );
 	}
 	
 	@Override
@@ -281,7 +281,7 @@ public class BadgeBanner extends Image {
 	}
 	
 	public static Image image( int index ) {
-		Image image = new Image( Assets.BADGES );
+		Image image = new Image( Assets.Interfaces.BADGES );
 		if (atlas == null) {
 			atlas = new TextureFilm( image.texture, 16, 16 );
 		}

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public class Halo extends Image {
 	
 	private static final Object CACHE_KEY = Halo.class;
 	
-	protected static final int RADIUS	= 64;
+	protected static final int RADIUS	= 128;
 	
 	protected float radius = RADIUS;
 	protected float brightness = 1;
@@ -38,10 +38,10 @@ public class Halo extends Image {
 		super();
 		
 		if (!TextureCache.contains( CACHE_KEY )) {
-			Pixmap pixmap = new Pixmap(RADIUS * 2, RADIUS * 2, Pixmap.Format.RGBA8888);
-			pixmap.setColor( 0xFFFFFF0A );
-			for (int i = 0; i < 50; i++) {
-				pixmap.fillCircle(RADIUS, RADIUS, (int)(RADIUS * (i+1)/50f));
+			Pixmap pixmap = new Pixmap(2*RADIUS+1, 2*RADIUS+1, Pixmap.Format.RGBA8888);
+			pixmap.setColor( 0xFFFFFF08 );
+			for (int i = 0; i < RADIUS; i+=2) {
+				pixmap.fillCircle(RADIUS, RADIUS, (RADIUS - i));
 			}
 			TextureCache.add( CACHE_KEY, new SmartTexture( pixmap ) );
 		}

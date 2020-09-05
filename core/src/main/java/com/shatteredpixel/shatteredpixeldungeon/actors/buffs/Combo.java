@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
@@ -59,24 +63,29 @@ public class Combo extends Buff implements ActionIndicator.Action {
 	
 	@Override
 	public void tintIcon(Image icon) {
-		if (comboTime >= 3f){
-			icon.resetColor();
-		} else {
-			icon.tint(0xb3b3b3, 0.5f + 0.5f*(3f + 1 - comboTime)/3f);
-		}
+		if (count >= 10)    icon.hardlight(1f, 0f, 0f);
+		else if (count >= 8)icon.hardlight(1f, 0.8f, 0f);
+		else if (count >= 6)icon.hardlight(1f, 1f, 0f);
+		else if (count >= 4)icon.hardlight(0.8f, 1f, 0f);
+		else if (count >= 2)icon.hardlight(0f, 1f, 0f);
+		else                icon.resetColor();
 	}
-	
+
+	@Override
+	public float iconFadePercent() {
+		return Math.max(0, (4 - comboTime)/4f);
+	}
+
 	@Override
 	public String toString() {
 		return Messages.get(this, "name");
 	}
 	
 	public void hit( Char enemy ) {
-		
+
 		count++;
 		comboTime = 4f;
 		misses = 0;
-		BuffIndicator.refreshHero();
 		
 		if (count >= 2) {
 
@@ -86,6 +95,8 @@ public class Combo extends Buff implements ActionIndicator.Action {
 			GLog.p( Messages.get(this, "combo", count) );
 			
 		}
+
+		BuffIndicator.refreshHero(); //refresh the buff visually on-hit
 
 	}
 
@@ -107,7 +118,6 @@ public class Combo extends Buff implements ActionIndicator.Action {
 	public boolean act() {
 		comboTime-=TICK;
 		spend(TICK);
-		BuffIndicator.refreshHero();
 		if (comboTime <= 0) {
 			detach();
 		}
@@ -207,6 +217,22 @@ public class Combo extends Buff implements ActionIndicator.Action {
 
 			AttackIndicator.target(enemy);
 
+			if (enemy.defenseSkill(target) >= Char.INFINITE_EVASION){
+				enemy.sprite.showStatus( CharSprite.NEUTRAL, enemy.defenseVerb() );
+				Sample.INSTANCE.play(Assets.Sounds.MISS);
+				detach();
+				ActionIndicator.clearAction(Combo.this);
+				((Hero)target).spendAndNext(((Hero)target).attackDelay());
+				return;
+			} else if (enemy.isInvulnerable(target.getClass())){
+				enemy.sprite.showStatus( CharSprite.POSITIVE, Messages.get(Char.class, "invulnerable") );
+				Sample.INSTANCE.play(Assets.Sounds.MISS);
+				detach();
+				ActionIndicator.clearAction(Combo.this);
+				((Hero)target).spendAndNext(((Hero)target).attackDelay());
+				return;
+			}
+
 			int dmg = target.damageRoll();
 
 			//variance in damage dealt
@@ -235,31 +261,25 @@ public class Combo extends Buff implements ActionIndicator.Action {
 			
 			dmg = enemy.defenseProc(target, dmg);
 			dmg -= enemy.drRoll();
+			
+			if ( enemy.buff( Vulnerable.class ) != null){
+				dmg *= 1.33f;
+			}
+			
 			dmg = target.attackProc(enemy, dmg);
+			boolean wasAlly = enemy.alignment == target.alignment;
 			enemy.damage( dmg, this );
 
 			//special effects
 			switch (type){
 				case CLOBBER:
 					if (enemy.isAlive()){
-						if (!enemy.properties().contains(Char.Property.IMMOVABLE)){
-							for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-								int ofs = PathFinder.NEIGHBOURS8[i];
-								if (enemy.pos - target.pos == ofs) {
-									int newPos = enemy.pos + ofs;
-									if ((Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos])
-											&& Actor.findChar( newPos ) == null) {
-
-										Actor.addDelayed( new Pushing( enemy, enemy.pos, newPos ), -1 );
-
-										enemy.pos = newPos;
-										Dungeon.level.occupyCell(enemy );
-
-									}
-									break;
-								}
-							}
-						}
+						//trace a ballistica to our target (which will also extend past them
+						Ballistica trajectory = new Ballistica(target.pos, enemy.pos, Ballistica.STOP_TARGET);
+						//trim it to just be the part that goes past them
+						trajectory = new Ballistica(trajectory.collisionPos, trajectory.path.get(trajectory.path.size()-1), Ballistica.PROJECTILE);
+						//knock them back along that ballistica
+						WandOfBlastWave.throwChar(enemy, trajectory, 2, true, false);
 						Buff.prolong(enemy, Vertigo.class, Random.NormalIntRange(1, 4));
 					}
 					break;
@@ -281,12 +301,13 @@ public class Combo extends Buff implements ActionIndicator.Action {
 			if (target.buff(FrostImbue.class) != null)
 				target.buff(FrostImbue.class).proc(enemy);
 
-			Sample.INSTANCE.play( Assets.SND_HIT, 1, 1, Random.Float( 0.8f, 1.25f ) );
+			target.hitSound(Random.Float(0.87f, 1.15f));
+			if (type != finisherType.FURY) Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
 			enemy.sprite.bloodBurstA( target.sprite.center(), dmg );
 			enemy.sprite.flash();
 
 			if (!enemy.isAlive()){
-				GLog.i( Messages.capitalize(Messages.get(Char.class, "defeat", enemy.name)) );
+				GLog.i( Messages.capitalize(Messages.get(Char.class, "defeat", enemy.name())) );
 			}
 
 			Hero hero = (Hero)target;
@@ -294,8 +315,9 @@ public class Combo extends Buff implements ActionIndicator.Action {
 			//Post-attack behaviour
 			switch(type){
 				case CLEAVE:
-					if (!enemy.isAlive()) {
-						//combo isn't reset, but rather increments with a cleave kill, and grants more time.
+					//combo isn't reset, but rather increments with a cleave kill, and grants more time.
+					//this includes corrupting kills (which is why we check alignment
+					if (!enemy.isAlive() || (!wasAlly && enemy.alignment == target.alignment)) {
 						hit( enemy );
 						comboTime = 12f;
 					} else {
@@ -317,6 +339,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 						});
 					} else {
 						detach();
+						Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
 						ActionIndicator.clearAction(Combo.this);
 						hero.spendAndNext(hero.attackDelay());
 					}

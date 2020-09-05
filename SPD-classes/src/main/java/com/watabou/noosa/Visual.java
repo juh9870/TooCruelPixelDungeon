@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,12 +138,12 @@ public class Visual extends Gizmo {
 	}
 	
 	public PointF center() {
-		return new PointF( x + width / 2, y + height / 2 );
+		return new PointF( x + width() / 2, y + height() / 2 );
 	}
 	
 	public PointF center( PointF p ) {
-		x = p.x - width / 2;
-		y = p.y - height / 2;
+		x = p.x - width() / 2;
+		y = p.y - height() / 2;
 		return p;
 	}
 
@@ -271,6 +271,9 @@ public class Visual extends Gizmo {
 		Camera c = camera();
 
 		if (c == null || !visible) return false;
+
+		//FIXME, the below calculations ignore angle, so assume visible if angle != 0
+		if (angle != 0) return true;
 
 		//x coord
 		if (x > c.scroll.x + c.width)

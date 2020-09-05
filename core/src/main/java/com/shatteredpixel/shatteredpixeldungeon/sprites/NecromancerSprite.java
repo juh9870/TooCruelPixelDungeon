@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Necromancer;
 import com.watabou.noosa.TextureFilm;
+import com.watabou.noosa.audio.Sample;
 
 public class NecromancerSprite extends MobSprite {
 	
@@ -32,7 +33,7 @@ public class NecromancerSprite extends MobSprite {
 	public NecromancerSprite(){
 		super();
 		
-		texture( Assets.NECRO );
+		texture( Assets.Sprites.NECRO );
 		TextureFilm film = new TextureFilm( texture, 16, 16 );
 		
 		idle = new Animation( 1, true );
@@ -58,7 +59,15 @@ public class NecromancerSprite extends MobSprite {
 	public void charge(){
 		play(charging);
 	}
-	
+
+	@Override
+	public void zap(int cell) {
+		super.zap(cell);
+		if (visible && ch instanceof Necromancer && ((Necromancer) ch).summoning){
+			Sample.INSTANCE.play( Assets.Sounds.CHARGEUP, 1f, 0.8f );
+		}
+	}
+
 	@Override
 	public void onComplete(Animation anim) {
 		super.onComplete(anim);

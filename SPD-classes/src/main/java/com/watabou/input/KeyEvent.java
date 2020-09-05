@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 package com.watabou.input;
 
-import com.badlogic.gdx.Input;
 import com.watabou.utils.Signal;
 
 import java.util.ArrayList;
@@ -39,9 +38,6 @@ public class KeyEvent {
 	// **********************
 	// *** Static members ***
 	// **********************
-	
-	public static final int BACK		= Input.Keys.BACK;
-	public static final int MENU		= Input.Keys.MENU;
 	
 	private static Signal<KeyEvent> keySignal = new Signal<>( true );
 	

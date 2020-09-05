@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,7 @@ public class SparkParticle extends PixelParticle {
 		
 		this.x = x;
 		this.y = y;
+		size = 5;
 		
 		left = lifespan = Random.Float( 0.5f, 1.0f );
 		
@@ -77,10 +78,14 @@ public class SparkParticle extends PixelParticle {
 		acc.set( 0, 0 );
 		speed.set( 0, 0 );
 	}
+
+	public void setMaxSize( float value ){
+		size = value;
+	}
 	
 	@Override
 	public void update() {
 		super.update();
-		size( Random.Float( 5 * left / lifespan ) );
+		size( Random.Float( size * left / lifespan ) );
 	}
 }

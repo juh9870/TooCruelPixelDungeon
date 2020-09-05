@@ -40,7 +40,7 @@ public class Legion extends Buff {
 				while (wantSpawn>0){
 					Mob mob = Dungeon.level.createMob();
 					mob.state = mob.WANDERING;
-					mob.pos = Dungeon.level.randomRespawnCell();
+					mob.pos = Dungeon.level.randomRespawnCell(mob);
 					if (Dungeon.hero.isAlive() && mob.pos != -1 && Dungeon.level.distance(Dungeon.hero.pos, mob.pos) >= 4) {
 						GameScene.add( mob );
 						wantSpawn--;

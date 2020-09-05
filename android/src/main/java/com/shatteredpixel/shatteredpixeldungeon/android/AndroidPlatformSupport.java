@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon.android;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
@@ -45,19 +48,23 @@ import java.util.regex.Pattern;
 public class AndroidPlatformSupport extends PlatformSupport {
 	
 	public void updateDisplaySize(){
-		boolean landscape = SPDSettings.landscape();
-		
-		AndroidGame.instance.setRequestedOrientation(landscape ?
-				ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
-				ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+		if (SPDSettings.landscape() != null) {
+			AndroidGame.instance.setRequestedOrientation( SPDSettings.landscape() ?
+					ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
+					ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT );
+		}
 		
 		if (AndroidGame.view.getMeasuredWidth() == 0 || AndroidGame.view.getMeasuredHeight() == 0)
 			return;
 		
 		Game.dispWidth = AndroidGame.view.getMeasuredWidth();
 		Game.dispHeight = AndroidGame.view.getMeasuredHeight();
-		
-		if ((Game.dispWidth > Game.dispHeight) != landscape){
+
+		boolean fullscreen = Build.VERSION.SDK_INT < Build.VERSION_CODES.N
+				|| !AndroidGame.instance.isInMultiWindowMode();
+
+		if (fullscreen && SPDSettings.landscape() != null
+				&& (Game.dispWidth >= Game.dispHeight) != SPDSettings.landscape()){
 			int tmp = Game.dispWidth;
 			Game.dispWidth = Game.dispHeight;
 			Game.dispHeight = tmp;
@@ -72,7 +79,7 @@ public class AndroidPlatformSupport extends PlatformSupport {
 		if (Game.dispWidth < renderWidth*2 || Game.dispHeight < renderHeight*2)
 			SPDSettings.put( SPDSettings.KEY_POWER_SAVER, true );
 		
-		if (SPDSettings.powerSaver()){
+		if (SPDSettings.powerSaver() && fullscreen){
 			
 			int maxZoom = (int)Math.min(Game.dispWidth/renderWidth, Game.dispHeight/renderHeight);
 			
@@ -140,6 +147,23 @@ public class AndroidPlatformSupport extends PlatformSupport {
 		
 	}
 	
+	@Override
+	@SuppressWarnings("deprecation")
+	public boolean connectedToUnmeteredNetwork() {
+		//Returns true if using unmetered connection, use shortcut method if available
+		ConnectivityManager cm = (ConnectivityManager) AndroidGame.instance.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+			return !cm.isActiveNetworkMetered();
+		} else {
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			return activeNetwork != null && activeNetwork.isConnectedOrConnecting() &&
+					(activeNetwork.getType() == ConnectivityManager.TYPE_WIFI
+					|| activeNetwork.getType() == ConnectivityManager.TYPE_WIMAX
+					|| activeNetwork.getType() == ConnectivityManager.TYPE_BLUETOOTH
+					|| activeNetwork.getType() == ConnectivityManager.TYPE_ETHERNET);
+		}
+	}
+
 	@Override
 	public void promptTextInput(final String title, final String hintText, final int maxLen, final boolean multiLine, final String posTxt, final String negTxt, final TextCallback callback) {
 		Game.runOnRenderThread( new Callback() {
@@ -216,7 +240,7 @@ public class AndroidPlatformSupport extends PlatformSupport {
 		} else if (systemfont && Gdx.files.absolute("/system/fonts/DroidSans.ttf").exists()){
 			basicFontGenerator = new FreeTypeFontGenerator(Gdx.files.absolute("/system/fonts/DroidSans.ttf"));
 		} else {
-			basicFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("pixel_font.ttf"));
+			basicFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/pixel_font.ttf"));
 		}
 		
 		//android 7.0+. all asian fonts are nicely contained in one spot
@@ -285,21 +309,23 @@ public class AndroidPlatformSupport extends PlatformSupport {
 	
 	@Override
 	public void resetGenerators() {
-		for (FreeTypeFontGenerator generator : fonts.keySet()){
-			for (BitmapFont f : fonts.get(generator).values()){
-				f.dispose();
+		if (fonts != null) {
+			for (FreeTypeFontGenerator generator : fonts.keySet()) {
+				for (BitmapFont f : fonts.get(generator).values()) {
+					f.dispose();
+				}
+				fonts.get(generator).clear();
+				generator.dispose();
 			}
-			fonts.get(generator).clear();
-			generator.dispose();
-		}
-		fonts.clear();
-		if (packer != null){
-			for (PixmapPacker.Page p : packer.getPages()){
-				p.getTexture().dispose();
+			fonts.clear();
+			if (packer != null) {
+				for (PixmapPacker.Page p : packer.getPages()) {
+					p.getTexture().dispose();
+				}
+				packer.dispose();
 			}
-			packer.dispose();
+			fonts = null;
 		}
-		fonts = null;
 		setupFontGenerators(pageSize, systemfont);
 	}
 	

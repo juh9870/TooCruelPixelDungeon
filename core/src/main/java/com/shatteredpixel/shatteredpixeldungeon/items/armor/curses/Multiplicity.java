@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,8 @@ public class Multiplicity extends Armor.Glyph {
 
 				} else {
 					//FIXME should probably have a mob property for this
-					if (attacker.properties().contains(Char.Property.BOSS) || attacker.properties().contains(Char.Property.MINIBOSS)
+					if (!(attacker instanceof Mob)
+							|| attacker.properties().contains(Char.Property.BOSS) || attacker.properties().contains(Char.Property.MINIBOSS)
 							|| attacker instanceof Mimic || attacker instanceof Statue){
 						m = Dungeon.level.createMob();
 					} else {
@@ -96,8 +97,20 @@ public class Multiplicity extends Armor.Glyph {
 				}
 
 				if (m != null) {
-					GameScene.add(m);
-					ScrollOfTeleportation.appear(m, Random.element(spawnPoints));
+
+					if (Char.hasProp(m, Char.Property.LARGE)){
+						for ( int i : spawnPoints.toArray(new Integer[0])){
+							if (!Dungeon.level.openSpace[i]){
+								//remove the value, not at the index
+								spawnPoints.remove((Integer) i);
+							}
+						}
+					}
+
+					if (!spawnPoints.isEmpty()) {
+						GameScene.add(m);
+						ScrollOfTeleportation.appear(m, Random.element(spawnPoints));
+					}
 				}
 
 			}

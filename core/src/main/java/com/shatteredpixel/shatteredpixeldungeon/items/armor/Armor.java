@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -75,8 +76,8 @@ public class Armor extends EquipableItem {
 	protected static final String AC_DETACH       = "DETACH";
 	
 	public enum Augment {
-		EVASION (1.5f , -1f),
-		DEFENSE (-1.5f, 1f),
+		EVASION (2f , -1f),
+		DEFENSE (-2f, 1f),
 		NONE	(0f   ,  0f);
 		
 		private float evasionFactor;
@@ -139,12 +140,6 @@ public class Armor extends EquipableItem {
 		inscribe((Glyph) bundle.get(GLYPH));
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
 		seal = (BrokenSeal)bundle.get(SEAL);
-		
-		//pre-0.7.2 saves
-		if (bundle.contains( "unfamiliarity" )){
-			usesLeftToID = bundle.getInt( "unfamiliarity" );
-			availableUsesToID = USES_TO_ID/2f;
-		}
 		
 		augment = bundle.getEnum(AUGMENT, Augment.class);
 	}
@@ -266,7 +261,7 @@ public class Armor extends EquipableItem {
 	}
 
 	public final int DRMax(){
-		return DRMax(level());
+		return DRMax(buffedLvl());
 	}
 
 	public int DRMax(int lvl){
@@ -279,7 +274,7 @@ public class Armor extends EquipableItem {
 	}
 
 	public final int DRMin(){
-		return DRMin(level());
+		return DRMin(buffedLvl());
 	}
 
 	public int DRMin(int lvl){
@@ -307,7 +302,7 @@ public class Armor extends EquipableItem {
 			}
 		}
 		
-		return evasion + augment.evasionFactor(level());
+		return evasion + augment.evasionFactor(buffedLvl());
 	}
 	
 	public float speedFactor( Char owner, float speed ){
@@ -319,15 +314,16 @@ public class Armor extends EquipableItem {
 		
 		if (hasGlyph(Swiftness.class, owner)) {
 			boolean enemyNear = false;
+			PathFinder.buildDistanceMap(owner.pos, Dungeon.level.passable, 2);
 			for (Char ch : Actor.chars()){
-				if (Dungeon.level.adjacent(ch.pos, owner.pos) && owner.alignment != ch.alignment){
+				if ( PathFinder.distance[ch.pos] != Integer.MAX_VALUE && owner.alignment != ch.alignment){
 					enemyNear = true;
 					break;
 				}
 			}
-			if (!enemyNear) speed *= (1.2f + 0.04f * level());
+			if (!enemyNear) speed *= (1.2f + 0.04f * buffedLvl());
 		} else if (hasGlyph(Flow.class, owner) && Dungeon.level.water[owner.pos]){
-			speed *= 2f;
+			speed *= (2f + 0.25f*buffedLvl());
 		}
 		
 		if (hasGlyph(Bulk.class, owner) &&
@@ -343,7 +339,7 @@ public class Armor extends EquipableItem {
 	public float stealthFactor( Char owner, float stealth ){
 		
 		if (hasGlyph(Obfuscation.class, owner)){
-			stealth += 1 + level()/3f;
+			stealth += 1 + buffedLvl()/3f;
 		}
 		
 		return stealth;
@@ -352,6 +348,16 @@ public class Armor extends EquipableItem {
 	@Override
 	public int level() {
 		return super.level() + (curseInfusionBonus ? 1 : 0);
+	}
+	
+	//other things can equip these, for now we assume only the hero can be affected by levelling debuffs
+	@Override
+	public int buffedLvl() {
+		if (isEquipped( Dungeon.hero ) || Dungeon.hero.belongings.contains( this )){
+			return super.buffedLvl();
+		} else {
+			return level();
+		}
 	}
 	
 	@Override
@@ -502,7 +508,7 @@ public class Armor extends EquipableItem {
 	}
 	
 	@Override
-	public int price() {
+	public int value() {
 		if (seal != null) return 0;
 
 		int price = 20 * tier;

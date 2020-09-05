@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ public class LloydsBeacon extends Artifact {
 			hero.busy();
 			
 			hero.sprite.operate( hero.pos );
-			Sample.INSTANCE.play( Assets.SND_BEACON );
+			Sample.INSTANCE.play( Assets.Sounds.BEACON );
 			
 			GLog.i( Messages.get(this, "return") );
 			
@@ -214,7 +214,7 @@ public class LloydsBeacon extends Artifact {
 					ScrollOfTeleportation.teleportHero(curUser);
 					curUser.spendAndNext( 1f );
 				} else {
-					Sample.INSTANCE.play( Assets.SND_ZAP );
+					Sample.INSTANCE.play( Assets.Sounds.ZAP );
 					curUser.sprite.zap(bolt.collisionPos);
 					curUser.busy();
 
@@ -230,7 +230,7 @@ public class LloydsBeacon extends Artifact {
 										int count = 10;
 										int pos;
 										do {
-											pos = Dungeon.level.randomRespawnCell();
+											pos = Dungeon.level.randomRespawnCell( ch );
 											if (count-- <= 0) {
 												break;
 											}

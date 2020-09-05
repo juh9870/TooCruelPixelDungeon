@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ public abstract class PlatformSupport {
 	public abstract void updateDisplaySize();
 	
 	public abstract void updateSystemUI();
+
+	public abstract boolean connectedToUnmeteredNetwork();
 	
 	//FIXME this is currently used because no platform-agnostic text input has been implemented.
 	//should look into doing that using either plain openGL or Libgdx's libraries

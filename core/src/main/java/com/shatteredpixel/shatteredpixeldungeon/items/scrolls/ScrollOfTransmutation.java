@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.watabou.utils.Random;
@@ -52,7 +53,7 @@ import com.watabou.utils.Reflection;
 public class ScrollOfTransmutation extends InventoryScroll {
 	
 	{
-		initials = 10;
+		icon = ItemSpriteSheet.Icons.SCROLL_TRANSMUTE;
 		mode = WndBag.Mode.TRANMSUTABLE;
 		
 		bones = true;
@@ -267,12 +268,7 @@ public class ScrollOfTransmutation extends InventoryScroll {
 	}
 	
 	@Override
-	public void empoweredRead() {
-		//does nothing, this shouldn't happen
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 50 * quantity : super.price();
+	public int value() {
+		return isKnown() ? 50 * quantity : super.value();
 	}
 }

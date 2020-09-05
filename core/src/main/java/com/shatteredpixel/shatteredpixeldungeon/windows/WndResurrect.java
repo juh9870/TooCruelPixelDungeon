@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,9 +79,9 @@ public class WndResurrect extends Window {
 			@Override
 			protected void onClick() {
 				hide();
-				
-				Rankings.INSTANCE.submit( false, WndResurrect.causeOfDeath.getClass() );
+
 				Hero.reallyDie( WndResurrect.causeOfDeath );
+				Rankings.INSTANCE.submit( false, WndResurrect.causeOfDeath.getClass() );
 			}
 		};
 		btnNo.setRect( 0, btnYes.bottom() + GAP, WIDTH, BTN_HEIGHT );

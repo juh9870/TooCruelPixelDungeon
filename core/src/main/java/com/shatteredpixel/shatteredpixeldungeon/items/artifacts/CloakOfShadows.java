@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -86,7 +87,7 @@ public class CloakOfShadows extends Artifact {
 					stealthed = true;
 					hero.spend( 1f );
 					hero.busy();
-					Sample.INSTANCE.play(Assets.SND_MELD);
+					Sample.INSTANCE.play(Assets.Sounds.MELD);
 					activeBuff = activeBuff();
 					activeBuff.attachTo(hero);
 					if (hero.sprite.parent != null) {
@@ -168,7 +169,7 @@ public class CloakOfShadows extends Artifact {
 	}
 
 	@Override
-	public int price() {
+	public int value() {
 		return 0;
 	}
 
@@ -181,6 +182,7 @@ public class CloakOfShadows extends Artifact {
 					float missing = (chargeCap - charge);
 					if (level() > 7) missing += 5*(level() - 7)/3f;
 					float turnsToCharge = (45 - missing);
+					turnsToCharge /= RingOfEnergy.artifactChargeMultiplier(target);
 					partialCharge += (1f / turnsToCharge);
 				}
 
@@ -218,6 +220,11 @@ public class CloakOfShadows extends Artifact {
 		@Override
 		public int icon() {
 			return BuffIndicator.INVISIBLE;
+		}
+
+		@Override
+		public float iconFadePercent() {
+			return (5f - turnsToCost) / 5f;
 		}
 
 		@Override

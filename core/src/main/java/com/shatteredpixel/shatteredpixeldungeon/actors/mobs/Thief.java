@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +50,10 @@ public class Thief extends Mob {
 		defenseSkill = 12;
 		
 		EXP = 5;
-		maxLvl = 10;
-		
+		maxLvl = 11;
+
 		loot = Random.oneOf(Generator.Category.RING, Generator.Category.ARTIFACT);
-		lootChance = 0.01f;
+		lootChance = 0.03f; //initially, see rollToDropLoot
 
 		WANDERING = new Wandering();
 		FLEEING = new Fleeing();
@@ -99,7 +99,16 @@ public class Thief extends Mob {
 			if (item instanceof Honeypot.ShatteredPot) ((Honeypot.ShatteredPot)item).dropPot( this, pos );
 			item = null;
 		}
+		//each drop makes future drops 1/3 as likely
+		// so loot chance looks like: 1/33, 1/100, 1/300, 1/900, etc.
+		lootChance *= Math.pow(1/3f, Dungeon.LimitedDrops.THEIF_MISC.count);
 		super.rollToDropLoot();
+	}
+
+	@Override
+	protected Item createLoot() {
+		Dungeon.LimitedDrops.THEIF_MISC.count++;
+		return super.createLoot();
 	}
 
 	@Override
@@ -200,7 +209,7 @@ public class Thief extends Mob {
 					int count = 32;
 					int newPos;
 					do {
-						newPos = Dungeon.level.randomRespawnCell();
+						newPos = Dungeon.level.randomRespawnCell( Thief.this );
 						if (count-- <= 0) {
 							break;
 						}

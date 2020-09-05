@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,19 +79,20 @@ public class SewerLevel extends RegularLevel {
 	
 	@Override
 	public String tilesTex() {
-		return Assets.TILES_SEWERS;
+		return Assets.Environment.TILES_SEWERS;
 	}
 	
 	@Override
 	public String waterTex() {
-		return Assets.WATER_SEWERS;
+		return Assets.Environment.WATER_SEWERS;
 	}
 	
 	@Override
 	protected Class<?>[] trapClasses() {
 		return (Dungeon.depth == 1 && !Challenges.EXTREME_CAUTION.hell()) ?
 				new Class<?>[]{ WornDartTrap.class } :
-				new Class<?>[]{ ChillingTrap.class, ShockingTrap.class, ToxicTrap.class, WornDartTrap.class,
+				new Class<?>[]{
+						ChillingTrap.class, ShockingTrap.class, ToxicTrap.class, WornDartTrap.class,
 						AlarmTrap.class, OozeTrap.class,
 						ConfusionTrap.class, FlockTrap.class, SummoningTrap.class, TeleportationTrap.class };
 }
@@ -101,11 +102,13 @@ public class SewerLevel extends RegularLevel {
 		if(!Challenges.EXTREME_CAUTION.hell()) {
 			return Dungeon.depth == 1 ?
 					new float[]{1} :
-					new float[]{8, 8, 8, 8,
-							4, 4,
-							2, 2, 2, 2};
+					new float[]{
+							4, 4, 4, 4,
+							2, 2,
+							1, 1, 1, 1};
 		} else {
-			return new float[]{2, 4, 4, 2,
+			return new float[]{
+					2, 4, 4, 2,
 					8, 8,
 					2, 2, 8, 4};
 		}
@@ -191,7 +194,7 @@ public class SewerLevel extends RegularLevel {
 				
 				super.update();
 				
-				if ((rippleDelay -= Game.elapsed) <= 0) {
+				if (!isFrozen() && (rippleDelay -= Game.elapsed) <= 0) {
 					Ripple ripple = GameScene.ripple( pos + Dungeon.level.width() );
 					if (ripple != null) {
 						ripple.y -= DungeonTilemap.SIZE / 2;

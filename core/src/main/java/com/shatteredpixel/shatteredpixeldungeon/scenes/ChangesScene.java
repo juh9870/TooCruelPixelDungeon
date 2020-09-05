@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -39,8 +40,10 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_4_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_5_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_6_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_7_X_Changes;
+import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_8_X_Changes;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.NinePatch;
+import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.ui.Component;
 
 import java.util.ArrayList;
@@ -52,6 +55,8 @@ public class ChangesScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
+		
+		Music.INSTANCE.play( Assets.Music.THEME, true );
 
 		int w = Camera.main.width;
 		int h = Camera.main.height;
@@ -87,6 +92,7 @@ public class ChangesScene extends PixelScene {
 				Cruel_Changes.addAllChanges(changeInfos);
 				break;
 			case 1:
+				v0_8_X_Changes.addAllChanges(changeInfos);
 				v0_7_X_Changes.addAllChanges(changeInfos);
 				v0_6_X_Changes.addAllChanges(changeInfos);
 				v0_5_X_Changes.addAllChanges(changeInfos);
@@ -107,7 +113,6 @@ public class ChangesScene extends PixelScene {
 					}
 				}
 			}
-
 		};
 		add( list );
 
@@ -148,7 +153,7 @@ public class ChangesScene extends PixelScene {
 				panel.innerWidth(),
 				panel.innerHeight() + 2);
 		list.scrollTo(0, 0);
-		
+
 		RedButton btn0_7 = new RedButton("Too Cruel PD"){
 			@Override
 			protected void onClick() {
@@ -159,6 +164,7 @@ public class ChangesScene extends PixelScene {
 				}
 			}
 		};
+
 		if (changesSelected == 0) btn0_7.textColor(Window.TITLE_COLOR);
 		btn0_7.setRect(list.left()-3, list.bottom()+5, 69, 14);
 		add(btn0_7);
@@ -176,20 +182,6 @@ public class ChangesScene extends PixelScene {
 		if (changesSelected == 1) btn0_6.textColor(Window.TITLE_COLOR);
 		btn0_6.setRect(btn0_7.right() + 2, btn0_7.top(), 68, 14);
 		add(btn0_6);
-		
-//		RedButton btnOld = new RedButton("v0.6-v0.1"){
-//			@Override
-//			protected void onClick() {
-//				super.onClick();
-//				if (changesSelected != 2) {
-//					changesSelected = 2;
-//					ShatteredPixelDungeon.seamlessResetScene();
-//				}
-//			}
-//		};
-//		if (changesSelected == 2) btnOld.textColor(Window.TITLE_COLOR);
-//		btnOld.setRect(btn0_6.right() + 2, btn0_7.top(), 45, 14);
-//		add(btnOld);
 
 		Archs archs = new Archs();
 		archs.setSize( Camera.main.width, Camera.main.height );

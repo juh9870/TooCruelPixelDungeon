@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -33,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -58,7 +61,7 @@ public enum Challenges {
 			return false;
 		}
 	},
-	NO_HEALING("no_healing", true){
+	NO_HEALING("no_healing", 2){
 		@Override
 		protected boolean _isItemBlocked(Item item) {
 			if (item instanceof PotionOfHealing){
@@ -79,19 +82,19 @@ public enum Challenges {
 			return false;
 		}
 	},
-	SWARM_INTELLIGENCE("swarm_intelligence",true),
-	DARKNESS("darkness",true),
+	SWARM_INTELLIGENCE("swarm_intelligence",1),
+	DARKNESS("darkness",1),
 	NO_SCROLLS("no_scrolls"),
-	AMNESIA("amnesia",true),
+	AMNESIA("amnesia",1),
 	CURSED("cursed"),
 	BLACKJACK("blackjack"),
-	HORDE("horde",true){
+	HORDE("horde",2){
 		@Override
 		protected float _nMobsMult(){
 			return 2;
 		}
 	},
-	COUNTDOWN("countdown",true),
+	COUNTDOWN("countdown",1),
 	ANALGESIA("analgesia"),
 	BIG_LEVELS("big_levels"){
 		@Override
@@ -104,27 +107,28 @@ public enum Challenges {
 			return 2;
 		}
 	},
-	MUTAGEN("mutagen",true),
-	RESURRECTION("resurrection",true),
-	EXTREME_CAUTION("extreme_caution",true){
+	MUTAGEN("mutagen",1),
+	RESURRECTION("resurrection",2),
+	EXTREME_CAUTION("extreme_caution",1){
 		@Override
 		protected float _nTrapsMult() {
 			return 4;
 		}
 	},
-	EXTERMINATION("extermination");
+	EXTERMINATION("extermination"),
+	ROOK("rook");
 	public int id;
 	public String name;
-	public boolean hell_enabled;
+	public int hellLevel;
 
 	Challenges(String name){
 		id = (int) Math.pow(2,this.ordinal());
 		this.name=name;
 	}
 	
-	Challenges(String name, boolean hell_enabled){
+	Challenges(String name, int hellLevel){
 		this(name);
-		this.hell_enabled=hell_enabled;
+		this.hellLevel=hellLevel;
 	}
 
 	protected float _nMobsMult(){
@@ -139,16 +143,36 @@ public enum Challenges {
 		return Dungeon.isChallenged(this.id);
 	}
 	public boolean hell(){
-		return Dungeon.isHellChallenged(this.id);
+		return hell(0);
+	}
+	public boolean hell(int level){
+		return Dungeon.isHellChallenged(level,this.id);
 	}
 
 	protected boolean _isItemBlocked( Item item ){
 		return false;
 	}
-
-	public static float ascendingChance(){
-		if(Statistics.amuletObtained)return .66f;
+	
+	public static float ascendingChance(Mob m){
+		
+		Ascension buff;
+		if((buff=m.buff(Ascension.class))!=null){
+			if(buff.level>=5)
+				return 1;
+			if(buff.level>=2 && m.buff(Extermanation.class)!=null)return 0;
+		}
+		
+		float chance = .25f*(1f*Dungeon.hero.lvl/m.maxLvl-1);
+		if(chance>.33f)return .25f*(chance-1);
+		
+		if(Statistics.amuletObtained){
+			return .66f;
+		}
 		return .33f;
+	}
+	public static float maxAscension(){
+		return RESURRECTION.hell(1)?6:
+				RESURRECTION.hell(0)?1:0;
 	}
 	
 	public static float nMobsMultiplier(){
@@ -193,5 +217,15 @@ public enum Challenges {
 		
 		return result;
 	}
-
+	
+	public static Icons icon(){
+		return icon(SPDSettings.challenges(),SPDSettings.hellChallenges());
+	}
+	
+	public static Icons icon(int challenges,int[] hell){
+		if(challenges==0)return Icons.CHALLENGE_OFF;
+		if(hell[0]==0)return Icons.CHALLENGE_ON;
+		if(hell[1]==0)return Icons.CHALLENGE_HELL;
+		else return Icons.CHALLENGE_HELL2;
+	}
 }

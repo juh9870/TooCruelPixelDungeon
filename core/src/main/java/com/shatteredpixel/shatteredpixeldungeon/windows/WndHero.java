@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ public class WndHero extends WndTabbed {
 		
 		resize( WIDTH, HEIGHT );
 		
-		icons = TextureCache.get( Assets.BUFFS_LARGE );
+		icons = TextureCache.get( Assets.Interfaces.BUFFS_LARGE );
 		film = new TextureFilm( icons, 16, 16 );
 		
 		stats = new StatsTab();
@@ -113,10 +113,12 @@ public class WndHero extends WndTabbed {
 
 			IconTitle title = new IconTitle();
 			title.icon( HeroSprite.avatar(hero.heroClass, hero.tier()) );
-			if (hero.givenName().equals(hero.className()))
-				title.label( Messages.get(this, "title", Challenges.ANALGESIA.enabled()?"??":hero.lvl, hero.className() ).toUpperCase( Locale.ENGLISH ) );
+			
+			if (hero.name().equals(hero.className()))
+				title.label( Messages.get(this, "title", hero.lvl, hero.className() ).toUpperCase( Locale.ENGLISH ) );
+
 			else
-				title.label((hero.givenName() + "\n" + Messages.get(this, "title", hero.lvl, hero.className())).toUpperCase(Locale.ENGLISH));
+				title.label((hero.name() + "\n" + Messages.get(this, "title", hero.lvl, hero.className())).toUpperCase(Locale.ENGLISH));
 			title.color(Window.SHPX_COLOR);
 			title.setRect( 0, 0, WIDTH, 0 );
 			add(title);

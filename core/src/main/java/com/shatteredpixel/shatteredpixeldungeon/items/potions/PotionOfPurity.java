@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2019 Evan Debenham
+ * Copyright (C) 2014-2021 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -44,7 +45,7 @@ public class PotionOfPurity extends Potion {
 	private static ArrayList<Class> affectedBlobs;
 
 	{
-		initials = 9;
+		icon = ItemSpriteSheet.Icons.POTION_PURITY;
 		
 		affectedBlobs = new ArrayList<>(new BlobImmunity().immunities());
 	}
@@ -88,7 +89,7 @@ public class PotionOfPurity extends Potion {
 		
 		if (Dungeon.level.heroFOV[cell]) {
 			splash(cell);
-			Sample.INSTANCE.play(Assets.SND_SHATTER);
+			Sample.INSTANCE.play(Assets.Sounds.SHATTER);
 			
 			setKnown();
 			GLog.i(Messages.get(this, "freshness"));
@@ -104,7 +105,7 @@ public class PotionOfPurity extends Potion {
 	}
 	
 	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
+	public int value() {
+		return isKnown() ? 40 * quantity : super.value();
 	}
 }
