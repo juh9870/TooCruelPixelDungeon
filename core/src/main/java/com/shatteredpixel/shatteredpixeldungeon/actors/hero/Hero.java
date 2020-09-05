@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Alchemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
@@ -329,6 +330,9 @@ public class Hero extends Char {
 		}
 		if (Challenges.COUNTDOWN.hell()){
 			Buff.affect(this, RacingTheDeath.class);
+		}
+		if (Challenges.AMNESIA.enabled()){
+			Buff.affect(this, Amnesia.class);
 		}
 	}
 
@@ -904,9 +908,28 @@ public class Hero extends Char {
 			
 			int exterminators = Challenges.exterminatorsLeft();
 			if (exterminators>0){
-				if (exterminators>1)
-					GLog.n(Messages.get(Challenges.class,"extermination_lock",exterminators));
-				else GLog.n(Messages.get(Challenges.class,"extermination_lock_last"));
+				
+				String text = exterminators>1?Messages.get(Challenges.class,"extermination_lock",exterminators):
+						Messages.get(Challenges.class,"extermination_lock_last");
+				
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show( new WndMessage( text ) );
+					}
+				});
+				
+				ready();
+				return false;
+			}
+			Legion legion = buff(Legion.class);
+			if(legion!=null && legion.sealTime()>0){
+				Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show( new WndMessage( Messages.get(Challenges.class,"horde_lock",(int)legion.sealTime()) ) );
+					}
+				});
 				ready();
 				return false;
 			}
@@ -962,7 +985,19 @@ public class Hero extends Char {
 				}
 
 			} else {
-
+				
+				Legion legion = buff(Legion.class);
+				if(legion!=null && legion.sealTime()>0){
+					Game.runOnRenderThread(new Callback() {
+						@Override
+						public void call() {
+							GameScene.show( new WndMessage( Messages.get(Challenges.class,"horde_lock",(int)legion.sealTime()) ) );
+						}
+					});
+					ready();
+					return false;
+				}
+				
 				curAction = null;
 
 				Buff buff = buff(TimekeepersHourglass.timeFreeze.class);

@@ -214,7 +214,7 @@ public class OldPrisonBossLevel extends Level {
 		int pos = 5+2*32; //random cell adjacent to the entrance.
 		int cell;
 		do {
-			cell = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+			cell = pos + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
 		} while (!passable[cell]
 				|| (Char.hasProp(ch, Char.Property.LARGE) && !openSpace[cell])
 				|| Actor.findChar(cell) != null);

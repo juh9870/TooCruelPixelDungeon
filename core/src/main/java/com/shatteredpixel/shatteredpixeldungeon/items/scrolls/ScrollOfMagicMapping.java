@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
@@ -70,6 +71,8 @@ public class ScrollOfMagicMapping extends Scroll {
 			}
 		}
 		GameScene.updateFog();
+		
+		if(curUser.buff(Amnesia.class)!=null)curUser.buff(Amnesia.class).postpone(TIME_TO_READ);
 		
 		GLog.i( Messages.get(this, "layout") );
 		if (noticed) {

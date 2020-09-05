@@ -14,8 +14,10 @@ import com.watabou.utils.Random;
 public class Legion extends Buff {
 	
 	private static final float WAVE_DELAY = 150;
+	private static final float LOCK_TIME = 20;
 	
 	private float turnsToNextWave = WAVE_DELAY;
+	private float turnsSinceLastWave = WAVE_DELAY;
 	
 	@Override
 	public boolean act() {
@@ -27,7 +29,7 @@ public class Legion extends Buff {
 			if (turnsToNextWave <= 0) {
 				turnsToNextWave = WAVE_DELAY;
 				int wantSpawn = (int)(Dungeon.level.nMobs()*(Statistics.amuletObtained?2:1.5));
-				if (Dungeon.depth==1)wantSpawn=(int)(15*Challenges.nMobsMultiplier());
+				if (wantSpawn==0 && Dungeon.depth==1)wantSpawn=(int)(15*Challenges.nMobsMultiplier());
 				
 				for (Mob mob : Dungeon.level.mobs){
 					if (mob.alignment == Char.Alignment.ENEMY) wantSpawn--;
@@ -48,24 +50,32 @@ public class Legion extends Buff {
 					}
 				}
 				turnsToNextWave = WAVE_DELAY;
-				
+				turnsSinceLastWave=0;
 			}
 		}
 		spend(TICK);
+		turnsSinceLastWave+=TICK;
 		return true;
 	}
 	
+	public float sealTime(){
+		return LOCK_TIME-turnsSinceLastWave;
+	}
+	
 	private static final String WAVE_TURNS = "wave_turns";
+	private static final String LAST_WAVE_TURNS = "last_wave_turns";
 	
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(WAVE_TURNS,turnsToNextWave);
+		bundle.put(LAST_WAVE_TURNS,turnsSinceLastWave);
 	}
 	
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		turnsToNextWave = bundle.getFloat(WAVE_TURNS);
+		turnsSinceLastWave = bundle.getFloat(LAST_WAVE_TURNS);
 	}
 }

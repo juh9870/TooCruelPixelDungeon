@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.items.stones;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
@@ -81,6 +83,8 @@ public class StoneOfClairvoyance extends Runestone {
 		if (noticed) {
 			Sample.INSTANCE.play( Assets.Sounds.SECRET );
 		}
+		
+		if(curUser.buff(Amnesia.class)!=null)curUser.buff(Amnesia.class).postpone(TIME_TO_THROW);
 		
 		Sample.INSTANCE.play( Assets.Sounds.TELEPORT );
 		GameScene.updateFog();

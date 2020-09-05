@@ -54,6 +54,28 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 		
+		changes = new ChangeInfo("v0.3.0a",false,null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+		
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed (caused by v0.3.0):\n" +
+						"_-_ Various crashes related to Rook challenge"));
+		
+		changes.addButton(new ChangeButton(new SwarmSprite(),Messages.get(Challenges.class,"horde_hell"),
+				"_-_ Now seals the level for 20 turns after start of each wave."));
+		
+		changes.addButton(new ChangeButton(new Ankh(){
+			@Override
+			public ItemSprite.Glowing glowing() {
+				return new ItemSprite.Glowing(0xFF0000);
+			}
+		},Messages.get(Challenges.class,"resurrection_hell2"),
+				"_-_ Tweaked mob rebirth chance"));
+		
+		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_OFF),Messages.get(Challenges.class,"amnesia"),
+				"_-_ Magically-mapped cells quickly becomes unknown."));
+		
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"),false,null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
@@ -63,6 +85,10 @@ public class Cruel_Changes {
 						"_-_ 315 days after v0.2.0" +
 						"\n" +
 						"Dev commentary will be added here in the future."));
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed (caused by v0.2.0):\n" +
+						"_-_ Racing the Death crash\n" +
+						"_-_ Missing Intoxication description"));
 		
 		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
 				"_-_ Added even-more harder version to 3 challenges\n" +

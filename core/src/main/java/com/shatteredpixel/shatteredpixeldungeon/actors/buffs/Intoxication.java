@@ -156,8 +156,8 @@ public class Intoxication extends Buff {
 		
 		float power = 1f*damage/target.HT;
 		
-		//losing 33% hp equal to 1 base toxic level
-		power *= 3*BASE;
+		//losing 25% hp equal to 1 base toxic level
+		power *= 4*BASE;
 		
 		power/=2;
 		

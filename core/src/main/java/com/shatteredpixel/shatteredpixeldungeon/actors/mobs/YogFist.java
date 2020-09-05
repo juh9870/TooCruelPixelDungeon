@@ -192,7 +192,7 @@ public abstract class YogFist extends Mob {
 			int evaporatedTiles = Random.chances(new float[]{0, 2, 1});
 
 			for (int i = 0; i < evaporatedTiles; i++) {
-				int cell = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+				int cell = pos + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
 				if (Dungeon.level.map[cell] == Terrain.WATER){
 					Level.set( cell, Terrain.EMPTY);
 					GameScene.updateMap( cell );
@@ -250,7 +250,7 @@ public abstract class YogFist extends Mob {
 			int furrowedTiles = Random.chances(new float[]{0, 2, 1});
 
 			for (int i = 0; i < furrowedTiles; i++) {
-				int cell = pos + PathFinder.NEIGHBOURS9[Random.Int(9)];
+				int cell = pos + PathFinder.NEIGHBOURS9[Random.Int(PathFinder.NEIGHBOURS9.length)];
 				if (Dungeon.level.map[cell] == Terrain.GRASS) {
 					Level.set(cell, Terrain.FURROWED_GRASS);
 					GameScene.updateMap(cell);

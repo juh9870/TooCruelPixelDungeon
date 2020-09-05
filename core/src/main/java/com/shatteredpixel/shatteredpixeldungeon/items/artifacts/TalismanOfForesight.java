@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
@@ -212,6 +213,7 @@ public class TalismanOfForesight extends Artifact {
 
 				curUser.sprite.zap(target);
 				curUser.spend(Actor.TICK);
+				if(curUser.buff(Amnesia.class)!=null)curUser.buff(Amnesia.class).postpone(Actor.TICK);
 				Sample.INSTANCE.play(Assets.Sounds.SCAN);
 				if (noticed) Sample.INSTANCE.play(Assets.Sounds.SECRET);
 

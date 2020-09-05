@@ -393,7 +393,7 @@ public class NewDM300 extends Mob {
 				//pick an adjacent cell to the hero as a safe cell. This cell is less likely to be in a wall or containing hazards
 				int safeCell;
 				do {
-					safeCell = rockCenter + PathFinder.NEIGHBOURS8[Random.Int(8)];
+					safeCell = rockCenter + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
 				} while (safeCell == pos
 						|| (Dungeon.level.solid[safeCell] && Random.Int(2) == 0)
 						|| (Blob.volumeAt(safeCell, NewCavesBossLevel.PylonEnergy.class) > 0 && Random.Int(2) == 0));
@@ -500,7 +500,7 @@ public class NewDM300 extends Mob {
 		for (int i = 0; i < shards; i++){
 			int ofs;
 			do {
-				ofs = PathFinder.NEIGHBOURS8[Random.Int(8)];
+				ofs = PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
 			} while (!Dungeon.level.passable[pos + ofs]);
 			Dungeon.level.drop( new MetalShard(), pos + ofs ).sprite.drop( pos );
 		}

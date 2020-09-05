@@ -197,7 +197,7 @@ public class YogDzewa extends Mob {
 					int targetPos = Dungeon.hero.pos;
 					if (i != 0){
 						do {
-							targetPos = Dungeon.hero.pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+							targetPos = Dungeon.hero.pos + PathFinder.NEIGHBOURS8_UNCHANGED[Random.Int(8)];
 						} while (Dungeon.level.trueDistance(pos, Dungeon.hero.pos)
 								> Dungeon.level.trueDistance(pos, targetPos));
 					}

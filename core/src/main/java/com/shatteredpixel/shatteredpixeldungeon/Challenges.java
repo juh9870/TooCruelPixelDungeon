@@ -157,18 +157,34 @@ public enum Challenges {
 		
 		Ascension buff;
 		if((buff=m.buff(Ascension.class))!=null){
-			if(buff.level>=5)
+			if(buff.level==5)
 				return 1;
 			if(buff.level>=2 && m.buff(Extermanation.class)!=null)return 0;
 		}
 		
-		float chance = .25f*(1f*Dungeon.hero.lvl/m.maxLvl-1);
-		if(chance>.33f)return .25f*(chance-1);
+		float chance = .33f;
 		
-		if(Statistics.amuletObtained){
-			return .66f;
+		float _m = m.maxLvl;
+		float h = Dungeon.hero.lvl;
+		float a = buff==null?0:buff.level;
+		
+		if(Dungeon.hero.lvl>m.maxLvl){
+			
+			float o = Math.max(0,10-_m);
+			
+			chance = .33f+((1-.33f)*((h-_m+o)*30/(35-o-_m)))/30;
 		}
-		return .33f;
+		
+		if(Statistics.amuletObtained && chance<.66){
+			chance=.66f;
+		}
+		
+		if(a>0){
+			if(h<=_m)chance*=0.5/Math.sqrt(a);
+			if(h<=_m+2)chance*=0.75/Math.sqrt(a);
+		}
+		
+		return chance;
 	}
 	public static float maxAscension(){
 		return RESURRECTION.hell(1)?6:

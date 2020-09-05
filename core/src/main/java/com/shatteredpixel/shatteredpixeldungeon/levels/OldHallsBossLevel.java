@@ -166,7 +166,7 @@ public class OldHallsBossLevel extends Level {
 		int pos = entrance == -1 ? stairs : entrance;
 		int cell;
 		do {
-			cell = pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
+			cell = pos + PathFinder.NEIGHBOURS8_UNCHANGED[Random.Int(8)];
 		} while (!passable[cell]
 				|| (Char.hasProp(ch, Char.Property.LARGE) && !openSpace[cell])
 				|| Actor.findChar(cell) != null);
