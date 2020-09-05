@@ -152,7 +152,7 @@ public class Dungeon {
 	}
 	
 	public static int challenges;
-	public static int[] hellChallenges;
+	public static int[] hellChallenges = new int[]{0,0};
 	public static boolean challengesInform;
 	
 	//Variable for Rook challenge
