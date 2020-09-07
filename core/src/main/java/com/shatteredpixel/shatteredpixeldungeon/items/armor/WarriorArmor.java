@@ -58,7 +58,7 @@ public class WarriorArmor extends ClassArmor {
 		public void onSelect( Integer target ) {
 			if (target != null && target != curUser.pos) {
 				
-				Ballistica route = new Ballistica(curUser.pos, target, Ballistica.PROJECTILE);
+				Ballistica route = new Ballistica(curUser.pos, target, Ballistica.PROJECTILE | Ballistica.AFFECTED_BY_ROOK);
 				int cell = route.collisionPos;
 
 				//can't occupy the same cell as another char, so move back one.

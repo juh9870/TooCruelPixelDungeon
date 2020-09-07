@@ -113,7 +113,7 @@ public class EtherealChains extends Artifact {
 					return;
 				}
 				
-				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
+				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET| Ballistica.AFFECTED_BY_ROOK);
 				
 				if (Actor.findChar( chain.collisionPos ) != null){
 					chainEnemy( chain, curUser, Actor.findChar( chain.collisionPos ));

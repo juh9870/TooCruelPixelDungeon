@@ -207,7 +207,7 @@ public class LloydsBeacon extends Artifact {
 				ScrollOfTeleportation.teleportHero(curUser);
 				curUser.spendAndNext(1f);
 			} else {
-				final Ballistica bolt = new Ballistica( curUser.pos, target, Ballistica.MAGIC_BOLT );
+				final Ballistica bolt = new Ballistica( curUser.pos, target, Ballistica.MAGIC_BOLT| Ballistica.AFFECTED_BY_ROOK );
 				final Char ch = Actor.findChar(bolt.collisionPos);
 
 				if (ch == curUser){

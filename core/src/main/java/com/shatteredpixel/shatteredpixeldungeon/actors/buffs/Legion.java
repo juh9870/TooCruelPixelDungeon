@@ -13,7 +13,7 @@ import com.watabou.utils.Random;
 
 public class Legion extends Buff {
 	
-	private static final float WAVE_DELAY = 150;
+	private static final float WAVE_DELAY = 200;
 	private static final float LOCK_TIME = 20;
 	
 	private float turnsToNextWave = WAVE_DELAY;
@@ -22,7 +22,7 @@ public class Legion extends Buff {
 	@Override
 	public boolean act() {
 		if(!Dungeon.bossLevel()&&Dungeon.depth!=21) {
-			turnsToNextWave -= TICK * Random.Float(.8f, 1.2f);
+			turnsToNextWave -= TICK * Random.Float(.9f, 1.1f);
 			
 //			GLog.i(Math.floor(turnsToNextWave)+"");
 			

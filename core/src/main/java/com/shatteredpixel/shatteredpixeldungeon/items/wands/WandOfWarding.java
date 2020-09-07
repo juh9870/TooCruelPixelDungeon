@@ -285,7 +285,7 @@ public class WandOfWarding extends Wand {
 
 		@Override
 		protected boolean canAttack( Char enemy ) {
-			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
+			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT| Ballistica.AFFECTED_BY_ROOK).collisionPos == enemy.pos;
 		}
 
 		@Override

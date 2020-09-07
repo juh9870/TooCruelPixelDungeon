@@ -54,6 +54,27 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 		
+		changes = new ChangeInfo("v0.3.0b",false,null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+		
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed (caused by v0.3.0):\n" +
+						"_-_ Even more crashes related to Rook challenge\n" +
+						"_-_ Crashes related to Blackjack"));
+		
+		changes.addButton(new ChangeButton(new SwarmSprite(),Messages.get(Challenges.class,"horde_hell")+" and "+Messages.get(Challenges.class,"horde_hell2"),
+				"_-_ Legion is now T3 challenge\n" +
+						"_-_ Invasion is now T2 challenge\n" +
+						"_-_ Invasion is now weaker on first 2 floors\n" +
+						"_-_ Legion waves delay is increased"));
+		
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_OFF.get(),Messages.get(Challenges.class,"rook"),
+				"_-_ Diagonal ranged player interactions are now impossible."));
+		
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER),Messages.get(Challenges.class,"no_healing_hell2"),
+				"_-_ Increased intoxication gained from taking damage."));
+		
 		changes = new ChangeInfo("v0.3.0a",false,null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);

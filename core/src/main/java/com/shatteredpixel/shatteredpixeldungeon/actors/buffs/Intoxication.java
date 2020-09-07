@@ -159,7 +159,7 @@ public class Intoxication extends Buff {
 		//losing 25% hp equal to 1 base toxic level
 		power *= 4*BASE;
 		
-		power/=2;
+		power/=1.5;
 		
 		//extra intoxication equal to received damage
 		power += damage;

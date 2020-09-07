@@ -469,7 +469,7 @@ public abstract class Wand extends Item {
 						}
 						CursedWand.cursedZap(curWand,
 								curUser,
-								new Ballistica(curUser.pos, target, Ballistica.MAGIC_BOLT),
+								new Ballistica(curUser.pos, target, Ballistica.MAGIC_BOLT | Ballistica.AFFECTED_BY_ROOK),
 								new Callback() {
 									@Override
 									public void call() {

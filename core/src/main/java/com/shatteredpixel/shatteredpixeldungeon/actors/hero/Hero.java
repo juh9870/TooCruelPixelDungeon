@@ -325,7 +325,7 @@ public class Hero extends Char {
 		if(Challenges.DARKNESS.hell()){
 			Buff.affect( this, PermaBlind.class );
 		}
-		if (Challenges.HORDE.hell()){
+		if (Challenges.HORDE.hell(1)){
 			Buff.affect(this, Legion.class);
 		}
 		if (Challenges.COUNTDOWN.hell()){

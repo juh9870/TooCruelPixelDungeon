@@ -96,6 +96,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 public abstract class Level implements Bundlable {
 	
@@ -478,7 +479,7 @@ public abstract class Level implements Bundlable {
 			if (h != null) {
 				if (h.type == Heap.Type.FOR_SALE) continue;
 				int goldCount = 0;
-				for (Item i : h.items) {
+				for (Item i : (LinkedList<Item>)h.items.clone()) {
 					if (i.value() > 0) {
 						goldCount += (int) (Shopkeeper.sellPrice(i) * Random.NormalFloat(0.25f, 1f));
 						switch (h.type) {
