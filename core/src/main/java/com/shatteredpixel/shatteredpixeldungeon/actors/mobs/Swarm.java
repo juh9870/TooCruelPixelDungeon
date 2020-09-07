@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
@@ -53,6 +54,11 @@ public class Swarm extends Mob {
 
 		loot = new PotionOfHealing();
 		lootChance = 0.1667f; //by default, see rollToDropLoot()
+	}
+	
+	@Override
+	public boolean canAscend() {
+		return Random.Int(generation)==0;
 	}
 	
 	private static final float SPLIT_DELAY	= 1f;
@@ -129,6 +135,9 @@ public class Swarm extends Mob {
 		}
 		if (buff(Corruption.class ) != null) {
 			Buff.affect( clone, Corruption.class);
+		}
+		if (buff(Ascension.class ) != null) {
+			Buff.affect( clone, Ascension.class).level=buff(Ascension.class).level;
 		}
 		return clone;
 	}
