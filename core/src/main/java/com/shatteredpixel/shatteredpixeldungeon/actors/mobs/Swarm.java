@@ -58,7 +58,7 @@ public class Swarm extends Mob {
 	
 	@Override
 	public boolean canAscend() {
-		return Random.Int(generation)==0;
+		return Random.Int(generation+1)==0;
 	}
 	
 	private static final float SPLIT_DELAY	= 1f;
