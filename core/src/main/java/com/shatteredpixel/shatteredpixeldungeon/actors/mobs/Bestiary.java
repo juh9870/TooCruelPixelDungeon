@@ -39,10 +39,11 @@ public class Bestiary {
 	
 	//returns a rotation of standard mobs, unshuffled.
 	private static ArrayList<Class<? extends Mob>> standardMobRotation( int depth ){
-		
-		if(depth==2)depth=3;
-		else if(depth!=1 && depth<25 && Challenges.HORDE.hell()){
-			depth+=2;
+		if(Challenges.HORDE.hell()) {
+			if (depth == 2) depth = 3;
+			else if (depth != 1 && depth < 25) {
+				depth += 2;
+			}
 		}
 		
 		switch(depth){
