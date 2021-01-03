@@ -68,10 +68,10 @@ public class PotionOfDragonsBreath extends ExoticPotion {
 		public void onSelect(final Integer cell) {
 
 			if (cell == null && !isKnown()){
-				setKnown();
+				identify();
 				detach(curUser.belongings.backpack);
 			} else if (cell != null) {
-				setKnown();
+				identify();
 				Sample.INSTANCE.play( Assets.Sounds.DRINK );
 				curUser.sprite.operate(curUser.pos, new Callback() {
 					@Override
@@ -81,19 +81,19 @@ public class PotionOfDragonsBreath extends ExoticPotion {
 
 						curUser.spend(1f);
 						
-						if(Challenges.NO_HEALING.hell())
+						if(Challenges.NO_HEALING.tier(2))
 							Buff.affect(curUser, Intoxication.class).extend(Intoxication.EXOTIC_INTOXICATION);
 						
 						curUser.sprite.idle();
 						curUser.sprite.zap(cell);
 						Sample.INSTANCE.play( Assets.Sounds.BURNING );
-
-						final Ballistica bolt = new Ballistica(curUser.pos, cell, Ballistica.STOP_TERRAIN | Ballistica.IGNORE_DOORS | Ballistica.AFFECTED_BY_ROOK);
+						
+						final Ballistica bolt = new Ballistica(curUser.pos, cell, Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID);
 
 						int maxDist = 6;
 						int dist = Math.min(bolt.dist, maxDist);
 
-						final ConeAOE cone = new ConeAOE(bolt, 6, 60, Ballistica.STOP_TERRAIN | Ballistica.STOP_TARGET | Ballistica.IGNORE_DOORS );
+						final ConeAOE cone = new ConeAOE(bolt, 6, 60, Ballistica.STOP_SOLID | Ballistica.STOP_TARGET | Ballistica.IGNORE_SOFT_SOLID);
 
 						//cast to cells at the tip, rather than all cells, better performance.
 						for (Ballistica ray : cone.rays){

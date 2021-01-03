@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.DarkBlock;
 import com.shatteredpixel.shatteredpixeldungeon.effects.EmoIcon;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.IceBlock;
 import com.shatteredpixel.shatteredpixeldungeon.effects.ShieldHalo;
@@ -57,6 +58,8 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
+import java.util.HashMap;
+
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
 	
 	// Color constants for floating text
@@ -83,6 +86,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public enum State {
 		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, EXTERMINATING
 	}
+	private int stunStates = 0;
 	
 	protected Animation idle;
 	protected Animation run;
@@ -107,6 +111,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected TorchHalo light;
 	protected ShieldHalo shield;
 	protected AlphaTweener invisible;
+	protected HashMap<Class,Flare> auras;
 	
 	protected EmoIcon emo;
 	protected CharHealthIndicator health;
@@ -126,6 +131,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public CharSprite() {
 		super();
 		listener = this;
+		auras=new HashMap<>();
 	}
 	
 	@Override
@@ -303,19 +309,19 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	
 	public Emitter emitter() {
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( this );
+		if (emitter != null) emitter.pos( this );
 		return emitter;
 	}
 	
 	public Emitter centerEmitter() {
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( center() );
+		if (emitter != null) emitter.pos( center() );
 		return emitter;
 	}
 	
 	public Emitter bottomEmitter() {
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( x, y + height, width, 0 );
+		if (emitter != null) emitter.pos( x, y + height, width, 0 );
 		return emitter;
 	}
 	
@@ -370,7 +376,6 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				break;
 			case FROZEN:
 				iceBlock = IceBlock.freeze( this );
-				paused = true;
 				break;
 			case ILLUMINATED:
 				GameScene.effect( light = new TorchHalo( this ) );
@@ -429,7 +434,6 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 					iceBlock.melt();
 					iceBlock = null;
 				}
-				paused = false;
 				break;
 			case ILLUMINATED:
 				if (light != null) {
@@ -473,6 +477,28 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				break;
 		}
 	}
+
+	public void aura( Class cl, int color, float sizeMod, boolean light ){
+		Flare aura = auras.get(cl);
+		if (aura != null){
+			aura.killAndErase();
+		}
+		float size = Math.max(width(), height());
+		size = Math.max(size+4, 16);
+		size*=sizeMod;
+		aura = new Flare(5, size);
+		aura.angularSpeed = 90;
+		aura.color(color, light).show(this, 0);
+		auras.put(cl,aura);
+	}
+
+	public void clearAura(Class cl){
+		Flare aura = auras.get(cl);
+		if (aura != null){
+			aura.killAndErase();
+			auras.remove(cl);
+		}
+	}
 	
 	@Override
 	public void update() {
@@ -504,6 +530,12 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 		if (exterminating != null) {
 			exterminating.visible = visible;
+		}
+		for (Flare aura : auras.values()) {
+			if (aura != null){
+				aura.visible = visible;
+				aura.point(center());
+			}
 		}
 		if (sleeping) {
 			showSleep();

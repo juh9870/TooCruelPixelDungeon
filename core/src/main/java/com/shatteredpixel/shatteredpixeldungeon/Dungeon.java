@@ -152,8 +152,7 @@ public class Dungeon {
 		
 	}
 	
-	public static int challenges;
-	public static int[] hellChallenges = new int[]{0,0};
+	public static Modifiers modifiers;
 	public static boolean challengesInform;
 	
 	//Variable for Rook challenge
@@ -179,20 +178,17 @@ public class Dungeon {
 	public static void init() {
 		
 		version = Game.versionCode;
-		challenges = SPDSettings.challenges();
-		hellChallenges = new int[]{
-				SPDSettings.hellChallenges(0),
-				SPDSettings.hellChallenges(1)
-		};
+		
+		seed = DungeonSeed.randomSeed();
+		
+		modifiers = SPDSettings.modifiers();
 		challengesInform = false;
-		if (challenges == 0) {
-			challenges = Challenges.randomChallenges();
+		if (!modifiers.isChallenged()) {
+			modifiers.randomize(seed);
 			challengesInform = true;
 		}
 		
 		PathFinder.noDiagonals = rook = Challenges.ROOK.enabled();
-		
-		seed = DungeonSeed.randomSeed();
 		
 		Actor.clear();
 		Actor.resetNextID();
@@ -215,8 +211,8 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-		if(DeviceCompat.isDebug())
-			depth = 14;
+//		if(DeviceCompat.isDebug())
+//			depth = 14;
 		gold = 0;
 		
 		droppedItems = new SparseArray<>();
@@ -241,16 +237,8 @@ public class Dungeon {
 		GamesInProgress.selectedClass.initHero(hero);
 	}
 	
-	public static boolean isChallenged(int mask) {
-		return (challenges & mask) != 0;
-	}
-	
-	public static boolean isHellChallenged(int mask) {
-		return isHellChallenged(0, mask);
-	}
-	
-	public static boolean isHellChallenged(int level, int mask) {
-		return (hellChallenges[level] & mask) != 0;
+	public static int challengeTier(int id) {
+		return modifiers.challengeTier(id);
 	}
 	
 	public static Level newLevel() {
@@ -393,7 +381,7 @@ public class Dungeon {
 		
 		if (pos == -2) {
 			pos = level.exit;
-		} else if (pos < 0 || pos >= level.length()) {
+		} else if (pos < 0 || pos >= level.length() || (!level.passable[pos] && !level.avoid[pos])){
 			pos = level.entrance;
 		}
 		
@@ -486,6 +474,7 @@ public class Dungeon {
 	
 	private static final String VERSION = "version";
 	private static final String SEED = "seed";
+	private static final String MODIFIERS = "modifiers";
 	private static final String CHALLENGES = "challenges";
 	private static final String HELL_CHALS = "hell_challenges";
 	private static final String HERO = "hero";
@@ -506,8 +495,7 @@ public class Dungeon {
 			version = Game.versionCode;
 			bundle.put(VERSION, version);
 			bundle.put(SEED, seed);
-			bundle.put(CHALLENGES, challenges);
-			bundle.put(HELL_CHALS, hellChallenges);
+			bundle.put(MODIFIERS, modifiers);
 			bundle.put(HERO, hero);
 			bundle.put(GOLD, gold);
 			bundle.put(DEPTH, depth);
@@ -579,7 +567,7 @@ public class Dungeon {
 			saveGame(GamesInProgress.curSlot);
 			saveLevel(GamesInProgress.curSlot);
 			
-			GamesInProgress.set(GamesInProgress.curSlot, depth, challenges, hellChallenges, hero);
+			GamesInProgress.set(GamesInProgress.curSlot, depth, modifiers, hero);
 			
 		}
 	}
@@ -601,10 +589,17 @@ public class Dungeon {
 		quickslot.reset();
 		QuickSlotButton.reset();
 		
-		Dungeon.challenges = bundle.getInt(CHALLENGES);
-		Dungeon.hellChallenges = bundle.getIntArray(HELL_CHALS);
-		if (Dungeon.hellChallenges == null)
-			Dungeon.hellChallenges = new int[]{bundle.getInt(HELL_CHALS), 0};
+		if(bundle.contains(MODIFIERS)){
+			Dungeon.modifiers=(Modifiers) bundle.get(MODIFIERS);
+		} else {
+			
+			int challenges = bundle.getInt(CHALLENGES);
+			int[] hellChallenges = bundle.getIntArray(HELL_CHALS);
+			if (hellChallenges == null)
+				hellChallenges = new int[]{bundle.getInt(HELL_CHALS), 0};
+			
+			Dungeon.modifiers = new Modifiers(Challenges.fromLegacy(challenges,hellChallenges[0],hellChallenges[1]));
+		}
 		
 		
 		PathFinder.noDiagonals = rook = Challenges.ROOK.enabled();
@@ -721,10 +716,17 @@ public class Dungeon {
 	public static void preview(GamesInProgress.Info info, Bundle bundle) {
 		info.depth = bundle.getInt(DEPTH);
 		info.version = bundle.getInt(VERSION);
-		info.challenges = bundle.getInt(CHALLENGES);
-		info.hellChallenges = bundle.getIntArray(HELL_CHALS);
-		if (info.hellChallenges == null)
-			info.hellChallenges = new int[]{bundle.getInt(HELL_CHALS), 0};
+		if(bundle.contains(MODIFIERS)){
+			info.modifiers=(Modifiers) bundle.get(MODIFIERS);
+		} else {
+			
+			int challenges = bundle.getInt(CHALLENGES);
+			int[] hellChallenges = bundle.getIntArray(HELL_CHALS);
+			if (hellChallenges == null)
+				hellChallenges = new int[]{bundle.getInt(HELL_CHALS), 0};
+			
+			info.modifiers = new Modifiers(Challenges.fromLegacy(challenges,hellChallenges[0],hellChallenges[1]));
+		}
 		Hero.preview(info, bundle.getBundle(HERO));
 		Statistics.preview(info, bundle);
 	}
@@ -738,21 +740,9 @@ public class Dungeon {
 	public static void win(Class cause) {
 		
 		hero.belongings.identify();
-		
-		int chCount = 0;
-		int hellCount = 0;
-		for (Challenges ch : Challenges.values()) {
-			if ((challenges & ch.id) != 0) chCount++;
-			for (int hell : hellChallenges) {
-				if ((hell & ch.id) != 0) hellCount++;
-			}
-		}
-		
-		if (chCount != 0) {
-			Badges.validateChampion(chCount, hellCount);
-		}
-		
-		Rankings.INSTANCE.submit(true, cause);
+
+		Rankings.INSTANCE.submit( true, cause );
+
 	}
 	
 	//TODO hero max vision is now separate from shadowcaster max vision. Might want to adjust.
@@ -856,8 +846,8 @@ public class Dungeon {
 			System.arraycopy(pass, 0, passable, 0, Dungeon.level.length());
 		}
 		
-		if (Char.hasProp(ch, Char.Property.LARGE)) {
-			BArray.and(pass, Dungeon.level.openSpace, passable);
+		if (chars && Char.hasProp(ch, Char.Property.LARGE)){
+			BArray.and( pass, Dungeon.level.openSpace, passable );
 		}
 		
 		if (chars) {

@@ -30,7 +30,22 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;
 
-public class HallwayRoom extends EmptyRoom {
+public class HallwayRoom extends StandardRoom {
+
+	@Override
+	public int minWidth() {
+		return Math.max(5, super.minWidth());
+	}
+
+	@Override
+	public int minHeight() {
+		return Math.max(5, super.minHeight());
+	}
+
+	@Override
+	public boolean canMerge(Level l, Point p, int mergeTerrain) {
+		return false;
+	}
 
 	//FIXME lots of copy-pasta from tunnel rooms here
 	@Override
@@ -86,6 +101,9 @@ public class HallwayRoom extends EmptyRoom {
 
 		}
 
+		Painter.fill( level, c.left, c.top, 3, 3, Terrain.EMPTY_SP );
+		Painter.fill( level, c.left+1, c.top+1, 1, 1,  Terrain.STATUE_SP );
+
 		for (Door door : connected.values()) {
 			door.set( Door.Type.REGULAR );
 		}
@@ -94,9 +112,12 @@ public class HallwayRoom extends EmptyRoom {
 	//returns the space which all doors must connect to (usually 1 cell, but can be more)
 	//Note that, like rooms, this space is inclusive to its right and bottom sides
 	protected Rect getConnectionSpace(){
-		Point c = connected.size() <= 1 ? center() : getDoorCenter();
+		Point c = center();
 
-		return new Rect(c.x, c.y, c.x, c.y);
+		c.x = (int) GameMath.gate(left + 2, c.x, right - 2);
+		c.y = (int) GameMath.gate(top + 2, c.y, bottom - 2);
+
+		return new Rect(c.x-1, c.y-1, c.x+1, c.y+1);
 	}
 
 	//returns a point equidistant from all doors this room has

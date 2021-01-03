@@ -21,10 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -58,7 +60,14 @@ public class ArmoredBrute extends Brute {
 	}
 	
 	@Override
+	public void rollToDropLoot() {
+		lootChance*= Challenges.rareLootChanceMultiplier();
+		super.rollToDropLoot();
+	}
+	
+	@Override
 	protected Item createLoot () {
+		Armor armor;
 		if (Random.Int( 4 ) == 0) {
 			return new PlateArmor().random();
 		}

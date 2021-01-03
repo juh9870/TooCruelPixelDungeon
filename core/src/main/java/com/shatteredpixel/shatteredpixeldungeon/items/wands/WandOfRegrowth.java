@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blooming;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -40,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.LotusSprite;
@@ -58,7 +58,7 @@ public class WandOfRegrowth extends Wand {
 	{
 		image = ItemSpriteSheet.WAND_REGROWTH;
 
-		collisionProperties = Ballistica.STOP_TERRAIN;
+		collisionProperties = Ballistica.STOP_SOLID;
 	}
 	
 	private int totChrgUsed = 0;
@@ -91,12 +91,8 @@ public class WandOfRegrowth extends Wand {
 		for (Iterator<Integer> i = cells.iterator(); i.hasNext();) {
 			int cell = i.next();
 			int terr = Dungeon.level.map[cell];
-			if (!(terr == Terrain.EMPTY ||
-					terr == Terrain.EMBERS ||
-					terr == Terrain.EMPTY_DECO ||
-					terr == Terrain.GRASS ||
-					terr == Terrain.HIGH_GRASS ||
-					terr == Terrain.FURROWED_GRASS)) {
+			if (!(terr == Terrain.EMPTY || terr == Terrain.EMBERS || terr == Terrain.EMPTY_DECO ||
+					terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS)) {
 				i.remove();
 			} else if (Char.hasProp(Actor.findChar(cell), Char.Property.IMMOVABLE)) {
 				i.remove();
@@ -197,7 +193,27 @@ public class WandOfRegrowth extends Wand {
 
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		new Blooming().proc(staff, attacker, defender, damage);
+		//like pre-nerf vampiric enchantment, except with herbal healing buff, only in grass
+		boolean grass = false;
+		int terr = Dungeon.level.map[attacker.pos];
+		if (terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS){
+			grass = true;
+		}
+		terr = Dungeon.level.map[defender.pos];
+		if (terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS){
+			grass = true;
+		}
+
+		if (grass) {
+			int level = Math.max(0, staff.buffedLvl());
+
+			// lvl 0 - 16%
+			// lvl 1 - 21%
+			// lvl 2 - 25%
+			int healing = Math.round(damage * (level + 2f) / (level + 6f) / 2f);
+			Buff.affect(attacker, Sungrass.Health.class).boost(healing);
+		}
+
 	}
 
 	protected void fx( Ballistica bolt, Callback callback ) {

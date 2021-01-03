@@ -34,6 +34,12 @@ public class BurnedRoom extends PatchRoom {
 	public float[] sizeCatProbs() {
 		return new float[]{4, 1, 0};
 	}
+
+	@Override
+	public boolean canMerge(Level l, Point p, int mergeTerrain) {
+		int cell = l.pointToCell(pointInside(p, 1));
+		return l.map[cell] == Terrain.EMPTY;
+	}
 	
 	@Override
 	public void paint(Level level) {
@@ -83,17 +89,17 @@ public class BurnedRoom extends PatchRoom {
 	
 	@Override
 	public boolean canPlaceWater(Point p) {
-		return super.canPlaceWater(p) && !patch[xyToPatchCoords(p.x, p.y)];
+		return !inside(p) || !patch[xyToPatchCoords(p.x, p.y)];
 	}
 
 	@Override
 	public boolean canPlaceGrass(Point p) {
-		return super.canPlaceGrass(p) && !patch[xyToPatchCoords(p.x, p.y)];
+		return !inside(p) || !patch[xyToPatchCoords(p.x, p.y)];
 	}
 
 	@Override
 	public boolean canPlaceTrap(Point p) {
-		return super.canPlaceTrap(p) && !patch[xyToPatchCoords(p.x, p.y)];
+		return !inside(p) || !patch[xyToPatchCoords(p.x, p.y)];
 	}
 	
 }

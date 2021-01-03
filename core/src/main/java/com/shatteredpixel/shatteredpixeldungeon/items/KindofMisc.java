@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -42,11 +43,25 @@ public abstract class KindofMisc extends EquipableItem {
 		if ( this instanceof Artifact
 				&& hero.belongings.artifact != null
 				&& hero.belongings.misc != null){
-			equipFull = true;
+
+			//see if we can re-arrange items first
+			if (hero.belongings.misc instanceof Ring && hero.belongings.ring == null){
+				hero.belongings.ring = (Ring) hero.belongings.misc;
+				hero.belongings.misc = null;
+			} else {
+				equipFull = true;
+			}
 		} else if (this instanceof Ring
 				&& hero.belongings.misc != null
 				&& hero.belongings.ring != null){
-			equipFull = true;
+
+			//see if we can re-arrange items first
+			if (hero.belongings.misc instanceof Artifact && hero.belongings.artifact == null){
+				hero.belongings.artifact = (Artifact) hero.belongings.misc;
+				hero.belongings.misc = null;
+			} else {
+				equipFull = true;
+			}
 		}
 
 		if (equipFull) {
@@ -118,6 +133,7 @@ public abstract class KindofMisc extends EquipableItem {
 
 			detach( hero.belongings.backpack );
 
+			Talent.onItemEquipped(hero, this);
 			activate( hero );
 
 			cursedKnown = true;

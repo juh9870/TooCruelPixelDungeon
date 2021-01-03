@@ -26,8 +26,11 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -65,6 +68,11 @@ public abstract class Plant implements Bundlable {
 
 		wither();
 		activate( ch );
+
+		if (Dungeon.level.heroFOV[pos] && Dungeon.hero.hasTalent(Talent.NATURES_AID)){
+			// 4/6 turns based on talent points spent
+			Buff.affect(Dungeon.hero, Barkskin.class).set(2, 2*(1+Dungeon.hero.pointsInTalent(Talent.NATURES_AID)));
+		}
 	}
 	
 	public abstract void activate( Char ch );
@@ -195,19 +203,19 @@ public abstract class Plant implements Bundlable {
 
 		@Override
 		public String desc() {
-			if (Challenges.AMNESIA.hell())return "";
+			if (Challenges.AMNESIA.tier(2))return "";
 			return Messages.get(plantClass, "desc");
 		}
 		
 		@Override
 		public int image() {
-			if (Challenges.AMNESIA.hell())return ItemSpriteSheet.SEED_SUNGRASS;
+			if (Challenges.AMNESIA.tier(2))return ItemSpriteSheet.SEED_SUNGRASS;
 			return super.image();
 		}
 		
 		@Override
 		public String name() {
-			if (Challenges.AMNESIA.hell())return Messages.get(PlaceHolder.class,"name");
+			if (Challenges.AMNESIA.tier(2))return Messages.get(PlaceHolder.class,"name");
 			return super.name();
 		}
 		

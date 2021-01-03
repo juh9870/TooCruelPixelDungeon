@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.android;
 
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -42,7 +41,6 @@ import com.watabou.utils.FileUtils;
 public class AndroidGame extends AndroidApplication {
 	
 	public static AndroidApplication instance;
-	protected static GLSurfaceView view;
 	
 	private static AndroidPlatformSupport support;
 	
@@ -105,14 +103,25 @@ public class AndroidGame extends AndroidApplication {
 		config.useAccelerometer = false;
 		
 		if (support == null) support = new AndroidPlatformSupport();
-		else                 support.resetGenerators();
+		else                 support.reloadGenerators();
 		
 		support.updateSystemUI();
 		
 		initialize(new ShatteredPixelDungeon(support), config);
 		
-		view = (GLSurfaceView)graphics.getView();
-		
+	}
+
+	@Override
+	protected void onResume() {
+		//prevents weird rare cases where the app is running twice
+		if (instance != this){
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+				finishAndRemoveTask();
+			} else {
+				finish();
+			}
+		}
+		super.onResume();
 	}
 
 	@Override

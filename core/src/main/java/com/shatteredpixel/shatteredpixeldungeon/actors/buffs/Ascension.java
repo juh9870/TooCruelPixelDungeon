@@ -2,9 +2,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
@@ -52,7 +49,7 @@ public class Ascension extends Buff {
 	
 	@Override
 	public boolean act() {
-		if(Challenges.RESURRECTION.hell(1)) {
+		if(Challenges.RESURRECTION.tier(3)) {
 			if (level >= 1 && level < 3)
 				Buff.affect(target, Stamina.class, 1000);
 			if (level >= 2) {

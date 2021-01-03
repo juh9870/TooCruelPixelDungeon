@@ -24,12 +24,12 @@ package com.shatteredpixel.shatteredpixeldungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.GameSettings;
 import com.watabou.utils.Point;
 
+import java.util.List;
 import java.util.Locale;
 
 public class SPDSettings extends GameSettings {
@@ -179,24 +179,12 @@ public class SPDSettings extends GameSettings {
 		return getInt( KEY_LAST_CLASS, 0, 0, 3 );
 	}
 	
-	public static void challenges( int value ) {
-		put( KEY_CHALLENGES, value );
+	public static void modifiers( Modifiers value ) {
+		put( KEY_CHALLENGES, Challenges.saveString(value.challenges) );
 	}
 	
-	public static int challenges() {
-		return getInt( KEY_CHALLENGES, 0, 0, (int)Math.pow(2,Challenges.values().length)-1 );
-	}
-	
-	public static void hellChallenges( int level, int value ) {
-		put( KEY_HELL_CHALLENGES+level, value );
-	}
-	
-	public static int hellChallenges(int level) {
-		return getInt( KEY_HELL_CHALLENGES+level, 0, 0, (int)Math.pow(2,Challenges.values().length)-1 );
-	}
-	
-	public static int[] hellChallenges() {
-		return new int[]{hellChallenges(0),hellChallenges(1)};
+	public static Modifiers modifiers() {
+		return new Modifiers(Challenges.fromString(getString(KEY_CHALLENGES,"")));
 	}
 
 	public static void supportNagged( boolean value ) {

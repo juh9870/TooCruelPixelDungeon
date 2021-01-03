@@ -462,7 +462,7 @@ public class NewPrisonBossLevel extends Level {
 				for (Mob m : allies){
 					do{
 						m.pos = randomTenguCellPos();
-					} while (findMob(m.pos) != null);
+					} while (findMob(m.pos) != null || m.pos == Dungeon.hero.pos);
 					if (m.sprite != null) m.sprite.place(m.pos);
 					mobs.add(m);
 				}
@@ -689,7 +689,7 @@ public class NewPrisonBossLevel extends Level {
 		public String name(int tileX, int tileY) {
 			int cell = (this.tileX+tileX) + Dungeon.level.width()*(this.tileY+tileY);
 			if (Dungeon.level.traps.get(cell) != null){
-				return Messages.titleCase(Dungeon.level.traps.get(cell).name);
+				return Messages.titleCase(Dungeon.level.traps.get(cell).name());
 			}
 			return super.name(tileX, tileY);
 		}

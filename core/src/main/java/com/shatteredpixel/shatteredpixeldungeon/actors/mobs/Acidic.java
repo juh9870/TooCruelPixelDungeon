@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -39,6 +40,13 @@ public class Acidic extends Scorpio {
 		loot = new PotionOfExperience();
 		lootChance = 1f;
 	}
+	
+	@Override
+	public void rollToDropLoot() {
+		lootChance*= Challenges.rareLootChanceMultiplier();
+		super.rollToDropLoot();
+	}
+	
 	@Override
 	public int attackProc(Char enemy, int damage) {
 		Buff.affect(enemy, Ooze.class).set( Ooze.DURATION );

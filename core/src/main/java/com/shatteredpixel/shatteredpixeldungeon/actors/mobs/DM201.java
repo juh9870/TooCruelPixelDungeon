@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -64,7 +65,7 @@ public class DM201 extends DM200 {
 		}
 
 		GameScene.add(Blob.seed(pos, 0, CorrosiveGas.class));
-		if (state == HUNTING && enemy != null && enemySeen
+		if (paralysed <= 0 && state == HUNTING && enemy != null && enemySeen
 				&& threatened && !Dungeon.level.adjacent(pos, enemy.pos) && fieldOfView[enemy.pos]){
 			enemySeen = enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
 			if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
@@ -120,6 +121,8 @@ public class DM201 extends DM200 {
 	@Override
 	public void rollToDropLoot() {
 		if (Dungeon.hero.lvl > maxLvl + 2) return;
+		
+		lootChance*= Challenges.rareLootChanceMultiplier();
 
 		super.rollToDropLoot();
 

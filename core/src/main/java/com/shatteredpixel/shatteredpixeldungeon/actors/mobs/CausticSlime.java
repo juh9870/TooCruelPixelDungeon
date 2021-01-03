@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -51,6 +52,8 @@ public class CausticSlime extends Slime {
 	@Override
 	public void rollToDropLoot() {
 		if (Dungeon.hero.lvl > maxLvl + 2) return;
+		
+		lootChance*= Challenges.rareLootChanceMultiplier();
 		
 		super.rollToDropLoot();
 		

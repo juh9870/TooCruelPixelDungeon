@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
+import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.ChangeInfo;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.Cruel_Changes;
@@ -41,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_5_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_6_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_7_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_8_X_Changes;
+import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_9_X_Changes;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.audio.Music;
@@ -77,11 +79,11 @@ public class ChangesScene extends PixelScene {
 		NinePatch panel = Chrome.get(Chrome.Type.TOAST);
 
 		int pw = 135 + panel.marginLeft() + panel.marginRight() - 2;
-		int ph = h - 35;
+		int ph = h - 36;
 
 		panel.size( pw, ph );
 		panel.x = (w - pw) / 2f;
-		panel.y = title.bottom() + 4;
+		panel.y = title.bottom() + 5;
 		align( panel );
 		add( panel );
 		
@@ -92,6 +94,7 @@ public class ChangesScene extends PixelScene {
 				Cruel_Changes.addAllChanges(changeInfos);
 				break;
 			case 1:
+				v0_9_X_Changes.addAllChanges(changeInfos);
 				v0_8_X_Changes.addAllChanges(changeInfos);
 				v0_7_X_Changes.addAllChanges(changeInfos);
 				v0_6_X_Changes.addAllChanges(changeInfos);
@@ -150,11 +153,11 @@ public class ChangesScene extends PixelScene {
 		list.setRect(
 				panel.x + panel.marginLeft(),
 				panel.y + panel.marginTop() - 1,
-				panel.innerWidth(),
+				panel.innerWidth() + 2,
 				panel.innerHeight() + 2);
 		list.scrollTo(0, 0);
-
-		RedButton btn0_7 = new RedButton("Too Cruel PD"){
+		
+		StyledButton btn0_9 = new StyledButton(Chrome.Type.GREY_BUTTON_TR,"Too Cruel PD"){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -165,11 +168,11 @@ public class ChangesScene extends PixelScene {
 			}
 		};
 
-		if (changesSelected == 0) btn0_7.textColor(Window.TITLE_COLOR);
-		btn0_7.setRect(list.left()-3, list.bottom()+5, 69, 14);
-		add(btn0_7);
-		
-		RedButton btn0_6 = new RedButton("Shattered PD"){
+		if (changesSelected != 0) btn0_9.textColor( 0xBBBBBB );
+		btn0_9.setRect(list.left()-4f, list.bottom(), w/2, changesSelected == 0 ? 19 : 15);
+		addToBack(btn0_9);
+
+		StyledButton btn0_8 = new StyledButton(Chrome.Type.GREY_BUTTON_TR, "Shattered PD"){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -179,9 +182,9 @@ public class ChangesScene extends PixelScene {
 				}
 			}
 		};
-		if (changesSelected == 1) btn0_6.textColor(Window.TITLE_COLOR);
-		btn0_6.setRect(btn0_7.right() + 2, btn0_7.top(), 68, 14);
-		add(btn0_6);
+		if (changesSelected != 1) btn0_8.textColor( 0xBBBBBB );
+		btn0_8.setRect(btn0_9.right() + 1, list.bottom(), w/2, changesSelected == 1 ? 19 : 15);
+		addToBack(btn0_8);
 
 		Archs archs = new Archs();
 		archs.setSize( Camera.main.width, Camera.main.height );

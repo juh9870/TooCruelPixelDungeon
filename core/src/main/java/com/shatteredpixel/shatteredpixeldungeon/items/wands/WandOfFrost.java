@@ -72,7 +72,7 @@ public class WandOfFrost extends DamageWand {
 			if (ch.buff(Chill.class) != null){
 				//6.67% less damage per turn of chill remaining, to a max of 10 turns (50% dmg)
 				float chillturns = Math.min(10, ch.buff(Chill.class).cooldown());
-				damage = (int)Math.round(damage * Math.pow(0.9633f, chillturns));
+				damage = (int)Math.round(damage * Math.pow(0.9333f, chillturns));
 			} else {
 				ch.sprite.burst( 0xFF99CCFF, buffedLvl() / 2 + 2 );
 			}
@@ -105,7 +105,7 @@ public class WandOfFrost extends DamageWand {
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		Chill chill = defender.buff(Chill.class);
-		if (chill != null && chill.cooldown() >= Chill.DURATION){
+		if (chill != null && Random.IntRange(2, (int)Chill.DURATION) <= chill.cooldown()){
 			//need to delay this through an actor so that the freezing isn't broken by taking damage from the staff hit.
 			new FlavourBuff(){
 				{actPriority = VFX_PRIO;}

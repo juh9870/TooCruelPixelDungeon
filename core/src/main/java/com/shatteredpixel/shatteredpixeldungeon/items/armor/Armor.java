@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
@@ -107,7 +108,7 @@ public class Armor extends EquipableItem {
 	public int tier;
 	
 	private static final int USES_TO_ID = 10;
-	private int usesLeftToID = USES_TO_ID;
+	private float usesLeftToID = USES_TO_ID;
 	private float availableUsesToID = USES_TO_ID/2f;
 	
 	public Armor( int tier ) {
@@ -172,6 +173,17 @@ public class Armor extends EquipableItem {
 			if (seal.level() > 0){
 				degrade();
 			}
+			if (seal.getGlyph() != null){
+				if (hero.hasTalent(Talent.RUNIC_TRANSFERENCE)
+						&& (Arrays.asList(Glyph.common).contains(seal.getGlyph().getClass())
+							|| Arrays.asList(Glyph.uncommon).contains(seal.getGlyph().getClass()))){
+					inscribe(null);
+				} else if (hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) == 2){
+					inscribe(null);
+				} else {
+					seal.setGlyph(null);
+				}
+			}
 			GLog.i( Messages.get(Armor.class, "detach_seal") );
 			hero.sprite.operate(hero.pos);
 			if (!seal.collect()){
@@ -198,7 +210,7 @@ public class Armor extends EquipableItem {
 			
 			((HeroSprite)hero.sprite).updateArmor();
 			activate(hero);
-
+			Talent.onItemEquipped(hero, this);
 			hero.spendAndNext( time2equip( hero ) );
 			return true;
 			
@@ -221,6 +233,9 @@ public class Armor extends EquipableItem {
 			//doesn't trigger upgrading logic such as affecting curses/glyphs
 			level(level()+1);
 			Badges.validateItemLevelAquired(this);
+		}
+		if (seal.getGlyph() != null){
+			inscribe(seal.getGlyph());
 		}
 		if (isEquipped(Dungeon.hero)){
 			Buff.affect(Dungeon.hero, BrokenSeal.WarriorShield.class).setArmor(this);
@@ -265,6 +280,10 @@ public class Armor extends EquipableItem {
 	}
 
 	public int DRMax(int lvl){
+		if (Challenges.NO_ARMOR.enabled()){
+			return 1 + tier + lvl + augment.defenseFactor(lvl);
+		}
+
 		int max = tier * (2 + lvl) + augment.defenseFactor(lvl);
 		if (lvl > max){
 			return ((lvl - max)+1)/2;
@@ -278,6 +297,10 @@ public class Armor extends EquipableItem {
 	}
 
 	public int DRMin(int lvl){
+		if (Challenges.NO_ARMOR.enabled()){
+			return 0;
+		}
+
 		int max = DRMax(lvl);
 		if (lvl >= max){
 			return (lvl - max);
@@ -387,9 +410,10 @@ public class Armor extends EquipableItem {
 			damage = glyph.proc( this, attacker, defender, damage );
 		}
 		
-		if (!levelKnown && defender == Dungeon.hero && availableUsesToID >= 1) {
-			availableUsesToID--;
-			usesLeftToID--;
+		if (!levelKnown && defender == Dungeon.hero) {
+			float uses = Math.min( availableUsesToID, Talent.itemIDSpeedFactor(Dungeon.hero, this) );
+			availableUsesToID -= uses;
+			usesLeftToID -= uses;
 			if (usesLeftToID <= 0) {
 				identify();
 				GLog.p( Messages.get(Armor.class, "identify") );
@@ -402,6 +426,7 @@ public class Armor extends EquipableItem {
 	
 	@Override
 	public void onHeroGainExp(float levelPercent, Hero hero) {
+		levelPercent *= Talent.itemIDSpeedFactor(hero, this);
 		if (!levelKnown && isEquipped(hero) && availableUsesToID <= USES_TO_ID/2f) {
 			//gains enough uses to ID over 0.5 levels
 			availableUsesToID = Math.min(USES_TO_ID/2f, availableUsesToID + levelPercent * USES_TO_ID);
@@ -531,6 +556,11 @@ public class Armor extends EquipableItem {
 		if (glyph == null || !glyph.curse()) curseInfusionBonus = false;
 		this.glyph = glyph;
 		updateQuickslot();
+		//the hero needs runic transference to actually transfer, but we still attach the glyph here
+		// in case they take that talent in the future
+		if (glyph != null && seal != null){
+			seal.setGlyph(glyph);
+		}
 		return this;
 	}
 

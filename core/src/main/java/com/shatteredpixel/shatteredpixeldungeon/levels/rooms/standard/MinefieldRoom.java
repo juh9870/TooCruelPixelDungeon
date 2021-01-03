@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ExplosiveTrap;
 import com.watabou.utils.PathFinder;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class MinefieldRoom extends StandardRoom {
@@ -33,6 +34,12 @@ public class MinefieldRoom extends StandardRoom {
 	@Override
 	public float[] sizeCatProbs() {
 		return new float[]{4, 1, 0};
+	}
+
+	@Override
+	public boolean canMerge(Level l, Point p, int mergeTerrain) {
+		int cell = l.pointToCell(pointInside(p, 1));
+		return l.map[cell] == Terrain.EMPTY;
 	}
 
 	@Override

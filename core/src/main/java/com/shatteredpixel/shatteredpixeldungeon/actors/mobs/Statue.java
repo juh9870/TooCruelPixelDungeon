@@ -143,8 +143,10 @@ public class Statue extends Mob {
 	@Override
 	public void die( Object cause ) {
 		weapon.identify();
-		weapon.cursed=true;
-		weapon.enchant(Enchantment.randomCurse());
+		if(Challenges.CURSED.enabled()) {
+			weapon.cursed = true;
+			weapon.enchant(Enchantment.randomCurse());
+		}
 		Dungeon.level.drop( weapon, pos ).sprite.drop();
 		super.die( cause );
 	}

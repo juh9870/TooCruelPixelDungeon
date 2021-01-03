@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Modifiers;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -37,24 +38,19 @@ import com.watabou.noosa.ui.Component;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WndChallenges extends Window {
-	
 	private static final int WIDTH = 130;
 	private static final int HEIGHT = 150;
 	private static final int TTL_HEIGHT = 18;
 	private static final int BTN_HEIGHT = 18;
 	private static final int GAP = 1;
-	
 	private boolean editable;
 	private ArrayList<ChallengeButton> boxes;
 	private ArrayList<IconButton> infos;
 	
-	public WndChallenges(int checked, int hell, int hell2, final boolean editable) {
-		this(checked, new int[]{hell, hell2}, editable);
-	}
-	
-	public WndChallenges(int checked, int[] hell, final boolean editable) {
+	public WndChallenges(Modifiers modifiers, final boolean editable) {
 		super();
 		
 		this.editable = editable;
@@ -112,7 +108,7 @@ public class WndChallenges extends Window {
 			final int id = i;
 			
 			ChallengeButton cb = new ChallengeButton(Challenges.values()[i]);
-			cb.updateState(checked, hell);
+			cb.updateState(modifiers);
 			cb.active = editable;
 			
 			if (i > 0) {
@@ -164,23 +160,20 @@ public class WndChallenges extends Window {
 	public void onBackPressed() {
 		
 		if (editable) {
-			int value = 0;
-			int hell = 0;
-			int hell2 = 0;
+			Modifiers modifiers = SPDSettings.modifiers();
 			for (int i = 0; i < boxes.size(); i++) {
-				if (boxes.get(i).checked()) {
-					value |= Challenges.values()[i].id;
-				}
-				if (boxes.get(i).hellChecked()) {
-					hell |= Challenges.values()[i].id;
-				}
-				if (boxes.get(i).hell2Checked()) {
-					hell2 |= Challenges.values()[i].id;
+				ChallengeButton box = boxes.get(i);
+				if (box.hell2Checked()) {
+					modifiers.challenges[i] = 3;
+				} else if (box.hellChecked()) {
+					modifiers.challenges[i] = 2;
+				} else if (box.checked()) {
+					modifiers.challenges[i] = 1;
+				} else {
+					modifiers.challenges[i] = 0;
 				}
 			}
-			SPDSettings.challenges(value);
-			SPDSettings.hellChallenges(0, hell);
-			SPDSettings.hellChallenges(1, hell2);
+			SPDSettings.modifiers(modifiers);
 		}
 		
 		super.onBackPressed();
@@ -195,8 +188,8 @@ public class WndChallenges extends Window {
 		public ChallengeButton(Challenges challenge) {
 			super(Messages.get(Challenges.class, challenge.name));
 			this.challenge = challenge;
-			hellCheckbox.visible = hellCheckbox.active = challenge.hellLevel > 0;
-			hell2Checkbox.visible = hell2Checkbox.active = challenge.hellLevel > 1;
+			hellCheckbox.visible = hellCheckbox.active = challenge.maxLevel > 0;
+			hell2Checkbox.visible = hell2Checkbox.active = challenge.maxLevel > 1;
 		}
 		
 		@Override
@@ -260,12 +253,12 @@ public class WndChallenges extends Window {
 			updateText();
 		}
 		
-		public void updateState(int challenges, int[] hell) {
-			checked((challenge.id & challenges) != 0);
+		public void updateState(Modifiers modifiers) {
+			checked((modifiers.challengeTier(challenge.ordinal())) >= 1);
 			if (hellCheckbox.active)
-				hellCheckbox.checked((challenge.id & hell[0]) != 0);
+				hellCheckbox.checked((modifiers.challengeTier(challenge.ordinal())) >= 2);
 			if (hell2Checkbox.active)
-				hell2Checkbox.checked((challenge.id & hell[1]) != 0);
+				hell2Checkbox.checked((modifiers.challengeTier(challenge.ordinal())) >= 3);
 			updateText();
 		}
 		

@@ -31,6 +31,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
@@ -52,7 +54,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -96,12 +101,9 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoItem;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoMob;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoPlant;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoTrap;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndList;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndStory;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -209,6 +211,7 @@ public class GameScene extends PixelScene {
 				Blending.enable();
 			}
 		};
+		water.autoAdjust = true;
 		terrain.add( water );
 
 		ripples = new Group();
@@ -474,6 +477,18 @@ public class GameScene extends PixelScene {
 						}
 					}
 				}
+
+				if (Dungeon.hero.hasTalent(Talent.ROGUES_FORESIGHT)
+						&& Dungeon.level instanceof RegularLevel){
+					int reqSecrets = Dungeon.level.feeling == Level.Feeling.SECRETS ? 2 : 1;
+					for (Room r : ((RegularLevel) Dungeon.level).rooms()){
+						if (r instanceof SecretRoom) reqSecrets--;
+					}
+					//50%/75% chance
+					if (reqSecrets <= 0 && Random.Int(4) <= Dungeon.hero.pointsInTalent(Talent.ROGUES_FORESIGHT)){
+						GLog.p(Messages.get(this, "secret_hint"));
+					}
+				}
 				
 			} else if (InterlevelScene.mode == InterlevelScene.Mode.RESET) {
 				GLog.h(Messages.get(this, "warp"));
@@ -481,24 +496,34 @@ public class GameScene extends PixelScene {
 				GLog.h(Messages.get(this, "return"), Dungeon.depth);
 			}
 
-			switch (Dungeon.level.feeling) {
-				case CHASM:
-					GLog.w(Messages.get(this, "chasm"));
+			boolean unspentTalents = false;
+			for (int i = 1; i <= Dungeon.hero.talents.size(); i++){
+				if (Dungeon.hero.talentPointsAvailable(i) > 0){
+					unspentTalents = true;
 					break;
-				case WATER:
-					GLog.w(Messages.get(this, "water"));
-					break;
-				case GRASS:
-					GLog.w(Messages.get(this, "grass"));
-					break;
-				case DARK:
-					GLog.w(Messages.get(this, "dark"));
-					break;
-				default:
+				}
 			}
-			if (Dungeon.level instanceof RegularLevel &&
-					((RegularLevel) Dungeon.level).secretDoors > Random.IntRange(3, 4)) {
-				GLog.w(Messages.get(this, "secrets"));
+			if (unspentTalents){
+				GLog.newLine();
+				GLog.w( Messages.get(Dungeon.hero, "unspent") );
+				StatusPane.talentBlink = 10f;
+				WndHero.lastIdx = 1;
+			}
+
+			switch (Dungeon.level.feeling) {
+				case CHASM:     GLog.w(Messages.get(this, "chasm"));    break;
+				case WATER:     GLog.w(Messages.get(this, "water"));    break;
+				case GRASS:     GLog.w(Messages.get(this, "grass"));    break;
+				case DARK:      GLog.w(Messages.get(this, "dark"));     break;
+				case LARGE:     GLog.w(Messages.get(this, "large"));    break;
+				case TRAPS:     GLog.w(Messages.get(this, "traps"));    break;
+				case SECRETS:   GLog.w(Messages.get(this, "secrets"));  break;
+			}
+
+			for (Mob mob : Dungeon.level.mobs) {
+				if (!mob.buffs(ChampionEnemy.class).isEmpty()) {
+					GLog.w(Messages.get(ChampionEnemy.class, "warn"));
+				}
 			}
 
 			InterlevelScene.mode = InterlevelScene.Mode.NONE;
@@ -822,7 +847,7 @@ public class GameScene extends PixelScene {
 	}
 	
 	public static void effect( Visual effect ) {
-		scene.effects.add( effect );
+		if (scene != null) scene.effects.add( effect );
 	}
 
 	public static void effectOverFog( Visual effect ) {
@@ -1113,7 +1138,7 @@ public class GameScene extends PixelScene {
 		Trap trap = Dungeon.level.traps.get( cell );
 		if (trap != null && trap.visible) {
 			objects.add(trap);
-			names.add(Messages.titleCase( trap.name ));
+			names.add(Messages.titleCase( trap.name() ));
 		}
 
 		if (objects.isEmpty()) {

@@ -98,7 +98,7 @@ public class ExoticPotion extends Potion {
 	
 	@Override
 	public void setKnown() {
-		if (Challenges.AMNESIA.hell())return;
+		if (Challenges.AMNESIA.tier(2))return;
 		if (!isKnown()) {
 			handler.know(exoToReg.get(this.getClass()));
 			updateQuickslot();
@@ -117,7 +117,7 @@ public class ExoticPotion extends Potion {
 			color = handler.label(exoToReg.get(this.getClass()));
 		}
 		
-		if (Challenges.AMNESIA.hell()){
+		if (Challenges.AMNESIA.tier(2)){
 			image = ItemSpriteSheet.POTION_SILVER + 16;
 			color = "unknown";
 		}

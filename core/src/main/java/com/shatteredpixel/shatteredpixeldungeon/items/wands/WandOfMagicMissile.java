@@ -82,7 +82,7 @@ public class WandOfMagicMissile extends DamageWand {
 		SpellSprite.show(attacker, SpellSprite.CHARGE);
 		for (Wand.Charger c : attacker.buffs(Wand.Charger.class)){
 			if (c.wand() != this){
-				c.gainCharge(0.33f);
+				c.gainCharge(0.5f);
 			}
 		}
 
@@ -119,7 +119,7 @@ public class WandOfMagicMissile extends DamageWand {
 
 		@Override
 		public int icon() {
-			return BuffIndicator.RECHARGING;
+			return BuffIndicator.UPGRADE;
 		}
 
 		@Override

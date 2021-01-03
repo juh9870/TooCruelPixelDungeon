@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -40,6 +41,12 @@ public class Bandit extends Thief {
 
 		//guaranteed first drop, then 1/3, 1/9, etc.
 		lootChance = 1f;
+	}
+	
+	@Override
+	public void rollToDropLoot() {
+		lootChance*= Challenges.rareLootChanceMultiplier();
+		super.rollToDropLoot();
 	}
 	
 	@Override

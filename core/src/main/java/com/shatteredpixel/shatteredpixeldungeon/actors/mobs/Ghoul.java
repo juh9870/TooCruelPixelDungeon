@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
@@ -128,6 +129,11 @@ public class Ghoul extends Mob {
 				if (sprite.visible) {
 					Actor.addDelayed( new Pushing( child, pos, child.pos ), -1 );
 				}
+
+				for (Buff b : buffs(ChampionEnemy.class)){
+					Buff.affect( child, b.getClass());
+				}
+
 			}
 			
 		}
@@ -159,8 +165,10 @@ public class Ghoul extends Mob {
 	protected synchronized void onRemove() {
 		if (beingLifeLinked) {
 			for (Buff buff : buffs()) {
-				//corruption and king damager are preserved when removed via life link
-				if (!(buff instanceof Corruption) && !(buff instanceof DwarfKing.KingDamager)) {
+				//corruption, champion, and king damager are preserved when removed via life link
+				if (!(buff instanceof Corruption)
+						&& (!(buff instanceof ChampionEnemy))
+						&& !(buff instanceof DwarfKing.KingDamager)) {
 					buff.detach();
 				}
 			}
@@ -214,6 +222,11 @@ public class Ghoul extends Mob {
 		@Override
 		public boolean act() {
 			ghoul.sprite.visible = Dungeon.level.heroFOV[ghoul.pos];
+
+			if (target.alignment != ghoul.alignment){
+				detach();
+				return true;
+			}
 
 			if (target.fieldOfView == null){
 				target.fieldOfView = new boolean[Dungeon.level.length()];

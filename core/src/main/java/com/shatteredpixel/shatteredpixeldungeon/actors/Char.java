@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Chill;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corrosion;
@@ -54,6 +55,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ShieldBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stamina;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
@@ -133,7 +135,7 @@ public abstract class Char extends Actor {
 		Dungeon.level.updateFieldOfView( this, fieldOfView );
 
 		//throw any items that are on top of an immovable char
-		if (properties.contains(Property.IMMOVABLE)){
+		if (properties().contains(Property.IMMOVABLE)){
 			throwItems();
 		}
 		return false;
@@ -173,8 +175,8 @@ public abstract class Char extends Actor {
 		}
 
 		//can't swap into a space without room
-		if (properties.contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos]
-			|| c.properties.contains(Property.LARGE) && !Dungeon.level.openSpace[pos]){
+		if (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos]
+			|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos]){
 			return true;
 		}
 		
@@ -377,10 +379,16 @@ public abstract class Char extends Actor {
 		float acuRoll = Random.Float( acuStat );
 		if (attacker.buff(Bless.class) != null) acuRoll *= 1.25f;
 		if (attacker.buff(  Hex.class) != null) acuRoll *= 0.8f;
+		for (ChampionEnemy buff : attacker.buffs(ChampionEnemy.class)){
+			acuRoll *= buff.evasionAndAccuracyFactor();
+		}
 		
 		float defRoll = Random.Float( defStat );
 		if (defender.buff(Bless.class) != null) defRoll *= 1.25f;
 		if (defender.buff(  Hex.class) != null) defRoll *= 0.8f;
+		for (ChampionEnemy buff : defender.buffs(ChampionEnemy.class)){
+			defRoll *= buff.evasionAndAccuracyFactor();
+		}
 		
 		return (magic ? acuRoll * 2 : acuRoll) >= defRoll;
 	}
@@ -411,6 +419,10 @@ public abstract class Char extends Actor {
 	public int attackProc( Char enemy, int damage ) {
 		if ( buff(Weakness.class) != null ){
 			damage *= 0.67f;
+		}
+		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
+			damage *= buff.meleeDamageFactor();
+			buff.onAttackProc( enemy );
 		}
 		return damage;
 	}
@@ -456,6 +468,10 @@ public abstract class Char extends Actor {
 			return;
 		}
 
+		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
+			dmg = (int) Math.ceil(dmg * buff.damageTakenFactor());
+		}
+
 		if (!(src instanceof LifeLink) && buff(LifeLink.class) != null){
 			HashSet<LifeLink> links = buffs(LifeLink.class);
 			for (LifeLink link : links.toArray(new LifeLink[0])){
@@ -480,7 +496,7 @@ public abstract class Char extends Actor {
 		}
 		Charm c = buff(Charm.class);
 		if (c != null){
-			c.recover();
+			c.recover(src);
 		}
 		if (this.buff(Frost.class) != null){
 			Buff.detach( this, Frost.class );
@@ -537,6 +553,18 @@ public abstract class Char extends Actor {
 	public void destroy() {
 		HP = 0;
 		Actor.remove( this );
+
+		for (Char ch : Actor.chars().toArray(new Char[0])){
+			if (ch.buff(Charm.class) != null && ch.buff(Charm.class).object == id()){
+				ch.buff(Charm.class).detach();
+			}
+			if (ch.buff(Terror.class) != null && ch.buff(Terror.class).object == id()){
+				ch.buff(Terror.class).detach();
+			}
+			if (ch.buff(SnipersMark.class) != null && ch.buff(SnipersMark.class).object == id()){
+				ch.buff(SnipersMark.class).detach();
+			}
+		}
 	}
 	
 	public void die( Object src ) {
@@ -661,7 +689,7 @@ public abstract class Char extends Actor {
 			sprite.interruptMotion();
 			int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
 			if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos])
-					|| (properties.contains(Property.LARGE) && !Dungeon.level.openSpace[pos])
+					|| (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[newPos])
 					|| Actor.findChar( newPos ) != null)
 				return;
 			else {
@@ -751,7 +779,12 @@ public abstract class Char extends Actor {
 	protected HashSet<Property> properties = new HashSet<>();
 
 	public HashSet<Property> properties() {
-		return new HashSet<>(properties);
+		HashSet<Property> props = new HashSet<>(properties);
+		//TODO any more of these and we should make it a property of the buff, like with resistances/immunities
+		if (buff(ChampionEnemy.Giant.class) != null) {
+			props.add(Property.LARGE);
+		}
+		return props;
 	}
 
 	public enum Property{
@@ -799,6 +832,6 @@ public abstract class Char extends Actor {
 	}
 
 	public static boolean hasProp( Char ch, Property p){
-		return (ch != null && ch.properties.contains(p));
+		return (ch != null && ch.properties().contains(p));
 	}
 }

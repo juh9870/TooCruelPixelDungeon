@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -38,6 +39,12 @@ public class Albino extends Rat {
 		
 		loot = new MysteryMeat();
 		lootChance = 1f;
+	}
+	
+	@Override
+	public void rollToDropLoot() {
+		lootChance*=Challenges.rareLootChanceMultiplier();
+		super.rollToDropLoot();
 	}
 	
 	@Override

@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Recycle;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
@@ -87,7 +88,7 @@ public class WndBag extends WndTabbed {
 		FOOD,
 		POTION,
 		SCROLL,
-		UNIDED_POTION_OR_SCROLL,
+		INTUITIONABLE,
 		EQUIPMENT,
 		TRANMSUTABLE,
 		ALCHEMY,
@@ -443,7 +444,7 @@ public class WndBag extends WndTabbed {
 						mode == Mode.FOOD && (item instanceof Food) ||
 						mode == Mode.POTION && (item instanceof Potion) ||
 						mode == Mode.SCROLL && (item instanceof Scroll) ||
-						mode == Mode.UNIDED_POTION_OR_SCROLL && (!item.isIdentified() && (item instanceof Scroll || item instanceof Potion)) ||
+						mode == Mode.INTUITIONABLE && StoneOfIntuition.isIntuitionable(item) ||
 						mode == Mode.EQUIPMENT && (item instanceof EquipableItem || item instanceof Wand) ||
 						mode == Mode.ALCHEMY && Recipe.usableInRecipe(item) ||
 						mode == Mode.TRANMSUTABLE && ScrollOfTransmutation.canTransmute(item) ||
@@ -491,6 +492,9 @@ public class WndBag extends WndTabbed {
 				hide();
 				Dungeon.quickslot.setSlot( 0 , item );
 				QuickSlotButton.refresh();
+				return true;
+			} else if (listener != null) {
+				Game.scene().addToFront(new WndInfoItem(item));
 				return true;
 			} else {
 				return false;

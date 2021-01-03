@@ -24,11 +24,13 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -147,6 +149,11 @@ public class CloakOfShadows extends Artifact {
 			}
 		}
 	}
+
+	public void overCharge(int amount){
+		charge = Math.min(charge+amount, chargeCap+amount);
+		updateQuickslot();
+	}
 	
 	@Override
 	public Item upgrade() {
@@ -240,9 +247,23 @@ public class CloakOfShadows extends Artifact {
 			}
 		}
 
+		float barrierInc = 0.5f;
+
 		@Override
 		public boolean act(){
 			turnsToCost--;
+
+			//barrier every 2/1 turns, to a max of 3/5
+			if (((Hero)target).hasTalent(Talent.PROTECTIVE_SHADOWS)){
+				Barrier barrier = Buff.affect(target, Barrier.class);
+				if (barrier.shielding() < 1 + 2*((Hero)target).pointsInTalent(Talent.PROTECTIVE_SHADOWS)) {
+					barrierInc += 0.5f * ((Hero) target).pointsInTalent(Talent.PROTECTIVE_SHADOWS);
+				}
+				if (barrierInc >= 1 ){
+					barrierInc = 0;
+					barrier.incShield(1);
+				}
+			}
 			
 			if (turnsToCost <= 0){
 				charge--;
@@ -312,12 +333,14 @@ public class CloakOfShadows extends Artifact {
 		}
 		
 		private static final String TURNSTOCOST = "turnsToCost";
+		private static final String BARRIER_INC = "barrier_inc";
 		
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
 			
 			bundle.put( TURNSTOCOST , turnsToCost);
+			bundle.put( BARRIER_INC, barrierInc);
 		}
 		
 		@Override
@@ -325,6 +348,7 @@ public class CloakOfShadows extends Artifact {
 			super.restoreFromBundle(bundle);
 			
 			turnsToCost = bundle.getInt( TURNSTOCOST );
+			barrierInc = bundle.getFloat( BARRIER_INC );
 		}
 	}
 }

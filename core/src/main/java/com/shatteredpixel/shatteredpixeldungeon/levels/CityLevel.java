@@ -58,13 +58,15 @@ public class CityLevel extends RegularLevel {
 	}
 	
 	@Override
-	protected int standardRooms() {
-		//7 to 10, average 7.9
+	protected int standardRooms(boolean forceMax) {
+		if (forceMax) return 10;
+		//7 to 10, average 8.0
 		return 7+Random.chances(new float[]{4, 3, 2, 1});
 	}
 	
 	@Override
-	protected int specialRooms() {
+	protected int specialRooms(boolean forceMax) {
+		if (forceMax) return 3;
 		//2 to 3, average 2.33
 		return 2 + Random.chances(new float[]{2, 1});
 	}
@@ -98,7 +100,7 @@ public class CityLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		if(!Challenges.EXTREME_CAUTION.hell()) {
+		if(!Challenges.EXTREME_CAUTION.tier(2)) {
 			return new float[]{
 					4, 4, 4, 4, 4,
 					2, 2, 2, 2,

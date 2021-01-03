@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -117,6 +116,7 @@ public class Imp extends NPC {
 			tell( Quest.alternative ? Messages.get(this, "monks_1") : Messages.get(this, "golems_1") );
 			Quest.given = true;
 			Quest.completed = false;
+			Notes.add( Notes.Landmark.IMP );
 		}
 
 		return true;

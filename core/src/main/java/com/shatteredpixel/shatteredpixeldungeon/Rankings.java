@@ -114,6 +114,7 @@ public enum Rankings {
 	public static final String BADGES = "badges";
 	public static final String HANDLERS = "handlers";
 	public static final String CHALLENGES = "challenges";
+	public static final String MODIFIERS = "modifiers";
 
 	public void saveGameData(Record rec){
 		rec.gameData = new Bundle();
@@ -164,7 +165,7 @@ public enum Rankings {
 		belongings.backpack.items = allItems;
 		
 		//save challenges
-		rec.gameData.put( CHALLENGES, Dungeon.challenges );
+		rec.gameData.put( MODIFIERS, Dungeon.modifiers );
 	}
 
 	public void loadGameData(Record rec){
@@ -189,7 +190,11 @@ public enum Rankings {
 
 		Statistics.restoreFromBundle(data.getBundle(STATS));
 		
-		Dungeon.challenges = data.getInt(CHALLENGES);
+		if(data.contains(MODIFIERS)) {
+			Dungeon.modifiers = (Modifiers)data.get(MODIFIERS);
+		} else {
+			Dungeon.modifiers = new Modifiers(Challenges.fromLegacy(data.getInt(CHALLENGES)));
+		}
 
 	}
 	

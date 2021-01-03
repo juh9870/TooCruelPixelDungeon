@@ -53,7 +53,7 @@ public class Intoxication extends Buff {
 				Buff.affect(targ,Ooze.class).set(Random.NormalIntRange(7,13));
 				break;
 			case 3:
-				if(Challenges.COUNTDOWN.hell()) applyMajor(targ);
+				if(Challenges.COUNTDOWN.tier(2)) applyMajor(targ);
 				else Buff.prolong(targ,Vertigo.class,Random.NormalFloat(7,13));
 				break;
 			case 4:

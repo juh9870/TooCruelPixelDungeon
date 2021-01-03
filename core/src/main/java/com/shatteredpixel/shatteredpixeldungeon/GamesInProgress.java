@@ -102,8 +102,8 @@ public class GamesInProgress {
 				info.slot = slot;
 				Dungeon.preview(info, bundle);
 				
-				//saves from before v0.7.3b are not supported
-				if (info.version < ShatteredPixelDungeon.v0_7_3b) {
+				//saves from before v0.7.5e are not supported
+				if (info.version < ShatteredPixelDungeon.v0_7_5e) {
 					info = null;
 				}
 
@@ -120,14 +120,12 @@ public class GamesInProgress {
 		}
 	}
 
-	public static void set(int slot, int depth, int challenges, int[] hellChallenges,
-	                       Hero hero) {
+	public static void set(int slot, int depth, Modifiers modifiers, Hero hero) {
 		Info info = new Info();
 		info.slot = slot;
 		
 		info.depth = depth;
-		info.challenges = challenges;
-		info.hellChallenges = hellChallenges;
+		info.modifiers=modifiers;
 		
 		info.level = hero.lvl;
 		info.str = hero.STR;
@@ -158,8 +156,7 @@ public class GamesInProgress {
 		
 		public int depth;
 		public int version;
-		public int challenges;
-		public int[] hellChallenges;
+		public Modifiers modifiers;
 		
 		public int level;
 		public int str;

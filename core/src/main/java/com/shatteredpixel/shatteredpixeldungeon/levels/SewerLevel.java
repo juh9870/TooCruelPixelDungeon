@@ -58,14 +58,16 @@ public class SewerLevel extends RegularLevel {
 	}
 	
 	@Override
-	protected int standardRooms() {
+	protected int standardRooms(boolean forceMax) {
+		if (forceMax) return 7;
 		//5 to 7, average 5.57
 		return 5+Random.chances(new float[]{4, 2, 1});
 	}
 	
 	@Override
-	protected int specialRooms() {
-		//1 to 3, average 1.67
+	protected int specialRooms(boolean forceMax) {
+		if (forceMax) return 3;
+		//1 to 3, average 1.8
 		return 1+Random.chances(new float[]{4, 4, 2});
 	}
 	
@@ -89,7 +91,7 @@ public class SewerLevel extends RegularLevel {
 	
 	@Override
 	protected Class<?>[] trapClasses() {
-		return (Dungeon.depth == 1 && !Challenges.EXTREME_CAUTION.hell()) ?
+		return (Dungeon.depth == 1 && !Challenges.EXTREME_CAUTION.tier(2)) ?
 				new Class<?>[]{ WornDartTrap.class } :
 				new Class<?>[]{
 						ChillingTrap.class, ShockingTrap.class, ToxicTrap.class, WornDartTrap.class,
@@ -99,7 +101,7 @@ public class SewerLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		if(!Challenges.EXTREME_CAUTION.hell()) {
+		if(!Challenges.EXTREME_CAUTION.tier(2)) {
 			return Dungeon.depth == 1 ?
 					new float[]{1} :
 					new float[]{

@@ -43,6 +43,11 @@ public class EntranceRoom extends StandardRoom {
 		return Math.max(super.minHeight(), 5);
 	}
 
+	@Override
+	public boolean canMerge(Level l, Point p, int mergeTerrain) {
+		return false;
+	}
+
 	public void paint( Level level ) {
 		
 		Painter.fill( level, this, Terrain.WALL );

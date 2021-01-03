@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.desktop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -154,6 +155,16 @@ public class DesktopPlatformSupport extends PlatformSupport {
 		}
 		setupFontGenerators(pageSize, systemfont);
 	}
+
+	@Override
+	public void reloadGenerators() {
+		if (packer != null) {
+			for (PixmapPacker.Page p : packer.getPages()) {
+				p.getTexture().dispose();
+				p.updateTexture(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest, false);
+			}
+		}
+	}
 	
 	private static Pattern asianMatcher = Pattern.compile("\\p{InHangul_Syllables}|" +
 			"\\p{InCJK_Unified_Ideographs}|\\p{InCJK_Symbols_and_Punctuation}|\\p{InHalfwidth_and_Fullwidth_Forms}|" +
@@ -181,7 +192,11 @@ public class DesktopPlatformSupport extends PlatformSupport {
 			parameters.size = size;
 			parameters.flip = true;
 			parameters.borderWidth = parameters.size / 10f;
-			parameters.renderCount = 3;
+			if (size >= 20){
+				parameters.renderCount = 2;
+			} else {
+				parameters.renderCount = 3;
+			}
 			parameters.hinting = FreeTypeFontGenerator.Hinting.None;
 			parameters.spaceX = -(int) parameters.borderWidth;
 			parameters.incremental = true;

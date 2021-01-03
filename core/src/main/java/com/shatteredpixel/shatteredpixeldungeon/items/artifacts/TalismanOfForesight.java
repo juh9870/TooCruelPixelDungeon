@@ -95,7 +95,7 @@ public class TalismanOfForesight extends Artifact {
 			if (charge >= chargeCap) {
 				charge = chargeCap;
 				partialCharge = 0;
-				GLog.p( Messages.get(Foresight.class, "full_charge") );
+				GLog.p( Messages.get(TalismanOfForesight.class, "full_charge") );
 			}
 		}
 	}
@@ -212,8 +212,10 @@ public class TalismanOfForesight extends Artifact {
 				GameScene.updateFog();
 
 				curUser.sprite.zap(target);
+				
 				curUser.spend(Actor.TICK);
 				if(curUser.buff(Amnesia.class)!=null)curUser.buff(Amnesia.class).postpone(Actor.TICK);
+				
 				Sample.INSTANCE.play(Assets.Sounds.SCAN);
 				if (noticed) Sample.INSTANCE.play(Assets.Sounds.SECRET);
 
@@ -318,7 +320,9 @@ public class TalismanOfForesight extends Artifact {
 		}
 
 		public void charge(int boost){
-			charge = Math.min((charge+boost), chargeCap);
+			if (!cursed) {
+				charge = Math.min((charge + boost), chargeCap);
+			}
 		}
 
 		@Override

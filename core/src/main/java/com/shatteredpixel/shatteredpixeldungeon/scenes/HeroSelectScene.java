@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
@@ -32,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -42,10 +42,10 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndChallenges;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTabbed;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.input.PointerEvent;
@@ -53,10 +53,10 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.PointerArea;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.GameMath;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class HeroSelectScene extends PixelScene {
 
@@ -109,7 +109,7 @@ public class HeroSelectScene extends PixelScene {
 			add(fadeRight);
 		}
 
-		prompt = PixelScene.renderTextBlock(Messages.get(WndStartGame.class, "title"), 12);
+		prompt = PixelScene.renderTextBlock(Messages.get(this, "title"), 12);
 		prompt.hardlight(Window.TITLE_COLOR);
 		prompt.setPos( (Camera.main.width - prompt.width())/2f, (Camera.main.height - HeroBtn.HEIGHT - prompt.height() - 4));
 		PixelScene.align(prompt);
@@ -173,7 +173,7 @@ public class HeroSelectScene extends PixelScene {
 				Icons.get(Challenges.icon())){
 			@Override
 			public void onClick() {
-				ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.challenges(), SPDSettings.hellChallenges(), true) {
+				ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.modifiers(), true) {
 					public void onBackPressed() {
 						super.onBackPressed();
 						icon(Icons.get( Challenges.icon() ));
@@ -271,7 +271,7 @@ public class HeroSelectScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		if (!SPDSettings.intro() && Rankings.INSTANCE.totalNumber == 0){
+		if (btnExit.visible){
 			ShatteredPixelDungeon.switchScene(TitleScene.class);
 		} else {
 			super.onBackPressed();
@@ -324,13 +324,29 @@ public class HeroSelectScene extends PixelScene {
 
 	private static class WndHeroInfo extends WndTabbed {
 
+		private RenderedTextBlock title;
 		private RenderedTextBlock info;
 
+		private TalentsPane talents;
+
 		private int WIDTH = 120;
-		private int MARGIN = 4;
+		private int HEIGHT = 120;
+		private int MARGIN = 2;
 		private int INFO_WIDTH = WIDTH - MARGIN*2;
 
 		public WndHeroInfo( HeroClass cl ){
+
+			title = PixelScene.renderTextBlock(9);
+			title.hardlight(TITLE_COLOR);
+			add(title);
+
+			info = PixelScene.renderTextBlock(6);
+			add(info);
+
+			ArrayList<LinkedHashMap<Talent, Integer>> talentList = new ArrayList<>();
+			Talent.initClassTalents(cl, talentList);
+			talents = new TalentsPane(false, talentList);
+			add(talents);
 
 			Tab tab;
 			Image[] tabIcons;
@@ -338,29 +354,25 @@ public class HeroSelectScene extends PixelScene {
 				case WARRIOR: default:
 					tabIcons = new Image[]{
 							new ItemSprite(ItemSpriteSheet.SEAL, null),
-							new ItemSprite(ItemSpriteSheet.WORN_SHORTSWORD, null),
-							new ItemSprite(ItemSpriteSheet.RATION, null)
+							new ItemSprite(ItemSpriteSheet.WORN_SHORTSWORD, null)
 					};
 					break;
 				case MAGE:
 					tabIcons = new Image[]{
 							new ItemSprite(ItemSpriteSheet.MAGES_STAFF, null),
-							new ItemSprite(ItemSpriteSheet.HOLDER, null),
-							new ItemSprite(ItemSpriteSheet.WAND_MAGIC_MISSILE, null)
+							new ItemSprite(ItemSpriteSheet.HOLDER, null)
 					};
 					break;
 				case ROGUE:
 					tabIcons = new Image[]{
 							new ItemSprite(ItemSpriteSheet.ARTIFACT_CLOAK, null),
-							new ItemSprite(ItemSpriteSheet.DAGGER, null),
-							Icons.get(Icons.DEPTH)
+							new ItemSprite(ItemSpriteSheet.DAGGER, null)
 					};
 					break;
 				case HUNTRESS:
 					tabIcons = new Image[]{
 							new ItemSprite(ItemSpriteSheet.SPIRIT_BOW, null),
-							new ItemSprite(ItemSpriteSheet.GLOVES, null),
-							new Image(Assets.Environment.TILES_SEWERS, 112, 96, 16, 16 )
+							new ItemSprite(ItemSpriteSheet.GLOVES, null)
 					};
 					break;
 			}
@@ -370,7 +382,8 @@ public class HeroSelectScene extends PixelScene {
 				protected void select(boolean value) {
 					super.select(value);
 					if (value){
-						info.text(Messages.get(cl, cl.name() + "_desc_item"), INFO_WIDTH);
+						title.text(Messages.titleCase(Messages.get(WndHeroInfo.class, "innate_title")));
+						info.text(Messages.get(cl, cl.name() + "_desc_innate"), INFO_WIDTH);
 					}
 				}
 			};
@@ -381,19 +394,22 @@ public class HeroSelectScene extends PixelScene {
 				protected void select(boolean value) {
 					super.select(value);
 					if (value){
+						title.text(Messages.titleCase(Messages.get(WndHeroInfo.class, "loadout_title")));
 						info.text(Messages.get(cl, cl.name() + "_desc_loadout"), INFO_WIDTH);
 					}
 				}
 			};
 			add(tab);
 
-			tab = new IconTab( tabIcons[2] ){
+			tab = new IconTab( Icons.get(Icons.TALENT) ){
 				@Override
 				protected void select(boolean value) {
 					super.select(value);
 					if (value){
-						info.text(Messages.get(cl, cl.name() + "_desc_misc"), INFO_WIDTH);
+						title.text(Messages.titleCase(Messages.get(WndHeroInfo.class, "talents_title")));
+						info.text(Messages.get(WndHeroInfo.class, "talents_desc"), INFO_WIDTH);
 					}
+					talents.visible = talents.active = value;
 				}
 			};
 			add(tab);
@@ -403,6 +419,7 @@ public class HeroSelectScene extends PixelScene {
 				protected void select(boolean value) {
 					super.select(value);
 					if (value){
+						title.text(Messages.titleCase(Messages.get(WndHeroInfo.class, "subclasses_title")));
 						String msg = Messages.get(cl, cl.name() + "_desc_subclasses");
 						for (HeroSubClass sub : cl.subClasses()){
 							msg += "\n\n" + sub.desc();
@@ -413,10 +430,6 @@ public class HeroSelectScene extends PixelScene {
 			};
 			add(tab);
 
-			info = PixelScene.renderTextBlock(6);
-			info.setPos(MARGIN, MARGIN);
-			add(info);
-
 			select(0);
 
 		}
@@ -424,8 +437,20 @@ public class HeroSelectScene extends PixelScene {
 		@Override
 		public void select(Tab tab) {
 			super.select(tab);
-			resize(WIDTH, (int)info.bottom()+MARGIN);
+
+			title.setPos((WIDTH-title.width())/2, MARGIN);
+			info.setPos(MARGIN, title.bottom()+2*MARGIN);
+			talents.setRect(0, info.bottom()+2*MARGIN, WIDTH, 100);
+
+			if (talents.visible) {
+				resize(WIDTH, (int) talents.bottom());
+				talents.setRect(0, info.bottom()+2*MARGIN, WIDTH, 100);
+			} else {
+				resize(WIDTH, (int) info.bottom() + 2*MARGIN);
+			}
+
 			layoutTabs();
+
 		}
 	}
 }

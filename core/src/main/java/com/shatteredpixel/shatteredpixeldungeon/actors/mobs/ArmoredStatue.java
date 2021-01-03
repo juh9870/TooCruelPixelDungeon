@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -100,6 +101,10 @@ public class ArmoredStatue extends Statue {
 	@Override
 	public void die( Object cause ) {
 		armor.identify();
+		if(Challenges.CURSED.enabled()){
+			armor.cursed=true;
+			armor.inscribe(Armor.Glyph.randomCurse());
+		}
 		Dungeon.level.drop( armor, pos ).sprite.drop();
 		super.die( cause );
 	}

@@ -29,16 +29,6 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.EntranceRo
 
 public class SewerBossEntranceRoom extends EntranceRoom {
 	
-	@Override
-	public int minHeight() {
-		return 6;
-	}
-	
-	@Override
-	public int minWidth() {
-		return 8;
-	}
-	
 	public void paint(Level level ) {
 		
 		Painter.fill( level, this, Terrain.WALL );

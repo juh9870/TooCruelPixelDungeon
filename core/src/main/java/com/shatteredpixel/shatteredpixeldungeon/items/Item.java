@@ -26,10 +26,14 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -105,6 +109,7 @@ public class Item implements Bundlable {
 			
 			GameScene.pickUp( this, hero.pos );
 			Sample.INSTANCE.play( Assets.Sounds.ITEM );
+			Talent.onItemCollected( hero, this );
 			hero.spendAndNext( TIME_TO_PICK_UP );
 			return true;
 			
@@ -371,13 +376,14 @@ public class Item implements Bundlable {
 	}
 	
 	public Item identify() {
-		
+
+		if (Dungeon.hero != null && Dungeon.hero.isAlive()){
+			Catalog.setSeen(getClass());
+			if (!isIdentified()) Talent.onItemIdentified(Dungeon.hero, this);
+		}
+
 		levelKnown = true;
 		cursedKnown = true;
-		
-		if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
-			Catalog.setSeen(getClass());
-		}
 		
 		return this;
 	}
@@ -507,6 +513,10 @@ public class Item implements Bundlable {
 		}
 	}
 
+	public int targetingPos( Hero user, int dst ){
+		return throwPos( user, dst );
+	}
+
 	public int throwPos( Hero user, int dst){
 		return new Ballistica( user.pos, dst, Ballistica.PROJECTILE | Ballistica.AFFECTED_BY_ROOK ).collisionPos;
 	}
@@ -538,6 +548,16 @@ public class Item implements Bundlable {
 						public void call() {
 							curUser = user;
 							Item.this.detach(user.belongings.backpack).onThrow(cell);
+							if (curUser.hasTalent(Talent.IMPROVISED_PROJECTILES)
+									&& !(Item.this instanceof MissileWeapon)
+									&& curUser.buff(Talent.ImprovisedProjectileCooldown.class) == null){
+								Char ch = Actor.findChar(cell);
+								if (ch != null && ch.alignment != curUser.alignment){
+									Sample.INSTANCE.play(Assets.Sounds.HIT);
+									Buff.affect(ch, Blindness.class, 1f + curUser.pointsInTalent(Talent.IMPROVISED_PROJECTILES));
+									Buff.affect(curUser, Talent.ImprovisedProjectileCooldown.class, 30f);
+								}
+							}
 							user.spendAndNext(delay);
 						}
 					});
@@ -551,6 +571,16 @@ public class Item implements Bundlable {
 						public void call() {
 							curUser = user;
 							Item.this.detach(user.belongings.backpack).onThrow(cell);
+							if (curUser.hasTalent(Talent.IMPROVISED_PROJECTILES)
+									&& !(Item.this instanceof MissileWeapon)
+									&& curUser.buff(Talent.ImprovisedProjectileCooldown.class) == null){
+								Char ch = Actor.findChar(cell);
+								if (ch != null && ch.alignment != curUser.alignment){
+									Sample.INSTANCE.play(Assets.Sounds.HIT);
+									Buff.affect(ch, Blindness.class, 1f + curUser.pointsInTalent(Talent.IMPROVISED_PROJECTILES));
+									Buff.affect(curUser, Talent.ImprovisedProjectileCooldown.class, 30f);
+								}
+							}
 							user.spendAndNext(delay);
 						}
 					});

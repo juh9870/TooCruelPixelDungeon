@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
-import com.watabou.noosa.Halo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.PrisonPainter;
@@ -45,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ToxicTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Group;
+import com.watabou.noosa.Halo;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
@@ -64,14 +64,16 @@ public class PrisonLevel extends RegularLevel {
 	}
 	
 	@Override
-	protected int standardRooms() {
-		//6 to 8, average 6.66
+	protected int standardRooms(boolean forceMax) {
+		if (forceMax) return 8;
+		//6 to 8, average 6.75
 		return 6+Random.chances(new float[]{4, 2, 2});
 	}
 	
 	@Override
-	protected int specialRooms() {
-		//1 to 3, average 1.83
+	protected int specialRooms(boolean forceMax) {
+		if (forceMax) return 3;
+		//1 to 3, average 2.0
 		return 1+Random.chances(new float[]{3, 4, 3});
 	}
 	
@@ -103,8 +105,8 @@ public class PrisonLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		float alarmChance = Challenges.SWARM_INTELLIGENCE.hell() ? 0 : 2;
-		if(!Challenges.EXTREME_CAUTION.hell()) {
+		float alarmChance = Challenges.SWARM_INTELLIGENCE.tier(2) ? 0 : 2;
+		if(!Challenges.EXTREME_CAUTION.tier(2)) {
 			return new float[]{
 					4, 4, 4, 4, 4,
 					alarmChance, 2, 2,

@@ -61,5 +61,14 @@ public class HallsPainter extends RegularPainter {
 				
 			}
 		}
+
+		for (Room r : rooms) {
+			for (Room n : r.neigbours) {
+				if (!r.connected.containsKey( n )) {
+					mergeRooms(level, r, n, null, Terrain.CHASM);
+				}
+			}
+		}
+
 	}
 }

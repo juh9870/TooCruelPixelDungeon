@@ -49,14 +49,14 @@ public abstract class ShieldBuff extends Buff {
 	}
 	
 	public void setShield( int shield ) {
-		this.shielding = shield;
+		if (this.shielding <= shield) this.shielding = shield;
 		if (target != null) target.needsShieldUpdate = true;
 	}
 	
 	public void incShield(){
 		incShield(1);
 	}
-	
+
 	public void incShield( int amt ){
 		shielding += amt;
 		if (target != null) target.needsShieldUpdate = true;
@@ -65,7 +65,7 @@ public abstract class ShieldBuff extends Buff {
 	public void decShield(){
 		decShield(1);
 	}
-	
+
 	public void decShield( int amt ){
 		shielding -= amt;
 		if (target != null) target.needsShieldUpdate = true;

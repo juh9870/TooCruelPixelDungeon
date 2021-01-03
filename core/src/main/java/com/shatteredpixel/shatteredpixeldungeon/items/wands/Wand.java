@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
@@ -33,13 +34,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -72,7 +75,7 @@ public abstract class Wand extends Item {
 	public boolean curseInfusionBonus = false;
 	
 	private static final int USES_TO_ID = 10;
-	private int usesLeftToID = USES_TO_ID;
+	private float usesLeftToID = USES_TO_ID;
 	private float availableUsesToID = USES_TO_ID/2f;
 
 	protected int collisionProperties = Ballistica.MAGIC_BOLT;
@@ -106,8 +109,13 @@ public abstract class Wand extends Item {
 			
 		}
 	}
-	
-	protected abstract void onZap( Ballistica attack );
+
+	@Override
+	public int targetingPos(Hero user, int dst) {
+		return new Ballistica( user.pos, dst, collisionProperties ).collisionPos;
+	}
+
+	protected abstract void onZap(Ballistica attack );
 
 	public abstract void onHit( MagesStaff staff, Char attacker, Char defender, int damage);
 
@@ -140,11 +148,16 @@ public abstract class Wand extends Item {
 			return false;
 		}
 	}
-	
+
 	public void gainCharge( float amt ){
+		gainCharge( amt, false );
+	}
+
+	public void gainCharge( float amt, boolean overcharge ){
 		partialCharge += amt;
 		while (partialCharge >= 1) {
-			curCharges = Math.min(maxCharges, curCharges+1);
+			if (overcharge) curCharges = Math.min(maxCharges+(int)amt, curCharges+1);
+			else curCharges = Math.min(maxCharges, curCharges+1);
 			partialCharge--;
 			updateQuickslot();
 		}
@@ -164,7 +177,13 @@ public abstract class Wand extends Item {
 		processSoulMark(target, buffedLvl(), chargesUsed);
 	}
 
+	//TODO some naming issues here. Consider renaming this method and externalizing char awareness buff
 	protected static void processSoulMark(Char target, int wandLevel, int chargesUsed){
+		if (Dungeon.hero.hasTalent(Talent.ARCANE_VISION)) {
+			int dur = 5 + 5*Dungeon.hero.pointsInTalent(Talent.ARCANE_VISION);
+			Buff.append(Dungeon.hero, TalismanOfForesight.CharAwareness.class, dur).charID = target.id();
+		}
+
 		if (target != Dungeon.hero &&
 				Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
 				//standard 1 - 0.92^x chance, plus 7%. Starts at 15%
@@ -202,6 +221,7 @@ public abstract class Wand extends Item {
 	}
 	
 	public void onHeroGainExp( float levelPercent, Hero hero ){
+		levelPercent *= Talent.itemIDSpeedFactor(hero, this);
 		if (!isIdentified() && availableUsesToID <= USES_TO_ID/2f) {
 			//gains enough uses to ID over 1 level
 			availableUsesToID = Math.min(USES_TO_ID/2f, availableUsesToID + levelPercent * USES_TO_ID/2f);
@@ -319,10 +339,11 @@ public abstract class Wand extends Item {
 	}
 
 	protected void wandUsed() {
-		if (!isIdentified() && availableUsesToID >= 1) {
-			availableUsesToID--;
-			usesLeftToID--;
-			if (usesLeftToID <= 0) {
+		if (!isIdentified()) {
+			float uses = Math.min( availableUsesToID, Talent.itemIDSpeedFactor(Dungeon.hero, this) );
+			availableUsesToID -= uses;
+			usesLeftToID -= uses;
+			if (usesLeftToID <= 0 || Dungeon.hero.pointsInTalent(Talent.SCHOLARS_INTUITION) == 2) {
 				identify();
 				GLog.p( Messages.get(Wand.class, "identify") );
 				Badges.validateItemLevelAquired( this );
@@ -336,9 +357,17 @@ public abstract class Wand extends Item {
 			buff.detach();
 		}
 
+		//if the wand is owned by the hero, but not in their inventory, it must be in the staff
+		if (curCharges == 0
+				&& charger != null
+				&& charger.target == Dungeon.hero
+				&& !Dungeon.hero.belongings.contains(this)
+				&& Dungeon.hero.hasTalent(Talent.BACKUP_BARRIER)){
+			//grants 4/6 shielding
+			Buff.affect(Dungeon.hero, Barrier.class).setShield(2 + 2*Dungeon.hero.pointsInTalent(Talent.BACKUP_BARRIER));
+		}
+
 		Invisibility.dispel();
-		
-		if (curUser.heroClass == HeroClass.MAGE) levelKnown = true;
 		updateQuickslot();
 
 		curUser.spendAndNext( TIME_TO_ZAP );
@@ -447,6 +476,18 @@ public abstract class Wand extends Item {
 				int cell = shot.collisionPos;
 				
 				if (target == curUser.pos || cell == curUser.pos) {
+					if (target == curUser.pos && curUser.hasTalent(Talent.SHIELD_BATTERY)){
+						float shield = curUser.HT * (0.05f*curWand.curCharges);
+						if (curUser.pointsInTalent(Talent.SHIELD_BATTERY) == 2) shield *= 1.5f;
+						Buff.affect(curUser, Barrier.class).setShield(Math.round(shield));
+						curWand.curCharges = 0;
+						curUser.sprite.operate(curUser.pos);
+						Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+						ScrollOfRecharging.charge(curUser);
+						updateQuickslot();
+						curUser.spend(Actor.TICK);
+						return;
+					}
 					GLog.i( Messages.get(Wand.class, "self_target") );
 					return;
 				}

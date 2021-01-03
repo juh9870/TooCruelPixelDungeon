@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
@@ -189,21 +188,21 @@ public class StartScene extends PixelScene {
 					classIcon.copy(Icons.get(info.heroClass));
 				}
 
-				if ((info.challenges&Challenges.AMNESIA.id)!=0){
+				if ((info.modifiers.isChallenged(Challenges.AMNESIA.ordinal()))){
 					depth.text("??");
 				} else {
 					depth.text(Integer.toString(info.depth));
 				}
 				depth.measure();
 
-				if ((info.challenges&Challenges.ANALGESIA.id)!=0){
+				if (info.modifiers.isChallenged(Challenges.AMNESIA.ordinal())){
 					level.text("??");
 				} else {
 					level.text(Integer.toString(info.level));
 				}
 				level.measure();
 				
-				if (info.challenges > 0){
+				if (info.modifiers.isChallenged()){
 					name.hardlight(Window.TITLE_COLOR);
 					depth.hardlight(Window.TITLE_COLOR);
 					level.hardlight(Window.TITLE_COLOR);

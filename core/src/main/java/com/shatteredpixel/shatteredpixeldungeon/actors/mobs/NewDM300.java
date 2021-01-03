@@ -187,9 +187,9 @@ public class NewDM300 extends Mob {
 				}
 			} else {
 
-				if (enemy == null) enemy = Dungeon.hero;
+				if (enemy == null && Dungeon.hero.invisible <= 0) enemy = Dungeon.hero;
 
-				if (!canReach){
+				if (enemy != null && !canReach){
 
 					if (fieldOfView[enemy.pos] && turnsSinceLastAbility >= MIN_COOLDOWN){
 
@@ -209,7 +209,7 @@ public class NewDM300 extends Mob {
 
 					}
 
-				} else {
+				} else if (enemy != null && fieldOfView[enemy.pos]) {
 					if (turnsSinceLastAbility > abilityCooldown) {
 
 						if (lastAbility == NONE) {
@@ -427,13 +427,17 @@ public class NewDM300 extends Mob {
 
 	@Override
 	public void damage(int dmg, Object src) {
+		int preHP = HP;
 		super.damage(dmg, src);
 		if (isInvulnerable(src.getClass())){
 			return;
 		}
 
-		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
-		if (lock != null && !isImmune(src.getClass())) lock.addTime(dmg);
+		int dmgTaken = preHP - HP;
+		if (dmgTaken > 0) {
+			LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
+			if (lock != null && !isImmune(src.getClass())) lock.addTime(dmgTaken*1.5f);
+		}
 
 		int threshold = HT/3 * (2- pylonsActivated);
 
@@ -461,6 +465,7 @@ public class NewDM300 extends Mob {
 		spend(3f);
 		yell(Messages.get(this, "charging"));
 		sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "invulnerable"));
+		((DM300Sprite)sprite).updateChargeState(true);
 		((DM300Sprite)sprite).charge();
 		chargeAnnounced = false;
 
@@ -472,7 +477,7 @@ public class NewDM300 extends Mob {
 
 	public void loseSupercharge(){
 		supercharged = false;
-		sprite.resetColor();
+		((DM300Sprite)sprite).updateChargeState(false);
 
 		if (pylonsActivated < 2){
 			yell(Messages.get(this, "charge_lost"));
@@ -521,7 +526,7 @@ public class NewDM300 extends Mob {
 			return true;
 		} else {
 
-			if (rooted || target == pos) {
+			if (!supercharged || rooted || target == pos) {
 				return false;
 			}
 
@@ -537,7 +542,7 @@ public class NewDM300 extends Mob {
 				return true;
 			}
 
-			if (!supercharged || state != HUNTING || Dungeon.level.adjacent(pos, target)){
+			if (state != HUNTING || Dungeon.level.adjacent(pos, target)){
 				return false;
 			}
 

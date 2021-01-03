@@ -26,11 +26,13 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.android.AndroidGraphics;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PixmapPacker;
@@ -53,12 +55,14 @@ public class AndroidPlatformSupport extends PlatformSupport {
 					ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
 					ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT );
 		}
+
+		GLSurfaceView view = (GLSurfaceView) ((AndroidGraphics)Gdx.graphics).getView();
 		
-		if (AndroidGame.view.getMeasuredWidth() == 0 || AndroidGame.view.getMeasuredHeight() == 0)
+		if (view.getMeasuredWidth() == 0 || view.getMeasuredHeight() == 0)
 			return;
 		
-		Game.dispWidth = AndroidGame.view.getMeasuredWidth();
-		Game.dispHeight = AndroidGame.view.getMeasuredHeight();
+		Game.dispWidth = view.getMeasuredWidth();
+		Game.dispHeight = view.getMeasuredHeight();
 
 		boolean fullscreen = Build.VERSION.SDK_INT < Build.VERSION_CODES.N
 				|| !AndroidGame.instance.isInMultiWindowMode();
@@ -99,7 +103,7 @@ public class AndroidPlatformSupport extends PlatformSupport {
 				AndroidGame.instance.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						AndroidGame.view.getHolder().setFixedSize(finalW, finalH);
+						view.getHolder().setFixedSize(finalW, finalH);
 					}
 				});
 				
@@ -108,7 +112,7 @@ public class AndroidPlatformSupport extends PlatformSupport {
 			AndroidGame.instance.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					AndroidGame.view.getHolder().setSizeFromLayout();
+					view.getHolder().setSizeFromLayout();
 				}
 			});
 		}
@@ -328,7 +332,27 @@ public class AndroidPlatformSupport extends PlatformSupport {
 		}
 		setupFontGenerators(pageSize, systemfont);
 	}
-	
+
+	@Override
+	//FIXME it would be really nice to keep the local texture data and just re-send it to the GPU
+	public void reloadGenerators() {
+		if (packer != null) {
+			for (FreeTypeFontGenerator generator : fonts.keySet()) {
+				for (BitmapFont f : fonts.get(generator).values()) {
+					f.dispose();
+				}
+				fonts.get(generator).clear();
+			}
+			if (packer != null) {
+				for (PixmapPacker.Page p : packer.getPages()) {
+					p.getTexture().dispose();
+				}
+				packer.dispose();
+			}
+			packer = new PixmapPacker(pageSize, pageSize, Pixmap.Format.RGBA8888, 1, false);
+		}
+	}
+
 	private static Pattern KRMatcher = Pattern.compile("\\p{InHangul_Syllables}");
 	private static Pattern SCMatcher = Pattern.compile("\\p{InCJK_Unified_Ideographs}|\\p{InCJK_Symbols_and_Punctuation}|\\p{InHalfwidth_and_Fullwidth_Forms}");
 	private static Pattern JPMatcher = Pattern.compile("\\p{InHiragana}|\\p{InKatakana}");
@@ -358,7 +382,11 @@ public class AndroidPlatformSupport extends PlatformSupport {
 			parameters.size = size;
 			parameters.flip = true;
 			parameters.borderWidth = parameters.size / 10f;
-			parameters.renderCount = 3;
+			if (size >= 20){
+				parameters.renderCount = 2;
+			} else {
+				parameters.renderCount = 3;
+			}
 			parameters.hinting = FreeTypeFontGenerator.Hinting.None;
 			parameters.spaceX = -(int) parameters.borderWidth;
 			parameters.incremental = true;

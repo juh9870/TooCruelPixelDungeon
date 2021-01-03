@@ -94,9 +94,11 @@ public class BuffIndicator extends Component {
 	public static final int VULNERABLE  = 46;
 	public static final int HEX         = 47;
 	public static final int DEGRADE     = 48;
-	public static final int COUNTDOWN1  = 49;
-	public static final int COUNTDOWN2  = 50;
-	public static final int INTOXICATION= 51;
+	public static final int PINCUSHION  = 49;
+	public static final int UPGRADE     = 50;
+	public static final int COUNTDOWN1  = 51;
+	public static final int COUNTDOWN2  = 52;
+	public static final int INTOXICATION= 53;
 
 	public static final int SIZE	= 7;
 	

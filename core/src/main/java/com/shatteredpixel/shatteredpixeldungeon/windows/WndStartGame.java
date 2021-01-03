@@ -120,7 +120,7 @@ public class WndStartGame extends Window {
 				Icons.get(Challenges.icon())){
 			@Override
 			public void onClick() {
-				ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.challenges(), SPDSettings.hellChallenges(), true) {
+				ShatteredPixelDungeon.scene().add(new WndChallenges(SPDSettings.modifiers(), true) {
 					public void onBackPressed() {
 						super.onBackPressed();
 						icon( Icons.get( Challenges.icon() ) );

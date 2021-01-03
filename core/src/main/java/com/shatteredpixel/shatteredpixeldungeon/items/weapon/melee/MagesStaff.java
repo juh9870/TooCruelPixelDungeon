@@ -25,8 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
@@ -150,7 +152,7 @@ public class MagesStaff extends MeleeWeapon {
 	public int proc(Char attacker, Char defender, int damage) {
 		if (wand != null &&
 				attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE) {
-			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
+			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.5f;
 			ScrollOfRecharging.charge((Hero)attacker);
 			wand.onHit(this, attacker, defender, damage);
 		}
@@ -187,6 +189,23 @@ public class MagesStaff extends MeleeWeapon {
 
 	public Item imbueWand(Wand wand, Char owner){
 
+		int oldStaffcharges = this.wand.curCharges;
+
+		if (owner == Dungeon.hero && Dungeon.hero.hasTalent(Talent.WAND_PRESERVATION)
+				&& Random.Float() < 0.34f + 0.33f*Dungeon.hero.pointsInTalent(Talent.WAND_PRESERVATION)){
+
+			Talent.WandPreservationCounter counter = Buff.affect(Dungeon.hero, Talent.WandPreservationCounter.class);
+			if (counter.count() < 3) {
+				counter.countUp(1);
+				this.wand.level(0);
+				if (!this.wand.collect()) {
+					Dungeon.level.drop(this.wand, owner.pos);
+				}
+				GLog.newLine();
+				GLog.p(Messages.get(this, "preserved"));
+			}
+		}
+
 		this.wand = null;
 
 		//syncs the level of the two items.
@@ -198,7 +217,7 @@ public class MagesStaff extends MeleeWeapon {
 		level(targetLevel);
 		this.wand = wand;
 		updateWand(false);
-		wand.curCharges = wand.maxCharges;
+		wand.curCharges = Math.min(wand.maxCharges, wand.curCharges+oldStaffcharges);
 		if (owner != null) wand.charge(owner);
 
 		//This is necessary to reset any particles.
@@ -215,10 +234,14 @@ public class MagesStaff extends MeleeWeapon {
 
 		return this;
 	}
-	
+
 	public void gainCharge( float amt ){
+		gainCharge(amt, false);
+	}
+
+	public void gainCharge( float amt, boolean overcharge ){
 		if (wand != null){
-			wand.gainCharge(amt);
+			wand.gainCharge(amt, overcharge);
 		}
 	}
 

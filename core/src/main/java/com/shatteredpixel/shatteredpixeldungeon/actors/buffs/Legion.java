@@ -29,7 +29,7 @@ public class Legion extends Buff {
 			if (turnsToNextWave <= 0) {
 				turnsToNextWave = WAVE_DELAY;
 				int wantSpawn = (int)(Dungeon.level.nMobs()*(Statistics.amuletObtained?2:1.5));
-				if (wantSpawn==0 && Dungeon.depth==1)wantSpawn=(int)(15*Challenges.nMobsMultiplier());
+				if (wantSpawn==0 && Dungeon.depth==1)wantSpawn=(int)(15* Challenges.nMobsMultiplier());
 				
 				for (Mob mob : Dungeon.level.mobs){
 					if (mob.alignment == Char.Alignment.ENEMY) wantSpawn--;

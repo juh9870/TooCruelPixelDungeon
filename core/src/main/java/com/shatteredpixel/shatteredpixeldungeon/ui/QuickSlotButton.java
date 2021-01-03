@@ -78,6 +78,9 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 		slot = new ItemSlot() {
 			@Override
 			protected void onClick() {
+				if (!Dungeon.hero.isAlive()){
+					return;
+				}
 				if (targeting) {
 					int cell = autoAim(lastTarget, select(slotNum));
 
@@ -233,7 +236,7 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 	public static int autoAim(Char target, Item item){
 
 		//first try to directly target
-		if (item.throwPos(Dungeon.hero, target.pos) == target.pos) {
+		if (item.targetingPos(Dungeon.hero, target.pos) == target.pos) {
 			return target.pos;
 		}
 
@@ -241,7 +244,7 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 		PathFinder.buildDistanceMap( target.pos, BArray.not( new boolean[Dungeon.level.length()], null ), 2 );
 		for (int i = 0; i < PathFinder.distance.length; i++) {
 			if (PathFinder.distance[i] < Integer.MAX_VALUE
-					&& item.throwPos(Dungeon.hero, i) == target.pos)
+					&& item.targetingPos(Dungeon.hero, i) == target.pos)
 				return i;
 		}
 

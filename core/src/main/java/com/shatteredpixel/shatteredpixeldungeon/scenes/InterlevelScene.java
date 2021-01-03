@@ -150,7 +150,7 @@ public class InterlevelScene extends PixelScene {
 			fadeTime += 0.5f; //adds 1 second total
 		//speed up transition when debugging
 		} else if (DeviceCompat.isDebug()){
-			fadeTime /= 2;
+			fadeTime = 0f;
 		}
 		
 		SkinnedBlock bg = new SkinnedBlock(Camera.main.width, Camera.main.height, loadingAsset ){
@@ -173,6 +173,7 @@ public class InterlevelScene extends PixelScene {
 			}
 		};
 		bg.scale(4, 4);
+		bg.autoAdjust = true;
 		add(bg);
 		
 		Image im = new Image(TextureCache.createGradient(0xAA000000, 0xBB000000, 0xCC000000, 0xDD000000, 0xFF000000)){

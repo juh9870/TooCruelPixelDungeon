@@ -461,7 +461,7 @@ public class Generator {
 	}
 
 	private static final float[][] floorSetTierProbs = new float[][] {
-			{0, 70, 20,  8,  2},
+			{0, 75, 20,  4,  1},
 			{0, 25, 50, 20,  5},
 			{0,  0, 40, 50, 10},
 			{0,  0, 20, 40, 40},
@@ -609,7 +609,7 @@ public class Generator {
 	public static boolean removeArtifact(Class<?extends Artifact> artifact) {
 		Category cat = Category.ARTIFACT;
 		for (int i = 0; i < cat.classes.length; i++){
-			if (cat.classes[i].equals(artifact)) {
+			if (cat.classes[i].equals(artifact) && cat.probs[i] > 0) {
 				cat.probs[i] = 0;
 				return true;
 			}

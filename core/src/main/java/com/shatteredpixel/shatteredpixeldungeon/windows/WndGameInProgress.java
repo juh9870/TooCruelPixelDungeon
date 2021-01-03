@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -66,7 +67,7 @@ public class WndGameInProgress extends Window {
 		IconTitle title = new IconTitle();
 		title.icon( HeroSprite.avatar(info.heroClass, info.armorTier) );
 		title.label((Messages.get(this, "title", info.level, className)).toUpperCase(Locale.ENGLISH));
-		title.color(Window.SHPX_COLOR);
+		title.color(Window.TITLE_COLOR);
 		title.setRect( 0, 0, WIDTH, 0 );
 		add(title);
 		
@@ -79,7 +80,7 @@ public class WndGameInProgress extends Window {
 					ShatteredPixelDungeon.scene().addToFront(new WndMessage("_Debug Info:_\n\n" +
 							"Version: " + Game.version + " (" + Game.versionCode + ")\n" +
 							"Seed: " + bundle.getLong("seed") + "\n" +
-							"Challenge Mask: " + info.challenges));
+							"Challenges: " + Challenges.saveString(info.modifiers.challenges)));
 				} catch (IOException ignored) { }
 				return true;
 			}
@@ -87,15 +88,15 @@ public class WndGameInProgress extends Window {
 		debug.setRect(0, 0, title.imIcon.width(), title.imIcon.height);
 		add(debug);
 		
-		if (info.challenges > 0) GAP -= 2;
+		if (info.modifiers.isChallenged()) GAP -= 2;
 		
 		pos = title.bottom() + GAP;
 		
-		if (info.challenges > 0) {
+		if (info.modifiers.isChallenged()) {
 			RedButton btnChallenges = new RedButton( Messages.get(this, "challenges") ) {
 				@Override
 				protected void onClick() {
-					Game.scene().add( new WndChallenges( info.challenges, info.hellChallenges, false ) );
+					Game.scene().add( new WndChallenges( info.modifiers, false ) );
 				}
 			};
 			float btnW = btnChallenges.reqWidth() + 2;
