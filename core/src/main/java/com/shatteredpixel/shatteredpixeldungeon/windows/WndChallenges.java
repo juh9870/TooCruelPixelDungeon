@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -41,8 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WndChallenges extends Window {
-	private static final int WIDTH = 130;
-	private static final int HEIGHT = 150;
+	private static final int WIDTH = Math.min(160,Camera.main.width-16);
+	private static final int HEIGHT = Math.min(200,Camera.main.height-16);
 	private static final int TTL_HEIGHT = 18;
 	private static final int BTN_HEIGHT = 18;
 	private static final int GAP = 1;

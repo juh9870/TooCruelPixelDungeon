@@ -152,7 +152,7 @@ public class Dungeon {
 		
 	}
 	
-	public static Modifiers modifiers;
+	public static Modifiers modifiers = new Modifiers();
 	public static boolean challengesInform;
 	
 	//Variable for Rook challenge

@@ -685,20 +685,10 @@ public abstract class Mob extends Char {
 	}
 	
 	@Override
-	public HashSet<Property> properties() {
-		HashSet<Property> props = super.properties();
-		Ascension buff = buff(Ascension.class);
-		if(buff!=null){
-			props.addAll(buff.props());
-		}
-		return props;
-	}
-	
-	@Override
 	public void die(Object cause) {
-		if (canAscend() && Challenges.RESURRECTION.tier(2)) {
+		if (canAscend()) {
 			Ascension buff = Buff.affect(this, Ascension.class);
-			if (buff.level < Challenges.maxAscension() && Random.Float() < Challenges.ascendingChance(this)) {
+			if (buff.level < Challenges.maxAscension(this) && Random.Float() < Challenges.ascendingChance(this)) {
 				
 				buff.level++;
 				HT *= 2;
@@ -710,9 +700,9 @@ public abstract class Mob extends Char {
 				Corruption cor = buff(Corruption.class);
 				if(cor!=null)cor.detach();
 				
-				float mult = buff.level/ Challenges.maxAscension();
+				float mult = 1f*buff.level / Challenges.maxAscension(this);
 				int raysColor = ColorMath.interpolate(0xFFFF66,0xFF0000,mult);
-				if(Challenges.maxAscension()==1)raysColor=0xFFFF66;
+				if(Challenges.maxAscension(this)==1)raysColor=0xFFFF66;
 				
 				Sample.INSTANCE.play(Assets.Sounds.CHARGEUP,2,1f);
 				Camera.main.shake(2*mult,2f*(1+mult));

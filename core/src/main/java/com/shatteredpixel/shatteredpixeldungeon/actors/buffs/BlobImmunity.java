@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blizzard;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ConfusionGas;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.CorrosiveGas;
@@ -38,6 +39,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.NewTengu;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+
+import java.util.HashSet;
 
 public class BlobImmunity extends FlavourBuff {
 	
@@ -82,7 +85,12 @@ public class BlobImmunity extends FlavourBuff {
 		immunities.add(NewTengu.FireAbility.FireBlob.class);
 		immunities.add(NewTengu.BombAbility.BombBlob.class);
 	}
-
+	
+	@Override
+	public void modifyProperties(HashSet<Char.Property> properties) {
+		properties.add(Char.Property.BLOB_IMMUNE);
+	}
+	
 	@Override
 	public String desc() {
 		return Messages.get(this, "desc", dispTurns());

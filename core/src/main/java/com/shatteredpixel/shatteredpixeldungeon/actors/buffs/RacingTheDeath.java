@@ -130,7 +130,7 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 		}
 		//to make buff create first piece of trail right away
 		spend(-1);
-		//To make sure that buff wont proc multiple times in function called more than once
+		//To make sure that buff wont proc multiple times if function called more than once
 		postpone(-1);
 		
 		createTrail();

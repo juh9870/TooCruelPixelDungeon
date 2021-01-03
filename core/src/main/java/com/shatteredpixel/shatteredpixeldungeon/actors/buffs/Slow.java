@@ -24,7 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class Slow extends TimescaleBuff {
 
 	{
 		type = buffType.NEGATIVE;
@@ -53,4 +53,8 @@ public class Slow extends FlavourBuff {
 		return Messages.get(this, "desc", dispTurns());
 	}
 	
+	@Override
+	public float speedFactor() {
+		return 0.5f;
+	}
 }

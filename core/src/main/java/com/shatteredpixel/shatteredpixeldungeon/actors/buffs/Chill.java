@@ -28,7 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 
 import java.text.DecimalFormat;
 
-public class Chill extends FlavourBuff {
+public class Chill extends TimescaleBuff {
 
 	public static final float DURATION = 10f;
 
@@ -45,10 +45,11 @@ public class Chill extends FlavourBuff {
 	}
 
 	//reduces speed by 10% for every turn remaining, capping at 50%
-	public float speedFactor(){
+	@Override
+	public float speedFactor() {
 		return Math.max(0.5f, 1 - cooldown()*0.1f);
 	}
-
+	
 	@Override
 	public int icon() {
 		return BuffIndicator.FROST;

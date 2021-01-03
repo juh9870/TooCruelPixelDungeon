@@ -29,48 +29,47 @@ public class Ascension extends Buff {
 		return immunities;
 	}
 	
-	public HashSet<Char.Property> props(){
-		HashSet<Char.Property> props = new HashSet<>();
+	@Override
+	public void modifyProperties(HashSet<Char.Property> properties) {
 		
 		if(level>=3){
-			props.add(Char.Property.INORGANIC);
+			properties.add(Char.Property.INORGANIC);
 		}
 		
 		if(level>=4){
-			props.add(Char.Property.BLOB_IMMUNE);
-			props.add(Char.Property.FIERY);
-			props.add(Char.Property.ICY);
-			props.add(Char.Property.ACIDIC);
-			props.add(Char.Property.ELECTRIC);
+			properties.add(Char.Property.BLOB_IMMUNE);
+			properties.add(Char.Property.FIERY);
+			properties.add(Char.Property.ICY);
+			properties.add(Char.Property.ACIDIC);
+			properties.add(Char.Property.ELECTRIC);
 		}
-		
-		return props;
 	}
 	
 	@Override
 	public boolean act() {
-		if(Challenges.RESURRECTION.tier(3)) {
-			if (level >= 1 && level < 3)
-				Buff.affect(target, Stamina.class, 1000);
-			if (level >= 2) {
-				Buff.affect(target, Bless.class, 1000);
-			}
-			if (level >= 3) {
-				Buff.affect(target, Levitation.class, 1000);
-				Buff.affect(target, Adrenaline.class, 1000);
-			}
-			if (level >= 4) {
-				Buff.affect(target, ToxicImbue.class).left = 1000;
-				Buff.affect(target, EarthImbue.class, 1000);
-				Buff.affect(target, FireImbue.class).left = 1000;
-				Buff.affect(target, FrostImbue.class, 1000);
-			}
-			if (level >= 5) {
-				Buff.affect(target, Godspeed.class, 1000);
-			}
-			if (level >= 6) {
-				Buff.affect(target, Barrier.class).setShield(target.HT / 32);
-			}
+		if (level >= 1 && level < 3)
+			Buff.affect(target, Stamina.class, 1000);
+		if (level >= 2) {
+			Buff.affect(target, Bless.class, 1000);
+		}
+		if (level >= 3) {
+			Buff.affect(target, Levitation.class, 1000);
+			Buff.affect(target, Adrenaline.class, 1000);
+		}
+		if (level >= 4) {
+			Buff.affect(target, ToxicImbue.class).left = 1000;
+			Buff.affect(target, EarthImbue.class, 1000);
+			Buff.affect(target, FireImbue.class).left = 1000;
+			Buff.affect(target, FrostImbue.class, 1000);
+		}
+		if (level >= 5) {
+			Buff.affect(target, Godspeed.class, 1000);
+		}
+		if(level==5){
+			Buff.affect(target, ForcedAscension.class, TICK*2);
+		}
+		if (level >= 6) {
+			Buff.affect(target, Barrier.class).setShield(target.HT / 32);
 		}
 		spend(TICK);
 		return true;
@@ -86,5 +85,16 @@ public class Ascension extends Buff {
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		level=bundle.getInt(LEVEL);
+	}
+	@Override
+	public void fx(boolean on) {
+		if(on){
+			target.sprite.aura(getClass(),0xFF0000,0.5f,true);
+		} else {
+			target.sprite.clearAura(getClass());
+		}
+	}
+	
+	public static class ForcedAscension extends FlavourBuff {
 	}
 }

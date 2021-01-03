@@ -1,4 +1,5 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-public class TimeBuffs {
+public abstract class TimescaleBuff extends FlavourBuff {
+	public abstract float speedFactor();
 }

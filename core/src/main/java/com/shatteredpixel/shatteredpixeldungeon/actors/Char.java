@@ -43,7 +43,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EarthImbue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FireImbue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FrostImbue;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Godspeed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -56,9 +55,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ShieldBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stamina;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TimescaleBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
@@ -471,6 +470,9 @@ public abstract class Char extends Actor {
 		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
 			dmg = (int) Math.ceil(dmg * buff.damageTakenFactor());
 		}
+		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
+			buff.onDamageProc(dmg);
+		}
 
 		if (!(src instanceof LifeLink) && buff(LifeLink.class) != null){
 			HashSet<LifeLink> links = buffs(LifeLink.class);
@@ -568,6 +570,11 @@ public abstract class Char extends Actor {
 	}
 	
 	public void die( Object src ) {
+		
+		for (ChampionEnemy buff : buffs(ChampionEnemy.class)) {
+			buff.onDeathProc(src);
+		}
+		
 		destroy();
 		if (src != Chasm.class) sprite.die();
 	}
@@ -580,17 +587,9 @@ public abstract class Char extends Actor {
 	protected void spend( float time ) {
 		
 		float timeScale = 1f;
-		if (buff( Slow.class ) != null) {
-			timeScale *= 0.5f;
-			//slowed and chilled do not stack
-		} else if (buff( Chill.class ) != null) {
-			timeScale *= buff( Chill.class ).speedFactor();
-		}
-		if (buff( Speed.class ) != null) {
-			timeScale *= 2.0f;
-		}
-		if (buff( Godspeed.class ) != null) {
-			timeScale *= Godspeed.SPEED;
+		
+		for (TimescaleBuff buff : buffs(TimescaleBuff.class)) {
+			timeScale *= buff.speedFactor();
 		}
 		
 		super.spend( time / timeScale );
@@ -780,10 +779,11 @@ public abstract class Char extends Actor {
 
 	public HashSet<Property> properties() {
 		HashSet<Property> props = new HashSet<>(properties);
-		//TODO any more of these and we should make it a property of the buff, like with resistances/immunities
-		if (buff(ChampionEnemy.Giant.class) != null) {
-			props.add(Property.LARGE);
+		
+		for (Buff buff : buffs) {
+			buff.modifyProperties(props);
 		}
+		
 		return props;
 	}
 
@@ -807,7 +807,8 @@ public abstract class Char extends Actor {
 		ELECTRIC ( new HashSet<Class>( Arrays.asList(WandOfLightning.class, Shocking.class, Potential.class, Electricity.class, ShockingDart.class, Elemental.ShockElemental.class )),
 				new HashSet<Class>()),
 		LARGE,
-		IMMOVABLE;
+		IMMOVABLE,
+		ALWAYS_VISIBLE;
 		
 		private HashSet<Class> resistances;
 		private HashSet<Class> immunities;

@@ -157,7 +157,7 @@ public class ChangesScene extends PixelScene {
 				panel.innerHeight() + 2);
 		list.scrollTo(0, 0);
 		
-		StyledButton btn0_9 = new StyledButton(Chrome.Type.GREY_BUTTON_TR,"Too Cruel PD"){
+		StyledButton btn0_9 = new StyledButton(Chrome.Type.TAB_SELECTED,"Too Cruel PD"){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -169,10 +169,10 @@ public class ChangesScene extends PixelScene {
 		};
 
 		if (changesSelected != 0) btn0_9.textColor( 0xBBBBBB );
-		btn0_9.setRect(list.left()-4f, list.bottom(), w/2, changesSelected == 0 ? 19 : 15);
+		btn0_9.setRect(list.left()-4f, list.bottom(), pw/2-1, changesSelected == 0 ? 19 : 15);
 		addToBack(btn0_9);
 
-		StyledButton btn0_8 = new StyledButton(Chrome.Type.GREY_BUTTON_TR, "Shattered PD"){
+		StyledButton btn0_8 = new StyledButton(Chrome.Type.TAB_SELECTED, "Shattered PD"){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -183,7 +183,7 @@ public class ChangesScene extends PixelScene {
 			}
 		};
 		if (changesSelected != 1) btn0_8.textColor( 0xBBBBBB );
-		btn0_8.setRect(btn0_9.right() + 1, list.bottom(), w/2, changesSelected == 1 ? 19 : 15);
+		btn0_8.setRect(btn0_9.right() + 1, list.bottom(), pw/2-1, changesSelected == 1 ? 19 : 15);
 		addToBack(btn0_8);
 
 		Archs archs = new Archs();

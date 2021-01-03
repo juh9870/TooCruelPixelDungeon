@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
@@ -52,15 +53,9 @@ public class SummoningTrap extends Trap {
 			}
 		}
 
-		ArrayList<Integer> candidates = new ArrayList<>();
+		
 
-		for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-			int p = pos + PathFinder.NEIGHBOURS8[i];
-			if (Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
-				candidates.add( p );
-			}
-		}
-
+		ArrayList<Integer> candidates = getSummonCells(pos,1);
 		ArrayList<Integer> respawnPoints = new ArrayList<>();
 
 		while (nMobs > 0 && candidates.size() > 0) {
@@ -73,18 +68,41 @@ public class SummoningTrap extends Trap {
 		ArrayList<Mob> mobs = new ArrayList<>();
 
 		for (Integer point : respawnPoints) {
-			Mob mob = Dungeon.level.createMob();
-			while (Char.hasProp(mob, Char.Property.LARGE) && !Dungeon.level.openSpace[point]){
-				mob = Dungeon.level.createMob();
-			}
-			if (mob != null) {
-				mob.state = mob.WANDERING;
-				mob.pos = point;
-				GameScene.add(mob, DELAY);
-				mobs.add(mob);
-			}
+			Mob mob = summonMob(point,DELAY);
+			if(mob!=null)mobs.add(mob);
 		}
 
+		placeMob(mobs);
+	}
+	
+	public static ArrayList<Integer> getSummonCells(int center, int maxDistance){
+		ArrayList<Integer> candidates = new ArrayList<>();
+		
+		PathFinder.buildDistanceMap(center, BArray.or(Dungeon.level.passable,Dungeon.level.avoid,null),maxDistance);
+		
+		for (int p = 0; p < PathFinder.distance.length; p++) {
+			if (PathFinder.distance[p]<=maxDistance && Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
+				candidates.add( p );
+			}
+		}
+		
+		return candidates;
+	}
+	
+	public static Mob summonMob(int point, float delay){
+		Mob mob;
+		do {
+			mob = Dungeon.level.createMob();
+		} while (Char.hasProp(mob, Char.Property.LARGE) && !Dungeon.level.openSpace[point]);
+		if (mob != null) {
+			mob.state = mob.WANDERING;
+			mob.pos = point;
+			GameScene.add(mob, delay);
+		}
+		return mob;
+	}
+	
+	public static void placeMob(Iterable<Mob> mobs){
 		//important to process the visuals and pressing of cells last, so spawned mobs have a chance to occupy cells first
 		Trap t;
 		for (Mob mob : mobs){
@@ -97,6 +115,5 @@ public class SummoningTrap extends Trap {
 			ScrollOfTeleportation.appear(mob, mob.pos);
 			Dungeon.level.occupyCell(mob);
 		}
-
 	}
 }

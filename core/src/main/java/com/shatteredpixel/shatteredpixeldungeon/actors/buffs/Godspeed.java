@@ -21,10 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-public class Godspeed extends FlavourBuff {
+public class Godspeed extends TimescaleBuff {
 	
 	public static final float DURATION = 10f;
 	
-	public static final float SPEED = 2f;
-	
+	@Override
+	public float speedFactor() {
+		return 2f;
+	}
 }
