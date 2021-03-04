@@ -107,8 +107,9 @@ public class CityLevel extends RegularLevel {
 					1, 1, 1,
 					1, 1, 1 };
 		} else {
-			return new float[]{4, 4, 4, 4, 4,
-					6, 6, 6, 6, 6,
+			return new float[]{
+					4, 4, 4, 4, 4,
+					6, 6, 6, 6,
 					8, 8, 8,
 					8, 4, 3};
 		}

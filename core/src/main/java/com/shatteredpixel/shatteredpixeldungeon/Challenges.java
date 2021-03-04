@@ -47,26 +47,26 @@ public enum Challenges {
 		}
 	},
 	NO_ARMOR("no_armor"),
-	NO_HEALING("no_healing", 2),
+	NO_HEALING("no_healing", 3),
 	NO_HERBALISM("no_herbalism") {
 		@Override
 		protected boolean _isItemBlocked(Item item) {
 			return item instanceof Dewdrop;
 		}
 	},
-	SWARM_INTELLIGENCE("swarm_intelligence", 1),
-	DARKNESS("darkness", 1),
+	SWARM_INTELLIGENCE("swarm_intelligence", 2),
+	DARKNESS("darkness", 2),
 	NO_SCROLLS("no_scrolls"),
-	AMNESIA("amnesia", 1),
+	AMNESIA("amnesia", 2),
 	CURSED("cursed"),
 	BLACKJACK("blackjack"),
-	HORDE("horde", 2) {
+	HORDE("horde", 3) {
 		@Override
 		protected float _nMobsMult() {
 			return 2;
 		}
 	},
-	COUNTDOWN("countdown", 1),
+	COUNTDOWN("countdown", 2),
 	ANALGESIA("analgesia"),
 	BIG_LEVELS("big_levels") {
 		@Override
@@ -79,15 +79,15 @@ public enum Challenges {
 			return 2;
 		}
 	},
-	MUTAGEN("mutagen", 1) {
+	MUTAGEN("mutagen", 2) {
 		@Override
 		protected float _rareLootChanceMultiplier() {
 			if (tier(2)) return 1 / 50f;
 			return 4 / 50f;
 		}
 	},
-	RESURRECTION("resurrection", 2),
-	EXTREME_CAUTION("extreme_caution", 1) {
+	RESURRECTION("resurrection", 3),
+	EXTREME_CAUTION("extreme_caution", 2) {
 		@Override
 		protected float _nTrapsMult() {
 			return 4;
@@ -95,16 +95,17 @@ public enum Challenges {
 	},
 	EXTERMINATION("extermination"),
 	ROOK("rook"),
-	CHAMPION_ENEMIES("champion_enemies",3);
+	CHAMPION_ENEMIES("champion_enemies",3),
+	NO_PERKS("perks");
 	public String name;
 	public int maxLevel;
 	
 	Challenges(String name) {
-		this.name = name;
+		this(name,1);
 	}
 	
 	Challenges(String name, int maxLevel) {
-		this(name);
+		this.name = name;
 		this.maxLevel = maxLevel;
 	}
 	

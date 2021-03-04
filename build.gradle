@@ -12,7 +12,7 @@ allprojects {
 
     ext {
         appName = 'Too Cruel Pixel Dungeon'
-        appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
+        appPackageName = 'ua.dreamfools.toocruelpixeldungeon.dev'
 
         appVersionCode = 500
         appVersionName = '0.4.0'

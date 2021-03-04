@@ -28,18 +28,19 @@ import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.ChallengesBar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class WndChallenges extends Window {
 	private static final int WIDTH = Math.min(160,Camera.main.width-16);
@@ -50,6 +51,20 @@ public class WndChallenges extends Window {
 	private boolean editable;
 	private ArrayList<ChallengeButton> boxes;
 	private ArrayList<IconButton> infos;
+	private RenderedTextBlock difficultyText;
+	private ChallengesBar difficultyBar;
+	
+	private void updateDifficulty(Modifiers modifiers){
+		String diff = Messages.get(Difficulty.class,Difficulty.align(modifiers).name);
+		difficultyText.text(Messages.get(this,"difficulty", diff, Difficulty.calculateDifficulty(modifiers)));
+		difficultyText.setPos(
+				(WIDTH - difficultyText.width()) / 2,
+				TTL_HEIGHT+GAP
+		);
+		PixelScene.align(difficultyText);
+		
+		difficultyBar.update(modifiers);
+	}
 	
 	public WndChallenges(Modifiers modifiers, final boolean editable) {
 		super();
@@ -64,6 +79,19 @@ public class WndChallenges extends Window {
 		);
 		PixelScene.align(title);
 		add(title);
+		
+		float bottom = TTL_HEIGHT;
+		
+		difficultyText = PixelScene.renderTextBlock("",8);
+		difficultyBar = new ChallengesBar();
+		updateDifficulty(modifiers);
+		add(difficultyText);
+		bottom=difficultyText.bottom()+GAP*2;
+		
+		difficultyBar.setRect(0,bottom,WIDTH,BTN_HEIGHT/2-2);
+		add(difficultyBar);
+		bottom=difficultyBar.bottom();
+		
 		
 		resize(WIDTH, HEIGHT);
 		
@@ -98,7 +126,7 @@ public class WndChallenges extends Window {
 			}
 		};
 		add(pane);
-		pane.setRect(0, TTL_HEIGHT, WIDTH, HEIGHT - TTL_HEIGHT);
+		pane.setRect(0, bottom, WIDTH, HEIGHT - bottom);
 		Component content = pane.content();
 		
 		ArrayList<ChallengeButton> disabled = new ArrayList<>();
@@ -157,9 +185,7 @@ public class WndChallenges extends Window {
 //		resize( WIDTH, (int)pos );
 	}
 	
-	@Override
-	public void onBackPressed() {
-		
+	private void updateCheckState(){
 		if (editable) {
 			Modifiers modifiers = SPDSettings.modifiers();
 			for (int i = 0; i < boxes.size(); i++) {
@@ -176,11 +202,18 @@ public class WndChallenges extends Window {
 			}
 			SPDSettings.modifiers(modifiers);
 		}
+		updateDifficulty(SPDSettings.modifiers());
+	}
+	
+	@Override
+	public void onBackPressed() {
+		
+		updateCheckState();
 		
 		super.onBackPressed();
 	}
 	
-	private static class ChallengeButton extends CheckBox {
+	private class ChallengeButton extends CheckBox {
 		
 		IconCheckBox hellCheckbox;
 		IconCheckBox hell2Checkbox;
@@ -189,8 +222,8 @@ public class WndChallenges extends Window {
 		public ChallengeButton(Challenges challenge) {
 			super(Messages.get(Challenges.class, challenge.name));
 			this.challenge = challenge;
-			hellCheckbox.visible = hellCheckbox.active = challenge.maxLevel > 0;
-			hell2Checkbox.visible = hell2Checkbox.active = challenge.maxLevel > 1;
+			hellCheckbox.visible = hellCheckbox.active = challenge.maxLevel >= 2;
+			hell2Checkbox.visible = hell2Checkbox.active = challenge.maxLevel >= 3;
 		}
 		
 		@Override
@@ -224,6 +257,7 @@ public class WndChallenges extends Window {
 			} else
 				super.onClick();
 			updateText();
+			updateCheckState();
 			
 			return true;
 		}

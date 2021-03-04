@@ -49,69 +49,75 @@ import java.util.Locale;
 
 public class WndHero extends WndTabbed {
 	
-	private static final int WIDTH		= 120;
-	private static final int HEIGHT		= 100;
+	private static final int WIDTH = 120;
+	private static final int HEIGHT = 100;
 	
 	private StatsTab stats;
 	private TalentsTab talents;
 	private BuffsTab buffs;
-
+	
 	public static int lastIdx = 0;
-
+	
 	public WndHero() {
 		
 		super();
 		
-		resize( WIDTH, HEIGHT );
+		resize(WIDTH, HEIGHT);
 		
 		stats = new StatsTab();
-		add( stats );
-
+		add(stats);
+		
 		talents = new TalentsTab();
 		add(talents);
 		talents.setRect(0, 0, WIDTH, HEIGHT);
-
+		
 		buffs = new BuffsTab();
-		add( buffs );
+		add(buffs);
 		buffs.setRect(0, 0, WIDTH, HEIGHT);
 		buffs.setupList();
 		
-		add( new LabeledTab( Messages.get(this, "stats") ) {
-			protected void select( boolean value ) {
-				super.select( value );
+		add(new LabeledTab(Messages.get(this, "stats")) {
+			protected void select(boolean value) {
+				super.select(value);
 				if (selected) lastIdx = 0;
 				stats.visible = stats.active = selected;
 			}
-		} );
-		add( new LabeledTab( Messages.get(this, "talents") ) {
-			protected void select( boolean value ) {
-				super.select( value );
+		});
+		add(new LabeledTab(Messages.get(this, "talents")) {
+			protected void select(boolean value) {
+				super.select(value);
 				if (selected) lastIdx = 1;
 				if (selected) StatusPane.talentBlink = 0;
 				talents.visible = talents.active = selected;
 			}
-		} );
-		add( new LabeledTab( Messages.get(this, "buffs") ) {
-			protected void select( boolean value ) {
-				super.select( value );
+		});
+		add(new LabeledTab(Messages.get(this, "buffs")) {
+			protected void select(boolean value) {
+				super.select(value);
 				if (selected) lastIdx = 2;
 				buffs.visible = buffs.active = selected;
 			}
-		} );
-
+		});
+		
 		layoutTabs();
 		if (Challenges.ANALGESIA.enabled()) {
-			tabs.get(1).bg.tint(0,0.5f);
+			tabs.get(2).bg.tint(0, 0.5f);
 		}
-
+		if (Challenges.NO_PERKS.enabled()) {
+			tabs.get(1).bg.tint(0, 0.5f);
+		}
 		
-		select( lastIdx );
+		
+		select(lastIdx);
 	}
+	
 	@Override
 	public void select(Tab tab) {
-		if(Challenges.ANALGESIA.enabled()&&tabs.indexOf(tab)==1)return;
+		if (Challenges.ANALGESIA.enabled() && tabs.indexOf(tab) == 2) return;
+		if (Challenges.NO_PERKS.enabled() && tabs.indexOf(tab) == 1) return;
 		super.select(tab);
 	}
+	
 	private class StatsTab extends Group {
 		
 		private static final int GAP = 6;
@@ -121,113 +127,114 @@ public class WndHero extends WndTabbed {
 		public StatsTab() {
 			
 			Hero hero = Dungeon.hero;
-
+			
 			IconTitle title = new IconTitle();
-			title.icon( HeroSprite.avatar(hero.heroClass, hero.tier()) );
+			title.icon(HeroSprite.avatar(hero.heroClass, hero.tier()));
 			
 			if (hero.name().equals(hero.className()))
-				title.label( Messages.get(this, "title", hero.lvl, hero.className() ).toUpperCase( Locale.ENGLISH ) );
-
+				title.label(Messages.get(this, "title", hero.lvl, hero.className()).toUpperCase(Locale.ENGLISH));
+			
 			else
 				title.label((hero.name() + "\n" + Messages.get(this, "title", hero.lvl, hero.className())).toUpperCase(Locale.ENGLISH));
 			title.color(Window.TITLE_COLOR);
-			title.setRect( 0, 0, WIDTH, 0 );
+			title.setRect(0, 0, WIDTH, 0);
 			add(title);
-
-			pos = title.bottom() + 2*GAP;
-
-			if (Challenges.ANALGESIA.enabled()){
-				statSlot( Messages.get(this, "str"), "??" );
-				if (hero.shielding() > 0) statSlot( Messages.get(this, "health"), "??+??/??" );
-				else statSlot( Messages.get(this, "health"), "??/??" );
-				statSlot( Messages.get(this, "exp"), "??/??" );
+			
+			pos = title.bottom() + 2 * GAP;
+			
+			if (Challenges.ANALGESIA.enabled()) {
+				statSlot(Messages.get(this, "str"), "??");
+				if (hero.shielding() > 0) statSlot(Messages.get(this, "health"), "??+??/??");
+				else statSlot(Messages.get(this, "health"), "??/??");
+				statSlot(Messages.get(this, "exp"), "??/??");
 			} else {
-				statSlot( Messages.get(this, "str"), hero.STR() );
-				if (hero.shielding() > 0) statSlot( Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT );
-				else statSlot( Messages.get(this, "health"), (hero.HP) + "/" + hero.HT );
-				statSlot( Messages.get(this, "exp"), hero.exp + "/" + hero.maxExp() );
+				statSlot(Messages.get(this, "str"), hero.STR());
+				if (hero.shielding() > 0)
+					statSlot(Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT);
+				else statSlot(Messages.get(this, "health"), (hero.HP) + "/" + hero.HT);
+				statSlot(Messages.get(this, "exp"), hero.exp + "/" + hero.maxExp());
 			}
-
+			
 			pos += GAP;
-
-			if (Challenges.AMNESIA.enabled()){
+			
+			if (Challenges.AMNESIA.enabled()) {
 				statSlot(Messages.get(this, "gold"), "????");
 				statSlot(Messages.get(this, "depth"), "??");
 			} else {
-
+				
 				statSlot(Messages.get(this, "gold"), Statistics.goldCollected);
 				statSlot(Messages.get(this, "depth"), Statistics.deepestFloor);
 			}
-
+			
 			pos += GAP;
 		}
-
-		private void statSlot( String label, String value ) {
+		
+		private void statSlot(String label, String value) {
 			
-			RenderedTextBlock txt = PixelScene.renderTextBlock( label, 8 );
+			RenderedTextBlock txt = PixelScene.renderTextBlock(label, 8);
 			txt.setPos(0, pos);
-			add( txt );
+			add(txt);
 			
-			txt = PixelScene.renderTextBlock( value, 8 );
+			txt = PixelScene.renderTextBlock(value, 8);
 			txt.setPos(WIDTH * 0.6f, pos);
 			PixelScene.align(txt);
-			add( txt );
+			add(txt);
 			
 			pos += GAP + txt.height();
 		}
 		
-		private void statSlot( String label, int value ) {
-			statSlot( label, Integer.toString( value ) );
+		private void statSlot(String label, int value) {
+			statSlot(label, Integer.toString(value));
 		}
 		
 		public float height() {
 			return pos;
 		}
 	}
-
+	
 	public class TalentsTab extends Component {
-
+		
 		TalentsPane pane;
-
+		
 		@Override
 		protected void createChildren() {
 			super.createChildren();
 			pane = new TalentsPane(true);
 			add(pane);
 		}
-
+		
 		@Override
 		protected void layout() {
 			super.layout();
 			pane.setRect(x, y, width, height);
 		}
-
+		
 	}
 	
 	private class BuffsTab extends Component {
 		
 		private static final int GAP = 2;
-
+		
 		private SmartTexture icons;
 		private TextureFilm film;
 		
 		private float pos;
 		private ScrollPane buffList;
 		private ArrayList<BuffSlot> slots = new ArrayList<>();
-
+		
 		@Override
 		protected void createChildren() {
-			icons = TextureCache.get( Assets.Interfaces.BUFFS_LARGE );
-			film = new TextureFilm( icons, 16, 16 );
-
+			icons = TextureCache.get(Assets.Interfaces.BUFFS_LARGE);
+			film = new TextureFilm(icons, 16, 16);
+			
 			super.createChildren();
-
-			buffList = new ScrollPane( new Component() ){
+			
+			buffList = new ScrollPane(new Component()) {
 				@Override
-				public void onClick( float x, float y ) {
+				public void onClick(float x, float y) {
 					int size = slots.size();
-					for (int i=0; i < size; i++) {
-						if (slots.get( i ).onClick( x, y )) {
+					for (int i = 0; i < size; i++) {
+						if (slots.get(i).onClick(x, y)) {
 							break;
 						}
 					}
@@ -256,35 +263,35 @@ public class WndHero extends WndTabbed {
 			content.setSize(buffList.width(), pos);
 			buffList.setSize(buffList.width(), buffList.height());
 		}
-
+		
 		private class BuffSlot extends Component {
-
+			
 			private Buff buff;
-
+			
 			Image icon;
 			RenderedTextBlock txt;
-
-			public BuffSlot( Buff buff ){
+			
+			public BuffSlot(Buff buff) {
 				super();
 				this.buff = buff;
 				int index = buff.icon();
-
-				icon = new Image( icons );
-				icon.frame( film.get( index ) );
+				
+				icon = new Image(icons);
+				icon.frame(film.get(index));
 				buff.tintIcon(icon);
 				icon.y = this.y;
-				add( icon );
-
-				txt = PixelScene.renderTextBlock( buff.toString(), 8 );
+				add(icon);
+				
+				txt = PixelScene.renderTextBlock(buff.toString(), 8);
 				txt.setPos(
 						icon.width + GAP,
 						this.y + (icon.height - txt.height()) / 2
 				);
 				PixelScene.align(txt);
-				add( txt );
-
+				add(txt);
+				
 			}
-
+			
 			@Override
 			protected void layout() {
 				super.layout();
@@ -295,8 +302,8 @@ public class WndHero extends WndTabbed {
 				);
 			}
 			
-			protected boolean onClick ( float x, float y ) {
-				if (inside( x, y )) {
+			protected boolean onClick(float x, float y) {
+				if (inside(x, y)) {
 					GameScene.show(new WndInfoBuff(buff));
 					return true;
 				} else {

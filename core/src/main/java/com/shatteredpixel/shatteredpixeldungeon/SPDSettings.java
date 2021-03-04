@@ -184,7 +184,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static Modifiers modifiers() {
-		return new Modifiers(Challenges.fromString(getString(KEY_CHALLENGES,"")));
+		return new Modifiers(Challenges.fromString(getString(KEY_CHALLENGES,"1")));
 	}
 
 	public static void supportNagged( boolean value ) {

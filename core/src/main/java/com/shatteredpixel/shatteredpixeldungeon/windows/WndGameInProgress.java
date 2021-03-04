@@ -64,9 +64,12 @@ public class WndGameInProgress extends Window {
 			className = info.heroClass.title();
 		}
 		
+		boolean amnesia = info.modifiers.isChallenged(Challenges.AMNESIA.ordinal());
+		boolean analgesia = info.modifiers.isChallenged(Challenges.ANALGESIA.ordinal());
+		
 		IconTitle title = new IconTitle();
 		title.icon( HeroSprite.avatar(info.heroClass, info.armorTier) );
-		title.label((Messages.get(this, "title", info.level, className)).toUpperCase(Locale.ENGLISH));
+		title.label((Messages.get(this, "title", amnesia||analgesia?"??":info.level, className)).toUpperCase(Locale.ENGLISH));
 		title.color(Window.TITLE_COLOR);
 		title.setRect( 0, 0, WIDTH, 0 );
 		add(title);
@@ -108,14 +111,14 @@ public class WndGameInProgress extends Window {
 		
 		pos += GAP;
 		
-		statSlot( Messages.get(this, "str"), info.str );
-		if (info.shld > 0) statSlot( Messages.get(this, "health"), info.hp + "+" + info.shld + "/" + info.ht );
-		else statSlot( Messages.get(this, "health"), (info.hp) + "/" + info.ht );
-		statSlot( Messages.get(this, "exp"), info.exp + "/" + Hero.maxExp(info.level) );
+		statSlot( Messages.get(this, "str"), info.str, analgesia );
+		if (info.shld > 0) statSlot( Messages.get(this, "health"), info.hp + "+" + info.shld + "/" + info.ht, analgesia );
+		else statSlot( Messages.get(this, "health"), (info.hp) + "/" + info.ht, analgesia );
+		statSlot( Messages.get(this, "exp"), info.exp + "/" + Hero.maxExp(info.level), analgesia );
 		
 		pos += GAP;
-		statSlot( Messages.get(this, "gold"), info.goldCollected );
-		statSlot( Messages.get(this, "depth"), info.maxDepth );
+		statSlot( Messages.get(this, "gold"), info.goldCollected, amnesia );
+		statSlot( Messages.get(this, "depth"), info.maxDepth, amnesia );
 		
 		pos += GAP;
 		
@@ -164,13 +167,13 @@ public class WndGameInProgress extends Window {
 		resize(WIDTH, HEIGHT);
 	}
 	
-	private void statSlot( String label, String value ) {
+	private void statSlot( String label, String value, boolean hide ) {
 		
 		RenderedTextBlock txt = PixelScene.renderTextBlock( label, 8 );
 		txt.setPos(0, pos);
 		add( txt );
 		
-		txt = PixelScene.renderTextBlock( value, 8 );
+		txt = PixelScene.renderTextBlock( hide?"??":value, 8 );
 		txt.setPos(WIDTH * 0.6f, pos);
 		PixelScene.align(txt);
 		add( txt );
@@ -178,7 +181,7 @@ public class WndGameInProgress extends Window {
 		pos += GAP + txt.height();
 	}
 	
-	private void statSlot( String label, int value ) {
-		statSlot( label, Integer.toString( value ) );
+	private void statSlot( String label, int value, boolean hide ) {
+		statSlot( label, Integer.toString( value ), hide );
 	}
 }

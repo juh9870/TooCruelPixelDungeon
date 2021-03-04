@@ -42,7 +42,7 @@ public class Modifiers implements Bundlable {
 		Random.shuffle(values);
 		
 		for (int i=0;i<Random.Int(1,values.length);i++){
-			challenges[values[i].ordinal()]=Random.Int(1,values[i].maxLevel);
+			challenges[values[i].ordinal()]=Random.Int(1,values[i].maxLevel+1);
 		}
 		
 		Random.popGenerator();

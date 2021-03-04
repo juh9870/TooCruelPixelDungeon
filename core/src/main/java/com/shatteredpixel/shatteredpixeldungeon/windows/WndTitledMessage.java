@@ -41,6 +41,8 @@ public class WndTitledMessage extends Window {
 
 	}
 	
+	ScrollPane sp;
+	
 	public WndTitledMessage( Component titlebar, String message ) {
 
 		super();
@@ -67,8 +69,14 @@ public class WndTitledMessage extends Window {
 		
 		resize( width, (int)Math.min((int)comp.bottom()+2+titlebar.height()+GAP, (int)(Camera.main.height*0.9)) );
 		
-		ScrollPane sp = new ScrollPane(comp);
+		sp = new ScrollPane(comp);
 		add(sp);
 		sp.setRect(titlebar.left(),titlebar.bottom() + GAP,comp.width(),Math.min((int)comp.bottom()+2, (int)(Camera.main.height*0.9)-titlebar.bottom()-GAP));
+	}
+	
+	@Override
+	public void resize(int w, int h) {
+		super.resize(w, h);
+		if(sp!=null)sp.setRect(sp.left(),sp.top(),sp.width(),sp.height());
 	}
 }

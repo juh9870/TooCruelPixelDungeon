@@ -27,9 +27,9 @@ import com.watabou.noosa.ui.Component;
 
 public class HealthBar extends Component {
 
-	private static final int COLOR_BG	= 0xFFCC0000;
-	private static final int COLOR_HP	= 0xFF00EE00;
-	private static final int COLOR_SHLD = 0xFFBBEEBB;
+	public static final int COLOR_BG	= 0xFFCC0000;
+	public static final int COLOR_HP	= 0xFF00EE00;
+	public static final int COLOR_SHLD = 0xFFBBEEBB;
 	
 	private static final int HEIGHT	= 2;
 	
@@ -67,6 +67,12 @@ public class HealthBar extends Component {
 		if (camera() != null) pixelWidth *= camera().zoom;
 		Shld.size( width * (float)Math.ceil(shield * pixelWidth)/pixelWidth, height );
 		Hp.size( width * (float)Math.ceil(health * pixelWidth)/pixelWidth, height );
+	}
+	
+	public void color(int bg, int hp, int shield){
+		Bg.color(bg);
+		Hp.color(hp);
+		Shld.color(shield);
 	}
 	
 	public void level( float value ) {

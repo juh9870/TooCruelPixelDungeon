@@ -362,6 +362,7 @@ public class GameScene extends PixelScene {
 		
 		if(Dungeon.challengesInform){
 			add(new WndHardNotification(Icons.CHALLENGE_ON.get(),Messages.get(this,"notification"),Messages.get(this,"challenges_info"),Messages.get(this,"thanks"),0));
+//			add(new WndTitledMessage(Icons.CHALLENGE_ON.get(),Messages.get(this,"notification"),Messages.get(this,"challenges_info")));
 			Dungeon.challengesInform=false;
 		}
 		
@@ -496,18 +497,21 @@ public class GameScene extends PixelScene {
 				GLog.h(Messages.get(this, "return"), Dungeon.depth);
 			}
 
-			boolean unspentTalents = false;
-			for (int i = 1; i <= Dungeon.hero.talents.size(); i++){
-				if (Dungeon.hero.talentPointsAvailable(i) > 0){
-					unspentTalents = true;
-					break;
+			if(!Challenges.NO_PERKS.enabled()) {
+				
+				boolean unspentTalents = false;
+				for (int i = 1; i <= Dungeon.hero.talents.size(); i++) {
+					if (Dungeon.hero.talentPointsAvailable(i) > 0) {
+						unspentTalents = true;
+						break;
+					}
 				}
-			}
-			if (unspentTalents){
-				GLog.newLine();
-				GLog.w( Messages.get(Dungeon.hero, "unspent") );
-				StatusPane.talentBlink = 10f;
-				WndHero.lastIdx = 1;
+				if (unspentTalents) {
+					GLog.newLine();
+					GLog.w(Messages.get(Dungeon.hero, "unspent"));
+					StatusPane.talentBlink = 10f;
+					WndHero.lastIdx = 1;
+				}
 			}
 
 			switch (Dungeon.level.feeling) {

@@ -28,6 +28,7 @@ public class Chrome {
 	public enum  Type {
 		TOAST,
 		TOAST_TR,
+		TOAST_EMPTY,
 		WINDOW,
 		WINDOW_SILVER,
 		RED_BUTTON,
@@ -52,6 +53,8 @@ public class Chrome {
 				return new NinePatch( Asset, 22, 0, 18, 18, 5 );
 			case TOAST_TR:
 				return new NinePatch( Asset, 40, 0, 18, 18, 5 );
+			case TOAST_EMPTY:
+				return new NinePatch( Asset, 109, 1, 16, 16, 5 );
 			case RED_BUTTON:
 				return new NinePatch( Asset, 58, 0, 6, 6, 2 );
 			case GREY_BUTTON:

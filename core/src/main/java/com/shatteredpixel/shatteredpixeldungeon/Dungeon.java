@@ -65,6 +65,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
@@ -211,8 +212,8 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-//		if(DeviceCompat.isDebug())
-//			depth = 14;
+		if(DeviceCompat.isDebug())
+			depth = 15;
 		gold = 0;
 		
 		droppedItems = new SparseArray<>();
