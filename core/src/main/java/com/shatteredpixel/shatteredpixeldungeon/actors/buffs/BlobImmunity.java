@@ -83,7 +83,6 @@ public class BlobImmunity extends FlavourBuff {
 		immunities.add( Web.class );
 
 		immunities.add(NewTengu.FireAbility.FireBlob.class);
-		immunities.add(NewTengu.BombAbility.BombBlob.class);
 	}
 	
 	@Override

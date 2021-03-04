@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal.WarriorShield;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -40,7 +42,7 @@ public class Berserk extends Buff {
 	}
 	private State state = State.NORMAL;
 
-	private static final float LEVEL_RECOVER_START = 2f;
+	private static final float LEVEL_RECOVER_START = 3f;
 	private float levelRecovery;
 	
 	private float power = 0;
@@ -71,7 +73,7 @@ public class Berserk extends Buff {
 		if (berserking()){
 			ShieldBuff buff = target.buff(WarriorShield.class);
 			if (target.HP <= 0) {
-				int dmg = 1 + (int)Math.ceil(target.shielding() * 0.1f);
+				int dmg = 1 + (int)Math.ceil(target.shielding() * 0.05f);
 				if (buff != null && buff.shielding() > 0) {
 					buff.absorbDamage(dmg);
 				} else {
@@ -87,7 +89,7 @@ public class Berserk extends Buff {
 				}
 			} else {
 				state = State.RECOVERING;
-				levelRecovery = LEVEL_RECOVER_START;
+				levelRecovery = LEVEL_RECOVER_START - 0.5f*Dungeon.hero.pointsInTalent(Talent.BERSERKING_STAMINA);
 				if (buff != null) buff.absorbDamage(buff.shielding());
 				power = 0f;
 			}
@@ -102,6 +104,10 @@ public class Berserk extends Buff {
 		return true;
 	}
 
+	public float rageAmount(){
+		return Math.min(1f, power);
+	}
+
 	public int damageFactor(int dmg){
 		float bonus = Math.min(1.5f, 1f + (power / 2f));
 		return Math.round(dmg * bonus);
@@ -113,7 +119,9 @@ public class Berserk extends Buff {
 			WarriorShield shield = target.buff(WarriorShield.class);
 			if (shield != null){
 				state = State.BERSERK;
-				shield.supercharge(shield.maxShield() * 10);
+				int shieldAmount = shield.maxShield() * 8;
+				shieldAmount = Math.round(shieldAmount * (1f + Dungeon.hero.pointsInTalent(Talent.BERSERKING_STAMINA)/6f));
+				shield.supercharge(shieldAmount);
 
 				SpellSprite.show(target, SpellSprite.BERSERK);
 				Sample.INSTANCE.play( Assets.Sounds.CHALLENGE );
@@ -127,7 +135,8 @@ public class Berserk extends Buff {
 	
 	public void damage(int damage){
 		if (state == State.RECOVERING) return;
-		power = Math.min(1.1f, power + (damage/(float)target.HT)/3f );
+		float maxPower = 1f + 0.15f*((Hero)target).pointsInTalent(Talent.ENDLESS_RAGE);
+		power = Math.min(maxPower, power + (damage/(float)target.HT)/3f );
 		BuffIndicator.refreshHero(); //show new power immediately
 	}
 
@@ -170,7 +179,7 @@ public class Berserk extends Buff {
 			case BERSERK:
 				return 0f;
 			case RECOVERING:
-				return 1f - levelRecovery/2f;
+				return 1f - levelRecovery/LEVEL_RECOVER_START;
 		}
 	}
 

@@ -170,26 +170,28 @@ public class Armor extends EquipableItem {
 			BrokenSeal.WarriorShield sealBuff = hero.buff(BrokenSeal.WarriorShield.class);
 			if (sealBuff != null) sealBuff.setArmor(null);
 
-			if (seal.level() > 0){
+			BrokenSeal detaching = seal;
+			seal = null;
+
+			if (detaching.level() > 0){
 				degrade();
 			}
-			if (seal.getGlyph() != null){
+			if (detaching.getGlyph() != null){
 				if (hero.hasTalent(Talent.RUNIC_TRANSFERENCE)
-						&& (Arrays.asList(Glyph.common).contains(seal.getGlyph().getClass())
-							|| Arrays.asList(Glyph.uncommon).contains(seal.getGlyph().getClass()))){
+						&& (Arrays.asList(Glyph.common).contains(detaching.getGlyph().getClass())
+							|| Arrays.asList(Glyph.uncommon).contains(detaching.getGlyph().getClass()))){
 					inscribe(null);
 				} else if (hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) == 2){
 					inscribe(null);
 				} else {
-					seal.setGlyph(null);
+					detaching.setGlyph(null);
 				}
 			}
 			GLog.i( Messages.get(Armor.class, "detach_seal") );
 			hero.sprite.operate(hero.pos);
-			if (!seal.collect()){
-				Dungeon.level.drop(seal, hero.pos);
+			if (!detaching.collect()){
+				Dungeon.level.drop(detaching, hero.pos);
 			}
-			seal = null;
 		}
 	}
 
@@ -321,7 +323,7 @@ public class Armor extends EquipableItem {
 			
 			Momentum momentum = owner.buff(Momentum.class);
 			if (momentum != null){
-				evasion += momentum.evasionBonus(Math.max(0, -aEnc));
+				evasion += momentum.evasionBonus(((Hero) owner).lvl, Math.max(0, -aEnc));
 			}
 		}
 		
@@ -458,10 +460,10 @@ public class Armor extends EquipableItem {
 
 		switch (augment) {
 			case EVASION:
-				info += "\n\n" + Messages.get(Armor.class, "evasion");
+				info += " " + Messages.get(Armor.class, "evasion");
 				break;
 			case DEFENSE:
-				info += "\n\n" + Messages.get(Armor.class, "defense");
+				info += " " + Messages.get(Armor.class, "defense");
 				break;
 			case NONE:
 		}
@@ -526,10 +528,20 @@ public class Armor extends EquipableItem {
 	}
 
 	public int STRReq(int lvl){
+		return STRReq(tier, lvl);
+	}
+
+	protected static int STRReq(int tier, int lvl){
 		lvl = Math.max(0, lvl);
 
 		//strength req decreases at +1,+3,+6,+10,etc.
-		return (8 + Math.round(tier * 2)) - (int)(Math.sqrt(8 * lvl + 1) - 1)/2;
+		int req = (8 + Math.round(tier * 2)) - (int)(Math.sqrt(8 * lvl + 1) - 1)/2;
+
+		if (Dungeon.hero.hasTalent(Talent.STRONGMAN)){
+			req -= (Dungeon.hero.pointsInTalent(Talent.STRONGMAN)+1)/2;
+		}
+
+		return req;
 	}
 	
 	@Override
@@ -558,7 +570,7 @@ public class Armor extends EquipableItem {
 		updateQuickslot();
 		//the hero needs runic transference to actually transfer, but we still attach the glyph here
 		// in case they take that talent in the future
-		if (glyph != null && seal != null){
+		if (seal != null){
 			seal.setGlyph(glyph);
 		}
 		return this;

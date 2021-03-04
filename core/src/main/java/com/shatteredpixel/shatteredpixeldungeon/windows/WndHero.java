@@ -50,7 +50,7 @@ import java.util.Locale;
 public class WndHero extends WndTabbed {
 	
 	private static final int WIDTH = 120;
-	private static final int HEIGHT = 100;
+	private static final int HEIGHT = 120;
 	
 	private StatsTab stats;
 	private TalentsTab talents;
@@ -100,6 +100,7 @@ public class WndHero extends WndTabbed {
 		});
 		
 		layoutTabs();
+		
 		if (Challenges.ANALGESIA.enabled()) {
 			tabs.get(2).bg.tint(0, 0.5f);
 		}
@@ -107,6 +108,9 @@ public class WndHero extends WndTabbed {
 			tabs.get(1).bg.tint(0, 0.5f);
 		}
 		
+		talents.setRect(0, 0, WIDTH, HEIGHT);
+		talents.pane.scrollTo(0, talents.pane.content().height() - talents.pane.height());
+		talents.layout();
 		
 		select(lastIdx);
 	}

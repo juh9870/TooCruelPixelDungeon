@@ -1,6 +1,5 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
@@ -58,7 +57,6 @@ public class Ascension extends Buff {
 		}
 		if (level >= 4) {
 			Buff.affect(target, ToxicImbue.class).left = 1000;
-			Buff.affect(target, EarthImbue.class, 1000);
 			Buff.affect(target, FireImbue.class).left = 1000;
 			Buff.affect(target, FrostImbue.class, 1000);
 		}

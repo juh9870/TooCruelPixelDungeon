@@ -91,8 +91,10 @@ public class Artifact extends KindofMisc {
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
-			passiveBuff.detach();
-			passiveBuff = null;
+			if (passiveBuff != null) {
+				passiveBuff.detach();
+				passiveBuff = null;
+			}
 
 			if (activeBuff != null){
 				activeBuff.detach();
@@ -209,7 +211,7 @@ public class Artifact extends KindofMisc {
 
 	protected ArtifactBuff activeBuff() {return null; }
 	
-	public void charge(Hero target){
+	public void charge(Hero target, float amount){
 		//do nothing by default;
 	}
 
@@ -221,6 +223,10 @@ public class Artifact extends KindofMisc {
 
 		public boolean isCursed() {
 			return cursed;
+		}
+
+		public void charge(Hero target, float amount){
+			Artifact.this.charge(target, amount);
 		}
 
 	}

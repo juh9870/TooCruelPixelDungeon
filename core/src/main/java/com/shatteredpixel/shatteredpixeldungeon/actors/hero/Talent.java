@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
@@ -66,58 +67,71 @@ import java.util.LinkedHashMap;
 
 public enum Talent {
 
-	HEARTY_MEAL(0),
-	ARMSMASTERS_INTUITION(1),
-	TEST_SUBJECT(2),
-	IRON_WILL(3),
-	IRON_STOMACH(4),
-	RESTORED_WILLPOWER(5),
-	RUNIC_TRANSFERENCE(6),
-	LETHAL_MOMENTUM(7),
-	IMPROVISED_PROJECTILES(8),
+	//Warrior T1
+	HEARTY_MEAL(0), ARMSMASTERS_INTUITION(1), TEST_SUBJECT(2), IRON_WILL(3),
+	//Warrior T2
+	IRON_STOMACH(4), RESTORED_WILLPOWER(5), RUNIC_TRANSFERENCE(6), LETHAL_MOMENTUM(7), IMPROVISED_PROJECTILES(8),
+	//Warrior T3
+	HOLD_FAST(9, 3), STRONGMAN(10, 3),
+	//Berserker T3
+	ENDLESS_RAGE(11, 3), BERSERKING_STAMINA(12, 3), ENRAGED_CATALYST(13, 3),
+	//Gladiator T3
+	CLEAVE(14, 3), LETHAL_DEFENSE(15, 3), ENHANCED_COMBO(16, 3),
 
-	EMPOWERING_MEAL(16),
-	SCHOLARS_INTUITION(17),
-	TESTED_HYPOTHESIS(18),
-	BACKUP_BARRIER(19),
-	ENERGIZING_MEAL(20),
-	ENERGIZING_UPGRADE(21),
-	WAND_PRESERVATION(22),
-	ARCANE_VISION(23),
-	SHIELD_BATTERY(24),
+	//Mage T1
+	EMPOWERING_MEAL(32), SCHOLARS_INTUITION(33), TESTED_HYPOTHESIS(34), BACKUP_BARRIER(35),
+	//Mage T2
+	ENERGIZING_MEAL(36), ENERGIZING_UPGRADE(37), WAND_PRESERVATION(38), ARCANE_VISION(39), SHIELD_BATTERY(40),
+	//Mage T3
+	EMPOWERING_SCROLLS(41, 3), ALLY_WARP(42, 3),
+	//Battlemage T3
+	EMPOWERED_STRIKE(43, 3), MYSTICAL_CHARGE(44, 3), EXCESS_CHARGE(45, 3),
+	//Warlock T3
+	SOUL_EATER(46, 3), SOUL_SIPHON(47, 3), NECROMANCERS_MINIONS(48, 3),
 
-	CACHED_RATIONS(32),
-	THIEFS_INTUITION(33),
-	SUCKER_PUNCH(34),
-	PROTECTIVE_SHADOWS(35),
-	MYSTICAL_MEAL(36),
-	MYSTICAL_UPGRADE(37),
-	WIDE_SEARCH(38),
-	SILENT_STEPS(39),
-	ROGUES_FORESIGHT(40),
+	//Rogue T1
+	CACHED_RATIONS(64), THIEFS_INTUITION(65), SUCKER_PUNCH(66), PROTECTIVE_SHADOWS(67),
+	//Rogue T2
+	MYSTICAL_MEAL(68), MYSTICAL_UPGRADE(69), WIDE_SEARCH(70), SILENT_STEPS(71), ROGUES_FORESIGHT(72),
+	//Rogue T3
+	ENHANCED_RINGS(73, 3), LIGHT_CLOAK(74, 3),
+	//Assassin T3
+	ENHANCED_LETHALITY(75, 3), ASSASSINS_REACH(76, 3), BOUNTY_HUNTER(77, 3),
+	//Freerunner T3
+	EVASIVE_ARMOR(78, 3), PROJECTILE_MOMENTUM(79, 3), SPEEDY_STEALTH(80, 3),
 
-	NATURES_BOUNTY(48),
-	SURVIVALISTS_INTUITION(49),
-	FOLLOWUP_STRIKE(50),
-	NATURES_AID(51),
-	INVIGORATING_MEAL(52),
-	RESTORED_NATURE(53),
-	REJUVENATING_STEPS(54),
-	HEIGHTENED_SENSES(55),
-	DURABLE_PROJECTILES(56);
+	//Huntress T1
+	NATURES_BOUNTY(96), SURVIVALISTS_INTUITION(97), FOLLOWUP_STRIKE(98), NATURES_AID(99),
+	//Huntress T2
+	INVIGORATING_MEAL(100), RESTORED_NATURE(101), REJUVENATING_STEPS(102), HEIGHTENED_SENSES(103), DURABLE_PROJECTILES(104),
+	//Huntress T3
+	POINT_BLANK(105, 3), SEER_SHOT(106, 3),
+	//Sniper T3
+	FARSIGHT(107, 3), SHARED_ENCHANTMENT(108, 3), SHARED_UPGRADES(109, 3),
+	//Warden T3
+	DURABLE_TIPS(110, 3), BARKSKIN(111, 3), SHIELDING_DEW(112, 3);
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{};
 	public static class LethalMomentumTracker extends FlavourBuff{};
 	public static class WandPreservationCounter extends CounterBuff{};
+	public static class EmpoweredStrikeTracker extends FlavourBuff{};
+	public static class BountyHunterTracker extends FlavourBuff{};
 	public static class RejuvenatingStepsCooldown extends FlavourBuff{};
+	public static class SeerShotCooldown extends FlavourBuff{};
 
 	int icon;
+	int maxPoints;
 
 	// tiers 1/2/3/4 start at levels 2/7/13/21
 	public static int[] tierLevelThresholds = new int[]{0, 2, 7, 13, 21, 31};
 
-	Talent(int icon ){
+	Talent( int icon ){
+		this(icon, 2);
+	}
+
+	Talent( int icon, int maxPoints ){
 		this.icon = icon;
+		this.maxPoints = maxPoints;
 	}
 
 	public int icon(){
@@ -125,7 +139,7 @@ public enum Talent {
 	}
 
 	public int maxPoints(){
-		return 2;
+		return maxPoints;
 	}
 
 	public String title(){
@@ -159,6 +173,10 @@ public enum Talent {
 			if (hero.belongings.ring instanceof Ring) hero.belongings.ring.setKnown();
 			if (hero.belongings.misc instanceof Ring) ((Ring) hero.belongings.misc).setKnown();
 		}
+
+		if (talent == FARSIGHT){
+			Dungeon.observe();
+		}
 	}
 
 	public static class CachedRationsDropped extends CounterBuff{};
@@ -169,11 +187,11 @@ public enum Talent {
 			//3/5 HP healed, when hero is below 25% health
 			if (hero.HP <= hero.HT/4) {
 				hero.HP = Math.min(hero.HP + 1 + 2 * hero.pointsInTalent(HEARTY_MEAL), hero.HT);
-				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), hero.pointsInTalent(HEARTY_MEAL));
+				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1+hero.pointsInTalent(HEARTY_MEAL));
 			//2/3 HP healed, when hero is below 50% health
 			} else if (hero.HP <= hero.HT/2){
 				hero.HP = Math.min(hero.HP + 1 + hero.pointsInTalent(HEARTY_MEAL), hero.HT);
-				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1+hero.pointsInTalent(HEARTY_MEAL));
+				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), hero.pointsInTalent(HEARTY_MEAL));
 			}
 		}
 		if (hero.hasTalent(IRON_STOMACH)){
@@ -188,7 +206,7 @@ public enum Talent {
 		}
 		if (hero.hasTalent(ENERGIZING_MEAL)){
 			//5/8 turns of recharging
-			Buff.affect( hero, Recharging.class, 2 + 3*(hero.pointsInTalent(ENERGIZING_MEAL)) );
+			Buff.prolong( hero, Recharging.class, 2 + 3*(hero.pointsInTalent(ENERGIZING_MEAL)) );
 			ScrollOfRecharging.charge( hero );
 		}
 		if (hero.hasTalent(MYSTICAL_MEAL)){
@@ -198,11 +216,13 @@ public enum Talent {
 		}
 		if (hero.hasTalent(INVIGORATING_MEAL)){
 			//effectively 1/2 turns of haste
-			Buff.affect( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
+			Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
 		}
 	}
 
-	public static class WarriorFoodImmunity extends FlavourBuff{};
+	public static class WarriorFoodImmunity extends FlavourBuff{
+		{ actPriority = HERO_PRIO+1; }
+	}
 
 	public static float itemIDSpeedFactor( Hero hero, Item item ){
 		// 1.75x/2.5x speed with huntress talent
@@ -272,7 +292,7 @@ public enum Talent {
 		if (hero.hasTalent(ENERGIZING_UPGRADE)){
 			MagesStaff staff = hero.belongings.getItem(MagesStaff.class);
 			if (staff != null){
-				staff.gainCharge( hero.pointsInTalent(ENERGIZING_UPGRADE), true);
+				staff.gainCharge(1 + hero.pointsInTalent(ENERGIZING_UPGRADE), true);
 				ScrollOfRecharging.charge( Dungeon.hero );
 				SpellSprite.show( hero, SpellSprite.CHARGE );
 			}
@@ -280,10 +300,16 @@ public enum Talent {
 		if (hero.hasTalent(MYSTICAL_UPGRADE)){
 			CloakOfShadows cloak = hero.belongings.getItem(CloakOfShadows.class);
 			if (cloak != null){
-				cloak.overCharge(hero.pointsInTalent(MYSTICAL_UPGRADE));
+				cloak.overCharge(1 + hero.pointsInTalent(MYSTICAL_UPGRADE));
 				ScrollOfRecharging.charge( Dungeon.hero );
 				SpellSprite.show( hero, SpellSprite.CHARGE );
 			}
+		}
+	}
+
+	public static void onArtifactUsed( Hero hero ){
+		if (hero.hasTalent(ENHANCED_RINGS)){
+			Buff.prolong(hero, EnhancedRings.class, 5f*hero.pointsInTalent(ENHANCED_RINGS));
 		}
 	}
 
@@ -347,7 +373,7 @@ public enum Talent {
 	public static class SuckerPunchTracker extends Buff{};
 	public static class FollowupStrikeTracker extends Buff{};
 
-	public static final int MAX_TALENT_TIERS = 2;
+	public static final int MAX_TALENT_TIERS = 3;
 
 	public static void initClassTalents( Hero hero ){
 		initClassTalents( hero.heroClass, hero.talents );
@@ -380,7 +406,7 @@ public enum Talent {
 		}
 		tierTalents.clear();
 
-		//tier 2+
+		//tier 2
 		switch (cls){
 			case WARRIOR: default:
 				Collections.addAll(tierTalents, IRON_STOMACH, RESTORED_WILLPOWER, RUNIC_TRANSFERENCE, LETHAL_MOMENTUM, IMPROVISED_PROJECTILES);
@@ -400,13 +426,77 @@ public enum Talent {
 		}
 		tierTalents.clear();
 
+		//tier 3
+		switch (cls){
+			case WARRIOR: default:
+				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN);
+				break;
+			case MAGE:
+				Collections.addAll(tierTalents, EMPOWERING_SCROLLS, ALLY_WARP);
+				break;
+			case ROGUE:
+				Collections.addAll(tierTalents, ENHANCED_RINGS, LIGHT_CLOAK);
+				break;
+			case HUNTRESS:
+				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
+				break;
+		}
+		for (Talent talent : tierTalents){
+			talents.get(2).put(talent, 0);
+		}
+		tierTalents.clear();
 
-		//tier 3+
+		//tier4
 		//TBD
 	}
 
 	public static void initSubclassTalents( Hero hero ){
-		//Nothing here yet. Hm.....
+		initSubclassTalents( hero.subClass, hero.talents );
+	}
+
+	public static void initSubclassTalents( HeroSubClass cls, ArrayList<LinkedHashMap<Talent, Integer>> talents ){
+		if (cls == HeroSubClass.NONE) return;
+
+		while (talents.size() < MAX_TALENT_TIERS){
+			talents.add(new LinkedHashMap<>());
+		}
+
+		ArrayList<Talent> tierTalents = new ArrayList<>();
+
+		//tier 3
+		switch (cls){
+			case BERSERKER: default:
+				Collections.addAll(tierTalents, ENDLESS_RAGE, BERSERKING_STAMINA, ENRAGED_CATALYST);
+				break;
+			case GLADIATOR:
+				Collections.addAll(tierTalents, CLEAVE, LETHAL_DEFENSE, ENHANCED_COMBO);
+				break;
+			case BATTLEMAGE:
+				Collections.addAll(tierTalents, EMPOWERED_STRIKE, MYSTICAL_CHARGE, EXCESS_CHARGE);
+				break;
+			case WARLOCK:
+				Collections.addAll(tierTalents, SOUL_EATER, SOUL_SIPHON, NECROMANCERS_MINIONS);
+				break;
+			case ASSASSIN:
+				Collections.addAll(tierTalents, ENHANCED_LETHALITY, ASSASSINS_REACH, BOUNTY_HUNTER);
+				break;
+			case FREERUNNER:
+				Collections.addAll(tierTalents, EVASIVE_ARMOR, PROJECTILE_MOMENTUM, SPEEDY_STEALTH);
+				break;
+			case SNIPER:
+				Collections.addAll(tierTalents, FARSIGHT, SHARED_ENCHANTMENT, SHARED_UPGRADES);
+				break;
+			case WARDEN:
+				Collections.addAll(tierTalents, DURABLE_TIPS, BARKSKIN, SHIELDING_DEW);
+				break;
+		}
+		for (Talent talent : tierTalents){
+			talents.get(2).put(talent, 0);
+		}
+		tierTalents.clear();
+
+		//tier4
+		//TBD
 	}
 
 	private static final String TALENT_TIER = "talents_tier_";

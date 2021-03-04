@@ -547,18 +547,23 @@ public class Item implements Bundlable {
 						@Override
 						public void call() {
 							curUser = user;
-							Item.this.detach(user.belongings.backpack).onThrow(cell);
+							Item i = Item.this.detach(user.belongings.backpack);
+							if (i != null) i.onThrow(cell);
 							if (curUser.hasTalent(Talent.IMPROVISED_PROJECTILES)
 									&& !(Item.this instanceof MissileWeapon)
 									&& curUser.buff(Talent.ImprovisedProjectileCooldown.class) == null){
-								Char ch = Actor.findChar(cell);
-								if (ch != null && ch.alignment != curUser.alignment){
+								if (enemy != null && enemy.alignment != curUser.alignment){
 									Sample.INSTANCE.play(Assets.Sounds.HIT);
-									Buff.affect(ch, Blindness.class, 1f + curUser.pointsInTalent(Talent.IMPROVISED_PROJECTILES));
+									Buff.affect(enemy, Blindness.class, 1f + curUser.pointsInTalent(Talent.IMPROVISED_PROJECTILES));
 									Buff.affect(curUser, Talent.ImprovisedProjectileCooldown.class, 30f);
 								}
 							}
-							user.spendAndNext(delay);
+							if (user.buff(Talent.LethalMomentumTracker.class) != null){
+								user.buff(Talent.LethalMomentumTracker.class).detach();
+								user.next();
+							} else {
+								user.spendAndNext(delay);
+							}
 						}
 					});
 		} else {
@@ -570,17 +575,8 @@ public class Item implements Bundlable {
 						@Override
 						public void call() {
 							curUser = user;
-							Item.this.detach(user.belongings.backpack).onThrow(cell);
-							if (curUser.hasTalent(Talent.IMPROVISED_PROJECTILES)
-									&& !(Item.this instanceof MissileWeapon)
-									&& curUser.buff(Talent.ImprovisedProjectileCooldown.class) == null){
-								Char ch = Actor.findChar(cell);
-								if (ch != null && ch.alignment != curUser.alignment){
-									Sample.INSTANCE.play(Assets.Sounds.HIT);
-									Buff.affect(ch, Blindness.class, 1f + curUser.pointsInTalent(Talent.IMPROVISED_PROJECTILES));
-									Buff.affect(curUser, Talent.ImprovisedProjectileCooldown.class, 30f);
-								}
-							}
+							Item i = Item.this.detach(user.belongings.backpack);
+							if (i != null) i.onThrow(cell);
 							user.spendAndNext(delay);
 						}
 					});

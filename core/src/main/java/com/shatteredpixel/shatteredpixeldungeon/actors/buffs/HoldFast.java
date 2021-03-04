@@ -21,35 +21,39 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.Image;
 
-//pre-0.7.0, otherwise unused
-public class EarthImbue extends FlavourBuff {
-	
+public class HoldFast extends Buff {
+
 	{
 		type = buffType.POSITIVE;
-		announced = true;
 	}
 
-	public static final float DURATION	= 30f;
+	public int pos = -1;
 
-	public void proc(Char enemy){
-		Buff.affect(enemy, Cripple.class, 2);
-		CellEmitter.bottom(enemy.pos).start(EarthParticle.FACTORY, 0.05f, 8);
+	@Override
+	public boolean act() {
+		if (pos == -1) pos = target.pos;
+		if (pos != target.pos) {
+			detach();
+		} else {
+			spend(TICK);
+		}
+		return true;
 	}
 
 	@Override
 	public int icon() {
-		return BuffIndicator.ROOTS;
+		return BuffIndicator.ARMOR;
 	}
 
 	@Override
-	public float iconFadePercent() {
-		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
+	public void tintIcon(Image icon) {
+		icon.hardlight(1.9f, 2.4f, 3.25f);
 	}
 
 	@Override
@@ -59,7 +63,8 @@ public class EarthImbue extends FlavourBuff {
 
 	@Override
 	public String desc() {
-		return Messages.get(this, "desc", dispTurns());
+		return Messages.get(this, "desc", 2*Dungeon.hero.pointsInTalent(Talent.HOLD_FAST));
 	}
-	
+
+
 }

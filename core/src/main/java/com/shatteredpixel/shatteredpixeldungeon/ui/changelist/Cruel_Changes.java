@@ -44,11 +44,30 @@ import java.util.ArrayList;
 public class Cruel_Changes {
 	
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add_v0_4_0_Changes(changeInfos);
 		add_v0_3_0_Changes(changeInfos);
 		add_v0_2_0_Changes(changeInfos);
 		add_v0_1_0_Changes(changeInfos);
 	}
 	
+	public static void add_v0_4_0_Changes(ArrayList<ChangeInfo> changeInfos) {
+		ChangeInfo changes = new ChangeInfo( "v0.4.0", true, "");
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+		
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"),false,null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+		
+		changes.addButton( new ChangeButton(Icons.get(Icons.INFO), "Developer Commentary",
+				"_-_ Released 05.03.2021\n" +
+						"_-_ 181 days after v0.3.0" +
+						"\n" +
+						"Dev commentary will be added here in the future."));
+		
+		
+		
+	}
 	public static void add_v0_3_0_Changes(ArrayList<ChangeInfo> changeInfos) {
 		ChangeInfo changes = new ChangeInfo( "v0.3.0", true, "");
 		changes.hardlight(Window.TITLE_COLOR);

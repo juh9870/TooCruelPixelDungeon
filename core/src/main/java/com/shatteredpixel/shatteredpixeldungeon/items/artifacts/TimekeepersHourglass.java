@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
@@ -100,6 +101,7 @@ public class TimekeepersHourglass extends Artifact {
 									Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
 
 									activeBuff = new timeStasis();
+									Talent.onArtifactUsed(Dungeon.hero);
 									activeBuff.attachTo(Dungeon.hero);
 								} else if (index == 1) {
 									GLog.i( Messages.get(TimekeepersHourglass.class, "onfreeze") );
@@ -107,6 +109,7 @@ public class TimekeepersHourglass extends Artifact {
 									Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
 
 									activeBuff = new timeFreeze();
+									Talent.onArtifactUsed(Dungeon.hero);
 									activeBuff.attachTo(Dungeon.hero);
 									((timeFreeze)activeBuff).processTime(0f);
 								}
@@ -141,9 +144,9 @@ public class TimekeepersHourglass extends Artifact {
 	}
 	
 	@Override
-	public void charge(Hero target) {
+	public void charge(Hero target, float amount) {
 		if (charge < chargeCap){
-			partialCharge += 0.25f;
+			partialCharge += 0.25f*amount;
 			if (partialCharge >= 1){
 				partialCharge--;
 				charge++;

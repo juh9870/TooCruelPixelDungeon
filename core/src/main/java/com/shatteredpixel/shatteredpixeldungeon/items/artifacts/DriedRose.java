@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
@@ -169,7 +170,8 @@ public class DriedRose extends Artifact {
 							ghost.sayAppeared();
 						}
 					}
-					
+
+					Talent.onArtifactUsed(hero);
 					charge = 0;
 					partialCharge = 0;
 					updateQuickslot();
@@ -271,10 +273,10 @@ public class DriedRose extends Artifact {
 	}
 	
 	@Override
-	public void charge(Hero target) {
+	public void charge(Hero target, float amount) {
 		if (ghost == null){
 			if (charge < chargeCap) {
-				charge += 4;
+				charge += Math.round(4*amount);
 				if (charge >= chargeCap) {
 					charge = chargeCap;
 					partialCharge = 0;
@@ -283,7 +285,8 @@ public class DriedRose extends Artifact {
 				updateQuickslot();
 			}
 		} else {
-			ghost.HP = Math.min( ghost.HT, ghost.HP + 1 + level()/3);
+			int heal = Math.round((1 + level()/3f)*amount);
+			ghost.HP = Math.min( ghost.HT, ghost.HP + heal);
 			updateQuickslot();
 		}
 	}

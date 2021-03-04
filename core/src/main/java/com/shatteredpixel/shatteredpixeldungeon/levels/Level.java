@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Shadows;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
@@ -1163,7 +1164,9 @@ public abstract class Level implements Bundlable {
 			}
 			
 			int viewDist = c.viewDistance;
-			if (c instanceof Hero && ((Hero) c).subClass == HeroSubClass.SNIPER) viewDist *= 1.5f;
+			if (c instanceof Hero){
+				viewDist *= 1f + 0.25f*((Hero) c).pointsInTalent(Talent.FARSIGHT);
+			}
 			
 			ShadowCaster.castShadow(cx, cy, fieldOfView, blocking, viewDist);
 		} else {
@@ -1282,6 +1285,13 @@ public abstract class Level implements Bundlable {
 					BArray.or(fieldOfView, m.fieldOfView, fieldOfView);
 				}
 			}
+
+			for (RevealedArea a : c.buffs(RevealedArea.class)){
+				if (Dungeon.depth != a.depth) continue;
+				for (int i : PathFinder.NEIGHBOURS9)
+					fieldOfView[a.pos+i] = true;
+			}
+
 		}
 		
 		if (c == Dungeon.hero) {

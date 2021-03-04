@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -116,6 +115,10 @@ public abstract class ChampionEnemy extends Buff {
 	}
 	
 	public static void rollForChampion(Mob m, HashSet<Mob> existing) {
+		
+		Dungeon.mobsToChampion++;
+		
+		
 		int existingChamps = 0;
 		for (Mob e : existing) {
 			if (!e.buffs(ChampionEnemy.class).isEmpty()) {
@@ -129,32 +132,22 @@ public abstract class ChampionEnemy extends Buff {
 		
 		int added = 0;
 		
-		//cap of 2/2/3/3/4 champs for each region. Mainly to prevent terrible luck in the earlygame
-		int cap = 2 + Dungeon.depth / 10;
+		// Every 8'th enemy is a champion.
+		int nthChampion = 8;
 		
-		// 3/3/4/4/6 at t2
-		if (Challenges.CHAMPION_ENEMIES.tier(2)) cap *= 1.5;
-		
-		//more mobs - more champions!
-		cap *= Challenges.nMobsMultiplier();
-		
-		//cap is removed after amulet obtained
-		if (!Statistics.amuletObtained && existingChamps >= cap) {
-			return;
-		}
-		
-		int chance = 10;
 		
 		if (Challenges.CHAMPION_ENEMIES.tier(2)) {
-			//100% champion spawn chance when no champions are left while t2 is enabled
-			chance = existingChamps == 0 ? 1 : 7;
+			//100% champion spawn chance when no champions are left while t2 is enabled, otherwise every 5'th enemy is a champion
+			nthChampion = existingChamps == 0 ? 1 : 5;
 		}
 		
 		
-		if (Random.Int(chance) == 0) {
-			if (Challenges.CHAMPION_ENEMIES.tier(2) && Random.Int(3) == 0) {
+		if (Dungeon.mobsToChampion % nthChampion == 0) {
+			//Every 3'rd champion is an elite champion
+			if (Challenges.CHAMPION_ENEMIES.tier(2) && Dungeon.mobsToChampion%3==0) {
 				Buff.affect(m, randomElite());
 				added += 2;
+				//Every elite champion is also a regular champion at t3
 				if (Challenges.CHAMPION_ENEMIES.tier(3)) {
 					Buff.affect(m, randomChampion());
 					added++;
@@ -543,7 +536,7 @@ public abstract class ChampionEnemy extends Buff {
 					SummoningTrap.placeMob(Collections.singletonList(mob));
 				}
 			}
-			if(!alarmed) {
+			if (!alarmed) {
 				for (Mob mob : mobsInFov()) {
 					if (mob.state == mob.WANDERING) {
 						mob.state = mob.SLEEPING;
@@ -650,9 +643,11 @@ public abstract class ChampionEnemy extends Buff {
 			public int icon() {
 				return BuffIndicator.SLOW;
 			}
+			
 			public String toString() {
 				return Messages.get(this, "name");
 			}
+			
 			public String desc() {
 				return Messages.get(this, "desc");
 			}

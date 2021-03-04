@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BannerSprites;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -39,10 +40,12 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.utils.FileUtils;
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class WelcomeScene extends PixelScene {
 
-	private static final int LATEST_UPDATE = ShatteredPixelDungeon.v0_9_1;
+	private static final int LATEST_UPDATE = ShatteredPixelDungeon.v0_9_2;
 
 	@Override
 	public void create() {
@@ -160,7 +163,6 @@ public class WelcomeScene extends PixelScene {
 	private void updateVersion(int previousVersion){
 
 		//update rankings, to update any data which may be outdated
-		//FIXME this is set to true temporarily as we want to run this no matter what, to ensure the v0.9.0a- badges bug is fixed
 		if (previousVersion < LATEST_UPDATE){
 			try {
 				Rankings.INSTANCE.load();
@@ -180,6 +182,15 @@ public class WelcomeScene extends PixelScene {
 				FileUtils.deleteFile( Rankings.RANKINGS_FILE );
 				ShatteredPixelDungeon.reportException(e);
 			}
+		}
+
+		//resetting language preference back to native for finnish speakers if they were on english
+		//This is because Finnish was unmaintained for quite a while
+		if ( previousVersion <= 500
+				&& Languages.matchLocale(Locale.getDefault()) == Languages.FINNISH
+				&& Messages.lang() == Languages.ENGLISH) {
+			SPDSettings.language(Languages.FINNISH);
+			Messages.setup(Languages.FINNISH);
 		}
 		
 		SPDSettings.version(ShatteredPixelDungeon.versionCode);

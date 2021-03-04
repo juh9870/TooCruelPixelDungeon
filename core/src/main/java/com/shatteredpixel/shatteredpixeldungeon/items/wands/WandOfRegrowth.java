@@ -26,6 +26,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
@@ -62,6 +64,7 @@ public class WandOfRegrowth extends Wand {
 	}
 	
 	private int totChrgUsed = 0;
+	private int chargesOverLimit = 0;
 
 	ConeAOE cone;
 	int target;
@@ -81,8 +84,10 @@ public class WandOfRegrowth extends Wand {
 
 		ArrayList<Integer> cells = new ArrayList<>(cone.cells);
 
-		int overLimit = totChrgUsed - chargeLimit(Dungeon.hero.lvl);
-		float furrowedChance = overLimit > 0 ? (overLimit / (10f + Dungeon.hero.lvl)) : 0;
+		float furrowedChance = 0;
+		if (totChrgUsed >= chargeLimit(Dungeon.hero.lvl)){
+			furrowedChance = (chargesOverLimit+1)/5f;
+		}
 
 		int chrgUsed = chargesPerCast();
 		int grassToPlace = Math.round((3.67f+buffedLvl()/3f)*chrgUsed);
@@ -175,9 +180,17 @@ public class WandOfRegrowth extends Wand {
 			grassToPlace--;
 		}
 
-		if (furrowedChance < 1f) {
+		if (totChrgUsed < chargeLimit(Dungeon.hero.lvl)) {
+			chargesOverLimit = 0;
 			totChrgUsed += chrgUsed;
+			if (totChrgUsed > chargeLimit(Dungeon.hero.lvl)){
+				chargesOverLimit = totChrgUsed - chargeLimit(Dungeon.hero.lvl);
+				totChrgUsed = chargeLimit(Dungeon.hero.lvl);
+			}
+		} else {
+			chargesOverLimit += chrgUsed;
 		}
+
 	}
 	
 	private int chargeLimit( int heroLvl ){
@@ -254,7 +267,12 @@ public class WandOfRegrowth extends Wand {
 
 	@Override
 	public String statsDesc() {
-		return Messages.get(this, "stats_desc", chargesPerCast());
+		String desc = Messages.get(this, "stats_desc", chargesPerCast());
+		if (isIdentified()){
+			int chargeLeft = chargeLimit(Dungeon.hero.lvl) - totChrgUsed;
+			if (chargeLeft < 10000) desc += " " + Messages.get(this, "degradation", Math.max(chargeLeft, 0));
+		}
+		return desc;
 	}
 
 	@Override
@@ -270,17 +288,20 @@ public class WandOfRegrowth extends Wand {
 	}
 	
 	private static final String TOTAL = "totChrgUsed";
+	private static final String OVER = "chargesOverLimit";
 	
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put( TOTAL, totChrgUsed );
+		bundle.put( OVER, chargesOverLimit);
 	}
 	
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		totChrgUsed = bundle.getInt(TOTAL);
+		chargesOverLimit = bundle.getInt(OVER);
 	}
 	
 	public static class Dewcatcher extends Plant{
@@ -417,6 +438,11 @@ public class WandOfRegrowth extends Wand {
 		@Override
 		public boolean isInvulnerable(Class effect) {
 			return true;
+		}
+
+		{
+			immunities.add(Corruption.class);
+			immunities.add(Doom.class);
 		}
 
 		@Override

@@ -29,7 +29,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Countdown;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
@@ -60,12 +62,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
-import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
-import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
@@ -159,6 +159,8 @@ public class Dungeon {
 	//Variable for Rook challenge
 	public static boolean rook = false;
 	
+	public static int mobsToChampion;
+	
 	public static Hero hero;
 	public static Level level;
 	
@@ -179,6 +181,7 @@ public class Dungeon {
 	public static void init() {
 		
 		version = Game.versionCode;
+		mobsToChampion = -1;
 		
 		seed = DungeonSeed.randomSeed();
 		
@@ -212,15 +215,15 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-		if(DeviceCompat.isDebug())
+		if (DeviceCompat.isDebug())
 			depth = 15;
 		gold = 0;
 		
 		droppedItems = new SparseArray<>();
 		portedItems = new SparseArray<>();
 		
-		for (LimitedDrops a : LimitedDrops.values())
-			a.count = 0;
+		
+		LimitedDrops.reset();
 		
 		chapters = new HashSet<>();
 		
@@ -382,7 +385,7 @@ public class Dungeon {
 		
 		if (pos == -2) {
 			pos = level.exit;
-		} else if (pos < 0 || pos >= level.length() || (!level.passable[pos] && !level.avoid[pos])){
+		} else if (pos < 0 || pos >= level.length() || (!level.passable[pos] && !level.avoid[pos])) {
 			pos = level.entrance;
 		}
 		
@@ -478,6 +481,7 @@ public class Dungeon {
 	private static final String MODIFIERS = "modifiers";
 	private static final String CHALLENGES = "challenges";
 	private static final String HELL_CHALS = "hell_challenges";
+	private static final String MOBS_TO_CHAMPION = "mobs_to_champion";
 	private static final String HERO = "hero";
 	private static final String GOLD = "gold";
 	private static final String DEPTH = "depth";
@@ -490,6 +494,7 @@ public class Dungeon {
 	private static final String BADGES = "badges";
 	
 	public static void saveGame(int save) {
+		
 		try {
 			Bundle bundle = new Bundle();
 			
@@ -497,10 +502,10 @@ public class Dungeon {
 			bundle.put(VERSION, version);
 			bundle.put(SEED, seed);
 			bundle.put(MODIFIERS, modifiers);
+			bundle.put(MOBS_TO_CHAMPION, mobsToChampion);
 			bundle.put(HERO, hero);
 			bundle.put(GOLD, gold);
 			bundle.put(DEPTH, depth);
-			
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(Messages.format(DROPPED, d), droppedItems.get(d));
 			}
@@ -590,8 +595,8 @@ public class Dungeon {
 		quickslot.reset();
 		QuickSlotButton.reset();
 		
-		if(bundle.contains(MODIFIERS)){
-			Dungeon.modifiers=(Modifiers) bundle.get(MODIFIERS);
+		if (bundle.contains(MODIFIERS)) {
+			Dungeon.modifiers = (Modifiers) bundle.get(MODIFIERS);
 		} else {
 			
 			int challenges = bundle.getInt(CHALLENGES);
@@ -599,11 +604,13 @@ public class Dungeon {
 			if (hellChallenges == null)
 				hellChallenges = new int[]{bundle.getInt(HELL_CHALS), 0};
 			
-			Dungeon.modifiers = new Modifiers(Challenges.fromLegacy(challenges,hellChallenges[0],hellChallenges[1]));
+			Dungeon.modifiers = new Modifiers(Challenges.fromLegacy(challenges, hellChallenges[0], hellChallenges[1]));
 		}
 		
 		
 		PathFinder.noDiagonals = rook = Challenges.ROOK.enabled();
+		
+		Dungeon.mobsToChampion = bundle.getInt(MOBS_TO_CHAMPION);
 		
 		Dungeon.level = null;
 		Dungeon.depth = -1;
@@ -717,8 +724,8 @@ public class Dungeon {
 	public static void preview(GamesInProgress.Info info, Bundle bundle) {
 		info.depth = bundle.getInt(DEPTH);
 		info.version = bundle.getInt(VERSION);
-		if(bundle.contains(MODIFIERS)){
-			info.modifiers=(Modifiers) bundle.get(MODIFIERS);
+		if (bundle.contains(MODIFIERS)) {
+			info.modifiers = (Modifiers) bundle.get(MODIFIERS);
 		} else {
 			
 			int challenges = bundle.getInt(CHALLENGES);
@@ -726,7 +733,7 @@ public class Dungeon {
 			if (hellChallenges == null)
 				hellChallenges = new int[]{bundle.getInt(HELL_CHALS), 0};
 			
-			info.modifiers = new Modifiers(Challenges.fromLegacy(challenges,hellChallenges[0],hellChallenges[1]));
+			info.modifiers = new Modifiers(Challenges.fromLegacy(challenges, hellChallenges[0], hellChallenges[1]));
 		}
 		Hero.preview(info, bundle.getBundle(HERO));
 		Statistics.preview(info, bundle);
@@ -741,14 +748,14 @@ public class Dungeon {
 	public static void win(Class cause) {
 		
 		hero.belongings.identify();
-
-		Rankings.INSTANCE.submit( true, cause );
-
+		
+		Rankings.INSTANCE.submit(true, cause);
 	}
 	
-	//TODO hero max vision is now separate from shadowcaster max vision. Might want to adjust.
+	
 	public static void observe() {
-		observe(ShadowCaster.MAX_DISTANCE + 1);
+		int dist = 8 + 2 * Dungeon.hero.pointsInTalent(Talent.FARSIGHT);
+		observe(dist + 1);
 	}
 	
 	public static void observe(int dist) {
@@ -825,6 +832,14 @@ public class Dungeon {
 			GameScene.updateFog(h.pos, 2);
 		}
 		
+		for (RevealedArea a : hero.buffs(RevealedArea.class)) {
+			if (Dungeon.depth != a.depth) continue;
+			BArray.or(level.visited, level.heroFOV, a.pos - 1 - level.width(), 3, level.visited);
+			BArray.or(level.visited, level.heroFOV, a.pos - 1, 3, level.visited);
+			BArray.or(level.visited, level.heroFOV, a.pos - 1 + level.width(), 3, level.visited);
+			GameScene.updateFog(a.pos, 2);
+		}
+		
 		GameScene.afterObserve();
 	}
 	
@@ -847,8 +862,8 @@ public class Dungeon {
 			System.arraycopy(pass, 0, passable, 0, Dungeon.level.length());
 		}
 		
-		if (chars && Char.hasProp(ch, Char.Property.LARGE)){
-			BArray.and( pass, Dungeon.level.openSpace, passable );
+		if (chars && Char.hasProp(ch, Char.Property.LARGE)) {
+			BArray.and(passable, Dungeon.level.openSpace, passable);
 		}
 		
 		if (chars) {
@@ -877,7 +892,7 @@ public class Dungeon {
 		}
 		
 		if (Char.hasProp(ch, Char.Property.LARGE)) {
-			BArray.and(pass, Dungeon.level.openSpace, passable);
+			BArray.and(passable, Dungeon.level.openSpace, passable);
 		}
 		
 		if (chars) {
@@ -902,19 +917,18 @@ public class Dungeon {
 		}
 		
 		if (Char.hasProp(ch, Char.Property.LARGE)) {
-			BArray.and(pass, Dungeon.level.openSpace, passable);
+			BArray.and(passable, Dungeon.level.openSpace, passable);
 		}
 		
-		if (chars) {
-			for (Char c : Actor.chars()) {
-				if (visible[c.pos]) {
-					passable[c.pos] = false;
-				}
-			}
-		}
 		passable[ch.pos] = true;
 		
-		return PathFinder.getStepBack(ch.pos, from, passable);
+		//only consider chars impassable if our retreat path runs into them
+		int step = PathFinder.getStepBack(ch.pos, from, passable);
+		while (step != -1 && Actor.findChar(step) != null) {
+			passable[step] = false;
+			step = PathFinder.getStepBack(ch.pos, from, passable);
+		}
+		return step;
 		
 	}
 	

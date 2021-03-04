@@ -100,7 +100,7 @@ public class Pylon extends Mob {
 		shockChar(Actor.findChar(cell1));
 		shockChar(Actor.findChar(cell2));
 
-		targetNeighbor = (targetNeighbor+1)%8;
+		targetNeighbor = (targetNeighbor+1)%PathFinder.CIRCLE8.length;
 
 		return true;
 	}

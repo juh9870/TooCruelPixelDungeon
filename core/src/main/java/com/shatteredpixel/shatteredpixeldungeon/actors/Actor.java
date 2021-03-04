@@ -104,7 +104,12 @@ public abstract class Actor implements Bundlable {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		time = bundle.getFloat( TIME );
-		id = bundle.getInt( ID );
+		int incomingID = bundle.getInt( ID );
+		if (Actor.findById(id) == null){
+			id = incomingID;
+		} else {
+			id = nextID++;
+		}
 	}
 
 	private static int nextID = 1;
@@ -118,6 +123,7 @@ public abstract class Actor implements Bundlable {
 
 	// **********************
 	// *** Static members ***
+	// **********************
 	
 	private static HashSet<Actor> all = new HashSet<>();
 	private static HashSet<Char> chars = new HashSet<>();
@@ -202,6 +208,10 @@ public abstract class Actor implements Bundlable {
 
 	public static boolean processing(){
 		return current != null;
+	}
+
+	public static int curActorPriority() {
+		return current != null ? current.actPriority : DEFAULT;
 	}
 	
 	public static boolean keepActorThreadAlive = true;

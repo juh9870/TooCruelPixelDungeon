@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -91,6 +92,7 @@ public class SandalsOfNature extends Artifact {
 				CellEmitter.bottom(hero.pos).start(EarthParticle.FACTORY, 0.05f, 8);
 				Camera.main.shake(1, 0.4f);
 				charge = 0;
+				Talent.onArtifactUsed(Dungeon.hero);
 				updateQuickslot();
 			}
 		}
@@ -102,8 +104,8 @@ public class SandalsOfNature extends Artifact {
 	}
 	
 	@Override
-	public void charge(Hero target) {
-		target.buff(Naturalism.class).charge();
+	public void charge(Hero target, float amount) {
+		target.buff(Naturalism.class).charge(amount);
 	}
 
 	@Override
@@ -172,10 +174,11 @@ public class SandalsOfNature extends Artifact {
 	}
 
 	public class Naturalism extends ArtifactBuff{
-		public void charge() {
+		public void charge(float amount) {
 			if (level() > 0 && charge < target.HT){
 				//gain 1+(1*level)% of the difference between current charge and max HP.
 				float chargeGain = (target.HT-charge) * (.01f+ level()*0.01f);
+				chargeGain *= amount;
 				chargeGain *= RingOfEnergy.artifactChargeMultiplier(target);
 				partialCharge += Math.max(0, chargeGain);
 				while (partialCharge > 1){

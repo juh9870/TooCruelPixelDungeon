@@ -70,8 +70,8 @@ public abstract class Plant implements Bundlable {
 		activate( ch );
 
 		if (Dungeon.level.heroFOV[pos] && Dungeon.hero.hasTalent(Talent.NATURES_AID)){
-			// 4/6 turns based on talent points spent
-			Buff.affect(Dungeon.hero, Barkskin.class).set(2, 2*(1+Dungeon.hero.pointsInTalent(Talent.NATURES_AID)));
+			// 3/5 turns based on talent points spent
+			Buff.affect(Dungeon.hero, Barkskin.class).set(2, 1 + 2*(Dungeon.hero.pointsInTalent(Talent.NATURES_AID)));
 		}
 	}
 	
@@ -115,7 +115,11 @@ public abstract class Plant implements Bundlable {
 	}
 	
 	public String desc() {
-		return Messages.get(this, "desc");
+		String desc = Messages.get(this, "desc");
+		if (Dungeon.hero.subClass == HeroSubClass.WARDEN){
+			desc += "\n\n" + Messages.get(this, "warden_desc");
+		}
+		return desc;
 	}
 	
 	public static class Seed extends Item {
@@ -203,8 +207,11 @@ public abstract class Plant implements Bundlable {
 
 		@Override
 		public String desc() {
-			if (Challenges.AMNESIA.tier(2))return "";
-			return Messages.get(plantClass, "desc");
+			String desc = Messages.get(plantClass, "desc");
+			if (Dungeon.hero.subClass == HeroSubClass.WARDEN){
+				desc += "\n\n" + Messages.get(plantClass, "warden_desc");
+			}
+			return desc;
 		}
 		
 		@Override

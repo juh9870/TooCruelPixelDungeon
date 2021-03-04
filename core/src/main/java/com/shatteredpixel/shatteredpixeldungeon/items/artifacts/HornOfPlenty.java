@@ -98,11 +98,10 @@ public class HornOfPlenty extends Artifact {
 				if (chargesToUse > charge) chargesToUse = charge;
 				hunger.satisfy(satietyPerCharge * chargesToUse);
 
-				Talent.onFoodEaten(hero, satietyPerCharge * chargesToUse, this);
-
 				Statistics.foodEaten++;
 
 				charge -= chargesToUse;
+				Talent.onArtifactUsed(hero);
 
 				hero.sprite.operate(hero.pos);
 				hero.busy();
@@ -118,6 +117,8 @@ public class HornOfPlenty extends Artifact {
 				} else {
 					hero.spend(Food.TIME_TO_EAT);
 				}
+
+				Talent.onFoodEaten(hero, satietyPerCharge * chargesToUse, this);
 
 				Badges.validateFoodEaten();
 
@@ -142,9 +143,9 @@ public class HornOfPlenty extends Artifact {
 	}
 	
 	@Override
-	public void charge(Hero target) {
+	public void charge(Hero target, float amount) {
 		if (charge < chargeCap){
-			partialCharge += 0.25f;
+			partialCharge += 0.25f*amount;
 			if (partialCharge >= 1){
 				partialCharge--;
 				charge++;

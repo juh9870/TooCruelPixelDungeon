@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.TextureFilm;
 
 public class GhoulSprite extends MobSprite {
@@ -56,6 +57,16 @@ public class GhoulSprite extends MobSprite {
 	public void crumple(){
 		hideEmo();
 		play(crumple);
+	}
+
+	@Override
+	public void move(int from, int to) {
+		if (parent == null){
+			//fixme this happens rarely, likely due to ghoul life link?
+			Game.reportException(new RuntimeException("ghoul sprite tried to move with null parent! ghoul HP: " + ch.HP));
+			return;
+		}
+		super.move(from, to);
 	}
 
 	@Override

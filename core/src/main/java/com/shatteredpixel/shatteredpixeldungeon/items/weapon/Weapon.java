@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -205,7 +206,18 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 
 	public abstract int STRReq(int lvl);
-	
+
+	protected static int STRReq(int tier, int lvl){
+		lvl = Math.max(0, lvl);
+
+		//strength req decreases at +1,+3,+6,+10,etc.
+		int req = (8 + tier * 2) - (int)(Math.sqrt(8 * lvl + 1) - 1)/2;
+
+		if (Dungeon.hero.pointsInTalent(Talent.STRONGMAN) >= 2) req--;
+
+		return req;
+	}
+
 	@Override
 	public int level() {
 		return super.level() + (curseInfusionBonus ? 1 : 0);
@@ -335,6 +347,17 @@ abstract public class Weapon extends KindOfWeapon {
 		
 			
 		public abstract int proc( Weapon weapon, Char attacker, Char defender, int damage );
+
+		protected float procChanceMultiplier( Char attacker ){
+			float multi = 1f;
+			if (attacker instanceof Hero && ((Hero) attacker).hasTalent(Talent.ENRAGED_CATALYST)){
+				Berserk rage = attacker.buff(Berserk.class);
+				if (rage != null) {
+					multi += 0.2f * rage.rageAmount() * ((Hero) attacker).pointsInTalent(Talent.ENRAGED_CATALYST);
+				}
+			}
+			return multi;
+		}
 
 		public String name() {
 			if (!curse())

@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -285,6 +286,15 @@ public class Ring extends KindofMisc {
 			GLog.p( Messages.get(Ring.class, "identify", toString()) );
 			Badges.validateItemLevelAquired( this );
 		}
+	}
+
+	@Override
+	public int buffedLvl() {
+		int lvl = super.buffedLvl();
+		if (Dungeon.hero.buff(EnhancedRings.class) != null){
+			lvl++;
+		}
+		return lvl;
 	}
 
 	public static int getBonus(Char target, Class<?extends RingBuff> type){

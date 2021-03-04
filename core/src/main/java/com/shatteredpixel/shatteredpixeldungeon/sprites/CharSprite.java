@@ -226,7 +226,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	//returns where the center of this sprite will be after it completes any motion in progress
 	public PointF destinationCenter(){
 		PosTweener motion = this.motion;
-		if (motion != null){
+		if (motion != null && motion.elapsed >= 0){
 			return new PointF(motion.end.x + width()/2f, motion.end.y + height()/2f);
 		} else {
 			return center();
@@ -502,12 +502,13 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	
 	@Override
 	public void update() {
+		if (paused && !looping() && ch != null && curAnim != null){
+			Animation cur = curAnim;
+			curAnim = null;
+			listener.onComplete(cur);
+		}
 		
 		super.update();
-		
-		if (paused && listener != null) {
-			listener.onComplete( curAnim );
-		}
 		
 		if (flashTime > 0 && (flashTime -= Game.elapsed) <= 0) {
 			resetColor();

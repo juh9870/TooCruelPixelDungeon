@@ -27,6 +27,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PinCushion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -34,8 +36,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Projecting;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -91,9 +95,7 @@ abstract public class MissileWeapon extends Weapon {
 	}
 	
 	public int STRReq(int lvl){
-		lvl = Math.max(0, lvl);
-		//strength req decreases at +1,+3,+6,+10,etc.
-		return (7 + tier * 2) - (int)(Math.sqrt(8 * lvl + 1) - 1)/2;
+		return STRReq(tier, lvl) - 1; //1 less str than normal for their tier
 	}
 	
 	@Override
@@ -145,12 +147,33 @@ abstract public class MissileWeapon extends Weapon {
 	
 	@Override
 	public int throwPos(Hero user, int dst) {
-		if (hasEnchant(Projecting.class, user)
-				&& !Dungeon.level.solid[dst] && Dungeon.level.distance(user.pos, dst) <= 4){
+
+		boolean projecting = hasEnchant(Projecting.class, user);
+		if (!projecting && Random.Int(3) < user.pointsInTalent(Talent.SHARED_ENCHANTMENT)){
+			if (this instanceof Dart && ((Dart) this).crossbowHasEnchant(Dungeon.hero)){
+				//do nothing
+			} else {
+				SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);
+				if (bow != null && bow.hasEnchant(Projecting.class, user)) {
+					projecting = true;
+				}
+			}
+		}
+
+		if (projecting && !Dungeon.level.solid[dst] && Dungeon.level.distance(user.pos, dst) <= 4){
 			return dst;
 		} else {
 			return super.throwPos(user, dst);
 		}
+	}
+
+	@Override
+	public float accuracyFactor(Char owner) {
+		float accFactor = super.accuracyFactor(owner);
+		if (owner instanceof Hero && owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()){
+			accFactor *= 1f + 0.2f*((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM);
+		}
+		return accFactor;
 	}
 
 	@Override
@@ -175,7 +198,23 @@ abstract public class MissileWeapon extends Weapon {
 			}
 		}
 	}
-	
+
+	@Override
+	public int proc(Char attacker, Char defender, int damage) {
+		if (attacker == Dungeon.hero && Random.Int(3) < Dungeon.hero.pointsInTalent(Talent.SHARED_ENCHANTMENT)){
+			if (this instanceof Dart && ((Dart) this).crossbowHasEnchant(Dungeon.hero)){
+				//do nothing
+			} else {
+				SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);
+				if (bow != null && bow.enchantment != null && Dungeon.hero.buff(MagicImmune.class) == null) {
+					damage = bow.enchantment.proc(this, attacker, defender, damage);
+				}
+			}
+		}
+
+		return super.proc(attacker, defender, damage);
+	}
+
 	@Override
 	public Item random() {
 		if (!stackable) return this;
@@ -233,6 +272,8 @@ abstract public class MissileWeapon extends Weapon {
 		
 		//at 100 uses, items just last forever.
 		if (usages >= 100f) return 0;
+
+		usages = Math.round(usages);
 		
 		//add a tiny amount to account for rounding error for calculations like 1/3
 		return (MAX_DURABILITY/usages) + 0.001f;
@@ -270,6 +311,9 @@ abstract public class MissileWeapon extends Weapon {
 			int exStr = ((Hero)owner).STR() - STRReq();
 			if (exStr > 0) {
 				damage += Random.IntRange( 0, exStr );
+			}
+			if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
+				damage = Math.round(damage * (1f + 0.1f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
 			}
 		}
 		

@@ -88,6 +88,8 @@ public class Statistics {
 	private static final String SPAWNERS	= "spawnersAlive";
 	
 	private static final String DURATION	= "duration";
+
+	private static final String NO_KILLING_QUALIFIED	= "qualifiedForNoKilling";
 	
 	private static final String AMULET		= "amuletObtained";
 	private static final String AMULETFLOOR	= "amuletFloor";
@@ -108,6 +110,8 @@ public class Statistics {
 		bundle.put( SPAWNERS,	spawnersAlive );
 		
 		bundle.put( DURATION,	duration );
+
+		bundle.put(NO_KILLING_QUALIFIED, qualifiedForNoKilling);
 		
 		bundle.put( AMULET,		amuletObtained );
 		bundle.put( AMULETFLOOR,amuletHighestFloor );
@@ -130,6 +134,8 @@ public class Statistics {
 		
 		duration		= bundle.getFloat( DURATION );
 
+		qualifiedForNoKilling = bundle.getBoolean( NO_KILLING_QUALIFIED );
+		
 		amuletObtained	= bundle.getBoolean( AMULET );
 		amuletHighestFloor = bundle.getInt( AMULETFLOOR );
 	}
