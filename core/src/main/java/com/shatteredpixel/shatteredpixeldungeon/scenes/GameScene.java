@@ -90,6 +90,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.TargetHealthIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Toast;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Toolbar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag.Mode;
@@ -181,7 +182,12 @@ public class GameScene extends PixelScene {
 			return;
 		}
 		
-		Music.INSTANCE.play( Assets.Music.GAME, true );
+		if(Dungeon.modifiers.difficulty().ordinal()>=Difficulty.VERY_HARD_3.ordinal() && Random.Int(2)==0){
+			Music.INSTANCE.play( Assets.Music.PYROJOKE, true );
+		} else {
+			Music.INSTANCE.play( Assets.Music.GAME, true );
+		}
+		
 
 		SPDSettings.lastClass(Dungeon.hero.heroClass.ordinal());
 		
