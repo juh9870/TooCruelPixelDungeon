@@ -67,11 +67,11 @@ public class WndTitledMessage extends Window {
 		text.setPos(0,GAP);
 		comp.setSize(text.width(),text.height()+GAP*2);
 		
-		resize( width, (int)Math.min((int)comp.bottom()+2+titlebar.height()+GAP, (int)(Camera.main.height*0.9)) );
+		resize( width, (int)Math.min((int)comp.bottom()+2+titlebar.height()+GAP, (int)(PixelScene.uiCamera.height*0.9)) );
 		
 		sp = new ScrollPane(comp);
 		add(sp);
-		sp.setRect(titlebar.left(),titlebar.bottom() + GAP,comp.width(),Math.min((int)comp.bottom()+2, (int)(Camera.main.height*0.9)-titlebar.bottom()-GAP));
+		sp.setRect(titlebar.left(),titlebar.bottom() + GAP,comp.width(),Math.min((int)comp.bottom()+2, (int)(PixelScene.uiCamera.height*0.9)-titlebar.bottom()-GAP));
 	}
 	
 	@Override

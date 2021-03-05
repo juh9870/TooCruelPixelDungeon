@@ -56,7 +56,7 @@ public enum Difficulty {
 		
 		modifier(0.2f,req(Challenges.HORDE));
 		modifier(0.3f,req(Challenges.HORDE,2));
-		modifier(0.6f,req(Challenges.HORDE,3));
+		modifier(2.0f,req(Challenges.HORDE,3));
 		
 		modifier(0.2f,req(Challenges.COUNTDOWN));
 		modifier(0.6f,req(Challenges.COUNTDOWN,2));
@@ -83,7 +83,7 @@ public enum Difficulty {
 		
 		modifier(0.2f,req(Challenges.CHAMPION_ENEMIES));
 		modifier(0.3f,req(Challenges.CHAMPION_ENEMIES,2));
-		modifier(0.6f,req(Challenges.CHAMPION_ENEMIES,3));
+		modifier(2.0f,req(Challenges.CHAMPION_ENEMIES,3));
 		
 		
 		modifier(0.2f,req(Challenges.NO_FOOD,2),req(Challenges.NO_HEALING));

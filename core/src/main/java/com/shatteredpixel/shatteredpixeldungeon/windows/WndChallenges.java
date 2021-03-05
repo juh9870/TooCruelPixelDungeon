@@ -43,8 +43,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import java.util.ArrayList;
 
 public class WndChallenges extends Window {
-	private static final int WIDTH = Math.min(160,Camera.main.width-16);
-	private static final int HEIGHT = Math.min(200,Camera.main.height-16);
+	private int WIDTH = Math.min(160,(int)(PixelScene.uiCamera.width*0.9));
+	private int HEIGHT = Math.min(200,(int)(PixelScene.uiCamera.height*0.9));
 	private static final int TTL_HEIGHT = 18;
 	private static final int BTN_HEIGHT = 18;
 	private static final int GAP = 1;

@@ -215,8 +215,8 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-		if (DeviceCompat.isDebug())
-			depth = 15;
+//		if (DeviceCompat.isDebug())
+//			depth = 15;
 		gold = 0;
 		
 		droppedItems = new SparseArray<>();
