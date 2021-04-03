@@ -86,8 +86,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 		count++;
 		comboTime = 5f;
 
-		//TODO this won't count a kill on an enemy that gets corruped by corrupting I think?
-		if (!enemy.isAlive() || enemy.buff(Corruption.class) != null){
+		if (!enemy.isAlive() || (enemy.buff(Corruption.class) != null && enemy.HP == enemy.HT)){
 			comboTime = Math.max(comboTime, 10*((Hero)target).pointsInTalent(Talent.CLEAVE));
 		}
 
@@ -184,7 +183,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 		SLAM   (4, 0xFFCCFF00),
 		PARRY  (6, 0xFFFFFF00),
 		CRUSH  (8, 0xFFFFCC00),
-		FURY   (10, 0xFFFF0000); //TODO can currently input other actions while attacking with fury
+		FURY   (10, 0xFFFF0000);
 
 		public int comboReq, tintColor;
 
@@ -333,7 +332,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 						if (count >= 7 && hero.pointsInTalent(Talent.ENHANCED_COMBO) >= 1){
 							dist ++;
 							Buff.prolong(enemy, Vertigo.class, 3);
-						} else {
+						} else if (!enemy.flying) {
 							while (dist > trajectory.dist ||
 									(dist > 0 && Dungeon.level.pit[trajectory.path.get(dist)])) {
 								dist--;
@@ -404,7 +403,8 @@ public class Combo extends Buff implements ActionIndicator.Action {
 			case FURY:
 				count--;
 				//fury attacks as many times as you have combo count
-				if (count > 0 && enemy.isAlive() && (wasAlly || enemy.alignment != target.alignment)){
+				if (count > 0 && enemy.isAlive() && hero.canAttack(enemy) &&
+						(wasAlly || enemy.alignment != target.alignment)){
 					target.sprite.attack(enemy.pos, new Callback() {
 						@Override
 						public void call() {
@@ -454,22 +454,27 @@ public class Combo extends Buff implements ActionIndicator.Action {
 				} else {
 					Ballistica c = new Ballistica(target.pos, enemy.pos, Ballistica.PROJECTILE);
 					if (c.collisionPos == enemy.pos){
-						Dungeon.hero.busy();
-						target.sprite.jump(target.pos, c.path.get(c.dist-1), new Callback() {
-							@Override
-							public void call() {
-								target.move(c.path.get(c.dist-1));
-								Dungeon.level.occupyCell(target);
-								Dungeon.observe();
-								GameScene.updateFog();
-								target.sprite.attack(cell, new Callback() {
-									@Override
-									public void call() {
-										doAttack(enemy);
-									}
-								});
-							}
-						});
+						final int leapPos = c.path.get(c.dist-1);
+						if (!Dungeon.level.passable[leapPos]){
+							GLog.w(Messages.get(Combo.class, "bad_target"));
+						} else {
+							Dungeon.hero.busy();
+							target.sprite.jump(target.pos, leapPos, new Callback() {
+								@Override
+								public void call() {
+									target.move(leapPos);
+									Dungeon.level.occupyCell(target);
+									Dungeon.observe();
+									GameScene.updateFog();
+									target.sprite.attack(cell, new Callback() {
+										@Override
+										public void call() {
+											doAttack(enemy);
+										}
+									});
+								}
+							});
+						}
 					} else {
 						GLog.w(Messages.get(Combo.class, "bad_target"));
 					}

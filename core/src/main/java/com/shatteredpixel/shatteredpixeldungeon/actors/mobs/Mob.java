@@ -898,19 +898,26 @@ public abstract class Mob extends Char {
         public static final String TAG = "SLEEPING";
 
         @Override
-        public boolean act(boolean enemyInFOV, boolean justAlerted) {
+        public boolean act( boolean enemyInFOV, boolean justAlerted ) {
+
+            //debuffs cause mobs to wake as well
+            for (Buff b : buffs()){
+                if (b.type == Buff.buffType.NEGATIVE){
+                    awaken(enemyInFOV);
+                    return true;
+                }
+            }
 
             if (enemyInFOV) {
 
                 float enemyStealth = enemy.stealth();
-
-                if (enemy instanceof Hero && ((Hero) enemy).hasTalent(Talent.SILENT_STEPS)) {
+                if (enemy instanceof Hero && ((Hero) enemy).hasTalent(Talent.SILENT_STEPS)){
                     if (Dungeon.level.distance(pos, enemy.pos) >= 4 - ((Hero) enemy).pointsInTalent(Talent.SILENT_STEPS)) {
                         enemyStealth = Float.POSITIVE_INFINITY;
                     }
                 }
 
-                if (Random.Float(distance(enemy) + enemyStealth) < 1) {
+                if (Random.Float( distance( enemy ) + enemyStealth ) < 1) {
                     enemySeen = true;
 
                     notice();
@@ -928,14 +935,39 @@ public abstract class Mob extends Char {
                     }
 
                     spend(TIME_TO_WAKE_UP);
+                    awaken(enemyInFOV);
                     return true;
                 }
-            }
 
+            }
             enemySeen = false;
-            spend(TICK);
+            spend( TICK );
 
             return true;
+        }
+
+        protected void awaken( boolean enemyInFOV ){
+            if (enemyInFOV) {
+                enemySeen = true;
+                notice();
+                state = HUNTING;
+                target = enemy.pos;
+            } else {
+                notice();
+                state = WANDERING;
+                target = Dungeon.level.randomDestination( Mob.this );
+            }
+
+            if (alignment == Alignment.ENEMY && Challenges.SWARM_INTELLIGENCE.enabled()) {
+                for (Mob mob : Dungeon.level.mobs) {
+                    if (mob.paralysed <= 0
+                            && Dungeon.level.distance(pos, mob.pos) <= 8
+                            && mob.state != mob.HUNTING) {
+                        mob.beckon(target);
+                    }
+                }
+            }
+            spend(TIME_TO_WAKE_UP);
         }
     }
 
@@ -1159,4 +1191,3 @@ public abstract class Mob extends Char {
         heldAllies.clear();
     }
 }
-

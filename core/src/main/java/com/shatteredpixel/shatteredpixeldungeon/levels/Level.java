@@ -121,6 +121,7 @@ public abstract class Level implements Bundlable {
 	private static final String MOBS = "mobs";
 	private static final String BLOBS = "blobs";
 	private static final String FEELING = "feeling";
+	private static boolean[] heroMindFov;
 	public int version;
 	public int[] map;
 	public boolean[] visited;
@@ -634,7 +635,6 @@ public abstract class Level implements Bundlable {
 		}
 	}
 
-
 	public int randomRespawnCell(Char ch) {
 		int cell;
 		do {
@@ -1142,13 +1142,18 @@ public abstract class Level implements Bundlable {
 
 		//Currently only the hero can get mind vision or awareness
 		if (c.isAlive() && c == Dungeon.hero) {
+
+			if (heroMindFov == null || heroMindFov.length != length()) {
+				heroMindFov = new boolean[length];
+			} else {
+				BArray.setFalse(heroMindFov);
+			}
+
 			Dungeon.hero.mindVisionEnemies.clear();
 			if (c.buff(MindVision.class) != null) {
 				for (Mob mob : mobs) {
-					int p = mob.pos;
-
-					if (!fieldOfView[p]) {
-						Dungeon.hero.mindVisionEnemies.add(mob);
+					for (int i : PathFinder.NEIGHBOURS9) {
+						heroMindFov[mob.pos + i] = true;
 					}
 				}
 			} else {
@@ -1157,27 +1162,20 @@ public abstract class Level implements Bundlable {
 					if ((mob.properties().contains(Char.Property.ALWAYS_VISIBLE) || mob.buff(Revealing.class) != null) && !fieldOfView[p]) {
 						Dungeon.hero.mindVisionEnemies.add(mob);
 					}
-
-					if (((Hero) c).hasTalent(Talent.HEIGHTENED_SENSES)) {
-						if (!fieldOfView[p]
-								&& distance(c.pos, p) <= 1 + ((Hero) c).pointsInTalent(Talent.HEIGHTENED_SENSES)) {
-							Dungeon.hero.mindVisionEnemies.add(mob);
+					if (((Hero) c).hasTalent(Talent.HEIGHTENED_SENSES))
+						if (!fieldOfView[p] && distance(c.pos, p) <= 1 + ((Hero) c).pointsInTalent(Talent.HEIGHTENED_SENSES)) {
+							for (int i : PathFinder.NEIGHBOURS9) {
+								heroMindFov[mob.pos + i] = true;
+							}
 						}
-					}
 				}
 			}
 
-			for (Mob m : Dungeon.hero.mindVisionEnemies) {
-				for (int i : PathFinder.NEIGHBOURS9) {
-					fieldOfView[m.pos + i] = true;
-				}
-			}
 
 			if (c.buff(Awareness.class) != null) {
 				for (Heap heap : heaps.valueList()) {
 					int p = heap.pos;
-					for (int i : PathFinder.NEIGHBOURS9)
-						fieldOfView[p + i] = true;
+					for (int i : PathFinder.NEIGHBOURS9) heroMindFov[p + i] = true;
 				}
 			}
 
@@ -1189,14 +1187,12 @@ public abstract class Level implements Bundlable {
 					continue;
 				}
 				int p = ch.pos;
-				for (int i : PathFinder.NEIGHBOURS9)
-					fieldOfView[p + i] = true;
+				for (int i : PathFinder.NEIGHBOURS9) heroMindFov[p + i] = true;
 			}
 
 			for (TalismanOfForesight.HeapAwareness h : c.buffs(TalismanOfForesight.HeapAwareness.class)) {
 				if (Dungeon.depth != h.depth) continue;
-				for (int i : PathFinder.NEIGHBOURS9)
-					fieldOfView[h.pos + i] = true;
+				for (int i : PathFinder.NEIGHBOURS9) heroMindFov[h.pos + i] = true;
 			}
 
 			for (Mob m : mobs) {
@@ -1205,21 +1201,23 @@ public abstract class Level implements Bundlable {
 						m.fieldOfView = new boolean[length()];
 						Dungeon.level.updateFieldOfView(m, m.fieldOfView);
 					}
-					for (Mob m1 : mobs) {
-						if (m.fieldOfView[m1.pos] && !fieldOfView[m1.pos] &&
-								!Dungeon.hero.mindVisionEnemies.contains(m1)) {
-							Dungeon.hero.mindVisionEnemies.add(m1);
-						}
-					}
-					BArray.or(fieldOfView, m.fieldOfView, fieldOfView);
+					BArray.or(heroMindFov, m.fieldOfView, heroMindFov);
 				}
 			}
 
 			for (RevealedArea a : c.buffs(RevealedArea.class)) {
 				if (Dungeon.depth != a.depth) continue;
-				for (int i : PathFinder.NEIGHBOURS9)
-					fieldOfView[a.pos + i] = true;
+				for (int i : PathFinder.NEIGHBOURS9) heroMindFov[a.pos + i] = true;
 			}
+
+			//set mind vision chars
+			for (Mob mob : mobs) {
+				if (heroMindFov[mob.pos] && !fieldOfView[mob.pos]) {
+					Dungeon.hero.mindVisionEnemies.add(mob);
+				}
+			}
+
+			BArray.or(heroMindFov, fieldOfView, fieldOfView);
 
 		}
 

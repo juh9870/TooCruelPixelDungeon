@@ -85,7 +85,9 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
@@ -192,9 +194,14 @@ public abstract class Char extends Actor {
 
 		//warp instantly with allies in this case
 		if (Dungeon.hero.hasTalent(Talent.ALLY_WARP)){
+			PathFinder.buildDistanceMap(c.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
+			if (PathFinder.distance[pos] == Integer.MAX_VALUE){
+				return true;
+			}
 			ScrollOfTeleportation.appear(this, Dungeon.hero.pos);
 			ScrollOfTeleportation.appear(Dungeon.hero, curPos);
 			Dungeon.observe();
+			GameScene.updateFog();
 			return true;
 		}
 		
@@ -297,6 +304,9 @@ public abstract class Char extends Actor {
 			Preparation prep = buff(Preparation.class);
 			if (prep != null){
 				dmg = prep.damageRoll(this);
+				if (this == Dungeon.hero && Dungeon.hero.hasTalent(Talent.BOUNTY_HUNTER)) {
+					Buff.affect(Dungeon.hero, Talent.BountyHunterTracker.class, 0.0f);
+				}
 			} else {
 				dmg = damageRoll();
 			}

@@ -553,9 +553,8 @@ public class Hero extends Char {
 		
 		return true;
 	}
-	
-	public boolean canAttack(Char enemy) {
-		if (enemy == null || pos == enemy.pos) {
+	public boolean canAttack(Char enemy){
+		if (enemy == null || pos == enemy.pos || !Actor.chars().contains(enemy)) {
 			return false;
 		}
 		
