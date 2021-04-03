@@ -389,7 +389,7 @@ public abstract class ChampionEnemy extends Buff {
 						ArrayList<Mob> mobs = new ArrayList<>();
 						
 						for (Integer point : respawnPoints) {
-							Mob summon = SummoningTrap.summonMob(point, 0);
+							Mob summon = SummoningTrap.summonMob(point, 1);
 							if (summon != null) mobs.add(summon);
 						}
 						
