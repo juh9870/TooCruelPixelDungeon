@@ -53,23 +53,29 @@ public class WndChallenges extends Window {
 	private ArrayList<IconButton> infos;
 	private RenderedTextBlock difficultyText;
 	private ChallengesBar difficultyBar;
+	private ScrollPane textScroll;
 	
 	private void updateDifficulty(Modifiers modifiers){
 		String diff = Messages.get(Difficulty.class,Difficulty.align(modifiers).name);
 		difficultyText.text(Messages.get(this,"difficulty", diff, Difficulty.calculateDifficulty(modifiers)));
 		difficultyText.setPos(
 				(WIDTH - difficultyText.width()) / 2,
-				TTL_HEIGHT+GAP
+//				TTL_HEIGHT+GAP
+				1
 		);
 		PixelScene.align(difficultyText);
+		textScroll.content().setSize(WIDTH,difficultyText.height()+2);
+		textScroll.scrollTo(0,0);
 		
 		difficultyBar.update(modifiers);
 	}
 	
 	public WndChallenges(Modifiers modifiers, final boolean editable) {
 		super();
+		resize(WIDTH, HEIGHT);
 		
 		this.editable = editable;
+
 		
 		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12);
 		title.hardlight(TITLE_COLOR);
@@ -84,16 +90,20 @@ public class WndChallenges extends Window {
 		
 		difficultyText = PixelScene.renderTextBlock("",8);
 		difficultyBar = new ChallengesBar();
+		difficultyText.maxWidth(WIDTH);
+
+		textScroll = new ScrollPane(new Component());
+		add(textScroll);
+		textScroll.setRect(0,TTL_HEIGHT+GAP,WIDTH,BTN_HEIGHT);
+		textScroll.content().add(difficultyText);
 		updateDifficulty(modifiers);
-		add(difficultyText);
-		bottom=difficultyText.bottom()+GAP*2;
+
+//		add(difficultyText);
+		bottom=textScroll.bottom()+GAP*2;
 		
 		difficultyBar.setRect(0,bottom,WIDTH,BTN_HEIGHT/2-2);
 		add(difficultyBar);
 		bottom=difficultyBar.bottom();
-		
-		
-		resize(WIDTH, HEIGHT);
 		
 		boxes = new ArrayList<>();
 		infos = new ArrayList<>();
@@ -134,8 +144,7 @@ public class WndChallenges extends Window {
 		
 		float pos = 0;
 		for (int i = 0; i < Challenges.values().length; i++) {
-			final int id = i;
-			
+
 			ChallengeButton cb = new ChallengeButton(Challenges.values()[i]);
 			cb.updateState(modifiers);
 			cb.active = editable;

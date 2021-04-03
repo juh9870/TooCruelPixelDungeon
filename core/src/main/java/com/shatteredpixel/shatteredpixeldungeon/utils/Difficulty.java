@@ -8,16 +8,22 @@ import java.util.HashSet;
 
 public enum Difficulty {
 	EASY_0(Integer.MIN_VALUE, "easy"),
-	NORMAL_1(1, "normal"),
-	HARD_2(2, "hard", Badges.Badge.CHAMPION_1),
-	VERY_HARD_3(3, "very_hard", Badges.Badge.CHAMPION_2),
-	INSANE_4(4, "insane", Badges.Badge.CHAMPION_3),
-	SUICIDE_5(5, "suicide", Badges.Badge.CHAMPION_4),
-	IMPOSSIBLE_6(5, "impossible", Badges.Badge.CHAMPION_5),
-	HELL_7(6, "hell", Badges.Badge.CHAMPION_6),
-	LUNATIC_8(7, "lunatic", Badges.Badge.CHAMPION_7),
-	
-	POINTLESS_9(100, "pointless");
+	NORMAL_1(2.5f, "normal"),
+	HARD_2(5, "hard", Badges.Badge.CHAMPION_1),
+	VERY_HARD_3(7.5f, "very_hard", Badges.Badge.CHAMPION_2),
+	INSANE_4(10, "insane", Badges.Badge.CHAMPION_3),
+	SUICIDE_5(12.5f, "suicide", Badges.Badge.CHAMPION_4),
+	IMPOSSIBLE_6(15, "impossible", Badges.Badge.CHAMPION_5),
+	HELL_7(17.5f, "hell", Badges.Badge.CHAMPION_6),
+	LUNATIC_8(20, "lunatic", Badges.Badge.CHAMPION_7),
+	LUNATIC_P_9(30, "lunatic_p"),
+	LUNATIC_PP_10(40, "lunatic_pp"),
+	LUNATIC_PPP_11(50, "lunatic_ppp"),
+	LUNATIC_PPPP_12(60, "lunatic_pppp"),
+	ULTIMATE_13(70, "ultimate"),
+	ISEKAI_14(80, "isekai"),
+
+	POINTLESS_9(1000, "pointless");
 	
 	private static final HashSet<DifficultyModifier> MODIFIERS;
 	
@@ -25,75 +31,75 @@ public enum Difficulty {
 	static {
 		MODIFIERS =new HashSet<>();
 		
-		modifier(0.1f,req(Challenges.NO_FOOD));
-		modifier(0.2f,req(Challenges.NO_FOOD,2));
+		modifier(1,req(Challenges.NO_FOOD));
+		modifier(1.5f,req(Challenges.NO_FOOD,2));
 		
-		modifier(0.2f,req(Challenges.NO_ARMOR));
+		modifier(2f,req(Challenges.NO_ARMOR));
 		
-		modifier(0.2f,req(Challenges.NO_HEALING));
-		modifier(0.2f,req(Challenges.NO_HEALING,2));
-		modifier(0.3f,req(Challenges.NO_HEALING,3));
-		
-		
-		modifier(0.1f,req(Challenges.NO_HERBALISM));
+		modifier(2f,req(Challenges.NO_HEALING));
+		modifier(2.5f,req(Challenges.NO_HEALING,2));
+		modifier(5f,req(Challenges.NO_HEALING,3));
 		
 		
-		modifier(0.1f,req(Challenges.SWARM_INTELLIGENCE));
-		modifier(0.3f,req(Challenges.SWARM_INTELLIGENCE,2));
+		modifier(2f,req(Challenges.NO_HERBALISM));
 		
 		
-		modifier(0.1f,req(Challenges.DARKNESS));
-		modifier(0.3f,req(Challenges.DARKNESS,2));
-		
-		modifier(0.3f,req(Challenges.NO_SCROLLS));
-		
-		modifier(0.2f,req(Challenges.AMNESIA));
-		modifier(0.1f,req(Challenges.AMNESIA,2));
-		
-		modifier(0.2f,req(Challenges.CURSED));
-		
-		modifier(0.3f,req(Challenges.BLACKJACK));
-		
-		modifier(0.2f,req(Challenges.HORDE));
-		modifier(0.3f,req(Challenges.HORDE,2));
-		modifier(2.0f,req(Challenges.HORDE,3));
-		
-		modifier(0.2f,req(Challenges.COUNTDOWN));
-		modifier(0.6f,req(Challenges.COUNTDOWN,2));
-		
-		modifier(0.3f,req(Challenges.ANALGESIA));
-		
-		modifier(0.2f,req(Challenges.BIG_LEVELS));
-		
-		modifier(0.2f,req(Challenges.MUTAGEN));
-		modifier(0.3f,req(Challenges.MUTAGEN,2));
-		
-		modifier(0.2f,req(Challenges.RESURRECTION));
-		modifier(0.3f,req(Challenges.RESURRECTION,2));
-		modifier(0.4f,req(Challenges.RESURRECTION,3));
-		
-		modifier(0.1f,req(Challenges.EXTREME_CAUTION));
-		modifier(0.2f,req(Challenges.EXTREME_CAUTION,2));
-		
-		modifier(0.2f,req(Challenges.EXTERMINATION));
-		
-		modifier(0.2f,req(Challenges.ROOK));
-		
-		modifier(0.2f,req(Challenges.NO_PERKS));
-		
-		modifier(0.2f,req(Challenges.CHAMPION_ENEMIES));
-		modifier(0.3f,req(Challenges.CHAMPION_ENEMIES,2));
-		modifier(2.0f,req(Challenges.CHAMPION_ENEMIES,3));
+		modifier(1.5f,req(Challenges.SWARM_INTELLIGENCE));
+		modifier(2.5f,req(Challenges.SWARM_INTELLIGENCE,2));
 		
 		
-		modifier(0.2f,req(Challenges.NO_FOOD,2),req(Challenges.NO_HEALING));
+		modifier(1f,req(Challenges.DARKNESS));
+		modifier(3f,req(Challenges.DARKNESS,2));
 		
-		modifier(0.2f,req(Challenges.EXTERMINATION),req(Challenges.HORDE));
-		modifier(0.4f,req(Challenges.EXTERMINATION),req(Challenges.COUNTDOWN));
-		modifier(0.6f,req(Challenges.EXTERMINATION),req(Challenges.COUNTDOWN),req(Challenges.HORDE));
+		modifier(1.5f,req(Challenges.NO_SCROLLS));
 		
-		modifier(0.6f,req(Challenges.DARKNESS,2),req(Challenges.COUNTDOWN,2));
-		modifier(0.6f,req(Challenges.ROOK),req(Challenges.COUNTDOWN,2));
+		modifier(1.5f,req(Challenges.AMNESIA));
+		modifier(3f,req(Challenges.AMNESIA,2));
+		
+		modifier(2f,req(Challenges.CURSED));
+		
+		modifier(2f,req(Challenges.BLACKJACK));
+		
+		modifier(1.5f,req(Challenges.HORDE));
+		modifier(2f,req(Challenges.HORDE,2));
+		modifier(7f,req(Challenges.HORDE,3));
+		
+		modifier(2f,req(Challenges.COUNTDOWN));
+		modifier(5f,req(Challenges.COUNTDOWN,2));
+		
+		modifier(1.5f,req(Challenges.ANALGESIA));
+		
+		modifier(1f,req(Challenges.BIG_LEVELS));
+		
+		modifier(2f,req(Challenges.MUTAGEN));
+		modifier(5f,req(Challenges.MUTAGEN,2));
+		
+		modifier(3f,req(Challenges.RESURRECTION));
+		modifier(4f,req(Challenges.RESURRECTION,2));
+		modifier(7f,req(Challenges.RESURRECTION,3));
+		
+		modifier(1f,req(Challenges.EXTREME_CAUTION));
+		modifier(2f,req(Challenges.EXTREME_CAUTION,2));
+		
+		modifier(1f,req(Challenges.EXTERMINATION));
+		
+		modifier(1.5f,req(Challenges.ROOK));
+		
+		modifier(2f,req(Challenges.NO_PERKS));
+		
+		modifier(2f,req(Challenges.CHAMPION_ENEMIES));
+		modifier(4f,req(Challenges.CHAMPION_ENEMIES,2));
+		modifier(7f,req(Challenges.CHAMPION_ENEMIES,3));
+		
+		
+//		modifier(0.2f,req(Challenges.NO_FOOD,2),req(Challenges.NO_HEALING));
+//
+//		modifier(0.2f,req(Challenges.EXTERMINATION),req(Challenges.HORDE));
+//		modifier(0.4f,req(Challenges.EXTERMINATION),req(Challenges.COUNTDOWN));
+//		modifier(0.6f,req(Challenges.EXTERMINATION),req(Challenges.COUNTDOWN),req(Challenges.HORDE));
+//
+//		modifier(0.6f,req(Challenges.DARKNESS,2),req(Challenges.COUNTDOWN,2));
+//		modifier(0.6f,req(Challenges.ROOK),req(Challenges.COUNTDOWN,2));
 		
 		
 		float total = 0;
@@ -115,7 +121,7 @@ public enum Difficulty {
 		this.badge = badge;
 	}
 	
-	Difficulty(int margin, String name) {
+	Difficulty(float margin, String name) {
 		this.margin = margin;
 		this.name = name;
 	}
