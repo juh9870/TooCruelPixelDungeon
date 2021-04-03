@@ -64,7 +64,7 @@ public class Ascension extends Buff {
 			Buff.affect(target, Godspeed.class, 1000);
 		}
 		if(level==5){
-			Buff.affect(target, ForcedAscension.class, TICK*2);
+			Buff.affect(target, ForcedAscension.class, 2f);
 		}
 		if (level >= 6) {
 			Buff.affect(target, Barrier.class).setShield(target.HT / 32);
@@ -94,5 +94,8 @@ public class Ascension extends Buff {
 	}
 	
 	public static class ForcedAscension extends FlavourBuff {
+	}
+
+	public static class BannedAscension extends Buff {
 	}
 }
