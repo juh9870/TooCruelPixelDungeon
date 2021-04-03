@@ -382,7 +382,7 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.saveAll();
 		
 		
-		int exterminators = Challenges.exterminatorsLeft();
+		int exterminators = Challenges.checkExterminators();
 		if (exterminators>0){
 			Dungeon.depth--;
 		}

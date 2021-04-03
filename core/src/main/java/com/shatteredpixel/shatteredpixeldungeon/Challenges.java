@@ -22,7 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -182,11 +184,14 @@ public enum Challenges {
 		return false;
 	}
 
-	public static int exterminatorsLeft() {
+	public static int checkExterminators() {
 		int left = 0;
 		if (EXTERMINATION.enabled())
 			for (Mob m : Dungeon.level.mobs) {
-				if (m.buff(Extermanation.class) != null) left++;
+				if (m.buff(Extermanation.class) != null) {
+					left++;
+					Buff.affect(m,Revealing.class,1f);
+				}
 			}
 		return left;
 	}
