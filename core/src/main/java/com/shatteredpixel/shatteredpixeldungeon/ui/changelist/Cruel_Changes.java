@@ -54,7 +54,22 @@ public class Cruel_Changes {
 		ChangeInfo changes = new ChangeInfo("v0.4.0", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
-		
+
+		changes = new ChangeInfo("v0.4.0b", false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed:\n" +
+						"_-_ Variety bugs related to Ascension challenge\n" +
+						"_-_ Missing text in sad ghost quest"));
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "champion_enemies_hell"),
+				"_-_ Elite Champion guardians are now delayed by 1 turn after spawning.\n" +
+						"_-_ When Elite Champion spawns, its position is revealed to the player for 2 turns.\n" +
+						"_-_ Restoring champions can no longer ascend."));
+		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_OFF), Messages.get(Challenges.class, "extermination"),
+				"_-_ When player tries to exit with targets remaining, they will be revealed for 1 turn."));
+		changes.addButton(new ChangeButton(Icons.INFO.get(), "Difficulty indicator", "Tweaked difficulties."));
+
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
