@@ -137,13 +137,6 @@ public class Swarm extends Mob {
 		if (buff(Corruption.class) != null) {
 			Buff.affect(clone, Corruption.class);
 		}
-		Ascension asc = buff(Ascension.class);
-		if (asc != null && asc.level>1) {
-			Buff.affect(clone, Ascension.class).level = asc.level-1;
-			for (Buff b : buffs(ChampionEnemy.class)) {
-				Buff.affect(clone, b.getClass());
-			}
-		}
 		Buff.affect(clone, Ascension.BannedAscension.class);
 		return clone;
 	}
