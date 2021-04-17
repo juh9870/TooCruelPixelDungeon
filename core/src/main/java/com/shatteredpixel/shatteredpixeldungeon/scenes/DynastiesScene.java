@@ -166,7 +166,6 @@ public class DynastiesScene extends PixelScene {
 
             this.dynasty = dynasty;
 
-
             position.text(Integer.toString(pos + 1));
             position.measure();
 
