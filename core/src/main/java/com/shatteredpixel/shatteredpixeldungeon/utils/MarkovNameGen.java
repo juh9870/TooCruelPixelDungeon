@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.Arrays;
 
-public class NameGen
+public class MarkovNameGen
 {
     // all the lowercase characters this generator will handle
     public static final char[] LOWERCHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g',
@@ -36,7 +36,7 @@ public class NameGen
      * @param min the minimum length of a generated name, inclusive
      * @param max the maximum length of a generated name, exclusive
      */
-    public NameGen(int min, int max)
+    public MarkovNameGen(int min, int max)
     {
         rand = new Random();
         this.min = min;
@@ -50,7 +50,7 @@ public class NameGen
      * @param max the maximum length of a generated name, exclusive
      * @param seed the seed for the random number generator
      */
-    public NameGen(int min, int max, long seed)
+    public MarkovNameGen(int min, int max, long seed)
     {
         rand = new Random(seed);
         this.min = min;
