@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Countdown;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -796,8 +797,9 @@ public class Dungeon {
 
         GameScene.updateFog(l, t, width, height);
 
-        if (hero.buff(MindVision.class) != null) {
-            for (Mob m : level.mobs.toArray(new Mob[0])) {
+        boolean mw = hero.buff(MindVision.class) != null;
+        for (Mob m : level.mobs.toArray(new Mob[0])) {
+            if(mw || m.properties().contains(Char.Property.ALWAYS_VISIBLE) || m.buff(Revealing.class)!=null) {
                 BArray.or(level.visited, level.heroFOV, m.pos - 1 - level.width(), 3, level.visited);
                 BArray.or(level.visited, level.heroFOV, m.pos, 3, level.visited);
                 BArray.or(level.visited, level.heroFOV, m.pos - 1 + level.width(), 3, level.visited);
