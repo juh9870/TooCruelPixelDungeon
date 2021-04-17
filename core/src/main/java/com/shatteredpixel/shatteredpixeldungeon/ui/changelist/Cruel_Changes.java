@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
+import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -51,7 +52,34 @@ public class Cruel_Changes {
 	}
 	
 	public static void add_v0_4_0_Changes(ArrayList<ChangeInfo> changeInfos) {
-		ChangeInfo changes = new ChangeInfo("v0.4.0", true, "");
+		ChangeInfo changes = new ChangeInfo("v0.4.1", true, "");
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed:\n" +
+						"_-_ Speculative fix for weird enemy timeskips.\n" +
+						"_-_ Fixed Toxic champion not summoning guards.\n" +
+						"_-_ Summoning champions not permanently visible (caused by v0.4.0b).\n"
+		));
+
+		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+				"_-_ Summoned mobs can no longer Ascend."
+		));
+
+		changes = new ChangeInfo("New content", false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton(new ChangeButton(new Amulet(), "Dynasties",
+				"_-_ Added dynasties (winstreaks) System"
+		));
+
+		changes = new ChangeInfo("v0.4.0", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 
