@@ -87,6 +87,8 @@ public class ShatteredPixelDungeon extends Game {
 		Sample.INSTANCE.volume( SPDSettings.SFXVol()*SPDSettings.SFXVol()/100f );
 
 		Sample.INSTANCE.load( Assets.Sounds.all );
+
+		SPDSettings.modifiers(SPDSettings.modifiers().setDynasty(""));
 		
 	}
 
@@ -136,6 +138,11 @@ public class ShatteredPixelDungeon extends Game {
 
 		updateDisplaySize();
 
+	}
+
+	public void resize(int width, int height,SceneChangeCallback callback){
+		resize(width,height);
+		onChange=callback;
 	}
 	
 	@Override

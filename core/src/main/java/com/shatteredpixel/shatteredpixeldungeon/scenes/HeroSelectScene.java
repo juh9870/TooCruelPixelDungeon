@@ -127,11 +127,23 @@ public class HeroSelectScene extends PixelScene {
 				ActionIndicator.action = null;
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 
-				if (SPDSettings.intro()) {
-					SPDSettings.intro( false );
-					Game.switchScene( IntroScene.class );
+				Rankings.Dynasty dyn = SPDSettings.modifiers().getDynasty();
+
+				if (dyn!=null && dyn.epic) {
+					WndChallenges.ChallengePredicate filter = SPDSettings.modifiers().select(3,1);
+					if(filter!=null) {
+						ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.modifiers(), true, true, filter) {
+							@Override
+							public void hide() {
+								super.hide();
+								startGame();
+							}
+						});
+					} else {
+						startGame();
+					}
 				} else {
-					Game.switchScene( InterlevelScene.class );
+					startGame();
 				}
 			}
 		};
@@ -174,7 +186,7 @@ public class HeroSelectScene extends PixelScene {
 				Icons.get(Challenges.icon())){
 			@Override
 			public void onClick() {
-				ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.modifiers(), true) {
+				ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.modifiers(), SPDSettings.modifiers().getDynasty()==null) {
 					public void onBackPressed() {
 						super.onBackPressed();
 						icon(Icons.get( Challenges.icon() ));
@@ -198,7 +210,7 @@ public class HeroSelectScene extends PixelScene {
 		btnExit = new ExitButton();
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
-		btnExit.visible = !SPDSettings.intro() || Rankings.INSTANCE.totalNumber > 0;
+		btnExit.visible = (!SPDSettings.intro() || Rankings.INSTANCE.totalNumber > 0) && SPDSettings.modifiers().getDynasty()==null;
 
 		PointerArea fadeResetter = new PointerArea(0, 0, Camera.main.width, Camera.main.height){
 			@Override
@@ -216,6 +228,15 @@ public class HeroSelectScene extends PixelScene {
 
 		fadeIn();
 
+	}
+
+	private void startGame(){
+		if (SPDSettings.intro()) {
+			SPDSettings.intro(false);
+			Game.switchScene(IntroScene.class);
+		} else {
+			Game.switchScene(InterlevelScene.class);
+		}
 	}
 
 	private void setSelectedHero(HeroClass cl){
@@ -245,7 +266,7 @@ public class HeroSelectScene extends PixelScene {
 	@Override
 	public void update() {
 		super.update();
-		btnExit.visible = !SPDSettings.intro() || Rankings.INSTANCE.totalNumber > 0;
+		btnExit.visible = (!SPDSettings.intro() || Rankings.INSTANCE.totalNumber > 0) && SPDSettings.modifiers().getDynasty()==null;
 		//do not fade when a window is open
 		for (Object v : members){
 			if (v instanceof Window) resetFade();
@@ -272,6 +293,7 @@ public class HeroSelectScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
+		if(SPDSettings.modifiers().getDynasty()!=null)return;
 		if (btnExit.visible){
 			ShatteredPixelDungeon.switchScene(TitleScene.class);
 		} else {

@@ -1160,7 +1160,7 @@ public abstract class Level implements Bundlable {
 				for (Mob mob : mobs) {
 					int p = mob.pos;
 					if ((mob.properties().contains(Char.Property.ALWAYS_VISIBLE) || mob.buff(Revealing.class) != null) && !fieldOfView[p]) {
-						Dungeon.hero.mindVisionEnemies.add(mob);
+						for (int i : PathFinder.NEIGHBOURS9) heroMindFov[p + i] = true;
 					}
 					if (((Hero) c).hasTalent(Talent.HEIGHTENED_SENSES))
 						if (!fieldOfView[p] && distance(c.pos, p) <= 1 + ((Hero) c).pointsInTalent(Talent.HEIGHTENED_SENSES)) {

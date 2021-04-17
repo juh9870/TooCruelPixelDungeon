@@ -106,7 +106,6 @@ public class Necromancer extends Mob {
 		}
 		
 		if (mySkeleton != null && mySkeleton.isAlive()){
-			Buff.affect(mySkeleton, Ascension.BannedAscension.class);
 			mySkeleton.die(null);
 		}
 		
@@ -340,6 +339,7 @@ public class Necromancer extends Mob {
 		
 		{
 			state = WANDERING;
+			properties.add(Property.SUMMONED);
 			
 			spriteClass = NecroSkeletonSprite.class;
 			

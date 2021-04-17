@@ -684,7 +684,8 @@ public abstract class Mob extends Char {
 
     public boolean canAscend() {
         if (properties().contains(Char.Property.BOSS) ||
-                properties().contains(Property.MINIBOSS)) return false;
+                properties().contains(Property.MINIBOSS) ||
+                properties().contains(Property.SUMMONED)) return false;
         if (buff(Ascension.BannedAscension.class) != null) return false;
         if (buff(ChampionEnemy.Restoring.class) != null) return false;
         return true;

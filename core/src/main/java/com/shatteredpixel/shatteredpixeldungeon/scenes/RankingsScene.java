@@ -45,10 +45,10 @@ import com.watabou.utils.GameMath;
 
 public class RankingsScene extends PixelScene {
 	
-	private static final float ROW_HEIGHT_MAX	= 20;
+	public static final float ROW_HEIGHT_MAX	= 20;
 	private static final float ROW_HEIGHT_MIN	= 12;
 
-	private static final float MAX_ROW_WIDTH    = 160;
+	public static final float MAX_ROW_WIDTH    = 160;
 
 	private static final float GAP	= 4;
 	
@@ -165,6 +165,9 @@ public class RankingsScene extends PixelScene {
 		private BitmapText level;
 		
 		public Record( int pos, boolean latest, Rankings.Record rec ) {
+			this(pos,latest,rec,false);
+		}
+		public Record( int pos, boolean latest, Rankings.Record rec, boolean noSkip ) {
 			super();
 			
 			this.rec = rec;
@@ -176,7 +179,7 @@ public class RankingsScene extends PixelScene {
 				addToBack( flare );
 			}
 
-			if (pos != Rankings.TABLE_SIZE-1) {
+			if (noSkip || pos != Rankings.TABLE_SIZE-1) {
 				position.text(Integer.toString(pos + 1));
 			} else
 				position.text(" ");

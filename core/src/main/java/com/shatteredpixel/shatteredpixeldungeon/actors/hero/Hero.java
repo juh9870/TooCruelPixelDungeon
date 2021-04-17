@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Bones;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
+import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -125,6 +126,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndDynastyStart;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
@@ -1033,6 +1035,16 @@ public class Hero extends Char {
 			return false;
 		}
 	}
+	public void win(){
+		Dungeon.win( Amulet.class );
+		Dungeon.deleteGame( GamesInProgress.curSlot, true );
+		Rankings.Dynasty dyn =Dungeon.modifiers.getDynasty();
+		if (dyn!=null) {
+			Game.scene().addToFront(new WndDynastyStart(dyn));
+		}else {
+			Game.scene().addToFront(new WndDynastyStart());
+		}
+	}
 	
 	private boolean actAscend(HeroAction.Ascend action) {
 		int stairs = action.dst;
@@ -1057,8 +1069,6 @@ public class Hero extends Char {
 					ready();
 				} else {
 					Badges.silentValidateHappyEnd();
-					Dungeon.win(Amulet.class);
-					Dungeon.deleteGame(GamesInProgress.curSlot, true);
 					Game.switchScene(SurfaceScene.class);
 				}
 				

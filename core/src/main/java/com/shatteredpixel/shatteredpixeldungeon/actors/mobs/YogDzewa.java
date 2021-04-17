@@ -506,6 +506,7 @@ public class YogDzewa extends Mob {
 			maxLvl = -2;
 
 			properties.add(Property.DEMONIC);
+			properties.add(Property.SUMMONED);
 		}
 
 		@Override
@@ -527,5 +528,8 @@ public class YogDzewa extends Mob {
 
 	//used so death to yog's ripper demons have their own rankings description and are more aggro
 	public static class YogRipper extends RipperDemon {
+		{
+			properties.add(Property.SUMMONED);
+		}
 	}
 }

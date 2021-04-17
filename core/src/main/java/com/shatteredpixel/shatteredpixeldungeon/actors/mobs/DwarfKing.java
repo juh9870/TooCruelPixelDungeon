@@ -463,6 +463,7 @@ public class DwarfKing extends Mob {
 	public static class DKGhoul extends Ghoul {
 		{
 			state = HUNTING;
+			properties.add(Property.SUMMONED);
 		}
 
 		@Override
@@ -475,12 +476,14 @@ public class DwarfKing extends Mob {
 	public static class DKMonk extends Monk {
 		{
 			state = HUNTING;
+			properties.add(Property.SUMMONED);
 		}
 	}
 
 	public static class DKWarlock extends Warlock {
 		{
 			state = HUNTING;
+			properties.add(Property.SUMMONED);
 		}
 	}
 

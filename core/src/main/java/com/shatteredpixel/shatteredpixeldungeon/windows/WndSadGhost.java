@@ -90,7 +90,7 @@ public class WndSadGhost extends Window {
         RewardButton btnWeapon = new RewardButton( Ghost.Quest.weapon );
         btnWeapon.setRect( (WIDTH - BTN_GAP) / 2 - BTN_SIZE, message.top() + message.height() + BTN_GAP, BTN_SIZE, BTN_SIZE );
         add( btnWeapon );
-m
+
         RewardButton btnArmor = new RewardButton( Ghost.Quest.armor );
         btnArmor.setRect( btnWeapon.right() + BTN_GAP, btnWeapon.top(), BTN_SIZE, BTN_SIZE );
         add(btnArmor);

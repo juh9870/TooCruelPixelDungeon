@@ -448,19 +448,25 @@ public class Bundle {
 
 			//cannot just tokenize the stream directly as that constructor doesn't exist on Android
 			BufferedReader reader = new BufferedReader( new InputStreamReader( stream ));
-			Object json = new JSONTokener( reader.readLine() ).nextValue();
+			String jsonString = reader.readLine();
 			reader.close();
 
-			//if the data is an array, put it in a fresh object with the default key
-			if (json instanceof JSONArray){
-				json = new JSONObject().put( DEFAULT_KEY, json );
-			}
-
-			return new Bundle( (JSONObject) json );
+			return fromString(jsonString);
 		} catch (Exception e) {
 			Game.reportException(e);
 			throw new IOException();
 		}
+	}
+
+	public static Bundle fromString(String value){
+		Object json = new JSONTokener( value ).nextValue();
+
+		//if the data is an array, put it in a fresh object with the default key
+		if (json instanceof JSONArray){
+			json = new JSONObject().put( DEFAULT_KEY, json );
+		}
+
+		return new Bundle( (JSONObject) json );
 	}
 
 	public static boolean write( Bundle bundle, OutputStream stream ){

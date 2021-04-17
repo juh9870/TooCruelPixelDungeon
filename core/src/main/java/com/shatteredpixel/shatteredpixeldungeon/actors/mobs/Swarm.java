@@ -57,11 +57,6 @@ public class Swarm extends Mob {
 		lootChance = 0.1667f; //by default, see rollToDropLoot()
 	}
 	
-	@Override
-	public boolean canAscend() {
-		return super.canAscend() && Random.Int(generation + 1) == 0;
-	}
-	
 	private static final float SPLIT_DELAY = 1f;
 	
 	int generation = 0;

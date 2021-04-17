@@ -23,10 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -49,10 +47,12 @@ public class AmuletScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
+
+		boolean canExit = Dungeon.modifiers.getDynasty()==null || !Dungeon.modifiers.getDynasty().surface;
 		
 		RenderedTextBlock text = null;
 		if (!noText) {
-			text = renderTextBlock( Messages.get(this, "text"), 8 );
+			text = renderTextBlock( Messages.get(this, canExit?"text":"text_return"), 8 );
 			text.maxWidth(WIDTH);
 			add( text );
 		}
@@ -63,15 +63,14 @@ public class AmuletScene extends PixelScene {
 		RedButton btnExit = new RedButton( Messages.get(this, "exit") ) {
 			@Override
 			protected void onClick() {
-				Dungeon.win( Amulet.class );
-				Dungeon.deleteGame( GamesInProgress.curSlot, true );
-				Game.switchScene( RankingsScene.class );
+				Dungeon.hero.win();
 			}
 		};
 		btnExit.setSize( WIDTH, BTN_HEIGHT );
 		add( btnExit );
-		
-		RedButton btnStay = new RedButton( Messages.get(this, "stay") ) {
+		btnExit.enable(canExit);
+
+		RedButton btnStay = new RedButton(Messages.get(this, "stay")) {
 			@Override
 			protected void onClick() {
 				onBackPressed();
@@ -90,7 +89,7 @@ public class AmuletScene extends PixelScene {
 
 			btnExit.setPos( (Camera.main.width - btnExit.width()) / 2, amulet.y + amulet.height + LARGE_GAP );
 			btnStay.setPos( btnExit.left(), btnExit.bottom() + SMALL_GAP );
-			
+
 		} else {
 			height = amulet.height + LARGE_GAP + text.height() + LARGE_GAP + btnExit.height() + SMALL_GAP + btnStay.height();
 			

@@ -62,7 +62,7 @@ public class Cruel_Changes {
 				"Fixed:\n" +
 						"_-_ Variety bugs related to Ascension challenge\n" +
 						"_-_ Missing text in sad ghost quest"));
-		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "champion_enemies_hell"),
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "champion_enemies_2"),
 				"_-_ Elite Champion guardians are now delayed by 1 turn after spawning.\n" +
 						"_-_ When Elite Champion spawns, its position is revealed to the player for 2 turns.\n" +
 						"_-_ Restoring champions can no longer ascend."));
@@ -93,8 +93,8 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 		
-		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "champion_enemies_hell"), Messages.get(Challenges.class, "champion_enemies_hell_desc")));
-		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL2.get(), Messages.get(Challenges.class, "champion_enemies_hell2"), Messages.get(Challenges.class, "champion_enemies_hell2_desc")));
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "champion_enemies_2"), Messages.get(Challenges.class, "champion_enemies_2_desc")));
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL2.get(), Messages.get(Challenges.class, "champion_enemies_3"), Messages.get(Challenges.class, "champion_enemies_3_desc")));
 		changes.addButton(new ChangeButton(Icons.TALENT.get(), Messages.get(Challenges.class, "perks"), Messages.get(Challenges.class, "perks_desc")));
 		
 		changes.addButton(new ChangeButton(Icons.INFO.get(), "Difficulty indicator", "Added difficulty indicator to challenges window."));
@@ -115,7 +115,7 @@ public class Cruel_Changes {
 						"_-_ Even more crashes related to Rook challenge\n" +
 						"_-_ Crashes related to Blackjack"));
 		
-		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_hell") + " and " + Messages.get(Challenges.class, "horde_hell2"),
+		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_2") + " and " + Messages.get(Challenges.class, "horde_3"),
 				"_-_ Legion is now T3 challenge\n" +
 						"_-_ Invasion is now T2 challenge\n" +
 						"_-_ Invasion is now weaker on first 2 floors\n" +
@@ -124,7 +124,7 @@ public class Cruel_Changes {
 		changes.addButton(new ChangeButton(Icons.CHALLENGE_OFF.get(), Messages.get(Challenges.class, "rook"),
 				"_-_ Diagonal ranged player interactions are now impossible."));
 		
-		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_hell2"),
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_3"),
 				"_-_ Increased intoxication gained from taking damage."));
 		
 		changes = new ChangeInfo("v0.3.0a", false, null);
@@ -135,7 +135,7 @@ public class Cruel_Changes {
 				"Fixed (caused by v0.3.0):\n" +
 						"_-_ Various crashes related to Rook challenge"));
 		
-		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_hell"),
+		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_2"),
 				"_-_ Now seals the level for 20 turns after start of each wave."));
 		
 		changes.addButton(new ChangeButton(new Ankh() {
@@ -143,7 +143,7 @@ public class Cruel_Changes {
 			public ItemSprite.Glowing glowing() {
 				return new ItemSprite.Glowing(0xFF0000);
 			}
-		}, Messages.get(Challenges.class, "resurrection_hell2"),
+		}, Messages.get(Challenges.class, "resurrection_3"),
 				"_-_ Tweaked mob rebirth chance"));
 		
 		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_OFF), Messages.get(Challenges.class, "amnesia"),
@@ -168,17 +168,17 @@ public class Cruel_Changes {
 						"_-_ Added Rook challenge"
 		));
 		
-		changes.addButton(new ChangeButton(new Ankh().bless(), Messages.get(Challenges.class, "resurrection_hell"),
+		changes.addButton(new ChangeButton(new Ankh().bless(), Messages.get(Challenges.class, "resurrection_2"),
 				"_-_ Renamed from Resurrection to Rebirth\n" +
 						"_-_ Chance of mob rebirth is now increases with difference between player level and mob max level"));
 		
 		changes.addButton(new ChangeButton(new AlbinoSprite(), Messages.get(Challenges.class, "mutagen"),
 				"_-_ Chance of spawning rare enemy variation reduced from 50% to 25%"));
 		
-		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_hell"),
+		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_2"),
 				"_-_ No longer increases chances of spawning mobs from lower floors."));
 		
-		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_hell"),
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_2"),
 				"_-_ Made debuffs duration random\n" +
 						"_-_ Added more possible debuffs.\n" +
 						"_-_ Increased debuff applying delay on lower intoxication levels"));
@@ -192,10 +192,10 @@ public class Cruel_Changes {
 			public ItemSprite.Glowing glowing() {
 				return new ItemSprite.Glowing(0xFF0000);
 			}
-		}, Messages.get(Challenges.class, "resurrection_hell2"), Messages.get(Challenges.class, "resurrection_hell2_desc")));
+		}, Messages.get(Challenges.class, "resurrection_3"), Messages.get(Challenges.class, "resurrection_3_desc")));
 		
-		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_hell2"), Messages.get(Challenges.class, "horde_hell2_desc")));
-		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_hell2"), Messages.get(Challenges.class, "no_healing_hell2_desc")));
+		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_3"), Messages.get(Challenges.class, "horde_3_desc")));
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_3"), Messages.get(Challenges.class, "no_healing_3_desc")));
 		changes.addButton(new ChangeButton(Icons.CHALLENGE_OFF.get(), Messages.get(Challenges.class, "rook"), Messages.get(Challenges.class, "rook_desc")));
 		
 	}
@@ -226,15 +226,15 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 		
-		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_hell"), Messages.get(Challenges.class, "no_healing_hell_desc")));
-		changes.addButton(new ChangeButton(new RotHeartSprite(), Messages.get(Challenges.class, "swarm_intelligence_hell"), Messages.get(Challenges.class, "swarm_intelligence_hell_desc")));
-		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TORCH), Messages.get(Challenges.class, "darkness_hell"), Messages.get(Challenges.class, "darkness_hell_desc")));
-		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "amnesia_hell"), Messages.get(Challenges.class, "amnesia_hell_desc")));
-		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_hell"), Messages.get(Challenges.class, "horde_hell_desc")));
-		changes.addButton(new ChangeButton(new Image(Assets.Interfaces.BUFFS_LARGE, 224, 32, 16, 16), Messages.get(Challenges.class, "countdown_hell"), Messages.get(Challenges.class, "countdown_hell_desc")));
-		changes.addButton(new ChangeButton(new AlbinoSprite(), Messages.get(Challenges.class, "mutagen_hell"), Messages.get(Challenges.class, "mutagen_hell_desc")));
-		changes.addButton(new ChangeButton(new Ankh().bless(), Messages.get(Challenges.class, "resurrection_hell"), Messages.get(Challenges.class, "resurrection_hell_desc")));
-		changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 112, 96, 16, 16), Messages.get(Challenges.class, "extreme_caution_hell"), Messages.get(Challenges.class, "extreme_caution_hell_desc")));
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "no_healing_2"), Messages.get(Challenges.class, "no_healing_2_desc")));
+		changes.addButton(new ChangeButton(new RotHeartSprite(), Messages.get(Challenges.class, "swarm_intelligence_2"), Messages.get(Challenges.class, "swarm_intelligence_2_desc")));
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TORCH), Messages.get(Challenges.class, "darkness_2"), Messages.get(Challenges.class, "darkness_2_desc")));
+		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "amnesia_2"), Messages.get(Challenges.class, "amnesia_2_desc")));
+		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde_2"), Messages.get(Challenges.class, "horde_2_desc")));
+		changes.addButton(new ChangeButton(new Image(Assets.Interfaces.BUFFS_LARGE, 224, 32, 16, 16), Messages.get(Challenges.class, "countdown_2"), Messages.get(Challenges.class, "countdown_2_desc")));
+		changes.addButton(new ChangeButton(new AlbinoSprite(), Messages.get(Challenges.class, "mutagen_2"), Messages.get(Challenges.class, "mutagen_2_desc")));
+		changes.addButton(new ChangeButton(new Ankh().bless(), Messages.get(Challenges.class, "resurrection_2"), Messages.get(Challenges.class, "resurrection_2_desc")));
+		changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 112, 96, 16, 16), Messages.get(Challenges.class, "extreme_caution_2"), Messages.get(Challenges.class, "extreme_caution_2_desc")));
 	}
 	
 	public static void add_v0_1_0_Changes(ArrayList<ChangeInfo> changeInfos) {

@@ -38,6 +38,10 @@ public abstract class Actor implements Bundlable {
 
 	private float time;
 
+	protected float getTime() {
+		return time;
+	}
+
 	private int id = 0;
 
 	//default priority values for general actor categories

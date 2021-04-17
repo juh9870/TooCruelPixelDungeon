@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
@@ -114,6 +115,8 @@ public enum HeroClass {
 			new ScrollOfMagicMapping().quantity(10).identify().collect();
 			new PotionOfMindVision().quantity(10).identify().collect();
 			new PotionOfInvisibility().quantity(10).identify().collect();
+
+			new Amulet().collect();
 		}
 
 		new ScrollOfIdentify().identify();

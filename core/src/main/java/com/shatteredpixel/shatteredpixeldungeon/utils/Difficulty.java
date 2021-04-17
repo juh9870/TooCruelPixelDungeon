@@ -175,7 +175,7 @@ public enum Difficulty {
 		}
 	}
 	
-	static class Requirement {
+	public static class Requirement {
 		int ordinal;
 		int level;
 		

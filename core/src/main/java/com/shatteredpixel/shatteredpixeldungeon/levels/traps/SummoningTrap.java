@@ -81,7 +81,7 @@ public class SummoningTrap extends Trap {
 		PathFinder.buildDistanceMap(center, BArray.or(Dungeon.level.passable,Dungeon.level.avoid,null),maxDistance);
 		
 		for (int p = 0; p < PathFinder.distance.length; p++) {
-			if (PathFinder.distance[p]<=maxDistance && Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
+			if (PathFinder.distance[p]<=maxDistance && Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p]) && !Dungeon.level.pit[p]) {
 				candidates.add( p );
 			}
 		}

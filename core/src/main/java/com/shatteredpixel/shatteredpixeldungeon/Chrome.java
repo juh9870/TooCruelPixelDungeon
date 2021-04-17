@@ -39,8 +39,16 @@ public class Chrome {
 		SCROLL,
 		TAB_SET,
 		TAB_SELECTED,
-		TAB_UNSELECTED
+		TAB_UNSELECTED,
+		OUTLINE,
+		OUTLINE_THIN,
+		FILL;
+
+		public NinePatch get(){
+			return Chrome.get(this);
+		}
 	}
+
 	
 	public static NinePatch get( Type type ) {
 		String Asset = Assets.Interfaces.CHROME;
@@ -73,6 +81,10 @@ public class Chrome {
 				return new NinePatch( Asset, 65, 22, 8, 13, 3, 7, 3, 5 );
 			case TAB_UNSELECTED:
 				return new NinePatch( Asset, 75, 22, 8, 13, 3, 7, 3, 5 );
+			case OUTLINE:
+				return new NinePatch( Asset, 0, 22, 9, 9, 3 );
+			case OUTLINE_THIN:
+				return new NinePatch( Asset, 10, 22, 3, 3, 1 );
 			default:
 				return null;
 		}

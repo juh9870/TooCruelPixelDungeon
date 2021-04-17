@@ -1123,7 +1123,7 @@ public class GameScene extends PixelScene {
 		if (cell == null
 				|| cell < 0
 				|| cell > Dungeon.level.length()
-				|| (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell])) {
+				|| (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell] && !Dungeon.hero.fieldOfView[cell])) {
 			return;
 		}
 

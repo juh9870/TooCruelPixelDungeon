@@ -162,6 +162,11 @@ public class Ghoul extends Mob {
 	}
 
 	@Override
+	public boolean canAscend() {
+		return super.canAscend() && Random.Boolean();
+	}
+
+	@Override
 	protected synchronized void onRemove() {
 		if (beingLifeLinked) {
 			for (Buff buff : buffs()) {

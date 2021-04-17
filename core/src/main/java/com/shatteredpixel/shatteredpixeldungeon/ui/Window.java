@@ -146,6 +146,7 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 			parent.erase(this);
 		}
 		destroy();
+
 	}
 	
 	@Override
@@ -173,4 +174,8 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 		hide();
 	}
 
+
+	public interface WindowCloseCallback {
+		void onClose();
+	}
 }

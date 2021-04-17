@@ -32,326 +32,353 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.ChallengesBar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
-import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
-import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 
 import java.util.ArrayList;
 
 public class WndChallenges extends Window {
-	private int WIDTH = Math.min(160,(int)(PixelScene.uiCamera.width*0.9));
-	private int HEIGHT = Math.min(200,(int)(PixelScene.uiCamera.height*0.9));
-	private static final int TTL_HEIGHT = 18;
-	private static final int BTN_HEIGHT = 18;
-	private static final int GAP = 1;
-	private boolean editable;
-	private ArrayList<ChallengeButton> boxes;
-	private ArrayList<IconButton> infos;
-	private RenderedTextBlock difficultyText;
-	private ChallengesBar difficultyBar;
-	private ScrollPane textScroll;
-	
-	private void updateDifficulty(Modifiers modifiers){
-		String diff = Messages.get(Difficulty.class,Difficulty.align(modifiers).name);
-		difficultyText.text(Messages.get(this,"difficulty", diff, Difficulty.calculateDifficulty(modifiers)));
-		difficultyText.setPos(
-				(WIDTH - difficultyText.width()) / 2,
-//				TTL_HEIGHT+GAP
-				1
-		);
-		PixelScene.align(difficultyText);
-		textScroll.content().setSize(WIDTH,difficultyText.height()+2);
-		textScroll.scrollTo(0,0);
-		
-		difficultyBar.update(modifiers);
-	}
-	
-	public WndChallenges(Modifiers modifiers, final boolean editable) {
-		super();
-		resize(WIDTH, HEIGHT);
-		
-		this.editable = editable;
+    public static final int HELL_COLOR = 0x79e3d2;
+    public static final int HELL2_COLOR = 0xff0000;
+    private static final int TTL_HEIGHT = 18;
+    private static final int BTN_HEIGHT = 18;
+    private static final int GAP = 1;
+    private int WIDTH = Math.min(160, (int) (PixelScene.uiCamera.width * 0.9));
+    private int HEIGHT = Math.min(200, (int) (PixelScene.uiCamera.height * 0.9));
+    private boolean editable;
+    private ArrayList<ChallengeButton> boxes;
+    private ArrayList<IconButton> infos;
+    private RenderedTextBlock difficultyText;
+    private ChallengesBar difficultyBar;
+    private ScrollPane textScroll;
+    private float oldDifficulty;
+    private boolean needIncrease;
 
-		
-		RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, "title"), 12);
-		title.hardlight(TITLE_COLOR);
-		title.setPos(
-				(WIDTH - title.width()) / 2,
-				(TTL_HEIGHT - title.height()) / 2
-		);
-		PixelScene.align(title);
-		add(title);
-		
-		float bottom = TTL_HEIGHT;
-		
-		difficultyText = PixelScene.renderTextBlock("",8);
-		difficultyBar = new ChallengesBar();
-		difficultyText.maxWidth(WIDTH);
+    public WndChallenges(Modifiers modifiers, final boolean editable) {
+        this(modifiers, editable, false, (o, o1) -> true);
+    }
 
-		textScroll = new ScrollPane(new Component());
-		add(textScroll);
-		textScroll.setRect(0,TTL_HEIGHT+GAP,WIDTH,BTN_HEIGHT);
-		textScroll.content().add(difficultyText);
-		updateDifficulty(modifiers);
+    public WndChallenges(Modifiers modifiers, final boolean editable, final boolean needIncrease, ChallengePredicate editableFilter) {
+        super();
+
+        oldDifficulty = Difficulty.calculateDifficulty(modifiers);
+        this.needIncrease = needIncrease;
+
+        resize(WIDTH, HEIGHT);
+
+        this.editable = editable;
+
+
+        RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, needIncrease ? "title_more" : "title"), 12);
+        title.hardlight(TITLE_COLOR);
+        title.setPos(
+                (WIDTH - title.width()) / 2,
+                (TTL_HEIGHT - title.height()) / 2
+        );
+        PixelScene.align(title);
+        add(title);
+
+        float bottom = TTL_HEIGHT;
+
+        difficultyText = PixelScene.renderTextBlock("", 8);
+        difficultyBar = new ChallengesBar();
+        difficultyText.maxWidth(WIDTH);
+
+        textScroll = new ScrollPane(new Component());
+        add(textScroll);
+        textScroll.setRect(0, TTL_HEIGHT + GAP, WIDTH, BTN_HEIGHT);
+        textScroll.content().add(difficultyText);
+        updateDifficulty(modifiers);
 
 //		add(difficultyText);
-		bottom=textScroll.bottom()+GAP*2;
-		
-		difficultyBar.setRect(0,bottom,WIDTH,BTN_HEIGHT/2-2);
-		add(difficultyBar);
-		bottom=difficultyBar.bottom();
-		
-		boxes = new ArrayList<>();
-		infos = new ArrayList<>();
-		
-		ScrollPane pane = new ScrollPane(new Component()) {
-			@Override
-			public void onClick(float x, float y) {
-				int size = boxes.size();
-				if (editable) {
-					for (int i = 0; i < size; i++) {
-						if (boxes.get(i).onClick(x, y)) break;
-					}
-				}
-				size = infos.size();
-				for (int i = 0; i < size; i++) {
-					if (infos.get(i).inside(x, y)) {
-						
-						String message = Messages.get(Challenges.class, Challenges.values()[i].name + "_desc");
-						if (boxes.get(i).hellChecked())
-							message += "\n\n" + Messages.get(Challenges.class, Challenges.values()[i].name + "_hell_desc");
-						if (boxes.get(i).hell2Checked())
-							message += "\n\n" + Messages.get(Challenges.class, Challenges.values()[i].name + "_hell2_desc");
-						ShatteredPixelDungeon.scene().add(
-								new WndMessage(message)
-						);
-						
-						break;
-					}
-				}
-			}
-		};
-		add(pane);
-		pane.setRect(0, bottom, WIDTH, HEIGHT - bottom);
-		Component content = pane.content();
-		
-		ArrayList<ChallengeButton> disabled = new ArrayList<>();
-		ArrayList<IconButton> disabledInfos = new ArrayList<>();
-		
-		float pos = 0;
-		for (int i = 0; i < Challenges.values().length; i++) {
+        bottom = textScroll.bottom() + GAP * 2;
 
-			ChallengeButton cb = new ChallengeButton(Challenges.values()[i]);
-			cb.updateState(modifiers);
-			cb.active = editable;
-			
-			if (i > 0) {
-				pos += GAP;
-			}
-			cb.setRect(0, pos, WIDTH - 16, BTN_HEIGHT);
-			
-			content.add(cb);
-			boxes.add(cb);
-			
-			IconButton info = new IconButton(Icons.get(Icons.INFO)) {
-				@Override
-				protected void layout() {
-					super.layout();
-					hotArea.y = -5000;
-				}
-			};
-			info.setRect(cb.right(), pos, 16, BTN_HEIGHT);
-			content.add(info);
-			infos.add(info);
-			
-			if (editable || cb.checked()) {
-				pos = cb.bottom();
-			} else {
-				disabled.add(cb);
-				disabledInfos.add(info);
-				if (i > 0) {
-					pos -= GAP;
-				}
-			}
-		}
-		
-		if (!editable) {
-			for (int i = 0; i < disabled.size(); i++) {
-				pos += GAP;
-				
-				disabled.get(i).setPos(0, pos);
-				disabledInfos.get(i).setRect(disabled.get(i).right(), pos, 16, BTN_HEIGHT);
-				
-				pos = disabled.get(i).bottom();
-			}
-		}
-		content.setSize(WIDTH, pos);
+        difficultyBar.setRect(0, bottom, WIDTH, BTN_HEIGHT / 2 - 2);
+        add(difficultyBar);
+        bottom = difficultyBar.bottom();
+
+        boxes = new ArrayList<>();
+        infos = new ArrayList<>();
+
+        ScrollPane pane = new ScrollPane(new Component()) {
+            @Override
+            public void onClick(float x, float y) {
+                int size = boxes.size();
+                if (editable) {
+                    for (int i = 0; i < size; i++) {
+                        if (boxes.get(i).onClick(x, y)) break;
+                    }
+                }
+                size = infos.size();
+                for (int i = 0; i < size; i++) {
+                    if (infos.get(i).inside(x, y)) {
+
+                        String message = Messages.get(Challenges.class, Challenges.values()[i].name + "_desc");
+                        if (boxes.get(i).hellChecked())
+                            message += "\n\n" + Messages.get(Challenges.class, Challenges.values()[i].name + "_2_desc");
+                        if (boxes.get(i).hell2Checked())
+                            message += "\n\n" + Messages.get(Challenges.class, Challenges.values()[i].name + "_3_desc");
+                        ShatteredPixelDungeon.scene().add(
+                                new WndMessage(message)
+                        );
+
+                        break;
+                    }
+                }
+            }
+        };
+        add(pane);
+        pane.setRect(0, bottom, WIDTH, HEIGHT - bottom);
+        Component content = pane.content();
+
+        ArrayList<ChallengeButton> disabled = new ArrayList<>();
+        ArrayList<IconButton> disabledInfos = new ArrayList<>();
+
+        float pos = 0;
+        for (int i = 0; i < Challenges.values().length; i++) {
+            Challenges chals = Challenges.values()[i];
+            ChallengeButton cb = new ChallengeButton(chals, editableFilter);
+            cb.updateState(modifiers);
+            cb.active = editable;
+
+            if (i > 0) {
+                pos += GAP;
+            }
+            cb.setRect(0, pos, WIDTH - 16, BTN_HEIGHT);
+
+            content.add(cb);
+            boxes.add(cb);
+
+            IconButton info = new IconButton(Icons.get(Icons.INFO)) {
+                @Override
+                protected void layout() {
+                    super.layout();
+                    hotArea.y = -5000;
+                }
+            };
+            info.setRect(cb.right(), pos, 16, BTN_HEIGHT);
+            content.add(info);
+            infos.add(info);
+
+            if ((editable || cb.checked()) && editableFilter != null && editableFilter.test(chals, -1)) {
+                pos = cb.bottom();
+            } else {
+                disabled.add(cb);
+                disabledInfos.add(info);
+                if (i > 0) {
+                    pos -= GAP;
+                }
+            }
+        }
+
+        for (int i = 0; i < disabled.size(); i++) {
+            pos += GAP;
+
+            disabled.get(i).setPos(0, pos);
+            disabledInfos.get(i).setRect(disabled.get(i).right(), pos, 16, BTN_HEIGHT);
+
+            pos = disabled.get(i).bottom();
+        }
+        content.setSize(WIDTH, pos);
 
 //		resize( WIDTH, (int)pos );
-	}
-	
-	private void updateCheckState(){
-		if (editable) {
-			Modifiers modifiers = SPDSettings.modifiers();
-			for (int i = 0; i < boxes.size(); i++) {
-				ChallengeButton box = boxes.get(i);
-				if (box.hell2Checked()) {
-					modifiers.challenges[i] = 3;
-				} else if (box.hellChecked()) {
-					modifiers.challenges[i] = 2;
-				} else if (box.checked()) {
-					modifiers.challenges[i] = 1;
-				} else {
-					modifiers.challenges[i] = 0;
-				}
-			}
-			SPDSettings.modifiers(modifiers);
-		}
-		updateDifficulty(SPDSettings.modifiers());
-	}
-	
-	@Override
-	public void onBackPressed() {
-		
-		updateCheckState();
-		
-		super.onBackPressed();
-	}
-	
-	private class ChallengeButton extends CheckBox {
-		
-		IconCheckBox hellCheckbox;
-		IconCheckBox hell2Checkbox;
-		Challenges challenge;
-		
-		public ChallengeButton(Challenges challenge) {
-			super(Messages.get(Challenges.class, challenge.name));
-			this.challenge = challenge;
-			hellCheckbox.visible = hellCheckbox.active = challenge.maxLevel >= 2;
-			hell2Checkbox.visible = hell2Checkbox.active = challenge.maxLevel >= 3;
-		}
-		
-		@Override
-		protected void createChildren() {
-			super.createChildren();
-			hellCheckbox = new IconCheckBox(Icons.DIAMOND_CHECKED);
-			add(hellCheckbox);
-			hell2Checkbox = new IconCheckBox(Icons.RED_CHECKED);
-			add(hell2Checkbox);
-		}
-		
-		public boolean hellChecked() {
-			return hellCheckbox.checked();
-		}
-		
-		public boolean hell2Checked() {
-			return hell2Checkbox.checked();
-		}
-		
-		protected boolean onClick(float x, float y) {
-			if (!inside(x, y)) return false;
-			
-			Sample.INSTANCE.play(Assets.Sounds.CLICK);
-			
-			if (checked() && hellCheckbox.active && hellCheckbox.inside(x, y)) {
-				hellCheckbox.checked(!hellCheckbox.checked());
-				if (!hellCheckbox.checked()) hell2Checkbox.checked(false);
-			} else if (checked() && hell2Checkbox.active && hell2Checkbox.inside(x, y)) {
-				if (!hellChecked()) hellCheckbox.checked(true);
-				else hell2Checkbox.checked(!hell2Checkbox.checked());
-			} else
-				super.onClick();
-			updateText();
-			updateCheckState();
-			
-			return true;
-		}
-		
-		private void updateText() {
-			if (hell2Checkbox.checked()) {
-				text(Messages.get(Challenges.class, challenge.name + "_hell2"));
+    }
+
+    private void updateDifficulty(Modifiers modifiers) {
+        String diff = Messages.get(Difficulty.class, Difficulty.align(modifiers).name);
+        difficultyText.text(Messages.get(this, "difficulty", diff, Difficulty.calculateDifficulty(modifiers)));
+        difficultyText.setPos(
+                (WIDTH - difficultyText.width()) / 2,
+//				TTL_HEIGHT+GAP
+                1
+        );
+        PixelScene.align(difficultyText);
+        textScroll.content().setSize(WIDTH, difficultyText.height() + 2);
+        textScroll.scrollTo(0, 0);
+
+        difficultyBar.update(modifiers);
+    }
+
+    private void updateCheckState() {
+        if (editable) {
+            Modifiers modifiers = SPDSettings.modifiers();
+            for (int i = 0; i < boxes.size(); i++) {
+                ChallengeButton box = boxes.get(i);
+                if (box.hell2Checked()) {
+                    modifiers.challenges[i] = 3;
+                } else if (box.hellChecked()) {
+                    modifiers.challenges[i] = 2;
+                } else if (box.checked()) {
+                    modifiers.challenges[i] = 1;
+                } else {
+                    modifiers.challenges[i] = 0;
+                }
+            }
+            SPDSettings.modifiers(modifiers);
+        }
+        updateDifficulty(SPDSettings.modifiers());
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        updateCheckState();
+
+        if (needIncrease && Difficulty.calculateDifficulty(SPDSettings.modifiers()) <= oldDifficulty) {
+            ShatteredPixelDungeon.scene().addToFront(new WndMessage(Messages.get(WndChallenges.class, "need_more", oldDifficulty)));
+            return;
+        }
+
+        super.onBackPressed();
+    }
+
+    public interface ChallengePredicate {
+        boolean test(Challenges challenge, int level);
+    }
+
+    private static class IconCheckBox extends IconButton {
+        private boolean checked = false;
+        private Icons checkedIcon;
+
+        public IconCheckBox(Icons icon) {
+            super(Icons.UNCHECKED.get());
+            this.checkedIcon = icon;
+        }
+
+        public boolean checked() {
+            return checked;
+        }
+
+        public void checked(boolean checked) {
+            this.checked = checked;
+            if (checked) {
+                icon(checkedIcon.get());
+            } else {
+                icon(Icons.UNCHECKED.get());
+            }
+            if (!active) {
+                icon.alpha(.3f);
+            }
+        }
+
+        @Override
+        protected void layout() {
+            super.layout();
+
+            hotArea.width = hotArea.height = 0;
+        }
+
+        @Override
+        public void onClick() {
+            super.onClick();
+            checked(!checked);
+        }
+    }
+
+    private class ChallengeButton extends CheckBox {
+
+        IconCheckBox hellCheckbox;
+        IconCheckBox hell2Checkbox;
+        Challenges challenge;
+        ChallengePredicate filter;
+
+        public ChallengeButton(Challenges challenge, ChallengePredicate filter) {
+            super(Messages.get(Challenges.class, challenge.name));
+            this.filter = filter;
+            this.challenge = challenge;
+            hellCheckbox.visible = hellCheckbox.active = challenge.maxLevel >= 2;
+            hell2Checkbox.visible = hell2Checkbox.active = challenge.maxLevel >= 3;
+
+            hellCheckbox.enable(hellCheckbox.active && filter.test(challenge, 2));
+            hell2Checkbox.enable(hell2Checkbox.active && filter.test(challenge, 3));
+            if (!filter.test(challenge, 1)) icon.alpha(0.3f);
+        }
+
+        @Override
+        protected void createChildren() {
+            super.createChildren();
+            hellCheckbox = new IconCheckBox(Icons.DIAMOND_CHECKED);
+            add(hellCheckbox);
+            hell2Checkbox = new IconCheckBox(Icons.RED_CHECKED);
+            add(hell2Checkbox);
+        }
+
+        public boolean hellChecked() {
+            return hellCheckbox.checked();
+        }
+
+        public boolean hell2Checked() {
+            return hell2Checkbox.checked();
+        }
+
+        protected boolean onClick(float x, float y) {
+            if (!inside(x, y)) return false;
+
+            Sample.INSTANCE.play(Assets.Sounds.CLICK);
+
+            if (checked() && hellCheckbox.active && hellCheckbox.inside(x, y)) {
+                hellCheckbox.checked(!hellCheckbox.checked());
+                if (!hellCheckbox.checked()) hell2Checkbox.checked(false);
+            } else if (checked() && hell2Checkbox.active && hell2Checkbox.inside(x, y)) {
+                if (!hellChecked()) hellCheckbox.checked(true);
+                else hell2Checkbox.checked(!hell2Checkbox.checked());
+            } else if (filter.test(challenge, 1))
+                super.onClick();
+            updateText();
+            updateCheckState();
+
+            return true;
+        }
+
+        private void updateText() {
+            if (hell2Checkbox.checked()) {
+                text(Messages.get(Challenges.class, challenge.name + "_3"));
 //				text.hardlight(0xb33636);
-				text.hardlight(0xff0000);
+                text.hardlight(HELL2_COLOR);
 //				text.invert();
-			} else if (hellCheckbox.checked()) {
-				text(Messages.get(Challenges.class, challenge.name + "_hell"));
-				text.hardlight(0x79e3d2);
+            } else if (hellCheckbox.checked()) {
+                text(Messages.get(Challenges.class, challenge.name + "_2"));
+                text.hardlight(HELL_COLOR);
 //				text.invert();
-			} else {
-				text(Messages.get(Challenges.class, challenge.name));
-				text.resetColor();
-			}
-		}
-		
-		@Override
-		public void checked(boolean value) {
-			super.checked(value);
-			if (!checked()) {
-				hellCheckbox.checked(false);
-				hell2Checkbox.checked(false);
-			}
-			updateText();
-		}
-		
-		public void updateState(Modifiers modifiers) {
-			checked((modifiers.challengeTier(challenge.ordinal())) >= 1);
-			if (hellCheckbox.active)
-				hellCheckbox.checked((modifiers.challengeTier(challenge.ordinal())) >= 2);
-			if (hell2Checkbox.active)
-				hell2Checkbox.checked((modifiers.challengeTier(challenge.ordinal())) >= 3);
-			updateText();
-		}
-		
-		@Override
-		protected void layout() {
-			super.layout();
-			
-			hotArea.width = hotArea.height = 0;
-			
-			float margin = hellCheckbox.width() / 4;
-			
-			hellCheckbox.setRect(icon.x - hellCheckbox.width() - margin, icon.y, icon.width, icon.height);
-			hell2Checkbox.setRect(hellCheckbox.left() - hell2Checkbox.width() - margin, icon.y, icon.width, icon.height);
-		}
-	}
-	
-	private static class IconCheckBox extends IconButton {
-		private boolean checked = false;
-		private Icons checkedIcon;
-		
-		public IconCheckBox(Icons icon) {
-			super(Icons.UNCHECKED.get());
-			this.checkedIcon = icon;
-		}
-		
-		public boolean checked() {
-			return checked;
-		}
-		
-		public void checked(boolean checked) {
-			this.checked = checked;
-			if (checked) {
-				icon(checkedIcon.get());
-			} else {
-				icon(Icons.UNCHECKED.get());
-			}
-		}
-		
-		@Override
-		protected void layout() {
-			super.layout();
-			
-			hotArea.width = hotArea.height = 0;
-		}
-		
-		@Override
-		public void onClick() {
-			super.onClick();
-			checked(!checked);
-		}
-	}
+            } else {
+                text(Messages.get(Challenges.class, challenge.name));
+                text.resetColor();
+            }
+        }
+
+        @Override
+        public void checked(boolean value) {
+            super.checked(value);
+            if (!checked()) {
+                hellCheckbox.checked(false);
+                hell2Checkbox.checked(false);
+            }
+            updateText();
+        }
+
+        public void updateState(Modifiers modifiers) {
+            checked((modifiers.challengeTier(challenge.ordinal())) >= 1);
+            if (hellCheckbox.visible)
+                hellCheckbox.checked((modifiers.challengeTier(challenge.ordinal())) >= 2);
+            if (hell2Checkbox.visible)
+                hell2Checkbox.checked((modifiers.challengeTier(challenge.ordinal())) >= 3);
+            updateText();
+        }
+
+        @Override
+        protected void layout() {
+            super.layout();
+
+            hotArea.width = hotArea.height = 0;
+
+            float margin = hellCheckbox.width() / 4;
+
+            hellCheckbox.setRect(icon.x - hellCheckbox.width() - margin, icon.y, icon.width, icon.height);
+            hell2Checkbox.setRect(hellCheckbox.left() - hell2Checkbox.width() - margin, icon.y, icon.width, icon.height);
+        }
+    }
 }

@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 
 import java.util.Arrays;
@@ -275,5 +276,23 @@ public enum Challenges {
 
 	protected boolean _isItemBlocked(Item item) {
 		return false;
+	}
+
+	public static class Entry {
+		private Challenges challenge;
+		private int level;
+
+		public Entry(Challenges challenge, int level) {
+			this.challenge = challenge;
+			this.level = level;
+		}
+
+		public String name(){
+			String key = challenge.name;
+			if(level>1){
+				key+="_"+level;
+			}
+			return Messages.get(Challenges.class,key);
+		}
 	}
 }
