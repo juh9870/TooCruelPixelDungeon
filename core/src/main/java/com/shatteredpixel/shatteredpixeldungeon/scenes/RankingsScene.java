@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
@@ -135,6 +136,16 @@ public class RankingsScene extends PixelScene {
 		ExitButton btnExit = new ExitButton();
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
+
+		RedButton btnDynasties = new RedButton(Messages.get(DynastiesScene.class,"title"),5){
+			@Override
+			protected void onClick() {
+				super.onClick();
+				ShatteredPixelDungeon.switchNoFade(DynastiesScene.class);
+			}
+		};
+		btnDynasties.setRect( 1, 1,36,12 );
+		add( btnDynasties );
 
 		fadeIn();
 	}

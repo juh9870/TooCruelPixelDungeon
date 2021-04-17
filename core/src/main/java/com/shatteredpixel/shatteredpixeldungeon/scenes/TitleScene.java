@@ -150,7 +150,7 @@ public class TitleScene extends PixelScene {
 		DashboardItem btnRankings = new DashboardItem( Messages.get(this, "rankings"), 2 ) {
 			@Override
 			protected void onClick() {
-				ShatteredPixelDungeon.switchNoFade( DynastiesScene.class );
+				ShatteredPixelDungeon.switchNoFade( RankingsScene.class );
 			}
 		};
 		add( btnRankings );

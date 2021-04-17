@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
+import com.shatteredpixel.shatteredpixeldungeon.utils.NamesGenerator;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
@@ -319,9 +320,9 @@ public enum Rankings {
 
         for (Dynasty dynasty : dynasties.values()) {
             if (!dynasty.finished) continue;
-            if (dynasty.length()<2){
+            if (dynasty.length() < 2) {
                 dynasties.remove(dynasty.id);
-                needSave=true;
+                needSave = true;
             }
         }
         if (needSave) save();
@@ -486,6 +487,8 @@ public enum Rankings {
             epic = bundle.getBoolean(EPIC);
             name = bundle.getString(NAME);
             id = bundle.getString(ID);
+
+            if (name == null || name.length() == 0) name = NamesGenerator.dynastyName(epic);
         }
 
         @Override

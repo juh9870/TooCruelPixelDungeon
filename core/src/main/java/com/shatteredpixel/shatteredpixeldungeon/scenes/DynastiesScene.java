@@ -31,9 +31,11 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndChallenges;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndDynastyInfo;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -127,6 +129,16 @@ public class DynastiesScene extends PixelScene {
         btnExit.setPos(Camera.main.width - btnExit.width(), 0);
         add(btnExit);
 
+        RedButton btnRankings = new RedButton(Messages.get(RankingsScene.class, "title"), 5) {
+            @Override
+            protected void onClick() {
+                super.onClick();
+                ShatteredPixelDungeon.switchNoFade(RankingsScene.class);
+            }
+        };
+        btnRankings.setRect(1, 1, 36, 12);
+        add(btnRankings);
+
         fadeIn();
     }
 
@@ -139,13 +151,9 @@ public class DynastiesScene extends PixelScene {
 
         private static final float GAP = 4;
 
-        private static final int[] TEXT_WIN = {0xFFFF88, 0xB2B25F};
-        private static final int[] TEXT_LOSE = {0xDDDDDD, 0x888888};
         private static final int FLARE_WIN = 0x888866;
-        private static final int FLARE_LOSE = 0x666666;
         protected ItemSprite shield;
         private Rankings.Dynasty dynasty;
-        //        private Flare flare;
         private BitmapText position;
         private RenderedTextBlock desc;
         private Image chalice;
@@ -163,6 +171,10 @@ public class DynastiesScene extends PixelScene {
             position.measure();
 
             desc.text(Messages.titleCase(dynasty.name));
+
+            if (dynasty.epic) {
+                desc.hardlight(WndChallenges.HELL_COLOR);
+            }
 
             if (!dynasty.finished) {
                 if (dynasty.epic) {
