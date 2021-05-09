@@ -188,14 +188,14 @@ public class StartScene extends PixelScene {
 					classIcon.copy(Icons.get(info.heroClass));
 				}
 
-				if ((info.modifiers.isChallenged(Challenges.AMNESIA.ordinal()))){
+				if ((info.modifiers.isChallenged(Challenges.AMNESIA.id))){
 					depth.text("??");
 				} else {
 					depth.text(Integer.toString(info.depth));
 				}
 				depth.measure();
 
-				if (info.modifiers.isChallenged(Challenges.AMNESIA.ordinal())){
+				if (info.modifiers.isChallenged(Challenges.AMNESIA.id)){
 					level.text("??");
 				} else {
 					level.text(Integer.toString(info.level));

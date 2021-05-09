@@ -30,66 +30,10 @@ public enum Difficulty {
 	
 	static {
 		MODIFIERS =new HashSet<>();
-		
-		modifier(1,req(Challenges.NO_FOOD));
-		modifier(1.5f,req(Challenges.NO_FOOD,2));
-		
-		modifier(2f,req(Challenges.NO_ARMOR));
-		
-		modifier(2f,req(Challenges.NO_HEALING));
-		modifier(2.5f,req(Challenges.NO_HEALING,2));
-		modifier(5f,req(Challenges.NO_HEALING,3));
-		
-		
-		modifier(2f,req(Challenges.NO_HERBALISM));
-		
-		
-		modifier(1.5f,req(Challenges.SWARM_INTELLIGENCE));
-		modifier(2.5f,req(Challenges.SWARM_INTELLIGENCE,2));
-		
-		
-		modifier(1f,req(Challenges.DARKNESS));
-		modifier(3f,req(Challenges.DARKNESS,2));
-		
-		modifier(1.5f,req(Challenges.NO_SCROLLS));
-		
-		modifier(1.5f,req(Challenges.AMNESIA));
-		modifier(3f,req(Challenges.AMNESIA,2));
-		
-		modifier(2f,req(Challenges.CURSED));
-		
-		modifier(2f,req(Challenges.BLACKJACK));
-		
-		modifier(1.5f,req(Challenges.HORDE));
-		modifier(2f,req(Challenges.HORDE,2));
-		modifier(7f,req(Challenges.HORDE,3));
-		
-		modifier(2f,req(Challenges.COUNTDOWN));
-		modifier(5f,req(Challenges.COUNTDOWN,2));
-		
-		modifier(1.5f,req(Challenges.ANALGESIA));
-		
-		modifier(1f,req(Challenges.BIG_LEVELS));
-		
-		modifier(2f,req(Challenges.MUTAGEN));
-		modifier(5f,req(Challenges.MUTAGEN,2));
-		
-		modifier(3f,req(Challenges.RESURRECTION));
-		modifier(4f,req(Challenges.RESURRECTION,2));
-		modifier(7f,req(Challenges.RESURRECTION,3));
-		
-		modifier(1f,req(Challenges.EXTREME_CAUTION));
-		modifier(2f,req(Challenges.EXTREME_CAUTION,2));
-		
-		modifier(1f,req(Challenges.EXTERMINATION));
-		
-		modifier(1.5f,req(Challenges.ROOK));
-		
-		modifier(2f,req(Challenges.NO_PERKS));
-		
-		modifier(2f,req(Challenges.CHAMPION_ENEMIES));
-		modifier(4f,req(Challenges.CHAMPION_ENEMIES,2));
-		modifier(7f,req(Challenges.CHAMPION_ENEMIES,3));
+
+		for (Challenges value : Challenges.values()) {
+			modifier(value.difficulty,req(value));
+		}
 		
 		
 //		modifier(0.2f,req(Challenges.NO_FOOD,2),req(Challenges.NO_HEALING));
@@ -148,10 +92,7 @@ public enum Difficulty {
 	}
 	
 	private static Requirement req(Challenges chal){
-		return req(chal,1);
-	}
-	private static Requirement req(Challenges chal, int level){
-		return new Requirement(chal.ordinal(),level);
+		return new Requirement(chal.id);
 	}
 	
 	private static void modifier(float mod, Requirement... requirements){
@@ -176,16 +117,14 @@ public enum Difficulty {
 	}
 	
 	public static class Requirement {
-		int ordinal;
-		int level;
+		int id;
 		
-		public Requirement(int ordinal, int level) {
-			this.ordinal = ordinal;
-			this.level = level;
+		public Requirement(int id) {
+			this.id = id;
 		}
 		
 		public boolean validate(Modifiers mods) {
-			return mods.challengeTier(ordinal) >= level;
+			return mods.isChallenged(id);
 		}
 	}
 }

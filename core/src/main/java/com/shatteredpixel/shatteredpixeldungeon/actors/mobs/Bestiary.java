@@ -39,7 +39,7 @@ public class Bestiary {
 	
 	//returns a rotation of standard mobs, unshuffled.
 	private static ArrayList<Class<? extends Mob>> standardMobRotation( int depth ){
-		if(Challenges.HORDE.tier(2)) {
+		if(Challenges.INVASION.enabled()) {
 			if (depth == 2) depth = 3;
 			else if (depth != 1 && depth < 25) {
 				depth += 2;
@@ -191,7 +191,7 @@ public class Bestiary {
 	//has a chance to add a rarely spawned mobs to the rotation
 	public static void addRareMobs( int depth, ArrayList<Class<?extends Mob>> rotation ){
 		
-		if(Challenges.HORDE.tier(2)){
+		if(Challenges.INVASION.enabled()){
 			if(depth<21 && (depth+2)%5==0){
 				ArrayList<Class<?extends Mob>> mobs = standardMobRotation(depth+1);
 				while(Random.Float()<0.125f){
@@ -232,7 +232,7 @@ public class Bestiary {
 		for (int i = 0; i < rotation.size(); i++){
 			int max = 50;
 			if (Challenges.MUTAGEN.enabled())max=4;
-			if(Challenges.MUTAGEN.tier(2))max=0;
+			if(Challenges.EVOLUTION.enabled())max=0;
 			if (Random.Int( max ) == 0) {
 				Class<? extends Mob> cl = rotation.get(i);
 				if (cl == Rat.class) {

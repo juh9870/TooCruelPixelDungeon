@@ -146,7 +146,7 @@ public abstract class Scroll extends Item {
 			image = handler.image(this);
 			rune = handler.label(this);
 		}
-		if(Challenges.AMNESIA.tier(2)){
+		if(Challenges.LOBOTOMY.enabled()){
 			image = ItemSpriteSheet.SCROLL_UNKNOWN;
 			rune = "unknown";
 		}
@@ -203,7 +203,7 @@ public abstract class Scroll extends Item {
 	}
 	
 	public void setKnown() {
-		if (Challenges.AMNESIA.tier(2))return;
+		if (Challenges.LOBOTOMY.enabled())return;
 		if (!anonymous) {
 			if (!isKnown()) {
 				handler.know(this);
@@ -218,7 +218,7 @@ public abstract class Scroll extends Item {
 	
 	@Override
 	public Item identify() {
-		if (Challenges.AMNESIA.tier(2))return this;
+		if (Challenges.LOBOTOMY.enabled())return this;
 		super.identify();
 
 		if (!isKnown()) {

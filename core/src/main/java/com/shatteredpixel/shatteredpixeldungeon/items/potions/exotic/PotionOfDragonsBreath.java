@@ -81,7 +81,7 @@ public class PotionOfDragonsBreath extends ExoticPotion {
 
 						curUser.spend(1f);
 						
-						if(Challenges.NO_HEALING.tier(2))
+						if(Challenges.INTOXICATION.enabled())
 							Buff.affect(curUser, Intoxication.class).extend(Intoxication.EXOTIC_INTOXICATION);
 						
 						curUser.sprite.idle();

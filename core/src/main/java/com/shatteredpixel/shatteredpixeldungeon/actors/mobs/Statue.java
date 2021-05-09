@@ -178,7 +178,7 @@ public class Statue extends Mob {
 	}
 
 	public static Statue random(){
-		if (Random.Int(10) == 0 && Challenges.NO_ARMOR.enabled()){
+		if (Random.Int(10) == 0 && Challenges.FAITH_ARMOR.enabled()){
 			return new ArmoredStatue();
 		} else {
 			return new Statue();

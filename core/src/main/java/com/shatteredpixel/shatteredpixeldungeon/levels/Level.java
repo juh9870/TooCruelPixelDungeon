@@ -224,7 +224,7 @@ public abstract class Level implements Bundlable {
 		if (!(Dungeon.bossLevel())) {
 
 
-			if (Challenges.NO_FOOD.tier(2)) {
+			if (Challenges.FAMINE.enabled()) {
 				addItemToSpawn(new SmallRation());
 			} else {
 				addItemToSpawn(Generator.random(Generator.Category.FOOD));
@@ -842,7 +842,7 @@ public abstract class Level implements Bundlable {
 
 	public Plant plant(Plant.Seed seed, int pos) {
 
-		if (Challenges.NO_HERBALISM.enabled()) {
+		if (Challenges.BARREN_LAND.enabled()) {
 			return null;
 		}
 

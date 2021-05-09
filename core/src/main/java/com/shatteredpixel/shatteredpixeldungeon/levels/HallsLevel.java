@@ -131,7 +131,7 @@ public class HallsLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		if(!Challenges.EXTREME_CAUTION.tier(2)) {
+		if(!Challenges.EXTREME_DANGER.enabled()) {
 			return new float[]{
 					4, 4, 4, 4, 4,
 					2, 2, 2, 2,

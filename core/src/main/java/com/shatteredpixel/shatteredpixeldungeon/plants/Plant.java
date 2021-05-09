@@ -147,7 +147,7 @@ public abstract class Plant implements Bundlable {
 			if (Dungeon.level.map[cell] == Terrain.ALCHEMY
 					|| Dungeon.level.pit[cell]
 					|| Dungeon.level.traps.get(cell) != null
-					|| Challenges.NO_HERBALISM.enabled()) {
+					|| Challenges.BARREN_LAND.enabled()) {
 				super.onThrow( cell );
 			} else {
 				Dungeon.level.plant( this, cell );
@@ -216,13 +216,13 @@ public abstract class Plant implements Bundlable {
 		
 		@Override
 		public int image() {
-			if (Challenges.AMNESIA.tier(2))return ItemSpriteSheet.SEED_SUNGRASS;
+			if (Challenges.LOBOTOMY.enabled())return ItemSpriteSheet.SEED_SUNGRASS;
 			return super.image();
 		}
 		
 		@Override
 		public String name() {
-			if (Challenges.AMNESIA.tier(2))return Messages.get(PlaceHolder.class,"name");
+			if (Challenges.LOBOTOMY.enabled())return Messages.get(PlaceHolder.class,"name");
 			return super.name();
 		}
 		

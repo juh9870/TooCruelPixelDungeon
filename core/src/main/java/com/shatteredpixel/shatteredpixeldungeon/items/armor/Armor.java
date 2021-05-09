@@ -284,7 +284,7 @@ public class Armor extends EquipableItem {
 	}
 
 	public int DRMax(int lvl){
-		if (Challenges.NO_ARMOR.enabled()){
+		if (Challenges.FAITH_ARMOR.enabled()){
 			return 1 + tier + lvl + augment.defenseFactor(lvl);
 		}
 
@@ -301,7 +301,7 @@ public class Armor extends EquipableItem {
 	}
 
 	public int DRMin(int lvl){
-		if (Challenges.NO_ARMOR.enabled()){
+		if (Challenges.FAITH_ARMOR.enabled()){
 			return 0;
 		}
 

@@ -99,7 +99,7 @@ public abstract class ChampionEnemy extends Buff {
         int nthChampion = 8;
 
 
-        if (Challenges.CHAMPION_ENEMIES.tier(2)) {
+        if (Challenges.ELITE_CHAMPIONS.enabled()) {
             //100% champion spawn chance when no champions are left while t2 is enabled, otherwise every 5'th enemy is a champion
             nthChampion = existingChamps == 0 ? 1 : 5;
         }
@@ -108,12 +108,12 @@ public abstract class ChampionEnemy extends Buff {
 
         if (Dungeon.mobsToChampion % nthChampion == 0) {
             //Every 3'rd champion is an elite champion
-            if (Challenges.CHAMPION_ENEMIES.tier(2) && Dungeon.mobsToChampion % 3 == 0) {
+            if (Challenges.ELITE_CHAMPIONS.enabled() && Dungeon.mobsToChampion % 3 == 0) {
                 Buff.affect(m, randomElite());
                 elite = true;
                 added += 2;
                 //Every elite champion is also a regular champion at t3
-                if (Challenges.CHAMPION_ENEMIES.tier(3)) {
+                if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
                     Buff.affect(m, randomChampion());
                     added++;
                 }
@@ -125,7 +125,7 @@ public abstract class ChampionEnemy extends Buff {
         }
 
         //go crazy at t3
-        if (Challenges.CHAMPION_ENEMIES.tier(3)) {
+        if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
             while (added < 8 && Random.Int(3 + added) == 0) {
                 if (Random.Int(3) == 0) {
                     Buff.affect(m, randomElite());
@@ -379,7 +379,7 @@ public abstract class ChampionEnemy extends Buff {
         }
 
         protected int guardsNumber() {
-            if (Challenges.CHAMPION_ENEMIES.tier(3)) return 2;
+            if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) return 2;
             return 1;
         }
 
@@ -413,7 +413,7 @@ public abstract class ChampionEnemy extends Buff {
                     }
                     guardiansCooldown = Math.max(GUARDS_SUMMON_COOLDOWN, guardiansCooldown);
                 } else {
-                    if (Challenges.CHAMPION_ENEMIES.tier(3)) {
+                    if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
                         if (mob.state == mob.WANDERING) {
                             guardiansCooldown--;
                         }
@@ -721,7 +721,8 @@ public abstract class ChampionEnemy extends Buff {
             for (Mob mob : mobsInFov()) {
                 Buff.affect(mob, Infectious.class);
             }
-            return super.act();
+            spend(TICK);
+            return true;
         }
 
         @Override

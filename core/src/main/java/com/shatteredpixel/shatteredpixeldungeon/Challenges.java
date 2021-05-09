@@ -34,265 +34,337 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 
-import java.util.Arrays;
-
 public enum Challenges {
-	NO_FOOD("no_food", 2) {
-		@Override
-		protected boolean _isItemBlocked(Item item) {
-			if (tier(2)) {
-				if (item instanceof Food && !(item instanceof SmallRation)) {
-					return true;
-				} else return item instanceof HornOfPlenty;
-			}
-			return false;
-		}
-	},
-	NO_ARMOR("no_armor"),
-	NO_HEALING("no_healing", 3),
-	NO_HERBALISM("no_herbalism") {
-		@Override
-		protected boolean _isItemBlocked(Item item) {
-			return item instanceof Dewdrop;
-		}
-	},
-	SWARM_INTELLIGENCE("swarm_intelligence", 2),
-	DARKNESS("darkness", 2),
-	NO_SCROLLS("no_scrolls"),
-	AMNESIA("amnesia", 2),
-	CURSED("cursed"),
-	BLACKJACK("blackjack"),
-	HORDE("horde", 3) {
-		@Override
-		protected float _nMobsMult() {
-			return 2;
-		}
-	},
-	COUNTDOWN("countdown", 2),
-	ANALGESIA("analgesia"),
-	BIG_LEVELS("big_levels") {
-		@Override
-		protected float _nMobsMult() {
-			return 2;
-		}
+    // T1
+    ON_DIET(0, 1, 1),
+    FAITH_ARMOR(1, 1, 2),
+    PHARMACOPHOBIA(2, 1, 2),
+    BARREN_LAND(3, 1, 2) {
+        @Override
+        protected boolean _isItemBlocked(Item item) {
+            return item instanceof Dewdrop;
+        }
+    },
+    SWARM_INTELLIGENCE(4, 1, 1.5f),
+    DARKNESS(5, 1, 1),
+    FORBIDDEN_RUNES(6, 1, 1.5f),
+    AMNESIA(7, 1, 1.5f),
+    CURSED(8, 1, 2),
+    BLACKJACK(9, 1, 2),
+    HORDE(10, 1, 1.5f) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+    },
+    COUNTDOWN(11, 1, 2),
+    ANALGESIA(12, 1, 1.5f),
+    BIG_LEVELS(13, 1, 1) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
 
-		@Override
-		protected float _nTrapsMult() {
-			return 2;
-		}
-	},
-	MUTAGEN("mutagen", 2) {
-		@Override
-		protected float _rareLootChanceMultiplier() {
-			if (tier(2)) return 1 / 50f;
-			return 4 / 50f;
-		}
-	},
-	RESURRECTION("resurrection", 3),
-	EXTREME_CAUTION("extreme_caution", 2) {
-		@Override
-		protected float _nTrapsMult() {
-			return 4;
-		}
-	},
-	EXTERMINATION("extermination"),
-	ROOK("rook"),
-	CHAMPION_ENEMIES("champion_enemies", 3),
-	NO_PERKS("perks");
-	public String name;
-	public int maxLevel;
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+    },
+    MUTAGEN(14, 1, 2) {
+        @Override
+        protected float _rareLootChanceMultiplier() {
+            if (EVOLUTION.enabled()) return 1 / 50f;
+            return 4 / 50f;
+        }
+    },
+    RESURRECTION(15, 1, 3f),
+    EXTREME_CAUTION(16, 1, 1) {
+        @Override
+        protected float _nTrapsMult() {
+            return 4;
+        }
+    },
+    EXTERMINATION(17, 1, 1),
+    ROOK(18, 1, 1.5f),
+    CHAMPION_ENEMIES(19, 1, 2f),
+    NO_PERKS(20, 1, 3f),
 
-	Challenges(String name) {
-		this(name, 1);
-	}
+    //T2
+    FAMINE(21, 2, 1.5f, ON_DIET) {
+        @Override
+        protected boolean _isItemBlocked(Item item) {
+            if (item instanceof Food && !(item instanceof SmallRation)) {
+                return true;
+            } else return item instanceof HornOfPlenty;
+        }
+    },
+    INTOXICATION(22, 2, 2.5f),
+    PLAGUE(23, 2, 3f, INTOXICATION),
+    HEART_OF_HIVE(24, 2, 2.5f, SWARM_INTELLIGENCE),
+    BLINDNESS(25, 2, 3f, DARKNESS),
+    LOBOTOMY(26, 2, 3f, AMNESIA),
+    INVASION(27, 2, 2f),
+    EVOLUTION(29, 2, 5f, MUTAGEN),
+    REBIRTH(30, 2, 4f),
+    EXTREME_DANGER(32, 2, 2f, EXTREME_CAUTION),
+    ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
 
-	Challenges(String name, int maxLevel) {
-		this.name = name;
-		this.maxLevel = maxLevel;
-	}
+    //T3
+    LEGION(28, 3, 7f),
+    ASCENSION(31, 3, 7f, REBIRTH),
+    DUNGEON_OF_CHAMPIONS(34, 3, 4f, ELITE_CHAMPIONS),
+    RACING_THE_DEATH(35, 3, 7f),
 
-	public static float ascendingChance(Mob m) {
+    ;
+    private static final Challenges[] mappings;
 
-		Ascension buff;
-		if ((buff = m.buff(Ascension.class)) != null) {
-			if (buff.level >= 2 && m.buff(Extermanation.class) != null) return 0;
-		}
-		if (m.buff(Ascension.ForcedAscension.class) != null) return 1;
+    static {
+        mappings = new Challenges[Challenges.values().length];
+        for (Challenges value : Challenges.values()) {
+            if (mappings[value.id] != null) throw new DuplicateChallengeException(mappings[value.id], value);
+            mappings[value.id] = value;
+        }
+        for (int i = 0; i < mappings.length; i++) {
+            if (mappings[i] == null) throw new MissingChallengeException(i);
+        }
+    }
 
-		float chance = .33f;
+    public final String name;
+    public final int id;
+    public final float difficulty;
+    public final int tier;
+    public final int[] requirements;
 
-		float _m = Math.max(m.maxLvl, Dungeon.depth);
-		float h = Dungeon.hero.lvl;
-		float a = buff == null ? 0 : buff.level;
+    Challenges(int id, int tier, float difficulty, Challenges... requirements) {
+        this.name = name().toLowerCase();
+        this.id = id;
+        this.difficulty = difficulty;
+        this.tier = tier;
+        this.requirements = new int[requirements.length];
+        for (int i = 0; i < requirements.length; i++) {
+            this.requirements[i] = requirements[i].id;
+        }
+    }
 
-		if (Dungeon.hero.lvl > _m) {
+    public static void enableFromLegacyTier(boolean[] chals, Challenges chal, int tier) {
+        switch (chal) {
+            case ON_DIET:
+                chals[FAMINE.id] = tier == 2;
+                break;
+            case PHARMACOPHOBIA:
+                chals[INTOXICATION.id] = tier > 1;
+                chals[PLAGUE.id] = tier == 3;
+                break;
+            case SWARM_INTELLIGENCE:
+                chals[HEART_OF_HIVE.id] = tier == 2;
+                break;
+            case AMNESIA:
+                chals[LOBOTOMY.id] = tier == 2;
+                break;
+            case HORDE:
+                chals[INVASION.id] = tier > 1;
+                chals[LEGION.id] = tier == 3;
+                break;
+            case COUNTDOWN:
+                chals[RACING_THE_DEATH.id] = tier == 2;
+                break;
+            case RESURRECTION:
+                chals[REBIRTH.id] = tier > 1;
+                chals[ASCENSION.id] = tier == 3;
+                break;
+            case EXTREME_CAUTION:
+                chals[EXTREME_DANGER.id] = tier == 2;
+                break;
+            case CHAMPION_ENEMIES:
+                chals[ELITE_CHAMPIONS.id] = tier > 1;
+                chals[DUNGEON_OF_CHAMPIONS.id] = tier == 3;
+                break;
+        }
+    }
 
-			float o = Math.max(0, 10 - _m);
+    public static Challenges fromId(int id) {
+        return mappings[id];
+    }
 
-			chance = .33f + ((1 - .33f) * ((h - _m + o) * 30 / (35 - o - _m))) / 30;
-		}
+    public static float ascendingChance(Mob m) {
 
-		if (Statistics.amuletObtained && chance < .66) {
-			chance = .66f;
-		}
+        Ascension buff;
+        if ((buff = m.buff(Ascension.class)) != null) {
+            if (buff.level >= 2 && m.buff(Extermanation.class) != null) return 0;
+        }
+        if (m.buff(Ascension.ForcedAscension.class) != null) return 1;
 
-		if (a > 0) {
-			if (h <= _m) chance *= 0.5 / Math.sqrt(a);
-			if (h <= _m + 2) chance *= 0.75 / Math.sqrt(a);
-		}
+        float chance = .33f;
 
-		return chance;
-	}
+        float _m = Math.max(m.maxLvl, Dungeon.depth);
+        float h = Dungeon.hero.lvl;
+        float a = buff == null ? 0 : buff.level;
 
-	public static int maxAscension(Mob m) {
-		int tier = RESURRECTION.tier();
-		if (tier >= 3 || m.buff(Ascension.ForcedAscension.class) != null) {
-			return 6;
-		} else if (tier == 2) {
-			return 1;
-		}
-		return 0;
-	}
+        if (Dungeon.hero.lvl > _m) {
 
-	public static float nMobsMultiplier() {
-		float mult = 1;
-		for (Challenges ch : values()) {
-			if (ch.enabled()) mult *= ch._nMobsMult();
-		}
-		return mult;
-	}
+            float o = Math.max(0, 10 - _m);
 
-	public static float nTrapsMultiplier() {
-		float mult = 1;
-		for (Challenges ch : values()) {
-			if (ch.enabled()) mult *= ch._nTrapsMult();
-		}
-		return mult;
-	}
+            chance = .33f + ((1 - .33f) * ((h - _m + o) * 30 / (35 - o - _m))) / 30;
+        }
 
-	public static float rareLootChanceMultiplier() {
-		float mult = 1;
-		for (Challenges ch : values()) {
-			if (ch.enabled()) mult *= ch._rareLootChanceMultiplier();
-		}
-		return mult;
-	}
+        if (Statistics.amuletObtained && chance < .66) {
+            chance = .66f;
+        }
 
-	public static boolean isItemBlocked(Item item) {
-		for (Challenges ch : values()) {
-			if (ch.enabled() && ch._isItemBlocked(item)) return true;
-		}
-		return false;
-	}
+        if (a > 0) {
+            if (h <= _m) chance *= 0.5 / Math.sqrt(a);
+            if (h <= _m + 2) chance *= 0.75 / Math.sqrt(a);
+        }
 
-	public static int checkExterminators() {
-		int left = 0;
-		if (EXTERMINATION.enabled())
-			for (Mob m : Dungeon.level.mobs) {
-				if (m.buff(Extermanation.class) != null) {
-					left++;
-					Buff.affect(m,Revealing.class,1f);
-				}
-			}
-		return left;
-	}
+        return chance;
+    }
 
-	public static Icons icon() {
-		return icon(SPDSettings.modifiers());
-	}
+    public static int maxAscension(Mob m) {
+        if (ASCENSION.enabled() || m.buff(Ascension.ForcedAscension.class) != null) {
+            return 6;
+        } else if (REBIRTH.enabled()) {
+            return 1;
+        }
+        return 0;
+    }
 
-	public static String saveString(int[] challenges) {
-		StringBuilder s = new StringBuilder();
-		for (int i = 0; i < challenges.length; i++) {
-			s.append(challenges[i]);
-		}
-		return s.toString();
-	}
+    public static float nMobsMultiplier() {
+        float mult = 1;
+        for (Challenges ch : values()) {
+            if (ch.enabled()) mult *= ch._nMobsMult();
+        }
+        return mult;
+    }
 
-	public static int[] fromString(String challenges) {
-		int[] ret = new int[Challenges.values().length];
-		int l = Challenges.values().length;
-		for (int i = 0; i < l; i++) {
-			if (i < challenges.length()) {
-				ret[i] = Integer.parseInt(Character.toString(challenges.charAt(i)));
-			} else {
-				ret[i] = 0;
-			}
-		}
-		return ret;
-	}
+    public static float nTrapsMultiplier() {
+        float mult = 1;
+        for (Challenges ch : values()) {
+            if (ch.enabled()) mult *= ch._nTrapsMult();
+        }
+        return mult;
+    }
 
-	public static int[] fromLegacy(int... levels) {
-		int[] arr = new int[Challenges.values().length];
-		Arrays.fill(arr, 0);
-		for (int i = 0; i < levels.length; i++) {
-			String str = Integer.toString(levels[i], 2);
-			int l = str.length();
-			for (int j = 0; j < l; j++) {
-				arr[j] += str.charAt(l - j - 1) == '1' ? 1 : 0;
-			}
-		}
-		return arr;
-	}
+    public static float rareLootChanceMultiplier() {
+        float mult = 1;
+        for (Challenges ch : values()) {
+            if (ch.enabled()) mult *= ch._rareLootChanceMultiplier();
+        }
+        return mult;
+    }
 
-	public static Icons icon(Modifiers modifiers) {
-		int l = 0;
-		for (int i = 0; i < modifiers.challenges.length; i++) {
-			l = Math.max(l, modifiers.challenges[i]);
-		}
-		if (l <= 0) {
-			return Icons.CHALLENGE_OFF;
-		} else if (l == 1) {
-			return Icons.CHALLENGE_ON;
-		} else if (l == 2) {
-			return Icons.CHALLENGE_HELL;
-		}
-		return Icons.CHALLENGE_HELL2;
-	}
+    public static boolean isItemBlocked(Item item) {
+        for (Challenges ch : values()) {
+            if (ch.enabled() && ch._isItemBlocked(item)) return true;
+        }
+        return false;
+    }
 
-	protected float _nMobsMult() {
-		return 1;
-	}
+    public static int checkExterminators() {
+        int left = 0;
+        if (EXTERMINATION.enabled())
+            for (Mob m : Dungeon.level.mobs) {
+                if (m.buff(Extermanation.class) != null) {
+                    left++;
+                    Buff.affect(m, Revealing.class, 1f);
+                }
+            }
+        return left;
+    }
 
-	protected float _nTrapsMult() {
-		return 1;
-	}
+    public static Icons icon() {
+        return icon(SPDSettings.modifiers());
+    }
 
-	protected float _rareLootChanceMultiplier() {
-		return 1;
-	}
+    public static String saveString(boolean[] challenges) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < challenges.length; i++) {
+            s.append(challenges[i] ? 1 : 0);
+        }
+        return s.toString();
+    }
 
-	public boolean enabled() {
-		return tier(1);
-	}
+    public static boolean[] fromString(String challenges) {
+        boolean[] ret = new boolean[Challenges.values().length];
+        int l = Math.min(Challenges.values().length, challenges.length());
+        for (int i = 0; i < l; i++) {
+            int tier = Integer.parseInt(Character.toString(challenges.charAt(i)));
+            ret[i] = tier > 0;
+            if (tier > 1) enableFromLegacyTier(ret, fromId(i), tier);
+        }
+        return ret;
+    }
 
-	public boolean tier(int required) {
-		return tier() >= required;
-	}
+    public static boolean[] fromLegacy(int... levels) {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < levels.length; i++) {
+            String str = Integer.toString(levels[i], 2);
+            int l = str.length();
+            int t = 0;
+            for (int j = 0; j < l; j++) {
+                t += str.charAt(l - j - 1) == '1' ? 1 : 0;
+            }
+            s.append(t);
+        }
+        return fromString(s.toString());
+    }
 
-	public int tier() {
-		return Dungeon.challengeTier(this.ordinal());
-	}
+    public static Icons icon(Modifiers modifiers) {
+        int l = 0;
+        for (int i = 0; i < modifiers.challenges.length; i++) {
+            if (modifiers.challenges[i])
+                l = Math.max(l, fromId(i).tier);
+        }
+        if (l <= 0) {
+            return Icons.CHALLENGE_OFF;
+        } else if (l == 1) {
+            return Icons.CHALLENGE_ON;
+        } else if (l == 2) {
+            return Icons.CHALLENGE_HELL;
+        }
+        return Icons.CHALLENGE_HELL2;
+    }
 
-	protected boolean _isItemBlocked(Item item) {
-		return false;
-	}
+    protected float _nMobsMult() {
+        return 1;
+    }
 
-	public static class Entry {
-		private Challenges challenge;
-		private int level;
+    protected float _nTrapsMult() {
+        return 1;
+    }
 
-		public Entry(Challenges challenge, int level) {
-			this.challenge = challenge;
-			this.level = level;
-		}
+    protected float _rareLootChanceMultiplier() {
+        return 1;
+    }
 
-		public String name(){
-			String key = challenge.name;
-			if(level>1){
-				key+="_"+level;
-			}
-			return Messages.get(Challenges.class,key);
-		}
-	}
+    public boolean enabled() {
+        return Dungeon.isChallenged(this.id);
+    }
+
+    public boolean requires(Challenges other) {
+        for (int requirement : this.requirements) {
+            if (requirement == other.id) return true;
+            if (fromId(requirement).requires(other)) return true;
+        }
+        return false;
+    }
+
+    public String localizedName() {
+        return Messages.get(Challenges.class, name);
+    }
+
+    protected boolean _isItemBlocked(Item item) {
+        return false;
+    }
+
+    public static class DuplicateChallengeException extends Error {
+        public DuplicateChallengeException(Challenges a, Challenges b) {
+            super(String.format("Challenges %s and %s have conflicting ids.", a.name, b.name));
+        }
+    }
+
+    public static class MissingChallengeException extends Error {
+        public MissingChallengeException(int id) {
+            super("Challenge id " + id + " is empty.");
+        }
+    }
 }

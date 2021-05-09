@@ -100,7 +100,7 @@ public class Food extends Item {
 	}
 	
 	protected void satisfy( Hero hero ){
-		if (Challenges.NO_FOOD.enabled()){
+		if (Challenges.ON_DIET.enabled()){
 			Buff.affect(hero, Hunger.class).satisfy(energy/3f);
 		} else {
 			Buff.affect(hero, Hunger.class).satisfy(energy);

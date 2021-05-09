@@ -172,7 +172,7 @@ public class DynastiesScene extends PixelScene {
             desc.text(Messages.titleCase(dynasty.name));
 
             if (dynasty.epic) {
-                desc.hardlight(WndChallenges.HELL_COLOR);
+                desc.hardlight(WndChallenges.TIER_COLORS[0]);
             }
 
             if (!dynasty.finished) {
@@ -263,7 +263,7 @@ public class DynastiesScene extends PixelScene {
 
         @Override
         protected void onClick() {
-            parent.add(new WndDynastyInfo(dynasty));
+            ShatteredPixelDungeon.scene().addToFront(new WndDynastyInfo(dynasty));
         }
     }
 }

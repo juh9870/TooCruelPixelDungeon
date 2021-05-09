@@ -74,7 +74,7 @@ public class WndDynastyInfo extends Window {
 
         top = middleText(dynasty.name, 9, TITLE_COLOR, top, mw).bottom() + GAP;
         if (dynasty.epic) {
-            top = middleText(Messages.get(this, "epic"), 8, WndChallenges.HELL_COLOR, top, mw).bottom() + GAP;
+            top = middleText(Messages.get(this, "epic"), 8, WndChallenges.TIER_COLORS[0], top, mw).bottom() + GAP;
         }
         top = middleText(Messages.get(this, dynasty.surface ? "belongs_surface" : "belongs_dungeon"), 8, -1, top, mw).bottom() + GAP;
 
@@ -143,13 +143,13 @@ public class WndDynastyInfo extends Window {
 
         top += PADDINGS + textBg.marginTop();
 
-        for (Challenges.Entry entry : diff.added) {
-            RenderedTextBlock bl = middleText("+" + entry.name(), 8, COLOR_POSITIVE, top, mtw);
+        for (Challenges entry : diff.added) {
+            RenderedTextBlock bl = middleText("+" + entry.localizedName(), 8, COLOR_POSITIVE, top, mtw);
             mw = Math.max(mw, (int) bl.width());
             top = bl.bottom() + GAP;
         }
-        for (Challenges.Entry entry : diff.removed) {
-            RenderedTextBlock bl = middleText("-" + entry.name(), 8, COLOR_NEGATIVE, top, mtw);
+        for (Challenges entry : diff.removed) {
+            RenderedTextBlock bl = middleText("-" + entry.localizedName(), 8, COLOR_NEGATIVE, top, mtw);
             mw = Math.max(mw, (int) bl.width());
             top = bl.bottom() + GAP;
         }

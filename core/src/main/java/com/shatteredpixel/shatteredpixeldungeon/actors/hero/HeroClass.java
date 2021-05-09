@@ -105,7 +105,7 @@ public enum HeroClass {
 		i = new Food();
 		if (!Challenges.isItemBlocked(i)) i.collect();
 
-		if (Challenges.NO_FOOD.enabled()){
+		if (Challenges.ON_DIET.enabled()){
 			new SmallRation().collect();
 		}
 		

@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndChallenges;
 import com.watabou.utils.Bundlable;
@@ -8,22 +9,24 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Modifiers implements Bundlable {
     private static final String CHALLENGES = "challenges";
     private static final String DYNASTY = "dynasty";
-    public int[] challenges;
+    public boolean[] challenges;
     public String dynastyId;
 
     public Modifiers() {
-        challenges = new int[Challenges.values().length];
+        challenges = new boolean[Challenges.values().length];
         dynastyId="";
         clear();
     }
 
-    public Modifiers(int[] challenges) {
+    public Modifiers(boolean[] challenges) {
         this();
         System.arraycopy(challenges, 0,this.challenges, 0, challenges.length);
     }
@@ -47,21 +50,65 @@ public class Modifiers implements Bundlable {
     }
 
     public void clear() {
-        int l = Challenges.values().length;
-        for (int i = 0; i < l; i++) {
-            challenges[i] = 0;
-        }
+        BArray.setFalse(challenges);
     }
 
     public boolean isChallenged(int id) {
-        return challengeTier(id) > 0;
+        return challenges[id];
     }
 
     public boolean isChallenged() {
-        for (Integer challenge : challenges) {
-            if (challenge > 0) return true;
+        for (boolean challenge : challenges) {
+            if (challenge) return true;
         }
         return false;
+    }
+
+    public boolean canEnable(Challenges challenge){
+        for (int req : challenge.requirements) {
+            if(!isChallenged(req))return false;
+        }
+        return true;
+    }
+
+    public Set<Challenges> requirements(Challenges challenge){
+        Set<Challenges> set = new HashSet<>();
+        for (int requirement : challenge.requirements) {
+            set.add(Challenges.fromId(requirement));
+        }
+        return set;
+    }
+
+    public Set<Challenges> recursiveRequirements(Challenges challenge){
+        Set<Challenges> set = requirements(challenge);
+        for (Challenges entry : set) {
+            set.addAll(recursiveRequirements(entry));
+        }
+        return set;
+    }
+
+
+    public boolean canDisable(Challenges challenge){
+        for (Challenges value : Challenges.values()) {
+            if(isChallenged(value.id) && value.requires(challenge))return false;
+        }
+        return true;
+    }
+
+    public Set<Challenges> dependants(Challenges challenge){
+        Set<Challenges> set = new HashSet<>();
+        for (Challenges value : Challenges.values()) {
+            if(value.requires(challenge))set.add(value);
+        }
+        return set;
+    }
+
+    public Set<Challenges> recursiveDependants(Challenges challenge){
+        Set<Challenges> set = dependants(challenge);
+        for (Challenges entry : set) {
+            set.addAll(recursiveDependants(entry));
+        }
+        return set;
     }
 
     public void randomize(long seed) {
@@ -69,22 +116,25 @@ public class Modifiers implements Bundlable {
         Random.pushGenerator(seed);
         Random.shuffle(values);
 
-        for (int i = 0; i < Random.Int(1, values.length); i++) {
-            challenges[values[i].ordinal()] = Random.Int(1, values[i].maxLevel + 1);
+        for (int i = 0; i < Random.NormalIntRange(1, values.length/2); i++) {
+            challenges[values[i].id] = true;
+            for (int req : values[i].requirements) {
+                challenges[req]=true;
+            }
         }
 
         Random.popGenerator();
     }
 
     public static class ChallengesDifference {
-        public List<Challenges.Entry> removed;
-        public List<Challenges.Entry> added;
+        public List<Challenges> removed;
+        public List<Challenges> added;
 
         public ChallengesDifference() {
             this.removed = new ArrayList<>();
             this.added = new ArrayList<>();
         }
-        public ChallengesDifference(List<Challenges.Entry> removed, List<Challenges.Entry> added) {
+        public ChallengesDifference(List<Challenges> removed, List<Challenges> added) {
             this.removed = removed;
             this.added = added;
         }
@@ -93,59 +143,37 @@ public class Modifiers implements Bundlable {
     public static ChallengesDifference challengesDifference(Modifiers a, Modifiers b){
         ChallengesDifference diff = new ChallengesDifference();
         for (Challenges chal : Challenges.values()) {
-            int la = a.challengeTier(chal.ordinal());
-            int lb = b.challengeTier(chal.ordinal());
+            boolean la = a.isChallenged(chal.id);
+            boolean lb = b.isChallenged(chal.id);
             if(la==lb)continue;
-            if(la>lb){
-                for (int i = la; i > lb; i--) {
-                    diff.removed.add(new Challenges.Entry(chal,i));
-                }
-            }
-            if(la<lb){
-                for (int i = la; i < lb; i++) {
-                    diff.added.add(new Challenges.Entry(chal,i+1));
-                }
-            }
+            if(!lb)diff.removed.add(chal);
+            if(!la)diff.added.add(chal);
         }
         return diff;
     }
 
     public WndChallenges.ChallengePredicate select(int amount,int old) {
-        HashMap<Challenges, Integer> selected = new HashMap<Challenges, Integer>();
-        HashMap<Challenges, Integer> enabled = new HashMap<Challenges, Integer>();
+        HashSet<Challenges> selectable = new HashSet<>();
+        HashSet<Challenges> canDisable = new HashSet<>();
         for (Challenges value : Challenges.values()) {
-            int curTier = challengeTier(value.ordinal());
-            for (int i = 1; i <= value.maxLevel; i++) {
-                if (curTier >= i) {
-                    enabled.put(value,i);
-                    continue;
-                }
-                if (curTier < i - 1) continue;
-                selected.put(value, i);
-                break;
-            }
+            if(isChallenged(value.id) && canDisable(value))canDisable.add(value);
+            if(!isChallenged(value.id) && canEnable(value))selectable.add(value);
         }
 
         Random.pushGenerator(Dungeon.seed);
 
-        while (selected.size() > amount) {
-            selected.remove(Random.element(selected.keySet()));
+        while (selectable.size() > amount) {
+            selectable.remove(Random.element(selectable));
         }
-        while (enabled.size() > old) {
-            enabled.remove(Random.element(enabled.keySet()));
+        while (canDisable.size() > old) {
+            canDisable.remove(Random.element(canDisable));
         }
-        for (Challenges chal : enabled.keySet()) {
-            selected.put(chal,enabled.get(chal));
-        }
+        selectable.addAll(canDisable);
 
-        if (selected.size() == 0) {
+        if (selectable.size() == 0) {
             return null;
         }
-        return (challenge, level) -> selected.containsKey(challenge) && (level < 0 || selected.get(challenge) == level);
-    }
-
-    public int challengeTier(int id) {
-        return challenges[id];
+        return selectable::contains;
     }
 
     public Difficulty difficulty() {

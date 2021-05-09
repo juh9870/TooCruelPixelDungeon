@@ -1000,7 +1000,7 @@ public abstract class Mob extends Char {
 
             if (alignment == Alignment.ENEMY && Challenges.SWARM_INTELLIGENCE.enabled()) {
                 for (Mob mob : Dungeon.level.mobs) {
-                    if (Challenges.SWARM_INTELLIGENCE.tier(2) ||
+                    if (Challenges.HEART_OF_HIVE.enabled() ||
                             (mob.paralysed <= 0
                                     && Dungeon.level.distance(pos, mob.pos) <= 8
                                     && mob.state != mob.HUNTING)) {
@@ -1054,7 +1054,7 @@ public abstract class Mob extends Char {
                     target = Dungeon.level.randomDestination(Mob.this);
                     spend(TICK);
                     return true;
-                } else if (Challenges.SWARM_INTELLIGENCE.tier(2) && enemy instanceof Hero) {
+                } else if (Challenges.HEART_OF_HIVE.enabled() && enemy instanceof Hero) {
                     target = Dungeon.hero.pos;
                 }
 
@@ -1081,7 +1081,7 @@ public abstract class Mob extends Char {
                     }
 
                     spend(TICK);
-                    if (!enemyInFOV && Challenges.SWARM_INTELLIGENCE.tier(2)) {
+                    if (!enemyInFOV && Challenges.HEART_OF_HIVE.enabled()) {
                         sprite.showLost();
                         state = WANDERING;
                         target = Dungeon.level.randomDestination(Mob.this);

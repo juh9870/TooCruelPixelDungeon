@@ -97,7 +97,7 @@ public abstract class ExoticScroll extends Scroll {
 	
 	@Override
 	public void setKnown() {
-		if (Challenges.AMNESIA.tier(2))return;
+		if (Challenges.LOBOTOMY.enabled())return;
 		if (!isKnown()) {
 			handler.know(exoToReg.get(this.getClass()));
 			updateQuickslot();
@@ -111,7 +111,7 @@ public abstract class ExoticScroll extends Scroll {
 			image = handler.image(exoToReg.get(this.getClass())) + 16;
 			rune = handler.label(exoToReg.get(this.getClass()));
 		}
-		if(Challenges.AMNESIA.tier(2)){
+		if(Challenges.LOBOTOMY.enabled()){
 			image = ItemSpriteSheet.EXOTIC_UNKNOWN;
 			rune = "unknown";
 		}

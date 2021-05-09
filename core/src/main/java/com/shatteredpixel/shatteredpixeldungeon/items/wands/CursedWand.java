@@ -179,7 +179,7 @@ public class CursedWand {
 				if (Dungeon.level.map[pos] != Terrain.ALCHEMY
 						&& !Dungeon.level.pit[pos]
 						&& Dungeon.level.traps.get(pos) == null
-						&& !Challenges.NO_HERBALISM.enabled()) {
+						&& !Challenges.BARREN_LAND.enabled()) {
 					Dungeon.level.plant((Plant.Seed) Generator.randomUsingDefaults(Generator.Category.SEED), pos);
 				} else {
 					return cursedEffect(origin, user, targetPos);

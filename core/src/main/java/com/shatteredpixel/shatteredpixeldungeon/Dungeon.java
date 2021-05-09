@@ -71,7 +71,6 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -243,8 +242,8 @@ public class Dungeon {
         GamesInProgress.selectedClass.initHero(hero);
     }
 
-    public static int challengeTier(int id) {
-        return modifiers.challengeTier(id);
+    public static boolean isChallenged(int id) {
+        return modifiers.isChallenged(id);
     }
 
     public static Level newLevel() {
@@ -456,7 +455,7 @@ public class Dungeon {
     public static boolean souNeeded() {
         int souLeftThisSet;
         //3 SOU each floor set, 1.5 (rounded) on forbidden runes challenge
-        if (Challenges.NO_SCROLLS.enabled()) {
+        if (Challenges.FORBIDDEN_RUNES.enabled()) {
             souLeftThisSet = Math.round(1.5f - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 1.5f));
         } else {
             souLeftThisSet = 3 - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 3);

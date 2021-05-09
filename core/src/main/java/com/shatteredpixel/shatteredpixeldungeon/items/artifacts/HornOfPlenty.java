@@ -89,7 +89,7 @@ public class HornOfPlenty extends Artifact {
 			else {
 				//consume as much food as it takes to be full, to a minimum of 1
 				int satietyPerCharge = (int) (Hunger.STARVING/10f);
-				if (Challenges.NO_FOOD.enabled()){
+				if (Challenges.ON_DIET.enabled()){
 					satietyPerCharge /= 3;
 				}
 

@@ -42,7 +42,7 @@ public class GardenRoom extends SpecialRoom {
 		
 		
 		
-		if (Challenges.NO_FOOD.enabled()) {
+		if (Challenges.ON_DIET.enabled()) {
 			if (Random.Int(2) == 0) {
 				level.plant(new Sungrass.Seed(), plantPos(level));
 			}

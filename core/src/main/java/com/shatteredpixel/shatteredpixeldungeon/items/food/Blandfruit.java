@@ -245,7 +245,7 @@ public class Blandfruit extends Food {
 			if (fruit.quantity() >= 1 && fruit.potionAttrib == null
 				&& seed.quantity() >= 1){
 
-				if (Challenges.NO_HEALING.enabled()
+				if (Challenges.PHARMACOPHOBIA.enabled()
 						&& seed instanceof Sungrass.Seed){
 					return false;
 				}

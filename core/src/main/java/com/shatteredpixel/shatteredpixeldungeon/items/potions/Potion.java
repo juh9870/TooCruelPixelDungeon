@@ -195,7 +195,7 @@ public class Potion extends Item {
 			image = handler.image(this);
 			color = handler.label(this);
 		}
-		if (Challenges.AMNESIA.tier(2)){
+		if (Challenges.LOBOTOMY.enabled()){
 			image = ItemSpriteSheet.POTION_SILVER;
 			color = "unknown";
 		}
@@ -295,7 +295,7 @@ public class Potion extends Item {
 		hero.busy();
 		apply( hero );
 		
-		if(Challenges.NO_HEALING.tier(2)) {
+		if(Challenges.INTOXICATION.enabled()) {
 			if (this instanceof ExoticPotion)Buff.affect(hero, Intoxication.class).extend(Intoxication.EXOTIC_INTOXICATION);
 			else Buff.affect(hero, Intoxication.class).extend(Intoxication.POION_INTOXICATION);
 		}
@@ -341,7 +341,7 @@ public class Potion extends Item {
 	}
 	
 	public void setKnown() {
-		if (Challenges.AMNESIA.tier(2))return;
+		if (Challenges.LOBOTOMY.enabled())return;
 		if (!anonymous) {
 			if (!isKnown()) {
 				handler.know(this);
@@ -362,7 +362,7 @@ public class Potion extends Item {
 	
 	@Override
 	public Item identify() {
-		if (Challenges.AMNESIA.tier(2)){
+		if (Challenges.LOBOTOMY.enabled()){
 			return this;
 		}
 		
@@ -522,7 +522,7 @@ public class Potion extends Item {
 			}
 
 			while (result instanceof PotionOfHealing
-					&& (Challenges.NO_HEALING.enabled()
+					&& (Challenges.PHARMACOPHOBIA.enabled()
 					|| Random.Int(10) < Dungeon.LimitedDrops.COOKING_HP.count)) {
 
 				result = (Potion) Generator.randomUsingDefaults(Generator.Category.POTION);

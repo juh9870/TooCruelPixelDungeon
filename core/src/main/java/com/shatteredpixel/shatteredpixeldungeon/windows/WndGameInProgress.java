@@ -64,8 +64,8 @@ public class WndGameInProgress extends Window {
 			className = info.heroClass.title();
 		}
 		
-		boolean amnesia = info.modifiers.isChallenged(Challenges.AMNESIA.ordinal());
-		boolean analgesia = info.modifiers.isChallenged(Challenges.ANALGESIA.ordinal());
+		boolean amnesia = info.modifiers.isChallenged(Challenges.AMNESIA.id);
+		boolean analgesia = info.modifiers.isChallenged(Challenges.ANALGESIA.id);
 		
 		IconTitle title = new IconTitle();
 		title.icon( HeroSprite.avatar(info.heroClass, info.armorTier) );

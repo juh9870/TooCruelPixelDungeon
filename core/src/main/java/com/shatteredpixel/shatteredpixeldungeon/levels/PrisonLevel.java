@@ -105,8 +105,8 @@ public class PrisonLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		float alarmChance = Challenges.SWARM_INTELLIGENCE.tier(2) ? 0 : 2;
-		if(!Challenges.EXTREME_CAUTION.tier(2)) {
+		float alarmChance = Challenges.HEART_OF_HIVE.enabled() ? 0 : 2;
+		if(!Challenges.EXTREME_DANGER.enabled()) {
 			return new float[]{
 					4, 4, 4, 4, 4,
 					alarmChance, 2, 2,

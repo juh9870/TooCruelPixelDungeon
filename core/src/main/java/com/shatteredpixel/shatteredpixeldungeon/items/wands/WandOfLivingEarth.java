@@ -332,7 +332,7 @@ public class WandOfLivingEarth extends DamageWand {
 
 		@Override
 		public int drRoll() {
-			if (Challenges.NO_ARMOR.enabled()){
+			if (Challenges.FAITH_ARMOR.enabled()){
 				return Random.NormalIntRange(wandLevel, 2 + wandLevel);
 			} else {
 				return Random.NormalIntRange(wandLevel, 3 + 3 * wandLevel);
@@ -341,7 +341,7 @@ public class WandOfLivingEarth extends DamageWand {
 
 		@Override
 		public String description() {
-			if (Challenges.NO_ARMOR.enabled()){
+			if (Challenges.FAITH_ARMOR.enabled()){
 				return Messages.get(this, "desc", wandLevel, 2 + wandLevel);
 			} else {
 				return Messages.get(this, "desc", wandLevel, 3 + 3*wandLevel);

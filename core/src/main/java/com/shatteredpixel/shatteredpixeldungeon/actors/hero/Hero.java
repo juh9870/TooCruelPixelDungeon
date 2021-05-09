@@ -373,13 +373,13 @@ public class Hero extends Char {
 		Buff.affect(this, Regeneration.class);
 		Buff.affect(this, Hunger.class);
 		
-		if (Challenges.DARKNESS.tier(2)) {
+		if (Challenges.BLINDNESS.enabled()) {
 			Buff.affect(this, PermaBlind.class);
 		}
-		if (Challenges.HORDE.tier(3)) {
+		if (Challenges.LEGION.enabled()) {
 			Buff.affect(this, Legion.class);
 		}
-		if (Challenges.COUNTDOWN.tier(2)) {
+		if (Challenges.RACING_THE_DEATH.enabled()) {
 			Buff.affect(this, RacingTheDeath.class);
 		}
 		if (Challenges.AMNESIA.enabled()) {
@@ -1253,7 +1253,7 @@ public class Hero extends Char {
 		int postHP = HP + shielding();
 		int effectiveDamage = preHP - postHP;
 		
-		if (Challenges.NO_HEALING.tier(3)) {
+		if (Challenges.PLAGUE.enabled()) {
 			Buff.affect(this, Intoxication.class).processHit(dmg, src);
 		}
 		
