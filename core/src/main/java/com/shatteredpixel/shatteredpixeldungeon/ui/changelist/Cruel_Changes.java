@@ -81,7 +81,7 @@ public class Cruel_Changes {
 
 		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
 				"_-_ Reworked challenges system\n" +
-						"_-_ Some challenges no longer requires their previous tiers to be enabled" +
+						"_-_ Some challenges no longer requires their previous tiers to be enabled\n" +
 						"_-_ Added 16 new challenges\n" +
 						"_-_ Legion no longer have element of randomness to wave delay\n" +
 						"_-_ Pharmacophobia potions now heals in addition to poisoning too\n" +
