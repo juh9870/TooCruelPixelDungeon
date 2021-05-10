@@ -109,6 +109,8 @@ public abstract class RegularLevel extends Level {
 			standards = (int)Math.ceil(standards * 1.5f);
 		}
 		if(Challenges.BIG_LEVELS.enabled())standards*=2;
+		if(Challenges.BIGGER_LEVELS.enabled())standards*=2;
+		if(Challenges.HUGE_LEVELS.enabled())standards*=3;
 		for (int i = 0; i < standards; i++) {
 			StandardRoom s;
 			do {

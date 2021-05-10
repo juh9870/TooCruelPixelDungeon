@@ -75,6 +75,10 @@ public abstract class PatchRoom extends StandardRoom {
 					fill -= 0.01f;
 					attempts = 0;
 				}
+				if(fill<=0){
+					BArray.setFalse(patch);
+					break;
+				}
 			} while (!valid);
 			PathFinder.setMapSize(level.width(), level.height());
 		} else {

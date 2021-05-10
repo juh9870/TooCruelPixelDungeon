@@ -71,6 +71,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -217,7 +218,7 @@ public class Dungeon {
 
         depth = 0;
 //		if (DeviceCompat.isDebug())
-//			depth = 25;
+//			depth = 8;
         gold = 0;
 
         droppedItems = new SparseArray<>();
@@ -254,7 +255,7 @@ public class Dungeon {
         depth++;
         if (depth > Statistics.deepestFloor) {
             if (Challenges.COUNTDOWN.enabled()) {
-                Buff.prolong(Dungeon.hero, Countdown.class, Countdown.DESCEND_TIME * (Challenges.BIG_LEVELS.enabled() ? 1.5f : 1));
+                Buff.prolong(Dungeon.hero, Countdown.class, Countdown.DESCEND_TIME * Countdown.timeMultiplier());
             }
             Statistics.deepestFloor = depth;
 
@@ -266,7 +267,7 @@ public class Dungeon {
         } else if (Statistics.amuletObtained && depth < Statistics.amuletHighestFloor) {
             Statistics.amuletHighestFloor = depth;
             if (Challenges.COUNTDOWN.enabled()) {
-                Buff.prolong(Dungeon.hero, Countdown.class, Countdown.ASCEND_TIME * (Challenges.BIG_LEVELS.enabled() ? 1.5f : 1));
+                Buff.prolong(Dungeon.hero, Countdown.class, Countdown.ASCEND_TIME * Countdown.timeMultiplier());
             }
         }
 

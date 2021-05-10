@@ -81,7 +81,7 @@ public enum Challenges {
     EXTREME_CAUTION(16, 1, 1) {
         @Override
         protected float _nTrapsMult() {
-            return 4;
+            return 2;
         }
     },
     EXTERMINATION(17, 1, 1),
@@ -109,6 +109,17 @@ public enum Challenges {
     EXTREME_DANGER(32, 2, 2f, EXTREME_CAUTION),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
+    BIGGER_LEVELS(37, 2, 3,BIG_LEVELS) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 4;
+        }
+    },
 
     //T3
     ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
@@ -120,8 +131,19 @@ public enum Challenges {
             return 1.5f;
         }
     },
+    HUGE_LEVELS(38, 3, 4,BIGGER_LEVELS) {
+        @Override
+        protected float _nMobsMult() {
+            return 3;
+        }
 
-    //Last id 36
+        @Override
+        protected float _nTrapsMult() {
+            return 3;
+        }
+    },
+
+    //Last id 38
     ;
     private static final Challenges[] mappings;
 

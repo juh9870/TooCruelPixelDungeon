@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -16,6 +17,13 @@ public class Countdown extends FlavourBuff implements Hero.Doom {
 
     public static final float DESCEND_TIME = 300;
     public static final float ASCEND_TIME = 150;
+
+    public static float timeMultiplier(){
+        float mult = 1.0f;
+        if(Challenges.BIG_LEVELS.enabled())mult*=2;
+        if(Challenges.BIGGER_LEVELS.enabled())mult*=2;
+        return mult;
+    }
 
     @Override
     public boolean act() {
