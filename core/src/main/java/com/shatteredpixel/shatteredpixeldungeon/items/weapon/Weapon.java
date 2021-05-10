@@ -290,6 +290,7 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 	
 	public Weapon enchant( Enchantment ench ) {
+        if (Challenges.CURSE_ENCHANT.enabled() && (ench == null || !ench.curse())) ench = Enchantment.randomCurse();
 		if (ench == null || !ench.curse()) curseInfusionBonus = false;
 		enchantment = ench;
 		updateQuickslot();

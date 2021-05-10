@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Enchanting;
@@ -61,9 +62,15 @@ public class ScrollOfEnchantment extends ExoticScroll {
 				final Weapon.Enchantment enchants[] = new Weapon.Enchantment[3];
 				
 				Class<? extends Weapon.Enchantment> existing = ((Weapon) item).enchantment != null ? ((Weapon) item).enchantment.getClass() : null;
-				enchants[0] = Weapon.Enchantment.randomCommon( existing );
-				enchants[1] = Weapon.Enchantment.randomUncommon( existing );
-				enchants[2] = Weapon.Enchantment.random( existing, enchants[0].getClass(), enchants[1].getClass());
+				if(Challenges.CURSE_ENCHANT.enabled()){
+					enchants[0] = Weapon.Enchantment.randomCurse(existing);
+					enchants[1] = Weapon.Enchantment.randomCurse(existing, enchants[0].getClass());
+					enchants[2] = Weapon.Enchantment.randomCurse(existing, enchants[0].getClass(), enchants[1].getClass());
+				} else {
+					enchants[0] = Weapon.Enchantment.randomCommon(existing);
+					enchants[1] = Weapon.Enchantment.randomUncommon(existing);
+					enchants[2] = Weapon.Enchantment.random(existing, enchants[0].getClass(), enchants[1].getClass());
+				}
 				
 				GameScene.show(new WndOptions(Messages.titleCase(ScrollOfEnchantment.this.name()),
 						Messages.get(ScrollOfEnchantment.class, "weapon") +
@@ -98,9 +105,15 @@ public class ScrollOfEnchantment extends ExoticScroll {
 				final Armor.Glyph glyphs[] = new Armor.Glyph[3];
 				
 				Class<? extends Armor.Glyph> existing = ((Armor) item).glyph != null ? ((Armor) item).glyph.getClass() : null;
-				glyphs[0] = Armor.Glyph.randomCommon( existing );
-				glyphs[1] = Armor.Glyph.randomUncommon( existing );
-				glyphs[2] = Armor.Glyph.random( existing, glyphs[0].getClass(), glyphs[1].getClass());
+				if(Challenges.CURSE_ENCHANT.enabled()){
+					glyphs[0] = Armor.Glyph.randomCurse(existing);
+					glyphs[1] = Armor.Glyph.randomCurse(existing);
+					glyphs[2] = Armor.Glyph.randomCurse(existing, glyphs[0].getClass(), glyphs[1].getClass());
+				} else {
+					glyphs[0] = Armor.Glyph.randomCommon(existing);
+					glyphs[1] = Armor.Glyph.randomUncommon(existing, glyphs[0].getClass());
+					glyphs[2] = Armor.Glyph.random(existing, glyphs[0].getClass(), glyphs[1].getClass());
+				}
 				
 				GameScene.show(new WndOptions(Messages.titleCase(ScrollOfEnchantment.this.name()),
 						Messages.get(ScrollOfEnchantment.class, "armor") +

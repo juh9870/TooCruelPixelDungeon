@@ -274,7 +274,7 @@ public class RingOfWealth extends Ring {
 				result.level(minLevel);
 			}
 		}
-		result.cursed = false;
+		result.cursed = Challenges.CURSED.enabled();
 		result.cursedKnown = true;
 		if (result.level() >= 2) {
 			latestDropTier = 4;

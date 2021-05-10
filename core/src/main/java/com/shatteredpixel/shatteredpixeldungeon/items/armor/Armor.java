@@ -567,6 +567,7 @@ public class Armor extends EquipableItem {
 	}
 
 	public Armor inscribe( Glyph glyph ) {
+		if (Challenges.CURSE_ENCHANT.enabled() && (glyph == null || !glyph.curse())) glyph = Glyph.randomCurse();
 		if (glyph == null || !glyph.curse()) curseInfusionBonus = false;
 		this.glyph = glyph;
 		updateQuickslot();

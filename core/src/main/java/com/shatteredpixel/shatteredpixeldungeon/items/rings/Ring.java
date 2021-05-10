@@ -45,7 +45,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Ring extends KindofMisc {
-	
+
 	protected Buff buff;
 
 	private static final HashMap<String, Integer> gems = new HashMap<String, Integer>() {
@@ -64,19 +64,19 @@ public class Ring extends KindofMisc {
 			put("diamond",ItemSpriteSheet.RING_DIAMOND);
 		}
 	};
-	
+
 	private static ItemStatusHandler<Ring> handler;
-	
+
 	private String gem;
-	
+
 	//rings cannot be 'used' like other equipment, so they ID purely based on exp
 	private float levelsToID = 1;
-	
+
 	@SuppressWarnings("unchecked")
 	public static void initGems() {
 		handler = new ItemStatusHandler<>( (Class<? extends Ring>[])Generator.Category.RING.classes, gems );
 	}
-	
+
 	public static void save( Bundle bundle ) {
 		handler.save( bundle );
 	}
@@ -84,12 +84,12 @@ public class Ring extends KindofMisc {
 	public static void saveSelectively( Bundle bundle, ArrayList<Item> items ) {
 		handler.saveSelectively( bundle, items );
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static void restore( Bundle bundle ) {
 		handler = new ItemStatusHandler<>( (Class<? extends Ring>[])Generator.Category.RING.classes, gems, bundle );
 	}
-	
+
 	public Ring() {
 		super();
 		reset();
@@ -103,7 +103,7 @@ public class Ring extends KindofMisc {
 		if (!isKnown()) image = ItemSpriteSheet.RING_HOLDER;
 		anonymous = true;
 	}
-	
+
 	public void reset() {
 		super.reset();
 		levelsToID = 1;
@@ -112,7 +112,7 @@ public class Ring extends KindofMisc {
 			gem = handler.label(this);
 		}
 	}
-	
+
 	public void activate( Char ch ) {
 		buff = buff();
 		buff.attachTo( ch );
@@ -133,11 +133,11 @@ public class Ring extends KindofMisc {
 
 		}
 	}
-	
+
 	public boolean isKnown() {
 		return anonymous || (handler != null && handler.isKnown( this ));
 	}
-	
+
 	public void setKnown() {
 		if (!anonymous) {
 			if (!isKnown()) {
@@ -149,62 +149,62 @@ public class Ring extends KindofMisc {
 			}
 		}
 	}
-	
+
 	@Override
 	public String name() {
 		return isKnown() ? super.name() : Messages.get(Ring.class, gem);
 	}
-	
+
 	@Override
 	public String info(){
-		
+
 		String desc = isKnown() ? super.desc() : Messages.get(this, "unknown_desc");
-		
+
 		if (cursed && isEquipped( Dungeon.hero )) {
 			desc += "\n\n" + Messages.get(Ring.class, "cursed_worn");
-			
+
 		} else if (cursed && cursedKnown) {
 			desc += "\n\n" + Messages.get(Ring.class, "curse_known");
-			
+
 		} else if (!isIdentified() && cursedKnown){
 			desc += "\n\n" + Messages.get(Ring.class, "not_cursed");
-			
+
 		}
-		
+
 		if (isKnown()) {
 			desc += "\n\n" + statsInfo();
 		}
-		
+
 		return desc;
 	}
-	
+
 	protected String statsInfo(){
 		return "";
 	}
-	
+
 	@Override
 	public Item upgrade() {
 		super.upgrade();
-		
+
 		if (Random.Int(3) == 0) {
 			cursed = false;
 		}
-		
+
 		return this;
 	}
-	
+
 	@Override
 	public boolean isIdentified() {
 		return super.isIdentified() && isKnown();
 	}
-	
+
 	@Override
 	public Item identify() {
 		setKnown();
 		levelsToID = 0;
 		return super.identify();
 	}
-	
+
 	@Override
 	public Item random() {
 		//+0: 66.67% (2/3)
@@ -218,27 +218,27 @@ public class Ring extends KindofMisc {
 			}
 		}
 		level(n);
-		
+
 		//30% chance to be cursed
-		if (Random.Float() < 0.3f|| Challenges.CURSED.enabled()) {
+		if (Random.Float() < 0.3f || Challenges.CURSED.enabled()) {
 			cursed = true;
 		}
-		
+
 		return this;
 	}
-	
+
 	public static HashSet<Class<? extends Ring>> getKnown() {
 		return handler.known();
 	}
-	
+
 	public static HashSet<Class<? extends Ring>> getUnknown() {
 		return handler.unknown();
 	}
-	
+
 	public static boolean allKnown() {
 		return handler.known().size() == Generator.Category.RING.classes.length;
 	}
-	
+
 	@Override
 	public int value() {
 		int price = 75;
@@ -257,7 +257,7 @@ public class Ring extends KindofMisc {
 		}
 		return price;
 	}
-	
+
 	protected RingBuff buff() {
 		return null;
 	}
@@ -275,7 +275,7 @@ public class Ring extends KindofMisc {
 		super.restoreFromBundle( bundle );
 		levelsToID = bundle.getFloat( LEVELS_TO_ID );
 	}
-	
+
 	public void onHeroGainExp( float levelPercent, Hero hero ){
 		if (isIdentified() || !isEquipped(hero)) return;
 		levelPercent *= Talent.itemIDSpeedFactor(hero, this);
@@ -312,7 +312,7 @@ public class Ring extends KindofMisc {
 		}
 		return bonus;
 	}
-	
+
 	public int soloBonus(){
 		if (cursed){
 			return Math.min( 0, Ring.this.level()-2 );
@@ -330,12 +330,12 @@ public class Ring extends KindofMisc {
 	}
 
 	public class RingBuff extends Buff {
-		
+
 		@Override
 		public boolean act() {
-			
+
 			spend( TICK );
-			
+
 			return true;
 		}
 

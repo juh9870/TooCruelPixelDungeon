@@ -140,6 +140,7 @@ public enum Challenges {
     },
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
+    CURSE_ENCHANT(43, 2, 2f, CURSED),
 
 
     //T3
@@ -169,7 +170,7 @@ public enum Challenges {
         }
     },
 
-    //Last id 42
+    //Last id 43
     ;
     private static final Challenges[] mappings;
 
