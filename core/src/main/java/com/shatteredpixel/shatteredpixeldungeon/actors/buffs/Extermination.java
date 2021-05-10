@@ -2,7 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 
-public class Extermanation extends Buff {
+public class Extermination extends Buff {
 	{
 		type=buffType.NEUTRAL;
 	}

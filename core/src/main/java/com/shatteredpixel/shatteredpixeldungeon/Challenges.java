@@ -23,7 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
@@ -108,13 +108,20 @@ public enum Challenges {
     REBIRTH(30, 2, 4f),
     EXTREME_DANGER(32, 2, 2f, EXTREME_CAUTION),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
+    LEGION(28, 2, 4f),
 
     //T3
-    LEGION(28, 3, 7f),
-    ASCENSION(31, 3, 7f, REBIRTH),
-    DUNGEON_OF_CHAMPIONS(34, 3, 4f, ELITE_CHAMPIONS),
+    ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
+    DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
     RACING_THE_DEATH(35, 3, 7f),
+    MANIFESTING_MYRIADS(36,3,7f,LEGION,HORDE){
+        @Override
+        protected float _nMobsMult() {
+            return 1.5f;
+        }
+    },
 
+    //Last id 36
     ;
     private static final Challenges[] mappings;
 
@@ -190,7 +197,7 @@ public enum Challenges {
 
         Ascension buff;
         if ((buff = m.buff(Ascension.class)) != null) {
-            if (buff.level >= 2 && m.buff(Extermanation.class) != null) return 0;
+            if (buff.level >= 2 && m.buff(Extermination.class) != null) return 0;
         }
         if (m.buff(Ascension.ForcedAscension.class) != null) return 1;
 
@@ -263,7 +270,7 @@ public enum Challenges {
         int left = 0;
         if (EXTERMINATION.enabled())
             for (Mob m : Dungeon.level.mobs) {
-                if (m.buff(Extermanation.class) != null) {
+                if (m.buff(Extermination.class) != null) {
                     left++;
                     Buff.affect(m, Revealing.class, 1f);
                 }

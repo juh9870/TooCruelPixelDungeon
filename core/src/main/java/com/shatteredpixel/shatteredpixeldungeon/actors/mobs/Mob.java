@@ -35,17 +35,19 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Surprise;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Wound;
@@ -84,44 +86,90 @@ import java.util.HashSet;
 
 public abstract class Mob extends Char {
 
-    {
-        actPriority = MOB_PRIO;
-
-        alignment = Alignment.ENEMY;
-    }
-
-    private static final String TXT_DIED = "You hear something died in the distance";
-
     protected static final String TXT_NOTICE1 = "?!";
     protected static final String TXT_RAGE = "#$%^";
     protected static final String TXT_EXP = "%+dEXP";
-
+    protected static final float TIME_TO_WAKE_UP = 1f;
+    private static final String TXT_DIED = "You hear something died in the distance";
+    private static final String STATE = "state";
+    private static final String SEEN = "seen";
+    private static final String TARGET = "target";
+    private static final String MAX_LVL = "max_lvl";
+    private static final ArrayList<Mob> heldAllies = new ArrayList<>();
     public AiState SLEEPING = new Sleeping();
     public AiState HUNTING = new Hunting();
     public AiState WANDERING = new Wandering();
     public AiState FLEEING = new Fleeing();
     public AiState PASSIVE = new Passive();
     public AiState state = SLEEPING;
-
     public Class<? extends CharSprite> spriteClass;
-
-    protected int target = -1;
-
-    protected int defenseSkill = 0;
-
     public int EXP = 1;
     public int maxLvl = Hero.MAX_LEVEL;
-
+    protected int target = -1;
+    protected int defenseSkill = 0;
     protected Char enemy;
     protected boolean enemySeen;
     protected boolean alerted = false;
+    //FIXME this is sort of a band-aid correction for allies needing more intelligent behaviour
+    protected boolean intelligentAlly = false;
+    protected boolean hitWithRanged = false;
+    protected Object loot = null;
+    protected float lootChance = 0;
 
-    protected static final float TIME_TO_WAKE_UP = 1f;
+    {
+        actPriority = MOB_PRIO;
 
-    private static final String STATE = "state";
-    private static final String SEEN = "seen";
-    private static final String TARGET = "target";
-    private static final String MAX_LVL = "max_lvl";
+        alignment = Alignment.ENEMY;
+    }
+
+    public static void holdAllies(Level level) {
+        heldAllies.clear();
+        for (Mob mob : level.mobs.toArray(new Mob[0])) {
+            //preserve the ghost no matter where they are
+            if (mob instanceof DriedRose.GhostHero) {
+                ((DriedRose.GhostHero) mob).clearDefensingPos();
+                level.mobs.remove(mob);
+                heldAllies.add(mob);
+
+                //preserve intelligent allies if they are near the hero
+            } else if (mob.alignment == Alignment.ALLY
+                    && mob.intelligentAlly
+                    && Dungeon.level.distance(Dungeon.hero.pos, mob.pos) <= 3) {
+                level.mobs.remove(mob);
+                heldAllies.add(mob);
+            }
+        }
+    }
+
+    public static void restoreAllies(Level level, int pos) {
+        if (!heldAllies.isEmpty()) {
+
+            ArrayList<Integer> candidatePositions = new ArrayList<>();
+            for (int i : PathFinder.NEIGHBOURS8) {
+                if (!Dungeon.level.solid[i + pos] && level.findMob(i + pos) == null) {
+                    candidatePositions.add(i + pos);
+                }
+            }
+            Collections.shuffle(candidatePositions);
+
+            for (Mob ally : heldAllies) {
+                level.mobs.add(ally);
+                ally.state = ally.WANDERING;
+
+                if (!candidatePositions.isEmpty()) {
+                    ally.pos = candidatePositions.remove(0);
+                } else {
+                    ally.pos = pos;
+                }
+
+            }
+        }
+        heldAllies.clear();
+    }
+
+    public static void clearHeldAllies() {
+        heldAllies.clear();
+    }
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -204,9 +252,6 @@ public abstract class Mob extends Char {
 
         return state.act(enemyInFOV, justAlerted);
     }
-
-    //FIXME this is sort of a band-aid correction for allies needing more intelligent behaviour
-    protected boolean intelligentAlly = false;
 
     protected Char chooseEnemy() {
 
@@ -357,7 +402,6 @@ public abstract class Mob extends Char {
             }
         }
     }
-
 
     protected boolean canAttack(Char enemy) {
         if (Dungeon.level.adjacent(pos, enemy.pos)) {
@@ -563,8 +607,6 @@ public abstract class Mob extends Char {
         }
     }
 
-    protected boolean hitWithRanged = false;
-
     @Override
     public int defenseProc(Char enemy, int damage) {
 
@@ -649,7 +691,6 @@ public abstract class Mob extends Char {
         super.damage(dmg, src);
     }
 
-
     @Override
     public void destroy() {
 
@@ -664,9 +705,12 @@ public abstract class Mob extends Char {
                 Badges.validateMonstersSlain();
                 Statistics.qualifiedForNoKilling = false;
 
-                int exp = Dungeon.hero.lvl <= maxLvl ? EXP : 0;
+                int exp = Dungeon.hero.lvl <= maxLvl && buff(NoReward.class) == null ? EXP : 0;
                 if (exp > 0) {
                     Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "exp", exp));
+                    if(Challenges.MANIFESTING_MYRIADS.enabled()){
+                        Dungeon.hero.buff(Legion.class).consumeDeath();
+                    }
                 }
                 Dungeon.hero.earnExp(exp, getClass());
             }
@@ -687,13 +731,12 @@ public abstract class Mob extends Char {
                 properties().contains(Property.MINIBOSS) ||
                 properties().contains(Property.SUMMONED)) return false;
         if (buff(Ascension.BannedAscension.class) != null) return false;
-        if (buff(ChampionEnemy.Restoring.class) != null) return false;
-        return true;
+        return buff(ChampionEnemy.Restoring.class) == null;
     }
 
     @Override
     public void die(Object cause) {
-        if (canAscend()) {
+        if (cause != Chasm.class && canAscend()) {
             Ascension buff = Buff.affect(this, Ascension.class);
             if (buff.level < Challenges.maxAscension(this) && Random.Float() < Challenges.ascendingChance(this)) {
 
@@ -744,7 +787,7 @@ public abstract class Mob extends Char {
                 Buff.affect(Dungeon.hero, Talent.LethalMomentumTracker.class, 1f);
             }
         }
-        if (buff(Extermanation.class) != null) {
+        if (buff(Extermination.class) != null) {
             if (Challenges.checkExterminators() <= 1) {
                 GameScene.levelCleared();
             }
@@ -773,7 +816,7 @@ public abstract class Mob extends Char {
     }
 
     public void rollToDropLoot() {
-        if (Dungeon.hero.lvl > maxLvl + 2) return;
+        if (Dungeon.hero.lvl > maxLvl + 2 || buff(NoReward.class) != null) return;
 
         float lootChance = this.lootChance;
         lootChance *= RingOfWealth.dropChanceMultiplier(Dungeon.hero);
@@ -815,9 +858,6 @@ public abstract class Mob extends Char {
         }
 
     }
-
-    protected Object loot = null;
-    protected float lootChance = 0;
 
     @SuppressWarnings("unchecked")
     protected Item createLoot() {
@@ -899,11 +939,11 @@ public abstract class Mob extends Char {
         public static final String TAG = "SLEEPING";
 
         @Override
-        public boolean act( boolean enemyInFOV, boolean justAlerted ) {
+        public boolean act(boolean enemyInFOV, boolean justAlerted) {
 
             //debuffs cause mobs to wake as well
-            for (Buff b : buffs()){
-                if (b.type == Buff.buffType.NEGATIVE){
+            for (Buff b : buffs()) {
+                if (b.type == Buff.buffType.NEGATIVE) {
                     awaken(enemyInFOV);
                     return true;
                 }
@@ -912,13 +952,13 @@ public abstract class Mob extends Char {
             if (enemyInFOV) {
 
                 float enemyStealth = enemy.stealth();
-                if (enemy instanceof Hero && ((Hero) enemy).hasTalent(Talent.SILENT_STEPS)){
+                if (enemy instanceof Hero && ((Hero) enemy).hasTalent(Talent.SILENT_STEPS)) {
                     if (Dungeon.level.distance(pos, enemy.pos) >= 4 - ((Hero) enemy).pointsInTalent(Talent.SILENT_STEPS)) {
                         enemyStealth = Float.POSITIVE_INFINITY;
                     }
                 }
 
-                if (Random.Float( distance( enemy ) + enemyStealth ) < 1) {
+                if (Random.Float(distance(enemy) + enemyStealth) < 1) {
                     enemySeen = true;
 
                     notice();
@@ -942,12 +982,12 @@ public abstract class Mob extends Char {
 
             }
             enemySeen = false;
-            spend( TICK );
+            spend(TICK);
 
             return true;
         }
 
-        protected void awaken( boolean enemyInFOV ){
+        protected void awaken(boolean enemyInFOV) {
             if (enemyInFOV) {
                 enemySeen = true;
                 notice();
@@ -956,7 +996,7 @@ public abstract class Mob extends Char {
             } else {
                 notice();
                 state = WANDERING;
-                target = Dungeon.level.randomDestination( Mob.this );
+                target = Dungeon.level.randomDestination(Mob.this);
             }
 
             if (alignment == Alignment.ENEMY && Challenges.SWARM_INTELLIGENCE.enabled()) {
@@ -1138,57 +1178,5 @@ public abstract class Mob extends Char {
             spend(TICK);
             return true;
         }
-    }
-
-
-    private static ArrayList<Mob> heldAllies = new ArrayList<>();
-
-    public static void holdAllies(Level level) {
-        heldAllies.clear();
-        for (Mob mob : level.mobs.toArray(new Mob[0])) {
-            //preserve the ghost no matter where they are
-            if (mob instanceof DriedRose.GhostHero) {
-                ((DriedRose.GhostHero) mob).clearDefensingPos();
-                level.mobs.remove(mob);
-                heldAllies.add(mob);
-
-                //preserve intelligent allies if they are near the hero
-            } else if (mob.alignment == Alignment.ALLY
-                    && mob.intelligentAlly
-                    && Dungeon.level.distance(Dungeon.hero.pos, mob.pos) <= 3) {
-                level.mobs.remove(mob);
-                heldAllies.add(mob);
-            }
-        }
-    }
-
-    public static void restoreAllies(Level level, int pos) {
-        if (!heldAllies.isEmpty()) {
-
-            ArrayList<Integer> candidatePositions = new ArrayList<>();
-            for (int i : PathFinder.NEIGHBOURS8) {
-                if (!Dungeon.level.solid[i + pos] && level.findMob(i + pos) == null) {
-                    candidatePositions.add(i + pos);
-                }
-            }
-            Collections.shuffle(candidatePositions);
-
-            for (Mob ally : heldAllies) {
-                level.mobs.add(ally);
-                ally.state = ally.WANDERING;
-
-                if (!candidatePositions.isEmpty()) {
-                    ally.pos = candidatePositions.remove(0);
-                } else {
-                    ally.pos = pos;
-                }
-
-            }
-        }
-        heldAllies.clear();
-    }
-
-    public static void clearHeldAllies() {
-        heldAllies.clear();
     }
 }

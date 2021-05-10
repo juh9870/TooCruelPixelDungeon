@@ -26,7 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermanation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
@@ -233,7 +233,7 @@ public abstract class RegularLevel extends Level {
 			if (tries >= 0) {
 				mobsToSpawn--;
 				if (Challenges.EXTERMINATION.enabled()){
-					Buff.affect(mob, Extermanation.class);
+					Buff.affect(mob, Extermination.class);
 				}
 				mobs.add(mob);
 
@@ -252,7 +252,7 @@ public abstract class RegularLevel extends Level {
 						mobsToSpawn--;
 						
 						if (Challenges.EXTERMINATION.enabled()){
-							Buff.affect(mob, Extermanation.class);
+							Buff.affect(mob, Extermination.class);
 						}
 						
 						mobs.add(mob);
