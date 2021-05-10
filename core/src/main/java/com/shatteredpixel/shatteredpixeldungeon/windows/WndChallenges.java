@@ -163,6 +163,8 @@ public class WndChallenges extends Window {
                 if (editable) {
                     if (checked) {
                         pos = delimiter(content, pos, Messages.get(this, "enabled"), 9, TITLE_COLOR);
+                    } else {
+                        pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
                     }
                 } else {
                     pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
