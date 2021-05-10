@@ -38,118 +38,116 @@ import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
 public class ElixirOfAquaticRejuvenation extends Elixir {
-	
-	{
-		image = ItemSpriteSheet.ELIXIR_AQUA;
-	}
-	
-	@Override
-	public void apply(Hero hero) {
-		if (Challenges.PHARMACOPHOBIA.enabled()){
-			PotionOfHealing.pharmacophobiaProc(hero);
-		} else {
-			Buff.affect(hero, AquaHealing.class).set(Math.round(hero.HT * 1.5f));
-			Talent.onHealingPotionUsed( hero );
-		}
-	}
-	
-	@Override
-	public int value() {
-		//prices of ingredients
-		return quantity * (30 + 50);
-	}
-	
-	public static class AquaHealing extends Buff {
-		
-		{
-			type = buffType.POSITIVE;
-			announced = true;
-		}
-		
-		private int left;
-		
-		public void set( int amount ){
-			if (amount > left) left = amount;
-		}
-		
-		@Override
-		public boolean act() {
-			
-			if (Dungeon.level.water[target.pos] && target.HP < target.HT){
-				float healAmt = GameMath.gate( 1, target.HT/50f, left );
-				healAmt = Math.min(healAmt, target.HT - target.HP);
-				if (Random.Float() < (healAmt % 1)){
-					healAmt = (float)Math.ceil(healAmt);
-				} else {
-					healAmt = (float)Math.floor(healAmt);
-				}
-				target.HP += healAmt;
-				left -= healAmt;
-				target.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
-			}
-			
-			if (left <= 0){
-				detach();
-			} else {
-				spend(TICK);
-			}
-			return true;
-		}
-		
-		@Override
-		public int icon() {
-			return BuffIndicator.HEALING;
-		}
 
-		@Override
-		public void tintIcon(Image icon) {
-			icon.hardlight(0, 0.75f, 0.75f);
-		}
+    {
+        image = ItemSpriteSheet.ELIXIR_AQUA;
+    }
 
-		@Override
-		public float iconFadePercent() {
-			float max = Math.round(target.HT * 1.5f);
-			return Math.max(0, (max - left) / max);
-		}
-		
-		@Override
-		public String toString() {
-			return Messages.get(this, "name");
-		}
-		
-		@Override
-		public String desc() {
-			return Messages.get(this, "desc", left);
-		}
-		
-		private static final String LEFT = "left";
-		
-		@Override
-		public void storeInBundle( Bundle bundle ) {
-			super.storeInBundle( bundle );
-			bundle.put( LEFT, left );
-		}
-		
-		@Override
-		public void restoreFromBundle( Bundle bundle ) {
-			super.restoreFromBundle( bundle );
-			left = bundle.getInt( LEFT );
-			
-		}
-	}
-	
-	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
-		
-		{
-			inputs =  new Class[]{PotionOfHealing.class, GooBlob.class};
-			inQuantity = new int[]{1, 1};
-			
-			cost = 6;
-			
-			output = ElixirOfAquaticRejuvenation.class;
-			outQuantity = 1;
-		}
-		
-	}
-	
+    @Override
+    public void apply(Hero hero) {
+        if (Challenges.PHARMACOPHOBIA.enabled()) {
+            PotionOfHealing.pharmacophobiaProc(hero);
+        }
+        Buff.affect(hero, AquaHealing.class).set(Math.round(hero.HT * 1.5f));
+        Talent.onHealingPotionUsed(hero);
+    }
+
+    @Override
+    public int value() {
+        //prices of ingredients
+        return quantity * (30 + 50);
+    }
+
+    public static class AquaHealing extends Buff {
+
+        private static final String LEFT = "left";
+        private int left;
+
+        {
+            type = buffType.POSITIVE;
+            announced = true;
+        }
+
+        public void set(int amount) {
+            if (amount > left) left = amount;
+        }
+
+        @Override
+        public boolean act() {
+
+            if (Dungeon.level.water[target.pos] && target.HP < target.HT) {
+                float healAmt = GameMath.gate(1, target.HT / 50f, left);
+                healAmt = Math.min(healAmt, target.HT - target.HP);
+                if (Random.Float() < (healAmt % 1)) {
+                    healAmt = (float) Math.ceil(healAmt);
+                } else {
+                    healAmt = (float) Math.floor(healAmt);
+                }
+                target.HP += healAmt;
+                left -= healAmt;
+                target.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1);
+            }
+
+            if (left <= 0) {
+                detach();
+            } else {
+                spend(TICK);
+            }
+            return true;
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.HEALING;
+        }
+
+        @Override
+        public void tintIcon(Image icon) {
+            icon.hardlight(0, 0.75f, 0.75f);
+        }
+
+        @Override
+        public float iconFadePercent() {
+            float max = Math.round(target.HT * 1.5f);
+            return Math.max(0, (max - left) / max);
+        }
+
+        @Override
+        public String toString() {
+            return Messages.get(this, "name");
+        }
+
+        @Override
+        public String desc() {
+            return Messages.get(this, "desc", left);
+        }
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(LEFT, left);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            left = bundle.getInt(LEFT);
+
+        }
+    }
+
+    public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
+
+        {
+            inputs = new Class[]{PotionOfHealing.class, GooBlob.class};
+            inQuantity = new int[]{1, 1};
+
+            cost = 6;
+
+            output = ElixirOfAquaticRejuvenation.class;
+            outQuantity = 1;
+        }
+
+    }
+
 }

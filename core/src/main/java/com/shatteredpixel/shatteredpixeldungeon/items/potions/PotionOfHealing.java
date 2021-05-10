@@ -43,51 +43,52 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
 public class PotionOfHealing extends Potion {
 
-	{
-		icon = ItemSpriteSheet.Icons.POTION_HEALING;
+    {
+        icon = ItemSpriteSheet.Icons.POTION_HEALING;
 
-		bones = true;
-	}
-	
-	@Override
-	public void apply( Hero hero ) {
-		identify();
-		cure( hero );
-		heal( hero );
-		Talent.onHealingPotionUsed( hero );
-	}
+        bones = true;
+    }
 
-	public static void heal( Char ch ){
-		if (ch == Dungeon.hero && Challenges.PHARMACOPHOBIA.enabled()){
-			pharmacophobiaProc(Dungeon.hero);
-		} else {
-			//starts out healing 30 hp, equalizes with hero health total at level 11
-			Buff.affect(ch, Healing.class).setHeal((int) (0.8f * ch.HT + 14), 0.25f, 0);
-			if (ch == Dungeon.hero){
-				GLog.p( Messages.get(PotionOfHealing.class, "heal") );
-			}
-		}
-	}
+    public static void heal(Char ch) {
 
-	public static void pharmacophobiaProc( Hero hero ){
-		// harms the hero for ~40% of their max HP in poison
-		Buff.affect( hero, Poison.class).set(4 + hero.lvl/2);
-	}
-	
-	public static void cure( Char ch ) {
-		Buff.detach( ch, Poison.class );
-		Buff.detach( ch, Cripple.class );
-		Buff.detach( ch, Weakness.class );
-		Buff.detach( ch, Vulnerable.class );
-		Buff.detach( ch, Bleeding.class );
-		Buff.detach( ch, Blindness.class );
-		Buff.detach( ch, Drowsy.class );
-		Buff.detach( ch, Slow.class );
-		Buff.detach( ch, Vertigo.class);
-	}
+        if (ch == Dungeon.hero && Challenges.PHARMACOPHOBIA.enabled()) {
+            pharmacophobiaProc(Dungeon.hero);
+        }
+        //starts out healing 30 hp, equalizes with hero health total at level 11
+        Buff.affect(ch, Healing.class).setHeal((int) (0.8f * ch.HT + 14), 0.25f, 0);
+        if (ch == Dungeon.hero) {
+            GLog.p(Messages.get(PotionOfHealing.class, "heal"));
+        }
 
-	@Override
-	public int value() {
-		return isKnown() ? 30 * quantity : super.value();
-	}
+    }
+
+    public static void pharmacophobiaProc(Hero hero) {
+        // harms the hero for ~40% of their max HP in poison
+        Buff.affect(hero, Poison.class).set(4 + hero.lvl / 2);
+    }
+
+    public static void cure(Char ch) {
+        Buff.detach(ch, Poison.class);
+        Buff.detach(ch, Cripple.class);
+        Buff.detach(ch, Weakness.class);
+        Buff.detach(ch, Vulnerable.class);
+        Buff.detach(ch, Bleeding.class);
+        Buff.detach(ch, Blindness.class);
+        Buff.detach(ch, Drowsy.class);
+        Buff.detach(ch, Slow.class);
+        Buff.detach(ch, Vertigo.class);
+    }
+
+    @Override
+    public void apply(Hero hero) {
+        identify();
+        cure(hero);
+        heal(hero);
+        Talent.onHealingPotionUsed(hero);
+    }
+
+    @Override
+    public int value() {
+        return isKnown() ? 30 * quantity : super.value();
+    }
 }

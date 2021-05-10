@@ -102,7 +102,7 @@ public class Legion extends Buff {
 
     @Override
     public int icon() {
-        return BuffIndicator.LOCKED_FLOOR;
+        return BuffIndicator.WEAPON;
     }
 
     @Override
