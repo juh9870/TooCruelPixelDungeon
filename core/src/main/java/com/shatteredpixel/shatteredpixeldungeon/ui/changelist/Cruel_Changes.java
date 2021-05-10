@@ -32,13 +32,16 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AlbinoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlackjackkeeperSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Image;
+import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
 
@@ -52,7 +55,7 @@ public class Cruel_Changes {
 	}
 	
 	public static void add_v0_4_0_Changes(ArrayList<ChangeInfo> changeInfos) {
-		ChangeInfo changes = new ChangeInfo("v0.4.1", true, "");
+		ChangeInfo changes = new ChangeInfo("v0.4.2", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 
@@ -77,7 +80,21 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 
+		Image _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
+		_mapicon.scale=new PointF(0.5f,0.5f);
+		changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "small_levels"), Messages.get(Challenges.class, "small_levels_desc")));
+		_mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
+		_mapicon.scale=new PointF(1.2f,1.2f);
+		changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "bigger_levels"), Messages.get(Challenges.class, "bigger_levels_desc")));
+		_mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
+		_mapicon.scale=new PointF(1.5f,1.5f);
+		_mapicon.color(0xFFFF00);
+		changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "huge_levels"), Messages.get(Challenges.class, "huge_levels_desc")));
 
+		MobSprite sp = new SwarmSprite();
+//		sp.add(CharSprite.State.INVISIBLE);
+		changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "manifesting_myriads"), Messages.get(Challenges.class, "manifesting_myriads_desc")));
+		sp.aura(Cruel_Changes.class,0xFFFF00,1.0f,true);
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
@@ -249,7 +266,7 @@ public class Cruel_Changes {
 			}
 		}, Messages.get(Challenges.class, "ascension"), Messages.get(Challenges.class, "ascension_desc")));
 		
-		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "invasion"), Messages.get(Challenges.class, "invasion_desc")));
+		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "legion"), Messages.get(Challenges.class, "legion_desc")));
 		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.POTION_AMBER), Messages.get(Challenges.class, "plague"), Messages.get(Challenges.class, "plague_desc")));
 		changes.addButton(new ChangeButton(Icons.CHALLENGE_OFF.get(), Messages.get(Challenges.class, "rook"), Messages.get(Challenges.class, "rook_desc")));
 		
