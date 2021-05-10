@@ -82,7 +82,7 @@ public class Cruel_Changes {
 		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
 				"_-_ Reworked challenges system\n" +
 						"_-_ Some challenges no longer requires their previous tiers to be enabled" +
-						"_-_ Added X new challenges\n" +
+						"_-_ Added 16 new challenges\n" +
 						"_-_ Legion no longer have element of randomness to wave delay\n" +
 						"_-_ Pharmacophobia potions now heals in addition to poisoning too\n" +
 						"_-_ Legion is now T2\n" +
@@ -140,8 +140,11 @@ public class Cruel_Changes {
 		Image clock2 = new Image(Assets.Interfaces.BUFFS_LARGE);
 		clock2.frame(film.get(BuffIndicator.COUNTDOWN1));
 		clock2.hardlight(0x00ffff);
+		Image eye = new Image(Assets.Interfaces.BUFFS_LARGE);
+		eye.frame(film.get(BuffIndicator.RAGE));
 		changes.addButton(new ChangeButton(clock1, Messages.get(Challenges.class, "marathon"), Messages.get(Challenges.class, "marathon_desc")));
 		changes.addButton(new ChangeButton(clock2, Messages.get(Challenges.class, "on_a_beat"), Messages.get(Challenges.class, "on_a_beat_desc")));
+		changes.addButton(new ChangeButton(eye, Messages.get(Challenges.class, "insomnia"), Messages.get(Challenges.class, "insomnia_desc")));
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
