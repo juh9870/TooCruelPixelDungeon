@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
@@ -1219,7 +1220,12 @@ public class Hero extends Char {
 	public void damage(int dmg, Object src) {
 		if (buff(TimekeepersHourglass.timeStasis.class) != null)
 			return;
-		
+
+		if(Challenges.ARROWHEAD.enabled()){
+			dmg*=2;
+		}
+
+
 		if (!(src instanceof Hunger || src instanceof Viscosity.DeferedDamage) && damageInterrupt) {
 			interrupt();
 			resting = false;
@@ -1246,6 +1252,13 @@ public class Hero extends Char {
 		if (buff(Talent.WarriorFoodImmunity.class) != null) {
 			if (pointsInTalent(Talent.IRON_STOMACH) == 1) dmg = Math.round(dmg * 0.25f);
 			else if (pointsInTalent(Talent.IRON_STOMACH) == 2) dmg = Math.round(dmg * 0.00f);
+		}
+		if(Challenges.BLOODBAG.enabled()){
+			if(!(src instanceof Bleeding)){
+				dmg/=2;
+				Buff.affect(this,Bleeding.class).add(Math.max(dmg,1));
+				return;
+			}
 		}
 		
 		int preHP = HP + shielding();

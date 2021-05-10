@@ -95,10 +95,14 @@ public enum Challenges {
             return 2;
         }
     },
+    EXTREME_DANGER(32,16.5f, 1, 2f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     ROOK(18, 1, 1.5f),
     CHAMPION_ENEMIES(19, 1, 2f),
     NO_PERKS(20, 1, 3f),
+    BLOODBAG(41, 2, 2f),
+
+
 
     //T2
     FAMINE(21, 2, 1.5f, ON_DIET) {
@@ -117,7 +121,6 @@ public enum Challenges {
     INVASION(27, 2, 2f),
     EVOLUTION(29, 2, 5f, MUTAGEN),
     REBIRTH(30, 2, 4f),
-    EXTREME_DANGER(32, 2, 2f, EXTREME_CAUTION),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
     BIGGER_LEVELS(37, 2, 3, BIG_LEVELS) {
@@ -136,6 +139,9 @@ public enum Challenges {
             return 2;
         }
     },
+    ARROWHEAD(40, 2, 2.5f),
+
+
 
     //T3
     ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
@@ -164,7 +170,7 @@ public enum Challenges {
         }
     },
 
-    //Last id 39
+    //Last id 41
     ;
     private static final Challenges[] mappings;
 

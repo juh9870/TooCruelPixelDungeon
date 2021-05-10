@@ -38,16 +38,24 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.watabou.gltextures.SmartTexture;
+import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
 
 public class Cruel_Changes {
+	private static TextureFilm film;
 	
 	public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+		SmartTexture icons = TextureCache.get(Assets.Interfaces.BUFFS_LARGE);
+		film = new TextureFilm(icons, 16, 16);
+
 		add_v0_4_0_Changes(changeInfos);
 		add_v0_3_0_Changes(changeInfos);
 		add_v0_2_0_Changes(changeInfos);
@@ -73,7 +81,10 @@ public class Cruel_Changes {
 						"_-_ Some challenges no longer requires their previous tiers to be enabled" +
 						"_-_ Added X new challenges\n" +
 						"_-_ Legion no longer have element of randomness to wave delay\n" +
-						"_-_ Pharmacophobia potions now heals in addition to poisoning too"
+						"_-_ Pharmacophobia potions now heals in addition to poisoning too\n" +
+						"_-_ Legion is now T2\n" +
+						"_-_ Plague is now T2\n" +
+						"_-_ Extreme Danger is now T1"
 		));
 
 		changes = new ChangeInfo("Challenges", false, null);
@@ -95,6 +106,13 @@ public class Cruel_Changes {
 //		sp.add(CharSprite.State.INVISIBLE);
 		changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "manifesting_myriads"), Messages.get(Challenges.class, "manifesting_myriads_desc")));
 		sp.aura(Cruel_Changes.class,0xFFFF00,1.0f,true);
+
+		Image blood = new Image(Assets.Interfaces.BUFFS_LARGE);
+		blood.frame(film.get(BuffIndicator.BLEEDING));
+		Image vulnerable = new Image(Assets.Interfaces.BUFFS_LARGE);
+		blood.frame(film.get(BuffIndicator.VULNERABLE));
+		changes.addButton(new ChangeButton(blood, Messages.get(Challenges.class, "bloodbag"), Messages.get(Challenges.class, "bloodbag_desc")));
+		changes.addButton(new ChangeButton(vulnerable, Messages.get(Challenges.class, "arrowhead"), Messages.get(Challenges.class, "arrowhead_desc")));
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
@@ -303,7 +321,9 @@ public class Cruel_Changes {
 		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.TORCH), Messages.get(Challenges.class, "blindness"), Messages.get(Challenges.class, "blindness_desc")));
 		changes.addButton(new ChangeButton(Icons.CHALLENGE_HELL.get(), Messages.get(Challenges.class, "lobotomy"), Messages.get(Challenges.class, "lobotomy_desc")));
 		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "invasion"), Messages.get(Challenges.class, "invasion_desc")));
-		changes.addButton(new ChangeButton(new Image(Assets.Interfaces.BUFFS_LARGE, 224, 32, 16, 16), Messages.get(Challenges.class, "racing_the_death"), Messages.get(Challenges.class, "racing_the_death_desc")));
+		Image clock = new Image(Assets.Interfaces.BUFFS_LARGE);
+		clock.frame(film.get(BuffIndicator.COUNTDOWN2));
+		changes.addButton(new ChangeButton(clock, Messages.get(Challenges.class, "racing_the_death"), Messages.get(Challenges.class, "racing_the_death_desc")));
 		changes.addButton(new ChangeButton(new AlbinoSprite(), Messages.get(Challenges.class, "evolution"), Messages.get(Challenges.class, "evolution_desc")));
 		changes.addButton(new ChangeButton(new Ankh().bless(), Messages.get(Challenges.class, "rebirth"), Messages.get(Challenges.class, "rebirth_desc")));
 		changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 112, 96, 16, 16), Messages.get(Challenges.class, "extreme_danger"), Messages.get(Challenges.class, "extreme_danger_desc")));
@@ -338,7 +358,9 @@ public class Cruel_Changes {
 		changes.addButton(new ChangeButton(new Embers(), Messages.get(Challenges.class, "cursed"), Messages.get(Challenges.class, "cursed_desc")));
 		changes.addButton(new ChangeButton(new BlackjackkeeperSprite(), Messages.get(Challenges.class, "blackjack"), Messages.get(Challenges.class, "blackjack_desc")));
 		changes.addButton(new ChangeButton(new SwarmSprite(), Messages.get(Challenges.class, "horde"), Messages.get(Challenges.class, "horde_desc")));
-		changes.addButton(new ChangeButton(new Image(Assets.Interfaces.BUFFS_LARGE, 224, 32, 16, 16), Messages.get(Challenges.class, "countdown"), Messages.get(Challenges.class, "countdown_desc")));
+		Image clock = new Image(Assets.Interfaces.BUFFS_LARGE);
+		clock.frame(film.get(BuffIndicator.COUNTDOWN1));
+		changes.addButton(new ChangeButton(clock, Messages.get(Challenges.class, "countdown"), Messages.get(Challenges.class, "countdown_desc")));
 		changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_OFF), Messages.get(Challenges.class, "analgesia"), Messages.get(Challenges.class, "analgesia_desc")));
 		changes.addButton(new ChangeButton(new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8), Messages.get(Challenges.class, "big_levels"), Messages.get(Challenges.class, "big_levels_desc")));
 		changes.addButton(new ChangeButton(new AlbinoSprite(), Messages.get(Challenges.class, "mutagen"), Messages.get(Challenges.class, "mutagen_desc")));
