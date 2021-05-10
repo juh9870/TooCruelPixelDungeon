@@ -7,35 +7,36 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.watabou.utils.Bundle;
 
 public class Countdown extends FlavourBuff implements Hero.Doom {
+
+    public static final float DESCEND_TIME = 300;
+    public static final float ASCEND_TIME = 150;
 
     {
         type = Buff.buffType.NEUTRAL;
     }
 
-    public static final float DESCEND_TIME = 300;
-    public static final float ASCEND_TIME = 150;
-
-    public static float timeMultiplier(){
+    public static float timeMultiplier() {
         float mult = 1.0f;
-        if(Challenges.BIG_LEVELS.enabled())mult*=2;
-        if(Challenges.BIGGER_LEVELS.enabled())mult*=2;
+        if (Challenges.BIG_LEVELS.enabled()) mult *= 2;
+        if (Challenges.BIGGER_LEVELS.enabled()) mult *= 2;
+        if (Challenges.HUGE_LEVELS.enabled()) mult *= 2;
+        if (Challenges.SMALL_LEVELS.enabled()) mult /= 2;
         return mult;
     }
 
     @Override
     public boolean act() {
-        target.damage((Statistics.deepestFloor/5+1)*3, this);
+        target.damage((Statistics.deepestFloor / 5 + 1) * 3, this);
 //        BuffIndicator.refreshHero();
-        spend( TICK );
+        spend(TICK);
         return true;
     }
 
     @Override
     public int icon() {
-        if (cooldown()>0) {
+        if (cooldown() > 0) {
             return BuffIndicator.COUNTDOWN1;
         } else {
             return BuffIndicator.COUNTDOWN2;
@@ -49,7 +50,7 @@ public class Countdown extends FlavourBuff implements Hero.Doom {
 
     @Override
     public String desc() {
-        if (cooldown()>0) {
+        if (cooldown() > 0) {
             return Messages.get(this, "desc", dispTurns());
         } else {
             return Messages.get(this, "descdeadly");
@@ -63,7 +64,7 @@ public class Countdown extends FlavourBuff implements Hero.Doom {
 
     @Override
     public void onDeath() {
-        Dungeon.fail( getClass() );
-        GLog.n( Messages.get(this, "ondeath") );
+        Dungeon.fail(getClass());
+        GLog.n(Messages.get(this, "ondeath"));
     }
 }

@@ -55,7 +55,7 @@ public class WndChallenges extends Window {
         int tDiff = (int) Math.signum(a.tier - b.tier);
         if (tDiff != 0) return tDiff;
 
-        return (int) Math.signum(a.id - b.id);
+        return (int) Math.signum(a.sortId - b.sortId);
     };
     private final int WIDTH = Math.min(160, (int) (PixelScene.uiCamera.width * 0.9));
     private final int HEIGHT = Math.min(200, (int) (PixelScene.uiCamera.height * 0.9));

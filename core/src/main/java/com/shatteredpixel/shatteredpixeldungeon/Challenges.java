@@ -69,6 +69,17 @@ public enum Challenges {
         protected float _nTrapsMult() {
             return 2;
         }
+
+        @Override
+        protected float _nRoomsMult() {
+            return 2;
+        }
+    },
+    SMALL_LEVELS(39, 13.5f, 1, 1f) {
+        @Override
+        protected float _nRoomsMult() {
+            return 0.5f;
+        }
     },
     MUTAGEN(14, 1, 2) {
         @Override
@@ -109,7 +120,7 @@ public enum Challenges {
     EXTREME_DANGER(32, 2, 2f, EXTREME_CAUTION),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
-    BIGGER_LEVELS(37, 2, 3,BIG_LEVELS) {
+    BIGGER_LEVELS(37, 2, 3, BIG_LEVELS) {
         @Override
         protected float _nMobsMult() {
             return 2;
@@ -117,7 +128,12 @@ public enum Challenges {
 
         @Override
         protected float _nTrapsMult() {
-            return 4;
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            return 2;
         }
     },
 
@@ -125,13 +141,13 @@ public enum Challenges {
     ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
     DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
     RACING_THE_DEATH(35, 3, 7f),
-    MANIFESTING_MYRIADS(36,3,7f,LEGION,HORDE){
+    MANIFESTING_MYRIADS(36, 3, 7f, LEGION, HORDE) {
         @Override
         protected float _nMobsMult() {
             return 1.5f;
         }
     },
-    HUGE_LEVELS(38, 3, 4,BIGGER_LEVELS) {
+    HUGE_LEVELS(38, 3, 7f, BIGGER_LEVELS) {
         @Override
         protected float _nMobsMult() {
             return 3;
@@ -141,9 +157,14 @@ public enum Challenges {
         protected float _nTrapsMult() {
             return 3;
         }
+
+        @Override
+        protected float _nRoomsMult() {
+            return 3;
+        }
     },
 
-    //Last id 38
+    //Last id 39
     ;
     private static final Challenges[] mappings;
 
@@ -160,13 +181,19 @@ public enum Challenges {
 
     public final String name;
     public final int id;
+    public final float sortId;
     public final float difficulty;
     public final int tier;
     public final int[] requirements;
 
     Challenges(int id, int tier, float difficulty, Challenges... requirements) {
+        this(id, id, tier, difficulty, requirements);
+    }
+
+    Challenges(int id, float sortId, int tier, float difficulty, Challenges... requirements) {
         this.name = name().toLowerCase();
         this.id = id;
+        this.sortId = sortId;
         this.difficulty = difficulty;
         this.tier = tier;
         this.requirements = new int[requirements.length];
@@ -265,6 +292,22 @@ public enum Challenges {
         return mult;
     }
 
+    public static float nLootMultiplier() {
+        float mult = 1;
+        for (Challenges ch : values()) {
+            if (ch.enabled()) mult *= ch._nLootMult();
+        }
+        return mult;
+    }
+
+    public static float nRoomsMult() {
+        float mult = 1;
+        for (Challenges ch : values()) {
+            if (ch.enabled()) mult *= ch._nRoomsMult();
+        }
+        return mult;
+    }
+
     public static float nTrapsMultiplier() {
         float mult = 1;
         for (Challenges ch : values()) {
@@ -354,6 +397,14 @@ public enum Challenges {
     }
 
     protected float _nMobsMult() {
+        return 1;
+    }
+
+    protected float _nLootMult() {
+        return 1;
+    }
+
+    protected float _nRoomsMult() {
         return 1;
     }
 
