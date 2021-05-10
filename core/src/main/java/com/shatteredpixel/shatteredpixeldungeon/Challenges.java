@@ -159,6 +159,7 @@ public enum Challenges {
     ECTOPLASM(46, 2, 2f, MIRROR_OF_RAGE),
     THOUGHTLESS(48, 2, 2.5f),
     EXHIBITIONISM(49, 2, 2f, RESURRECTION),
+    MARATHON(50, 2, 3f),
 
 
     //T3
@@ -189,8 +190,9 @@ public enum Challenges {
         }
     },
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
+    ON_A_BEAT(51, 3, 7f, MARATHON),
 
-    //Last id 49
+    //Last id 51
     ;
     private static final Challenges[] mappings;
 
@@ -443,6 +445,14 @@ public enum Challenges {
             }
         }
         return false;
+    }
+
+    public static double secondsPerTurn() {
+        if (MARATHON.enabled()) {
+            if (ON_A_BEAT.enabled()) return 2;
+            return 8;
+        }
+        return 1e64;
     }
 
     protected float _nMobsMult() {

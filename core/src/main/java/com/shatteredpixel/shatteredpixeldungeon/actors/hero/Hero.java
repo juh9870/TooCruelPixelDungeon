@@ -711,6 +711,7 @@ public class Hero extends Char {
 	
 	public void busy() {
 		ready = false;
+		GameScene.timerPaused=true;
 	}
 	
 	private void ready() {
@@ -2037,8 +2038,9 @@ public class Hero extends Char {
 	
 	@Override
 	public void next() {
-		if (isAlive())
+		if (isAlive()) {
 			super.next();
+		}
 	}
 
 	public static interface Doom {

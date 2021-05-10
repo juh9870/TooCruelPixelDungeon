@@ -51,6 +51,8 @@ public class WndGame extends Window {
 		
 		super();
 
+		GameScene.timerPaused = true;
+
 		RedButton curBtn;
 		addButton( curBtn = new RedButton( Messages.get(this, "settings") ) {
 			@Override
@@ -147,8 +149,14 @@ public class WndGame extends Window {
 		
 		resize( WIDTH, pos );
 	}
-	
-	private void addButton( RedButton btn ) {
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		GameScene.timerPaused = false;
+	}
+
+	private void addButton(RedButton btn ) {
 		add( btn );
 		btn.setRect( 0, pos > 0 ? pos += GAP : 0, WIDTH, BTN_HEIGHT );
 		pos += BTN_HEIGHT;

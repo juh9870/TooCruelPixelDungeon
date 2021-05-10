@@ -58,7 +58,7 @@ public class WndChallenges extends Window {
         return (int) Math.signum(a.sortId - b.sortId);
     };
     private final int WIDTH = Math.min(160, (int) (PixelScene.uiCamera.width * 0.9));
-    private final int HEIGHT = Math.min(200, (int) (PixelScene.uiCamera.height * 0.9));
+    private final int HEIGHT = (int) (PixelScene.uiCamera.height * 0.9);
     private final boolean editable;
     private final HashMap<Integer, ChallengeButton> boxes;
     private final ArrayList<IconButton> infos;

@@ -20,7 +20,7 @@ public class Legion extends Buff {
     private static final String WAVE_TURNS = "wave_turns";
     private static final String LAST_WAVE_TURNS = "last_wave_turns";
     private float turnsToNextWave = WAVE_DELAY;
-    private float turnsSinceLastWave = WAVE_DELAY;
+    private float turnsSinceLastWave = 0;
 
     {
         type = buffType.NEUTRAL;

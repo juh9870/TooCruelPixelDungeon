@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -110,8 +111,8 @@ public class TomeOfMastery extends Item {
 	public void choose( HeroSubClass way ) {
 		
 		detach( curUser.belongings.backpack );
-		
-		curUser.spend( TomeOfMastery.TIME_TO_READ );
+
+		curUser.spend(Challenges.RACING_THE_DEATH.enabled() ? 1 : TomeOfMastery.TIME_TO_READ);
 		curUser.busy();
 		
 		curUser.subClass = way;

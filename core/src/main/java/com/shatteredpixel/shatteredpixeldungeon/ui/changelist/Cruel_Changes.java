@@ -134,6 +134,14 @@ public class Cruel_Changes {
 		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "spiritual_connection"), Messages.get(Challenges.class, "spiritual_connection_desc")));
 		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.SCROLL_UNKNOWN), Messages.get(Challenges.class, "thoughtless"), Messages.get(Challenges.class, "thoughtless_desc")));
 		changes.addButton(new ChangeButton(new SuccubusSprite(), Messages.get(Challenges.class, "exhibitionism"), Messages.get(Challenges.class, "exhibitionism_desc")));
+		Image clock1 = new Image(Assets.Interfaces.BUFFS_LARGE);
+		clock1.frame(film.get(BuffIndicator.COUNTDOWN1));
+		clock1.hardlight(0x0000ff);
+		Image clock2 = new Image(Assets.Interfaces.BUFFS_LARGE);
+		clock2.frame(film.get(BuffIndicator.COUNTDOWN1));
+		clock2.hardlight(0x00ffff);
+		changes.addButton(new ChangeButton(clock1, Messages.get(Challenges.class, "marathon"), Messages.get(Challenges.class, "marathon_desc")));
+		changes.addButton(new ChangeButton(clock2, Messages.get(Challenges.class, "on_a_beat"), Messages.get(Challenges.class, "on_a_beat_desc")));
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);

@@ -144,6 +144,7 @@ public class GameScene extends PixelScene {
 	
 	private BusyIndicator busy;
 	private CircleArc counter;
+	private CircleArc timeCounter;
 	
 	private static CellSelector cellSelector;
 	
@@ -173,7 +174,10 @@ public class GameScene extends PixelScene {
 	private LootIndicator loot;
 	private ActionIndicator action;
 	private ResumeIndicator resume;
-	
+
+	public static boolean timerPaused = true;
+	private double timer = 10;
+
 	@Override
 	public void create() {
 		
@@ -365,6 +369,11 @@ public class GameScene extends PixelScene {
 		counter.color( 0x808080, true );
 		counter.camera = uiCamera;
 		counter.show(this, busy.center(), 0f);
+
+		timeCounter = new CircleArc((int) Math.floor(10), 4.25f);
+		timeCounter.color( 0xff0000, true );
+		timeCounter.camera = uiCamera;
+		timeCounter.show(this, busy.center(), 0f);
 		
 		if(Dungeon.challengesInform){
 			add(new WndHardNotification(Icons.CHALLENGE_ON.get(),Messages.get(this,"notification"),Messages.get(this,"challenges_info"),Messages.get(this,"thanks"),0));
@@ -543,9 +552,14 @@ public class GameScene extends PixelScene {
 
 			
 		}
-		
-		fadeIn();
 
+		fadeIn();
+		resetTimer();
+		timer += 5;
+	}
+
+	private void resetTimer() {
+		timer = Challenges.secondsPerTurn();
 	}
 	
 	public void destroy() {
@@ -613,7 +627,19 @@ public class GameScene extends PixelScene {
 		}
 
 		super.update();
-		
+
+		if (!timerPaused && Challenges.MARATHON.enabled() && Dungeon.hero.ready) {
+			timeCounter.visible=true;
+			timer -= Game.elapsed;
+			timeCounter.setSweep((1f - (float)(timer/Challenges.secondsPerTurn())) % 1f);
+			if (timer <= 0 && Dungeon.hero.isAlive()) {
+				Dungeon.hero.rest(false);
+				resetTimer();
+			}
+		} else {
+			timeCounter.visible=false;
+		}
+
 		if (!Emitter.freezeEmitters) water.offset( 0, -5 * Game.elapsed );
 
 		if (!Actor.processing() && Dungeon.hero.isAlive()) {
@@ -1109,6 +1135,10 @@ public class GameScene extends PixelScene {
 		selectCell( defaultCellListener );
 		QuickSlotButton.cancel();
 		if (scene != null && scene.toolbar != null) scene.toolbar.examining = false;
+		if(Dungeon.hero.ready) {
+			timerPaused = false;
+			if (scene != null) scene.resetTimer();
+		}
 	}
 	
 	public static void checkKeyHold(){
