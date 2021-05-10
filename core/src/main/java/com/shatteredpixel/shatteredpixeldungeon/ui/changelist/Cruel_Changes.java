@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MirrorWraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
@@ -126,6 +127,10 @@ public class Cruel_Changes {
 				return new ItemSprite.Glowing(0x880044, 2f);
 			}
 		}, Messages.get(Challenges.class, "curse_enchant"), Messages.get(Challenges.class, "curse_enchant_desc")));
+
+		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "mirror_of_rage"), Messages.get(Challenges.class, "mirror_of_rage_desc")));
+		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "ectoplasm"), Messages.get(Challenges.class, "ectoplasm_desc")));
+		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "spiritual_connection"), Messages.get(Challenges.class, "spiritual_connection_desc")));
 
 
 		changes = new ChangeInfo("v0.4.1", true, "");

@@ -106,6 +106,7 @@ public abstract class Char extends Actor {
 	
 	public int HT;
 	public int HP;
+	public int OVERKILL;
 	
 	protected float baseSpeed	= 1;
 	protected PathFinder.Path path;
@@ -568,7 +569,10 @@ public abstract class Char extends Actor {
 					Integer.toString(dmg + shielded));
 		}
 
-		if (HP < 0) HP = 0;
+		if (HP < 0) {
+			OVERKILL=-HP;
+			HP = 0;
+		}
 
 		if (!isAlive()) {
 			die( src );

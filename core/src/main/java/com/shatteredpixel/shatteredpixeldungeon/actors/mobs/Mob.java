@@ -708,12 +708,16 @@ public abstract class Mob extends Char {
                 int exp = Dungeon.hero.lvl <= maxLvl && buff(NoReward.class) == null ? EXP : 0;
                 if (exp > 0) {
                     Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "exp", exp));
-                    if(Challenges.MANIFESTING_MYRIADS.enabled()){
+                    if (Challenges.MANIFESTING_MYRIADS.enabled()) {
                         Dungeon.hero.buff(Legion.class).consumeDeath();
                     }
                 }
                 Dungeon.hero.earnExp(exp, getClass());
             }
+        }
+
+        if (Challenges.MIRROR_OF_RAGE.enabled() && Actor.findChar(pos) == null && canAscend() && Random.Int(Challenges.SPIRITUAL_CONNECTION.enabled() ? 2 : 3) == 0) {
+            MirrorWraith.spawnAt(pos, OVERKILL);
         }
     }
 
@@ -919,8 +923,8 @@ public abstract class Mob extends Char {
     @Override
     public float speed() {
         float speed = super.speed();
-        if(!enemySeen && Challenges.INSOMNIA.enabled()){
-            speed*=2;
+        if (!enemySeen && Challenges.INSOMNIA.enabled()) {
+            speed *= 2;
         }
         return speed;
     }
@@ -972,7 +976,7 @@ public abstract class Mob extends Char {
                     }
                 }
 
-                if (Random.Float( distance( enemy ) + enemyStealth ) < 1) {
+                if (Random.Float(distance(enemy) + enemyStealth) < 1) {
                     awaken(enemyInFOV);
                     return true;
                 }

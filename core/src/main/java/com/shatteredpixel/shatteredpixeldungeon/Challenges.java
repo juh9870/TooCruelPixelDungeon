@@ -100,7 +100,8 @@ public enum Challenges {
     ROOK(18, 1, 1.5f),
     CHAMPION_ENEMIES(19, 1, 2f),
     NO_PERKS(20, 1, 3f),
-    BLOODBAG(41, 2, 2f),
+    BLOODBAG(41, 1, 2f),
+    MIRROR_OF_RAGE(45, 1, 2f),
 
 
     //T2
@@ -141,10 +142,11 @@ public enum Challenges {
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
     CURSE_ENCHANT(43, 2, 2f, CURSED),
+    ECTOPLASM(46, 2, 2f,MIRROR_OF_RAGE),
 
 
     //T3
-    HEART_OF_HIVE(24, 3, 2.5f, INSOMNIA),
+    HEART_OF_HIVE(24, 3, 7f, INSOMNIA),
     ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
     DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
     RACING_THE_DEATH(35, 3, 7f),
@@ -170,8 +172,9 @@ public enum Challenges {
             return 3;
         }
     },
+    SPIRITUAL_CONNECTION(47, 2, 5f,ECTOPLASM),
 
-    //Last id 44
+    //Last id 47
     ;
     private static final Challenges[] mappings;
 

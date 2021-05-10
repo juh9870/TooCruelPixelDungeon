@@ -47,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Combo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Foresight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Fury;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GrowingRage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HoldFast;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Intoxication;
@@ -385,6 +386,9 @@ public class Hero extends Char {
 		}
 		if (Challenges.AMNESIA.enabled()) {
 			Buff.affect(this, Amnesia.class);
+		}
+		if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
+			Buff.affect(this, GrowingRage.class);
 		}
 	}
 	
@@ -2039,7 +2043,7 @@ public class Hero extends Char {
 		if (isAlive())
 			super.next();
 	}
-	
+
 	public static interface Doom {
 		public void onDeath();
 	}
