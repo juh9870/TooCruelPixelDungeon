@@ -28,6 +28,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Enchanting;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.InventoryScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -144,7 +146,10 @@ public class ScrollOfEnchantment extends ExoticScroll {
 				});
 			} else {
 				//TODO if this can ever be found un-IDed, need logic for that
-				curItem.collect();
+				if(Challenges.isItemAutouse(curItem))
+					InventoryScroll.confirmCancelation((Scroll)curItem,this,WndBag.Mode.ENCHANTABLE,Messages.get(ScrollOfEnchantment.class, "inv_title"));
+				else
+					curItem.collect();
 			}
 		}
 	};

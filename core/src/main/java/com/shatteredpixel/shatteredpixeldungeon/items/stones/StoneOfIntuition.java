@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.stones;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Identification;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
@@ -197,7 +198,9 @@ public class StoneOfIntuition extends InventoryStone {
 		@Override
 		public void onBackPressed() {
 			super.onBackPressed();
-			new StoneOfIntuition().collect();
+
+			if(!Challenges.isItemAutouse(StoneOfIntuition.this))
+				new StoneOfIntuition().collect();
 		}
 	}
 }

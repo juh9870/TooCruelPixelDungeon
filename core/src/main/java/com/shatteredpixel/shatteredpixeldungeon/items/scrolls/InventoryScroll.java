@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -36,34 +37,36 @@ public abstract class InventoryScroll extends Scroll {
 	
 	@Override
 	public void doRead() {
-		
+
 		if (!isKnown()) {
 			identify();
 			identifiedByUse = true;
 		} else {
 			identifiedByUse = false;
 		}
-		
+
 		GameScene.selectItem( itemSelector, mode, inventoryTitle );
 	}
-	
-	private void confirmCancelation() {
-		GameScene.show( new WndOptions( Messages.titleCase(name()), Messages.get(this, "warning"),
-				Messages.get(this, "yes"), Messages.get(this, "no") ) {
+
+	public static void confirmCancelation(Scroll item, WndBag.Listener itemSelector, WndBag.Mode mode, String inventoryTitle) {
+		GameScene.show(new WndOptions(Messages.titleCase(item.name()), Messages.get(InventoryScroll.class, "warning"),
+				Messages.get(InventoryScroll.class, "yes"), Messages.get(InventoryScroll.class, "no")) {
 			@Override
-			protected void onSelect( int index ) {
+			protected void onSelect(int index) {
 				switch (index) {
-				case 0:
-					curUser.spendAndNext( TIME_TO_READ );
-					identifiedByUse = false;
-					break;
-				case 1:
-					GameScene.selectItem( itemSelector, mode, inventoryTitle );
-					break;
+					case 0:
+						curUser.spendAndNext(TIME_TO_READ);
+						identifiedByUse = false;
+						break;
+					case 1:
+						GameScene.selectItem(itemSelector, mode, inventoryTitle);
+						break;
 				}
 			}
-			public void onBackPressed() {}
-		} );
+
+			public void onBackPressed() {
+			}
+		});
 	}
 	
 	protected abstract void onItemSelected( Item item );
@@ -85,10 +88,10 @@ public abstract class InventoryScroll extends Scroll {
 				((InventoryScroll)curItem).readAnimation();
 				
 				Sample.INSTANCE.play( Assets.Sounds.READ );
-				
-			} else if (identifiedByUse && !((Scroll)curItem).anonymous) {
-				
-				((InventoryScroll)curItem).confirmCancelation();
+
+			} else if ((Challenges.isItemAutouse(curItem) || identifiedByUse) && !((Scroll) curItem).anonymous) {
+
+				InventoryScroll.confirmCancelation((Scroll)curItem,this,((InventoryScroll)curItem).mode,((InventoryScroll)curItem).inventoryTitle);
 				
 			} else if (!((Scroll)curItem).anonymous) {
 				

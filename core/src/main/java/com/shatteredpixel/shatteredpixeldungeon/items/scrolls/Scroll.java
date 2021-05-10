@@ -52,10 +52,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfShock;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
@@ -184,6 +188,21 @@ public abstract class Scroll extends Item {
 	}
 	
 	public abstract void doRead();
+
+	@Override
+	public boolean doPickUp(Hero hero) {
+		if(super.doPickUp(hero)){
+			if(Challenges.isItemAutouse(this)){
+				Game.runOnRenderThread(() -> {
+					curUser = hero;
+					curItem = detach( hero.belongings.backpack );
+					doRead();
+				});
+			}
+			return true;
+		}
+		return false;
+	}
 
 	protected void readAnimation() {
 		Invisibility.dispel();

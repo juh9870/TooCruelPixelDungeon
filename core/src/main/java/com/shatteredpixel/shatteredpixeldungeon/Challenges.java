@@ -31,6 +31,22 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.InventoryScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDivination;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfForesight;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMysticalEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.InventoryStone;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 
@@ -113,7 +129,12 @@ public enum Challenges {
             } else return item instanceof HornOfPlenty;
         }
     },
-    INSOMNIA(44,21.5f, 2, 2f, SWARM_INTELLIGENCE),
+    INSOMNIA(44, 21.5f, 2, 2f, SWARM_INTELLIGENCE){
+        @Override
+        protected boolean _isItemBlocked(Item item) {
+            return item instanceof ScrollOfLullaby;
+        }
+    },
     INTOXICATION(22, 2, 2.5f),
     PLAGUE(23, 2, 3f, INTOXICATION),
     BLINDNESS(25, 2, 3f, DARKNESS),
@@ -142,7 +163,8 @@ public enum Challenges {
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
     CURSE_ENCHANT(43, 2, 2f, CURSED),
-    ECTOPLASM(46, 2, 2f,MIRROR_OF_RAGE),
+    ECTOPLASM(46, 2, 2f, MIRROR_OF_RAGE),
+    THOUGHTLESS(48, 2, 2.5f),
 
 
     //T3
@@ -172,7 +194,7 @@ public enum Challenges {
             return 3;
         }
     },
-    SPIRITUAL_CONNECTION(47, 2, 5f,ECTOPLASM),
+    SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
 
     //Last id 47
     ;
@@ -353,6 +375,20 @@ public enum Challenges {
         return left;
     }
 
+    public static boolean isItemAutouse(Item item) {
+        if (THOUGHTLESS.enabled()) {
+            if (item instanceof InventoryScroll) return true;
+            if (item instanceof ScrollOfMagicMapping) return true;
+            if (item instanceof ScrollOfRecharging) return true;
+            if (item instanceof ScrollOfEnchantment) return true;
+            if (item instanceof ScrollOfMysticalEnergy) return true;
+            if (item instanceof ScrollOfDivination) return true;
+            if (item instanceof ScrollOfForesight) return true;
+            if (item instanceof InventoryStone) return true;
+        }
+        return false;
+    }
+
     public static Icons icon() {
         return icon(SPDSettings.modifiers());
     }
@@ -406,9 +442,9 @@ public enum Challenges {
         return Icons.CHALLENGE_HELL2;
     }
 
-    public static boolean isActionBanned(Item item,String action){
-        if(item.cursed){
-            if(Challenges.CURSE_MAGNET.enabled()){
+    public static boolean isActionBanned(Item item, String action) {
+        if (item.cursed) {
+            if (Challenges.CURSE_MAGNET.enabled()) {
                 return action.equals(Item.AC_DROP) || action.equals(Item.AC_THROW);
             }
         }

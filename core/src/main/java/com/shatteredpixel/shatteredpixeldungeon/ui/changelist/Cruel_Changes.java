@@ -132,6 +132,7 @@ public class Cruel_Changes {
 		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "ectoplasm"), Messages.get(Challenges.class, "ectoplasm_desc")));
 		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "spiritual_connection"), Messages.get(Challenges.class, "spiritual_connection_desc")));
 
+		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.SCROLL_UNKNOWN), Messages.get(Challenges.class, "thoughtless"), Messages.get(Challenges.class, "thoughtless_desc")));
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);

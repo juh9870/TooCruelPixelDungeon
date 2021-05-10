@@ -22,12 +22,15 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.stones;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
@@ -57,6 +60,39 @@ public abstract class InventoryStone extends Runestone {
 			curItem = detach( hero.belongings.backpack );
 			activate(curUser.pos);
 		}
+	}
+
+	private void confirmCancelation() {
+		GameScene.show( new WndOptions( Messages.titleCase(name()), Messages.get(this, "warning"),
+				Messages.get(this, "yes"), Messages.get(this, "no") ) {
+			@Override
+			protected void onSelect( int index ) {
+				switch (index) {
+					case 0:
+						curUser.spendAndNext( 1f );
+						break;
+					case 1:
+						activate(curUser.pos);
+						break;
+				}
+			}
+			public void onBackPressed() {}
+		} );
+	}
+
+	@Override
+	public boolean doPickUp(Hero hero) {
+		if(super.doPickUp(hero)){
+			if(Challenges.isItemAutouse(this)){
+				Game.runOnRenderThread(() -> {
+					curUser = hero;
+					curItem = detach( hero.belongings.backpack );
+					activate(curUser.pos);
+				});
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	@Override
@@ -90,7 +126,11 @@ public abstract class InventoryStone extends Runestone {
 				((InventoryStone)curItem).onItemSelected( item );
 				
 			} else{
-				curItem.collect( curUser.belongings.backpack );
+
+				if (!Challenges.isItemAutouse(curItem))
+					curItem.collect(curUser.belongings.backpack);
+				else
+					((InventoryStone) curItem).confirmCancelation();
 			}
 		}
 	};

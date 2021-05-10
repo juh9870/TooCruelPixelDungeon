@@ -1144,9 +1144,6 @@ public class Hero extends Char {
 	
 	
 	public void rest(boolean fullRest) {
-		if (Challenges.INSOMNIA.enabled()) {
-			return;
-		}
 		spendAndNext(TIME_TO_REST);
 		if (!fullRest) {
 			if (hasTalent(Talent.HOLD_FAST)) {
@@ -1156,7 +1153,7 @@ public class Hero extends Char {
 				sprite.showStatus(CharSprite.DEFAULT, Messages.get(this, "wait"));
 			}
 		}
-		resting = fullRest;
+		resting = fullRest && !Challenges.INSOMNIA.enabled();
 	}
 	
 	@Override

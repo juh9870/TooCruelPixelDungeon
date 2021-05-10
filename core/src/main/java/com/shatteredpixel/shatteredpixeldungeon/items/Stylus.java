@@ -32,6 +32,8 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
@@ -55,6 +57,38 @@ public class Stylus extends Item {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_INSCRIBE );
 		return actions;
+	}
+
+	@Override
+	public boolean doPickUp(Hero hero) {
+		if (super.doPickUp(hero)) {
+			if (Challenges.THOUGHTLESS.enabled()) {
+				Game.runOnRenderThread(() -> {
+					execute(hero, AC_INSCRIBE);
+				});
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private void confirmCancelation() {
+		GameScene.show( new WndOptions( Messages.titleCase(name()), Messages.get(this, "warning"),
+				Messages.get(this, "yes"), Messages.get(this, "no") ) {
+			@Override
+			protected void onSelect( int index ) {
+				switch (index) {
+					case 0:
+						curUser.spendAndNext( TIME_TO_INSCRIBE );
+						detach(curUser.belongings.backpack);
+						break;
+					case 1:
+						execute(curUser,AC_INSCRIBE);
+						break;
+				}
+			}
+			public void onBackPressed() {}
+		} );
 	}
 	
 	@Override
@@ -115,6 +149,10 @@ public class Stylus extends Item {
 		public void onSelect( Item item ) {
 			if (item != null) {
 				Stylus.this.inscribe( (Armor)item );
+			} else {
+				if(Challenges.THOUGHTLESS.enabled()){
+					confirmCancelation();
+				}
 			}
 		}
 	};

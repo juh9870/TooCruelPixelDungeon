@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.stones;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -36,60 +37,60 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 
 public class StoneOfAugmentation extends InventoryStone {
-	
+
 	{
 		mode = WndBag.Mode.ENCHANTABLE;
 		image = ItemSpriteSheet.STONE_AUGMENTATION;
 	}
-	
+
 	@Override
 	protected void onItemSelected(Item item) {
-		
+
 		GameScene.show(new WndAugment( item));
-		
+
 	}
-	
+
 	public void apply( Weapon weapon, Weapon.Augment augment ) {
-		
+
 		weapon.augment = augment;
 		useAnimation();
 		ScrollOfUpgrade.upgrade(curUser);
-		
+
 	}
-	
+
 	public void apply( Armor armor, Armor.Augment augment ) {
-		
+
 		armor.augment = augment;
 		useAnimation();
 		ScrollOfUpgrade.upgrade(curUser);
 	}
-	
+
 	@Override
 	public int value() {
 		return 30 * quantity;
 	}
-	
+
 	public class WndAugment extends Window {
-		
+
 		private static final int WIDTH			= 120;
 		private static final int MARGIN 		= 2;
 		private static final int BUTTON_WIDTH	= WIDTH - MARGIN * 2;
 		private static final int BUTTON_HEIGHT	= 20;
-		
+
 		public WndAugment( final Item toAugment ) {
 			super();
-			
+
 			IconTitle titlebar = new IconTitle( toAugment );
 			titlebar.setRect( 0, 0, WIDTH, 0 );
 			add( titlebar );
-			
+
 			RenderedTextBlock tfMesage = PixelScene.renderTextBlock( Messages.get(this, "choice"), 8 );
 			tfMesage.maxWidth(WIDTH - MARGIN * 2);
 			tfMesage.setPos(MARGIN, titlebar.bottom() + MARGIN);
 			add( tfMesage );
-			
+
 			float pos = tfMesage.top() + tfMesage.height();
-			
+
 			if (toAugment instanceof Weapon){
 				for (final Weapon.Augment aug : Weapon.Augment.values()){
 					if (((Weapon) toAugment).augment != aug){
@@ -102,11 +103,11 @@ public class StoneOfAugmentation extends InventoryStone {
 						};
 						btnSpeed.setRect( MARGIN, pos + MARGIN, BUTTON_WIDTH, BUTTON_HEIGHT );
 						add( btnSpeed );
-						
+
 						pos = btnSpeed.bottom();
 					}
 				}
-				
+
 			} else if (toAugment instanceof Armor){
 				for (final Armor.Augment aug : Armor.Augment.values()){
 					if (((Armor) toAugment).augment != aug){
@@ -119,28 +120,30 @@ public class StoneOfAugmentation extends InventoryStone {
 						};
 						btnSpeed.setRect( MARGIN, pos + MARGIN, BUTTON_WIDTH, BUTTON_HEIGHT );
 						add( btnSpeed );
-						
+
 						pos = btnSpeed.bottom();
 					}
 				}
 			}
-			
 			RedButton btnCancel = new RedButton( Messages.get(this, "cancel") ) {
 				@Override
 				protected void onClick() {
 					hide();
-					StoneOfAugmentation.this.collect();
+					if(!Challenges.isItemAutouse(StoneOfAugmentation.this))
+						StoneOfAugmentation.this.collect();
 				}
 			};
 			btnCancel.setRect( MARGIN, pos + MARGIN, BUTTON_WIDTH, BUTTON_HEIGHT );
 			add( btnCancel );
-			
+            if (Challenges.isItemAutouse(StoneOfAugmentation.this)) btnCancel.enable(false);
+
 			resize( WIDTH, (int)btnCancel.bottom() + MARGIN );
 		}
-		
+
 		@Override
 		public void onBackPressed() {
-			StoneOfAugmentation.this.collect();
+            if (!Challenges.isItemAutouse(StoneOfAugmentation.this))
+                StoneOfAugmentation.this.collect();
 			super.onBackPressed();
 		}
 	}

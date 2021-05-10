@@ -45,8 +45,15 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDivination;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfForesight;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMysticalEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -121,22 +128,22 @@ public enum HeroClass {
 		if (DeviceCompat.isDebug()) {
 			new ScrollOfIdentify().identify();
 			
-			new ScrollOfMagicMapping().quantity(10).identify().collect();
-			new ScrollOfUpgrade().quantity(10).identify().collect();
-			new ScrollOfEnchantment().quantity(10).identify().collect();
-			new Stylus().quantity(10).identify().collect();
-			new PotionOfMindVision().quantity(10).identify().collect();
-			new PotionOfInvisibility().quantity(10).identify().collect();
+			new ScrollOfMagicMapping().quantity(1).identify().collect();
+			new ScrollOfUpgrade().quantity(1).identify().collect();
+			new ScrollOfEnchantment().quantity(1).identify().collect();
+			new ScrollOfIdentify().quantity(1).identify().collect();
+			new ScrollOfRemoveCurse().quantity(1).identify().collect();
+			new ScrollOfMysticalEnergy().quantity(1).identify().collect();
+			new ScrollOfDivination().quantity(1).identify().collect();
+			new ScrollOfForesight().quantity(1).identify().collect();
+			new StoneOfAugmentation().quantity(1).identify().collect();
+			new StoneOfIntuition().quantity(1).identify().collect();
+			new StoneOfEnchantment().quantity(1).identify().collect();
+			new Stylus().quantity(1).identify().collect();
+			new PotionOfMindVision().quantity(1).identify().collect();
+			new PotionOfInvisibility().quantity(1).identify().collect();
 
 			new Amulet().collect();
-
-			Generator.randomWeapon(1).collect();
-			Generator.randomWeapon(1).collect();
-			Generator.randomWeapon(1).collect();
-
-			Generator.randomArmor(1).collect();
-			Generator.randomArmor(1).collect();
-			Generator.randomArmor(1).collect();
 		}
 
 		new ScrollOfIdentify().identify();
