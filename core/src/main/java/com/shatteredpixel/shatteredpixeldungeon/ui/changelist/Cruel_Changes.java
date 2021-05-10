@@ -119,6 +119,12 @@ public class Cruel_Changes {
 				return new ItemSprite.Glowing(0xff0000, 2f);
 			}
 		}, Messages.get(Challenges.class, "curse_magnet"), Messages.get(Challenges.class, "curse_magnet_desc")));
+		changes.addButton(new ChangeButton(new Embers(){
+			@Override
+			public ItemSprite.Glowing glowing() {
+				return new ItemSprite.Glowing(0x880044, 2f);
+			}
+		}, Messages.get(Challenges.class, "curse_enchant"), Messages.get(Challenges.class, "curse_enchant_desc")));
 
 
 		changes = new ChangeInfo("v0.4.1", true, "");
