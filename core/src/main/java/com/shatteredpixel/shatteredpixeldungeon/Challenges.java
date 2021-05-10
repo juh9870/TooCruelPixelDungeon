@@ -95,13 +95,12 @@ public enum Challenges {
             return 2;
         }
     },
-    EXTREME_DANGER(32,16.5f, 1, 2f, EXTREME_CAUTION),
+    EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     ROOK(18, 1, 1.5f),
     CHAMPION_ENEMIES(19, 1, 2f),
     NO_PERKS(20, 1, 3f),
     BLOODBAG(41, 2, 2f),
-
 
 
     //T2
@@ -140,7 +139,7 @@ public enum Challenges {
         }
     },
     ARROWHEAD(40, 2, 2.5f),
-
+    CURSE_MAGNET(42, 2, 2f, CURSED),
 
 
     //T3
@@ -170,7 +169,7 @@ public enum Challenges {
         }
     },
 
-    //Last id 41
+    //Last id 42
     ;
     private static final Challenges[] mappings;
 
@@ -400,6 +399,15 @@ public enum Challenges {
             return Icons.CHALLENGE_HELL;
         }
         return Icons.CHALLENGE_HELL2;
+    }
+
+    public static boolean isActionBanned(Item item,String action){
+        if(item.cursed){
+            if(Challenges.CURSE_MAGNET.enabled()){
+                return action.equals(Item.AC_DROP) || action.equals(Item.AC_THROW);
+            }
+        }
+        return false;
     }
 
     protected float _nMobsMult() {

@@ -91,6 +91,11 @@ public class Cruel_Changes {
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
 
+		MobSprite sp = new SwarmSprite();
+//		sp.add(CharSprite.State.INVISIBLE);
+		changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "manifesting_myriads"), Messages.get(Challenges.class, "manifesting_myriads_desc")));
+		sp.aura(Cruel_Changes.class,0xFF0000,1.0f,false);
+
 		Image _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
 		_mapicon.scale=new PointF(0.5f,0.5f);
 		changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "small_levels"), Messages.get(Challenges.class, "small_levels_desc")));
@@ -102,17 +107,19 @@ public class Cruel_Changes {
 		_mapicon.color(0xFFFF00);
 		changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "huge_levels"), Messages.get(Challenges.class, "huge_levels_desc")));
 
-		MobSprite sp = new SwarmSprite();
-//		sp.add(CharSprite.State.INVISIBLE);
-		changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "manifesting_myriads"), Messages.get(Challenges.class, "manifesting_myriads_desc")));
-		sp.aura(Cruel_Changes.class,0xFFFF00,1.0f,true);
-
 		Image blood = new Image(Assets.Interfaces.BUFFS_LARGE);
 		blood.frame(film.get(BuffIndicator.BLEEDING));
 		Image vulnerable = new Image(Assets.Interfaces.BUFFS_LARGE);
-		blood.frame(film.get(BuffIndicator.VULNERABLE));
+		vulnerable.frame(film.get(BuffIndicator.VULNERABLE));
 		changes.addButton(new ChangeButton(blood, Messages.get(Challenges.class, "bloodbag"), Messages.get(Challenges.class, "bloodbag_desc")));
 		changes.addButton(new ChangeButton(vulnerable, Messages.get(Challenges.class, "arrowhead"), Messages.get(Challenges.class, "arrowhead_desc")));
+		changes.addButton(new ChangeButton(new Embers(){
+			@Override
+			public ItemSprite.Glowing glowing() {
+				return new ItemSprite.Glowing(0xff0000, 2f);
+			}
+		}, Messages.get(Challenges.class, "curse_magnet"), Messages.get(Challenges.class, "curse_magnet_desc")));
+
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
