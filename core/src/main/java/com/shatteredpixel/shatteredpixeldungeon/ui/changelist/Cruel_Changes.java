@@ -84,6 +84,7 @@ public class Cruel_Changes {
 						"_-_ Pharmacophobia potions now heals in addition to poisoning too\n" +
 						"_-_ Legion is now T2\n" +
 						"_-_ Plague is now T2\n" +
+						"_-_ Heart of the Hive is now T3\n" +
 						"_-_ Extreme Danger is now T1"
 		));
 

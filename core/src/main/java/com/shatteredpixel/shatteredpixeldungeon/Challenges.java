@@ -112,9 +112,9 @@ public enum Challenges {
             } else return item instanceof HornOfPlenty;
         }
     },
+    INSOMNIA(44,21.5f, 2, 2f, SWARM_INTELLIGENCE),
     INTOXICATION(22, 2, 2.5f),
     PLAGUE(23, 2, 3f, INTOXICATION),
-    HEART_OF_HIVE(24, 2, 2.5f, SWARM_INTELLIGENCE),
     BLINDNESS(25, 2, 3f, DARKNESS),
     LOBOTOMY(26, 2, 3f, AMNESIA),
     INVASION(27, 2, 2f),
@@ -144,6 +144,7 @@ public enum Challenges {
 
 
     //T3
+    HEART_OF_HIVE(24, 3, 2.5f, INSOMNIA),
     ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
     DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
     RACING_THE_DEATH(35, 3, 7f),
@@ -170,7 +171,7 @@ public enum Challenges {
         }
     },
 
-    //Last id 43
+    //Last id 44
     ;
     private static final Challenges[] mappings;
 

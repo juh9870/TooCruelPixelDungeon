@@ -916,6 +916,15 @@ public abstract class Mob extends Char {
         return desc;
     }
 
+    @Override
+    public float speed() {
+        float speed = super.speed();
+        if(!enemySeen && Challenges.INSOMNIA.enabled()){
+            speed*=2;
+        }
+        return speed;
+    }
+
     public void notice() {
         sprite.showAlert();
     }
@@ -940,6 +949,11 @@ public abstract class Mob extends Char {
 
         @Override
         public boolean act(boolean enemyInFOV, boolean justAlerted) {
+
+            if (Challenges.INSOMNIA.enabled()) {
+                awaken(enemyInFOV);
+                return true;
+            }
 
             //debuffs cause mobs to wake as well
             for (Buff b : buffs()) {
