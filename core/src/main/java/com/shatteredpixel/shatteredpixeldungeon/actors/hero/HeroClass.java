@@ -27,7 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
-import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
@@ -51,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDiv
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMysticalEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
@@ -128,20 +128,21 @@ public enum HeroClass {
 		if (DeviceCompat.isDebug()) {
 			new ScrollOfIdentify().identify();
 			
-			new ScrollOfMagicMapping().quantity(1).identify().collect();
-			new ScrollOfUpgrade().quantity(1).identify().collect();
-			new ScrollOfEnchantment().quantity(1).identify().collect();
-			new ScrollOfIdentify().quantity(1).identify().collect();
-			new ScrollOfRemoveCurse().quantity(1).identify().collect();
-			new ScrollOfMysticalEnergy().quantity(1).identify().collect();
-			new ScrollOfDivination().quantity(1).identify().collect();
-			new ScrollOfForesight().quantity(1).identify().collect();
-			new StoneOfAugmentation().quantity(1).identify().collect();
-			new StoneOfIntuition().quantity(1).identify().collect();
-			new StoneOfEnchantment().quantity(1).identify().collect();
-			new Stylus().quantity(1).identify().collect();
-			new PotionOfMindVision().quantity(1).identify().collect();
-			new PotionOfInvisibility().quantity(1).identify().collect();
+			new ScrollOfMagicMapping().quantity(10).identify().collect();
+			new ScrollOfPsionicBlast().quantity(10).identify().collect();
+//			new ScrollOfUpgrade().quantity(1).identify().collect();
+//			new ScrollOfEnchantment().quantity(1).identify().collect();
+//			new ScrollOfIdentify().quantity(1).identify().collect();
+//			new ScrollOfRemoveCurse().quantity(1).identify().collect();
+//			new ScrollOfMysticalEnergy().quantity(1).identify().collect();
+//			new ScrollOfDivination().quantity(1).identify().collect();
+//			new ScrollOfForesight().quantity(1).identify().collect();
+//			new StoneOfAugmentation().quantity(1).identify().collect();
+//			new StoneOfIntuition().quantity(1).identify().collect();
+//			new StoneOfEnchantment().quantity(1).identify().collect();
+//			new Stylus().quantity(1).identify().collect();
+			new PotionOfMindVision().quantity(10).identify().collect();
+			new PotionOfInvisibility().quantity(10).identify().collect();
 
 			new Amulet().collect();
 		}
@@ -223,6 +224,8 @@ public enum HeroClass {
 		(hero.belongings.weapon = new Gloves()).identify();
 		SpiritBow bow = new SpiritBow();
 		bow.identify().collect();
+
+		if (Challenges.CURSE_ENCHANT.enabled()) bow.enchant();
 
 		Dungeon.quickslot.setSlot(0, bow);
 

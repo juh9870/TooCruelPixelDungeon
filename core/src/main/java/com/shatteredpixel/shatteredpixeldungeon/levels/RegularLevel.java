@@ -276,6 +276,7 @@ public abstract class RegularLevel extends Level {
     public int randomRespawnCell(Char ch) {
         int count = 0;
         int cell = -1;
+        boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
 
         while (true) {
 
@@ -283,13 +284,13 @@ public abstract class RegularLevel extends Level {
                 return -1;
             }
 
-            Room room = randomRoom(StandardRoom.class);
-            if (room == null || room == roomEntrance) {
+            Room room = allowHeroFov ? randomBiasedRoom(StandardRoom.class) : randomRoom(StandardRoom.class);
+            if (room == null || (room == roomEntrance && !allowHeroFov)) {
                 continue;
             }
 
             cell = pointToCell(room.random(1));
-            if (!heroFOV[cell]
+            if ((!heroFOV[cell] || allowHeroFov)
                     && Actor.findChar(cell) == null
                     && passable[cell]
                     && !solid[cell]
@@ -513,6 +514,21 @@ public abstract class RegularLevel extends Level {
         Random.shuffle(rooms);
         for (Room r : rooms) {
             if (type.isInstance(r)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    protected Room randomBiasedRoom(Class<? extends Room> type) {
+        ArrayList<Room> rooms = new ArrayList<>(this.rooms);
+        Room playerRoom = room(Dungeon.hero.pos);
+        for (int i = 0; i < 2; i++) {
+            rooms.add(playerRoom);
+        }
+        Random.shuffle(rooms);
+        for (Room r : rooms) {
+            if (type.isInstance(r) || r == playerRoom) {
                 return r;
             }
         }

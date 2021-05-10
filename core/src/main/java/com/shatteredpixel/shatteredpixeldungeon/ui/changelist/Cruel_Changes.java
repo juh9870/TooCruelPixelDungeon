@@ -38,7 +38,9 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.SuccubusSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ThiefSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -127,12 +129,11 @@ public class Cruel_Changes {
 				return new ItemSprite.Glowing(0x880044, 2f);
 			}
 		}, Messages.get(Challenges.class, "curse_enchant"), Messages.get(Challenges.class, "curse_enchant_desc")));
-
 		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "mirror_of_rage"), Messages.get(Challenges.class, "mirror_of_rage_desc")));
 		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "ectoplasm"), Messages.get(Challenges.class, "ectoplasm_desc")));
 		changes.addButton(new ChangeButton(new MirrorWraith.MirrorWraithSprite(), Messages.get(Challenges.class, "spiritual_connection"), Messages.get(Challenges.class, "spiritual_connection_desc")));
-
 		changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.SCROLL_UNKNOWN), Messages.get(Challenges.class, "thoughtless"), Messages.get(Challenges.class, "thoughtless_desc")));
+		changes.addButton(new ChangeButton(new SuccubusSprite(), Messages.get(Challenges.class, "exhibitionism"), Messages.get(Challenges.class, "exhibitionism_desc")));
 
 		changes = new ChangeInfo("v0.4.1", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
