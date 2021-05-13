@@ -38,8 +38,11 @@ import com.watabou.utils.Random;
 public class MirrorWraith extends Mob {
 
     private static final float SPAWN_DELAY = 2f;
+    private static final float LIFETIME = 10f;
     private static final String LEVEL = "level";
     private static final String MULT = "dmg_multiplier";
+    private static final String TIMER = "die_timer";
+    private float lifetime;
     private int level;
     private float forceMult = 1f;
 
@@ -48,6 +51,8 @@ public class MirrorWraith extends Mob {
 
         HP = HT = 1;
         EXP = 0;
+
+        lifetime = LIFETIME;
 
         maxLvl = -2;
 
@@ -64,6 +69,7 @@ public class MirrorWraith extends Mob {
 
             if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
                 w.forceMult = Dungeon.hero.buff(GrowingRage.class).multiplier();
+                w.lifetime *= (w.forceMult - 1) * 2 + 1;
             }
 
             w.adjustStats(level);
@@ -95,6 +101,7 @@ public class MirrorWraith extends Mob {
         super.storeInBundle(bundle);
         bundle.put(LEVEL, level);
         bundle.put(MULT, forceMult);
+        bundle.put(TIMER, lifetime);
     }
 
     @Override
@@ -112,8 +119,17 @@ public class MirrorWraith extends Mob {
 
     @Override
     protected boolean act() {
-        if (Random.Int(10) == 0) die(this);
+        if (lifetime <= 0) {
+            die(this);
+            return true;
+        }
         return super.act();
+    }
+
+    @Override
+    protected void spend(float time) {
+        lifetime -= time;
+        super.spend(time);
     }
 
     @Override
@@ -134,7 +150,13 @@ public class MirrorWraith extends Mob {
         super.restoreFromBundle(bundle);
         level = bundle.getInt(LEVEL);
         forceMult = bundle.getFloat(MULT);
+        lifetime = bundle.getFloat(TIMER);
         adjustStats(level);
+    }
+
+    @Override
+    public String description() {
+        return Messages.get(this, "desc", Math.round(lifetime));
     }
 
     @Override

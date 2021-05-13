@@ -24,7 +24,8 @@ public class GrowingRage extends Buff {
 
     @Override
     public String desc() {
-        return Messages.get(this, "desc", slain, Math.round(multiplier()*100)-100);
+        int p = Math.round(multiplier() * 100) - 100;
+        return Messages.get(this, "desc", slain, p, p * 2);
     }
 
     @Override
