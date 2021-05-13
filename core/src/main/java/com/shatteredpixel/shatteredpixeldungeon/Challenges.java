@@ -190,7 +190,7 @@ public enum Challenges {
         }
     },
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
-    ON_A_BEAT(51, 3, 7f, MARATHON),
+    ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
 
     //Last id 51
     ;
