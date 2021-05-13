@@ -89,6 +89,11 @@ public enum Challenges {
         protected float _nRoomsMult() {
             return 0.5f;
         }
+
+        @Override
+        protected float _nLootMult() {
+            return 0.5f;
+        }
     },
     MUTAGEN(14, 1, 2) {
         @Override
