@@ -158,6 +158,12 @@ public enum Challenges {
             return 2;
         }
     },
+    LINEAR(52, 37.5f, 2, 2f, BIGGER_LEVELS){
+        @Override
+        protected float _nRoomsMult() {
+            return 1.5f;
+        }
+    },
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
     CURSE_ENCHANT(43, 2, 2f, CURSED),
@@ -178,7 +184,7 @@ public enum Challenges {
             return 1.5f;
         }
     },
-    HUGE_LEVELS(38, 3, 7f, BIGGER_LEVELS) {
+    HUGE_LEVELS(38, 3, 7f, BIGGER_LEVELS, LINEAR) {
         @Override
         protected float _nMobsMult() {
             return 3;
@@ -197,7 +203,7 @@ public enum Challenges {
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
 
-    //Last id 51
+    //Last id 52
     ;
     private static final Challenges[] mappings;
 

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -111,6 +112,10 @@ public class EtherealChains extends Artifact {
 		public void onSelect(Integer target) {
 			if (target != null && (Dungeon.level.visited[target] || Dungeon.level.mapped[target])){
 
+				if (Dungeon.level.visited[target] && Challenges.LINEAR.enabled()){
+					GLog.w( Messages.get(EtherealChains.class, "cant_reach") );
+					return;
+				}
 				//chains cannot be used to go where it is impossible to walk to
 				PathFinder.buildDistanceMap(target, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
 				if (PathFinder.distance[curUser.pos] == Integer.MAX_VALUE){
@@ -118,7 +123,7 @@ public class EtherealChains extends Artifact {
 					return;
 				}
 				
-				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET| Ballistica.AFFECTED_BY_ROOK);
+				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET | Ballistica.AFFECTED_BY_ROOK);
 				
 				if (Actor.findChar( chain.collisionPos ) != null){
 					chainEnemy( chain, curUser, Actor.findChar( chain.collisionPos ));
@@ -127,7 +132,6 @@ public class EtherealChains extends Artifact {
 				}
 				throwSound();
 				Sample.INSTANCE.play( Assets.Sounds.CHAINS );
-
 			}
 
 		}

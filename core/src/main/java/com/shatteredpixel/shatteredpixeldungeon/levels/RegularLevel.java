@@ -43,7 +43,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.GoldenKey;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.Builder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.FigureEightBuilder;
+import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LineBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
+import com.shatteredpixel.shatteredpixeldungeon.levels.builders.RegularBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
@@ -67,6 +69,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 public abstract class RegularLevel extends Level {
@@ -77,11 +80,22 @@ public abstract class RegularLevel extends Level {
 
     protected Room roomEntrance;
     protected Room roomExit;
+    protected float nRooms = -1;
 
     @Override
     protected boolean build() {
 
         builder = builder();
+
+        if(builder instanceof RegularBuilder){
+            if(Challenges.LINEAR.enabled()) {
+                ((RegularBuilder) builder).setPathLength(1, new float[]{1});
+                ((RegularBuilder) builder).setPathVariance(0);
+            }
+            if(Challenges.BIGGER_LEVELS.enabled()){
+                ((RegularBuilder) builder).setExtraConnectionChance(1f);
+            }
+        }
 
         ArrayList<Room> initRooms = initRooms();
         Random.shuffle(initRooms);
@@ -94,8 +108,19 @@ public abstract class RegularLevel extends Level {
             rooms = builder.build((ArrayList<Room>) initRooms.clone());
         } while (rooms == null);
 
-        return painter().paint(this, rooms);
+        boolean painted = painter().paint(this, rooms);
+        if (length > Level.SIZE_LIMIT) {
+            nRooms -= 0.3334f;
+        }
+        return painted;
+    }
 
+    protected HashSet<Room> emptyRooms(){
+        HashSet<Room> empty = new HashSet<>();
+        for (Room room : rooms) {
+            if(room.isEmpty())empty.add(room);
+        }
+        return empty;
     }
 
     protected ArrayList<Room> initRooms() {
@@ -109,6 +134,11 @@ public abstract class RegularLevel extends Level {
             standards = (int) Math.ceil(standards * 1.5f);
         }
         standards *= Challenges.nRoomsMult();
+        if(nRooms>0){
+            standards=(int)Math.floor(nRooms);
+        } else {
+            nRooms=standards;
+        }
         for (int i = 0; i < standards; i++) {
             StandardRoom s;
             do {
@@ -156,6 +186,8 @@ public abstract class RegularLevel extends Level {
     }
 
     protected Builder builder() {
+        if (Challenges.LINEAR.enabled())
+            return new LineBuilder();
         if (Random.Int(2) == 0) {
             return new LoopBuilder()
                     .setLoopShape(2,
@@ -167,7 +199,6 @@ public abstract class RegularLevel extends Level {
                             Random.Float(0.3f, 0.8f),
                             0f);
         }
-
     }
 
     protected abstract Painter painter();

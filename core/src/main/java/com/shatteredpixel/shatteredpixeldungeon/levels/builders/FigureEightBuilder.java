@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.builders;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.ConnectionRoom;
 import com.watabou.utils.PointF;
@@ -97,6 +98,9 @@ public class FigureEightBuilder extends RegularBuilder {
 		multiConnections.remove(landmarkRoom);
 		
 		float startAngle = Random.Float(0, 360);
+		if(Challenges.BIGGER_LEVELS.enabled()){
+			startAngle = Random.Int(4) * 90;
+		}
 
 		int roomsOnFirstLoop = mainPathRooms.size()/2;
 		if (mainPathRooms.size() % 2 == 1) roomsOnFirstLoop += Random.Int(2);

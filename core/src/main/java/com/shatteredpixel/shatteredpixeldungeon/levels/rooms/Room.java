@@ -144,7 +144,6 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	public Point random() {
 		return random( 1 );
 	}
-	
 	public Point random( int m ) {
 		return new Point( Random.IntRange( left + m, right - m ),
 				Random.IntRange( top + m, bottom - m ));

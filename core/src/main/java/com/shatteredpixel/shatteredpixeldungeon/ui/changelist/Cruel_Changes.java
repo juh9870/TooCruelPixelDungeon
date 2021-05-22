@@ -79,8 +79,12 @@ public class Cruel_Changes {
         ));
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "Fixed:\n" +
-                        "_-_ Fixed Agoraphobia not halving the loot"
+                        "_-_ Fixed Agoraphobia not halving the loot\n" +
+                        "_-_ Fixed crash when winning on difficulty normal or lower\n" +
+                        "_-_ Fixed Marathon & On a Beat timer reset exploit"
         ));
+        Image _mapicon = new Image(Assets.Effects.EFFECTS, 16, 24, 16, 6);
+        changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "linear"), Messages.get(Challenges.class, "linear_desc")));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
         changes.hardlight(Window.TITLE_COLOR);
@@ -112,15 +116,16 @@ public class Cruel_Changes {
         changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "manifesting_myriads"), Messages.get(Challenges.class, "manifesting_myriads_desc")));
         sp.aura(Cruel_Changes.class, 0xFF0000, 1.0f, false);
 
-        Image _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
+        _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
         _mapicon.scale = new PointF(0.5f, 0.5f);
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "small_levels"), Messages.get(Challenges.class, "small_levels_desc")));
         _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
         _mapicon.scale = new PointF(1.2f, 1.2f);
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "bigger_levels"), Messages.get(Challenges.class, "bigger_levels_desc")));
-        _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
-        _mapicon.scale = new PointF(1.5f, 1.5f);
+        _mapicon = new Image(Assets.Effects.SPELL_ICONS, 16, 0, 16, 16);
+//        _mapicon.scale = new PointF(1.5f, 1.5f);
         _mapicon.color(0xFFFF00);
+        _mapicon.aa=1;
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "huge_levels"), Messages.get(Challenges.class, "huge_levels_desc")));
 
         Image blood = new Image(Assets.Interfaces.BUFFS_LARGE);

@@ -184,7 +184,8 @@ public class Dungeon {
         version = Game.versionCode;
         mobsToChampion = -1;
 
-        seed = DungeonSeed.randomSeed();
+//        seed = DungeonSeed.randomSeed();
+        seed = 3596304741126l;
 
         modifiers = SPDSettings.modifiers();
         challengesInform = false;
@@ -218,7 +219,7 @@ public class Dungeon {
 
         depth = 0;
 //		if (DeviceCompat.isDebug())
-//			depth = 8;
+//			depth = 20;
         gold = 0;
 
         droppedItems = new SparseArray<>();

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -81,10 +82,13 @@ public class ScrollOfTeleportation extends Scroll {
 	}
 	
 	public static void teleportHero( Hero hero ) {
-		teleportChar( hero );
+		teleportChar( hero, Challenges.LINEAR.enabled() );
 	}
 	
-	public static void teleportChar( Char ch ) {
+	public static void teleportChar( Char ch) {
+		teleportChar(ch,false);
+	}
+	public static void teleportChar( Char ch, boolean visitedOnly ) {
 
 		if (Dungeon.bossLevel()){
 			GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
@@ -93,10 +97,14 @@ public class ScrollOfTeleportation extends Scroll {
 		
 		int count = 20;
 		int pos;
+		if(visitedOnly)count*=5;
 		do {
 			pos = Dungeon.level.randomRespawnCell( ch );
 			if (count-- <= 0) {
 				break;
+			}
+			if (visitedOnly && !Dungeon.level.visited[pos]) {
+				pos = -1;
 			}
 		} while (pos == -1 || Dungeon.level.secret[pos]);
 		
@@ -121,7 +129,7 @@ public class ScrollOfTeleportation extends Scroll {
 	
 	public static void teleportPreferringUnseen( Hero hero ){
 		
-		if (Dungeon.bossLevel() || !(Dungeon.level instanceof RegularLevel)){
+		if (Dungeon.bossLevel() || !(Dungeon.level instanceof RegularLevel) || Challenges.LINEAR.enabled()){
 			teleportHero( hero );
 			return;
 		}

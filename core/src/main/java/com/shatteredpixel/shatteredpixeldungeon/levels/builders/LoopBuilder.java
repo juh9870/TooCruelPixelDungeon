@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.builders;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.ConnectionRoom;
 import com.watabou.utils.PointF;
@@ -82,6 +83,9 @@ public class LoopBuilder extends RegularBuilder {
 		entrance.setPos(0, 0);
 		
 		float startAngle = Random.Float(0, 360);
+		if(Challenges.BIGGER_LEVELS.enabled()){
+			startAngle = Random.Int(4) * 90;
+		}
 
 		mainPathRooms.add(0, entrance);
 		mainPathRooms.add((mainPathRooms.size()+1)/2, exit);

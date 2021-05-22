@@ -89,30 +89,33 @@ public abstract class PatchRoom extends StandardRoom {
 	//removes all diagonal-only adjacent filled patch areas, handy for making things look cleaner
 	//note that this will reduce the fill rate very slightly
 	protected void cleanDiagonalEdges(){
-		if (patch == null) return;
-		
-		int pWidth = width()-2;
-		
-		for (int i = 0; i < patch.length - pWidth; i++){
-			if (!patch[i]) continue;
-			
-			//we don't need to check above because we are either at the top
-			// or have already dealt with those tiles
-			
-			//down-left
-			if (i % pWidth != 0){
-				if (patch[i - 1 + pWidth] && !(patch[i - 1] || patch[i + pWidth])){
-					patch[i - 1 + pWidth] = false;
+		try {
+			if (patch == null) return;
+
+			int pWidth = width() - 2;
+
+			for (int i = 0; i < patch.length - pWidth; i++) {
+				if (!patch[i]) continue;
+
+				//we don't need to check above because we are either at the top
+				// or have already dealt with those tiles
+
+				//down-left
+				if (i % pWidth != 0) {
+					if (patch[i - 1 + pWidth] && !(patch[i - 1] || patch[i + pWidth])) {
+						patch[i - 1 + pWidth] = false;
+					}
 				}
-			}
-			
-			//down-right
-			if ((i + 1) % pWidth != 0){
-				if (patch[i + 1 + pWidth] && !(patch[i + 1] || patch[i + pWidth])){
-					patch[i + 1 + pWidth] = false;
+
+				//down-right
+				if ((i + 1) % pWidth != 0) {
+					if (patch[i + 1 + pWidth] && !(patch[i + 1] || patch[i + pWidth])) {
+						patch[i + 1 + pWidth] = false;
+					}
 				}
+
 			}
-			
+		} catch (ArrayIndexOutOfBoundsException e){
 		}
 	}
 	

@@ -103,6 +103,8 @@ import java.util.LinkedList;
 
 public abstract class Level implements Bundlable {
 
+    public static final int SIZE_LIMIT = 16383;
+
     protected static final float TIME_TO_RESPAWN = 50;
     private static final String VERSION = "version";
     private static final String WIDTH = "width";
@@ -262,7 +264,11 @@ public abstract class Level implements Bundlable {
                 //~7.15% chance for each feeling
                 switch (Random.Int(14)) {
                     case 0:
-                        feeling = Feeling.CHASM;
+                        if(Challenges.LINEAR.enabled()){
+                            feeling = Feeling.LARGE;
+                        } else {
+                            feeling = Feeling.CHASM;
+                        }
                         break;
                     case 1:
                         feeling = Feeling.WATER;
@@ -636,8 +642,8 @@ public abstract class Level implements Bundlable {
     }
 
     public int randomRespawnCell(Char ch) {
-		int cell;
-		boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
+        int cell;
+        boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
 
         do {
             cell = Random.Int(length());

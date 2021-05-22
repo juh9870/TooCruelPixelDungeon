@@ -89,6 +89,7 @@ public class LastShopLevel extends RegularLevel {
 	@Override
 	protected Builder builder() {
 		return new LineBuilder()
+				.setRevolutions(0)
 				.setPathVariance(0f)
 				.setPathLength(1f, new float[]{1})
 				.setTunnelLength(new float[]{0, 0, 1}, new float[]{1});

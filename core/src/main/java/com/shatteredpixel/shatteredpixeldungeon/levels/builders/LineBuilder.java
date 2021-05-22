@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.builders;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.ConnectionRoom;
 import com.watabou.utils.Random;
@@ -30,78 +31,116 @@ import java.util.ArrayList;
 //A simple builder which utilizes a line as its core feature.
 public class LineBuilder extends RegularBuilder {
 
-	@Override
-	public ArrayList<Room> build(ArrayList<Room> rooms) {
-	
-		setupRooms(rooms);
-		
-		if (entrance == null){
-			return null;
-		}
+    int removedRooms = 0;
+    private float revolutions = 2.5f;
 
-		float direction = Random.Float(0, 360);
-		ArrayList<Room> branchable = new ArrayList<>();
-		
-		entrance.setSize();
-		entrance.setPos(0, 0);
-		branchable.add(entrance);
+    public LineBuilder setRevolutions(float revolutions){
+        this.revolutions=revolutions;
+        return this;
+    }
 
-		if (shop != null){
-			placeRoom(rooms, entrance, shop, direction + 180f);
-		}
-		
-		int roomsOnPath = (int)(multiConnections.size()*pathLength) + Random.chances(pathLenJitterChances);
-		roomsOnPath = Math.min(roomsOnPath, multiConnections.size());
-		
-		Room curr = entrance;
-		
-		float[] pathTunnels = pathTunnelChances.clone();
-		for (int i = 0; i <= roomsOnPath; i++){
-			if (i == roomsOnPath && exit == null)
-				continue;
-			
-			int tunnels = Random.chances(pathTunnels);
-			if (tunnels == -1){
-				pathTunnels = pathTunnelChances.clone();
-				tunnels = Random.chances(pathTunnels);
-			}
-			pathTunnels[tunnels]--;
-			
-			for (int j = 0; j < tunnels; j++){
-				ConnectionRoom t = ConnectionRoom.createRoom();
-				placeRoom(rooms, curr, t, direction + Random.Float(-pathVariance, pathVariance));
-				branchable.add(t);
-				rooms.add(t);
-				curr = t;
-			}
+    @Override
+    public ArrayList<Room> build(ArrayList<Room> rooms) {
 
-			Room r = (i == roomsOnPath ? exit : multiConnections.get(i));
-			placeRoom(rooms, curr, r, direction + Random.Float(-pathVariance, pathVariance));
-			branchable.add(r);
-			curr = r;
-		}
-		
-		ArrayList<Room> roomsToBranch = new ArrayList<>();
-		for (int i = roomsOnPath; i < multiConnections.size(); i++){
-			roomsToBranch.add(multiConnections.get(i));
-		}
-		roomsToBranch.addAll(singleConnections);
-		weightRooms(branchable);
-		createBranches(rooms, branchable, roomsToBranch, branchTunnelChances);
-		
-		findNeighbours(rooms);
-		
-		for (Room r : rooms){
-			for (Room n : r.neigbours){
-				if (!n.connected.containsKey(r)
-						&& Random.Float() < extraConnectionChance){
-					r.connect(n);
-				}
-			}
-		}
-		
-		return rooms;
-	
-	}
+        setupRooms(rooms);
+        multiConnections.addAll(mainPathRooms);
+        mainPathRooms.clear();
+
+        float step = 360 * revolutions / multiConnections.size();
+
+        if (entrance == null) {
+            return null;
+        }
+        boolean noCorridors = false;
+
+        float direction = Random.Float(0, 360);
+        if (Challenges.LINEAR.enabled()) {
+            int i = Random.Int(4);
+            direction = i * 90;
+            noCorridors = true;
+        }
+        ArrayList<Room> branchable = new ArrayList<>();
+
+        entrance.setSize();
+        entrance.setPos(-entrance.width()/2, -entrance.height()/2);
+        branchable.add(entrance);
+
+        if (shop != null) {
+            placeRoom(rooms, entrance, shop, direction + 180f);
+        }
+
+        int roomsOnPath = (int) (multiConnections.size() * pathLength) + Random.chances(pathLenJitterChances);
+        roomsOnPath = Math.min(roomsOnPath, multiConnections.size());
+
+        Room curr = entrance;
+
+        float[] pathTunnels = pathTunnelChances.clone();
+        for (int i = 0; i <= roomsOnPath; i++) {
+
+            direction += step;
+
+            if (i == roomsOnPath && exit == null)
+                continue;
+
+            int tunnels = Random.chances(pathTunnels);
+            if (tunnels == -1) {
+                pathTunnels = pathTunnelChances.clone();
+                tunnels = Random.chances(pathTunnels);
+            }
+            pathTunnels[tunnels]--;
+
+            if (!noCorridors) {
+                for (int j = 0; j < tunnels; j++) {
+                    ConnectionRoom t = ConnectionRoom.createRoom();
+                    placeRoom(rooms, curr, t, direction + Random.Float(-pathVariance, pathVariance));
+                    branchable.add(t);
+                    rooms.add(t);
+                    curr = t;
+                }
+            }
+
+            Room r = (i == roomsOnPath ? exit : multiConnections.get(i));
+            float angle;
+            int tries = 4;
+            do {
+                angle = placeRoom(rooms, curr, r, direction + Random.Float(-pathVariance, pathVariance));
+                tries--;
+            } while (angle == -1 && tries >= 0);
+            if (angle == -1) {
+                if (r == exit || r == entrance) return null;
+                r.clearConnections();
+                roomsOnPath--;
+                i--;
+                multiConnections.remove(r);
+                rooms.remove(r);
+                removedRooms++;
+            } else {
+                branchable.add(r);
+                curr = r;
+            }
+        }
+
+        ArrayList<Room> roomsToBranch = new ArrayList<>();
+        for (int i = roomsOnPath; i < multiConnections.size(); i++) {
+            roomsToBranch.add(multiConnections.get(i));
+        }
+        roomsToBranch.addAll(singleConnections);
+        weightRooms(branchable);
+        createBranches(rooms, branchable, roomsToBranch, branchTunnelChances);
+
+        findNeighbours(rooms);
+
+//        for (Room r : rooms) {
+//            for (Room n : r.neigbours) {
+//                if (!n.connected.containsKey(r)
+//                        && Random.Float() < extraConnectionChance) {
+//                    r.connect(n);
+//                }
+//            }
+//        }
+
+        return rooms;
+
+    }
 
 }
