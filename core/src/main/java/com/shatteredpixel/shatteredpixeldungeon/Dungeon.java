@@ -184,8 +184,8 @@ public class Dungeon {
         version = Game.versionCode;
         mobsToChampion = -1;
 
-//        seed = DungeonSeed.randomSeed();
-        seed = 3596304741126l;
+        seed = DungeonSeed.randomSeed();
+//        seed = 3596304741126l;
 
         modifiers = SPDSettings.modifiers();
         challengesInform = false;
