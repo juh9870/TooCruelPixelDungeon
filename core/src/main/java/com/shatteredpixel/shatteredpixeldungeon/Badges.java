@@ -830,8 +830,10 @@ public class Badges {
 				}
 			}
 		}
-		local.add(topBadge);
-		displayBadge(topBadge);
+		if(topBadge!=null) {
+			local.add(topBadge);
+			displayBadge(topBadge);
+		}
 	}
 	
 	private static void displayBadge(Badge badge) {
