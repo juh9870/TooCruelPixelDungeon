@@ -184,7 +184,7 @@ public enum Challenges {
             return 1.5f;
         }
     },
-    HUGE_LEVELS(38, 3, 7f, LINEAR) {
+    HUGE_LEVELS(38, 3, 7f, BIGGER_LEVELS) {
         @Override
         protected float _nMobsMult() {
             return 3;

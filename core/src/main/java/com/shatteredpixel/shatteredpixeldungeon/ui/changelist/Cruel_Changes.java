@@ -82,8 +82,7 @@ public class Cruel_Changes {
                         "_-_ Fixed Agoraphobia not halving the loot\n" +
                         "_-_ Fixed crash when winning on difficulty normal or lower\n" +
                         "_-_ Fixed Marathon & On a Beat timer reset exploit\n" +
-                        "_-_ Added 1 new T2 challenge.\n" +
-                        "_-_ World Inside Out now requires new challenge."
+                        "_-_ Added 1 new T2 challenge."
         ));
         Image _mapicon = new Image(Assets.Effects.EFFECTS, 16, 24, 16, 6);
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "linear"), Messages.get(Challenges.class, "linear_desc")));
