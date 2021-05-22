@@ -611,7 +611,10 @@ public class Hero extends Char {
 			bubble.processTime(time);
 			return;
 		}
-		
+
+		if (time > 0) {
+			GameScene.resetTimer();
+		}
 		super.spend(time);
 	}
 	

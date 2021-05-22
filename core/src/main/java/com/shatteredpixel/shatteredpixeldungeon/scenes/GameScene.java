@@ -176,7 +176,7 @@ public class GameScene extends PixelScene {
 	private ResumeIndicator resume;
 
 	public static boolean timerPaused = true;
-	private double timer = 10;
+	private static double timer = 10;
 
 	@Override
 	public void create() {
@@ -554,11 +554,11 @@ public class GameScene extends PixelScene {
 		}
 
 		fadeIn();
-		resetTimer();
+//		resetTimer();
 		timer += 5;
 	}
 
-	private void resetTimer() {
+	public static void resetTimer() {
 		timer = Challenges.secondsPerTurn();
 	}
 	
@@ -1137,7 +1137,6 @@ public class GameScene extends PixelScene {
 		if (scene != null && scene.toolbar != null) scene.toolbar.examining = false;
 		if(Dungeon.hero.ready) {
 			timerPaused = false;
-			if (scene != null) scene.resetTimer();
 		}
 	}
 	
