@@ -86,7 +86,10 @@ public class Cruel_Changes {
                         "_-_ Fixed Marathon & On a Beat timer reset exploit\n" +
                         "_-_ Fixed levelgen bug with too big levels"
         ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),"_-_ Added Chinese translations for challenges."));
+        changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),
+                "_-_ Added Chinese translations for challenges.\n" +
+                "_-_ Added Korean translations for challenges."
+        ));
         Image _mapicon = new Image(Assets.Effects.EFFECTS, 16, 24, 16, 6);
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "linear"), Messages.get(Challenges.class, "linear_desc")));
 

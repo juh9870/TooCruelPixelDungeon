@@ -71,7 +71,7 @@ public class NoosaScript extends Script {
 		
 	}
 
-	public void drawElements( FloatBuffer vertices, ShortBuffer indices, int size ) {
+	public void drawElements(FloatBuffer vertices, ShortBuffer indices, int size ) {
 		
 		vertices.position( 0 );
 		aXY.vertexPointer( 2, 4, vertices );
