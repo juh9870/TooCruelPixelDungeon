@@ -52,9 +52,8 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 		}
 		return false;
 	}
-	
-	@Override
-	public boolean act() {
+
+	public void tick() {
 		
 		if(Dungeon.depth!=lastDepth){
 			resetTrail();
@@ -90,11 +89,8 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 		if (damage>0) {
 			target.damage(damage, this);
 		}
-		
-		spend(TICK);
-		return true;
 	}
-	
+
 	@Override
 	public void fx(boolean on) {
 		fx=on;

@@ -600,6 +600,14 @@ public class Hero extends Char {
 	@Override
 	public void spend(float time) {
 		justMoved = false;
+
+		if(time>0) {
+			RacingTheDeath rtd = buff(RacingTheDeath.class);
+			if (rtd != null) {
+				rtd.tick();
+			}
+		}
+
 		TimekeepersHourglass.timeFreeze freeze = buff(TimekeepersHourglass.timeFreeze.class);
 		if (freeze != null) {
 			freeze.processTime(time);

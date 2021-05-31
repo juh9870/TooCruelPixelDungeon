@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GrowingRage;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.WraithSprite;
@@ -118,6 +119,11 @@ public class MirrorWraith extends Mob {
     }
 
     @Override
+    public float speed() {
+        return Dungeon.hero.isAlive() ? Dungeon.hero.speed() : super.speed();
+    }
+
+    @Override
     protected boolean act() {
         if (lifetime <= 0) {
             die(this);
@@ -128,7 +134,16 @@ public class MirrorWraith extends Mob {
 
     @Override
     protected void spend(float time) {
-        lifetime -= time;
+        if (!Dungeon.hero.isAlive() || Dungeon.hero.buff(TimekeepersHourglass.timeStasis.class) == null) {
+            float mult = 1;
+            if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
+                float p = (float) HP / HT;
+                // https://www.desmos.com/calculator/d3y5ojeiu8
+                mult = (float) (1 / (Math.pow(10 * (p - 0.5f), 2) + 1));
+            }
+            mult = Math.max(0, Math.min(mult, 1));
+            lifetime -= time * mult;
+        }
         super.spend(time);
     }
 
@@ -161,12 +176,12 @@ public class MirrorWraith extends Mob {
 
     @Override
     public int damageRoll() {
-        return Random.NormalIntRange(1 + level / 2, 2 + level);
+        return Math.round(Random.NormalIntRange(1 + level / 2, 2 + level) * forceMult);
     }
 
     @Override
     public int attackSkill(Char target) {
-        return 10 + level;
+        return Math.round((10 + level) * forceMult);
     }
 
     @Override

@@ -75,15 +75,18 @@ public class Cruel_Changes {
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
                 "_-_ On a Beat now requires Countdown\n" +
-                        "_-_ Mirror of Rage's Mirror Wraiths not have fixed lifetime of 10 turns, which scales with amount of mirror wraiths killed if when Spiritual Connection is enabled."
+                        "_-_ Mirror of Rage's Mirror Wraiths not have fixed lifetime of 10 turns, which scales with amount of mirror wraiths killed and their HP if when Spiritual Connection is enabled.\n" +
+                        "_-_ Added 1 new T2 challenge\n" +
+                        "_-_ Racing The Death now counts player actions instead of turns"
         ));
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "Fixed:\n" +
                         "_-_ Fixed Agoraphobia not halving the loot\n" +
                         "_-_ Fixed crash when winning on difficulty normal or lower\n" +
                         "_-_ Fixed Marathon & On a Beat timer reset exploit\n" +
-                        "_-_ Added 1 new T2 challenge."
+                        "_-_ Fixed levelgen bug with too big levels"
         ));
+        changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),"_-_ Added Chinese translations for challenges."));
         Image _mapicon = new Image(Assets.Effects.EFFECTS, 16, 24, 16, 6);
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "linear"), Messages.get(Challenges.class, "linear_desc")));
 

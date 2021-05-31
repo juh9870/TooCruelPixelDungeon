@@ -112,7 +112,7 @@ public class TomeOfMastery extends Item {
 		
 		detach( curUser.belongings.backpack );
 
-		curUser.spend(Challenges.RACING_THE_DEATH.enabled() ? 1 : TomeOfMastery.TIME_TO_READ);
+		curUser.spend(TomeOfMastery.TIME_TO_READ);
 		curUser.busy();
 		
 		curUser.subClass = way;
