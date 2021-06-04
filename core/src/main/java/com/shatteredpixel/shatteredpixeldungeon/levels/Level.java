@@ -1419,7 +1419,7 @@ public abstract class Level implements Bundlable {
                         mob.beckon(Dungeon.hero.pos);
                     }
                     if (!mob.buffs(ChampionEnemy.class).isEmpty()) {
-                        GLog.w(Messages.get(ChampionEnemy.class, "warn"));
+//                        GLog.w(Messages.get(ChampionEnemy.class, "warn"));
                     }
                     spend(Dungeon.level.respawnCooldown());
                 } else {
