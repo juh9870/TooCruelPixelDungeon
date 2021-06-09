@@ -136,7 +136,12 @@ public enum Challenges {
     },
     EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
-    ROOK_DISABLED(18, 1, 1.5f),
+    STACKING(18, 1, 1.5f){
+        @Override
+        protected float _nMobsMult() {
+            return 1.5f;
+        }
+    },
     CHAMPION_ENEMIES(19, 1, 2f),
     NO_PERKS(20, 1, 3f),
     BLOODBAG(41, 1, 2f),
@@ -226,7 +231,8 @@ public enum Challenges {
     THOUGHTLESS(48, 2, 2.5f),
     EXHIBITIONISM(49, 2, 2f, RESURRECTION),
     MARATHON(50, 2, 3f),
-    STRONGER_BOSSES(56,2,3f),
+    STRONGER_BOSSES(56, 2, 3f),
+    STACKING_SPAWN(57, 2, 2f),
 
 
     //T3
@@ -259,7 +265,7 @@ public enum Challenges {
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
 
-    INFINITY_MOBS(55, 4, 16f){
+    INFINITY_MOBS(55, 4, 16f) {
         @Override
         protected float _nMobsMult() {
             return 1000;
@@ -287,6 +293,7 @@ public enum Challenges {
     public final float difficulty;
     public final int tier;
     public final int[] requirements;
+
 
     Challenges(int id, int tier, float difficulty, Challenges... requirements) {
         this(id, id, tier, difficulty, requirements);
@@ -537,8 +544,8 @@ public enum Challenges {
         return 1e64;
     }
 
-    public static boolean isTooManyMobs(){
-        return nMobsMultiplier()>16;
+    public static boolean isTooManyMobs() {
+        return nMobsMultiplier() > 16;
     }
 
     protected float _nMobsMult() {

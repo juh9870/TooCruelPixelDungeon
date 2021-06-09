@@ -639,7 +639,7 @@ public abstract class Char extends Actor {
 	
 	public void die( Object src ) {
 		
-		for (ChampionEnemy buff : buffs(ChampionEnemy.class)) {
+		for (Buff buff : buffs()) {
 			buff.onDeathProc(src);
 		}
 		

@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Shadows;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stacking;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -601,10 +602,14 @@ public abstract class Level implements Bundlable {
 			for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
 				if (mob.alignment == Char.Alignment.ENEMY && !mob.properties().contains(Char.Property.MINIBOSS)) {
 					count += mob.spawningWeight();
+					Stacking stack = mob.buff(Stacking.class);
+					if (stack != null) count += stack.count / 2f;
 				}
 			}
 
-			if (count < Dungeon.level.nMobs()) {
+			float leftover = Dungeon.level.nMobs() - count;
+
+			if (leftover > 0) {
 
 				boolean allowNearHero = Challenges.EXHIBITIONISM.enabled() || Challenges.SMALL_LEVELS.enabled();
 				PathFinder.buildDistanceMap(Dungeon.hero.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
@@ -619,6 +624,9 @@ public abstract class Level implements Bundlable {
 					}
 					if (!mob.buffs(ChampionEnemy.class).isEmpty()) {
 //                        GLog.w(Messages.get(ChampionEnemy.class, "warn"));
+					}
+					if (Challenges.STACKING_SPAWN.enabled()) {
+						Buff.affect(mob, Stacking.class).count = Math.max((int) leftover, 1);
 					}
 					spend(Dungeon.level.respawnCooldown());
 				} else {

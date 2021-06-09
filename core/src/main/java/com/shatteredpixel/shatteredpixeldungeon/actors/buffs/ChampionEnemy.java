@@ -107,10 +107,6 @@ public abstract class ChampionEnemy extends Buff {
 	public void onDamageProc(int damage) {
 
 	}
-
-	public void onDeathProc(Object src) {
-
-	}
 	public boolean canAttackWithExtraReach( Char enemy ){
 		return false;
 	}

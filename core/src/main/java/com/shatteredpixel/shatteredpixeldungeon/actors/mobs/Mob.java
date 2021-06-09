@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stacking;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -56,7 +57,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
@@ -176,7 +176,11 @@ public abstract class Mob extends Char {
 	public CharSprite sprite() {
 		return Reflection.newInstance(spriteClass);
 	}
-	
+
+	public int enemyPos(){
+		return enemy!=null ? enemy.pos : -1;
+	}
+
 	@Override
 	protected boolean act() {
 		
@@ -205,6 +209,10 @@ public abstract class Mob extends Char {
 		enemy = chooseEnemy();
 		
 		boolean enemyInFOV = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
+		if(enemyInFOV) {
+			Stacking stack = buff(Stacking.class);
+			if (stack != null) stack.proc();
+		}
 
 		return state.act( enemyInFOV, justAlerted );
 	}

@@ -88,6 +88,9 @@ public class Buff extends Actor {
 	
 	public void modifyProperties(HashSet<Char.Property> properties){
 	}
+
+	public void onDeathProc(Object src) {
+	}
 	
 	public int icon() {
 		return BuffIndicator.NONE;

@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stacking;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
@@ -71,6 +72,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -232,6 +234,24 @@ public abstract class RegularLevel extends Level {
         mobs *= (int) Math.ceil(Challenges.nMobsMultiplier());
 		return mobs;
 	}
+
+	private boolean tryCreateMobInRoom(Mob mob, Room roomToSpawn){
+		int tries = 30;
+		do {
+			mob.pos = pointToCell(roomToSpawn.random());
+			tries--;
+		} while (tries >= 0 && (!passable[mob.pos] || solid[mob.pos] || mob.pos == exit
+				|| (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE)) || findMob(mob.pos) != null));
+
+		if (tries < 0) {
+			return false;
+		}
+		if (Challenges.EXTERMINATION.enabled()) {
+			Buff.affect(mob, Extermination.class);
+		}
+		mobs.add(mob);
+		return true;
+	}
 	
 	@Override
 	protected void createMobs() {
@@ -253,96 +273,91 @@ public abstract class RegularLevel extends Level {
 		Random.shuffle(stdRooms);
 		Iterator<Room> stdRoomIter = stdRooms.iterator();
 
-        if(!Challenges.isTooManyMobs()) {
-		while (mobsToSpawn > 0) {
-			Mob mob = createMob();
-			Room roomToSpawn;
-			
-			if (!stdRoomIter.hasNext()) {
-				stdRoomIter = stdRooms.iterator();
+		boolean stacking = Challenges.STACKING.enabled();
+
+		if(Challenges.INFINITY_MOBS.enabled() && stacking){
+			while (stdRoomIter.hasNext()) {
+				Room r = stdRoomIter.next();
+				int count = 0;
+				for (int i = r.left; i < r.right; i++) {
+					for (int j = r.top; j < r.bottom; j++) {
+						int c = pointToCell(new Point(i, j));
+						if (passable[c] && !solid[c] && c != exit && c != entrance) {
+							count++;
+						}
+					}
+				}
+				Mob m = createMob();
+				tryCreateMobInRoom(m, r);
+				Buff.affect(m, Stacking.class).count = count;
 			}
-			roomToSpawn = stdRoomIter.next();
+		} else if (!Challenges.isTooManyMobs() || stacking) {
+			HashMap<Room, Stacking> roomMobMap = new HashMap<>();
+			while (mobsToSpawn > 0) {
+				Room roomToSpawn;
 
-			int tries = 30;
-			do {
-				mob.pos = pointToCell(roomToSpawn.random());
-				tries--;
-                } while (tries >= 0 && (!passable[mob.pos] || solid[mob.pos] || mob.pos == exit
-                        || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE)) || findMob(mob.pos) != null));
+				if (!stdRoomIter.hasNext()) {
+					stdRoomIter = stdRooms.iterator();
+				}
+				roomToSpawn = stdRoomIter.next();
 
-			if (tries >= 0) {
-				mobsToSpawn--;
-                    if (Challenges.EXTERMINATION.enabled()) {
-                        Buff.affect(mob, Extermination.class);
-                    }
-                    mobs.add(mob);
-
-                    for (int i = 0; i < 10; i++) {
-                        Mob oldMob = mob;
-                        mob = createMob();
-                        mob.pos=oldMob.pos;
-
-                        if (Challenges.EXTERMINATION.enabled()) {
-                            Buff.affect(mob, Extermination.class);
-                        }
-				mobs.add(mob);
-                    }
-
-                    //add a second mob to this room
-                    if (mobsToSpawn > 0 && Random.Int(4) == 0) {
-					mob = createMob();
-
-					tries = 30;
-					do {
-						mob.pos = pointToCell(roomToSpawn.random());
-						tries--;
-					} while (tries >= 0 && (findMob(mob.pos) != null || !passable[mob.pos] || solid[mob.pos] || mob.pos == exit
-							|| (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE))));
-
-					if (tries >= 0) {
+				if (stacking && roomMobMap.containsKey(roomToSpawn)) {
+					Stacking stack = roomMobMap.get(roomToSpawn);
+					stack.count++;
+					mobsToSpawn--;
+					if (Random.Int(4) == 0) {
+						stack.count++;
 						mobsToSpawn--;
-                            if (Challenges.EXTERMINATION.enabled()) {
-                                Buff.affect(mob, Extermination.class);
-                            }
-
-                            mobs.add(mob);
-                        }
-                    }
-                }
-            }
-        } else {
-            HashSet<Integer> cells = new HashSet<>();
-            HashSet<Integer> largeCells = new HashSet<>();
-            while (stdRoomIter.hasNext()) {
-                Room r = stdRoomIter.next();
-                for (int i = r.left; i < r.right; i++) {
-                    for (int j = r.top; j < r.bottom; j++) {
-                        int c = pointToCell(new Point(i, j));
-                        if (passable[c] && !solid[c] && c != exit && c != entrance) {
-                            cells.add(c);
-                            if (openSpace[c]) largeCells.add(c);
-                        }
-                    }
-                }
-            }
-            while (mobsToSpawn > 0) {
-                Mob mob = createMob();
-                if (cells.size() <= 0) break;
-                HashSet<Integer> set = mob.properties().contains(Char.Property.LARGE) ? largeCells : cells;
-
-                mobsToSpawn--;
-                if (set.size() > 0) {
-                    int cell = Random.element(set);
-                    mob.pos = cell;
-                    cells.remove(cell);
-                    largeCells.remove(cell);
-                            if (Challenges.EXTERMINATION.enabled()) {
-                                Buff.affect(mob, Extermination.class);
-                            }
-						mobs.add(mob);
+					}
+				} else {
+					Mob mob = createMob();
+					if (tryCreateMobInRoom(mob, roomToSpawn)) {
+						mobsToSpawn--;
+						if(stacking){
+							roomMobMap.put(roomToSpawn, Buff.affect(mob, Stacking.class));
+						}
+						if (mobsToSpawn > 0 && Random.Int(4) == 0) {
+							mob = createMob();
+							if (tryCreateMobInRoom(mob, roomToSpawn)) {
+								mobsToSpawn--;
+							}
+						}
 					}
 				}
 			}
+		} else {
+			HashSet<Integer> cells = new HashSet<>();
+			HashSet<Integer> largeCells = new HashSet<>();
+			while (stdRoomIter.hasNext()) {
+				Room r = stdRoomIter.next();
+				for (int i = r.left; i < r.right; i++) {
+					for (int j = r.top; j < r.bottom; j++) {
+						int c = pointToCell(new Point(i, j));
+						if (passable[c] && !solid[c] && c != exit && c != entrance) {
+							cells.add(c);
+							if (openSpace[c]) largeCells.add(c);
+						}
+					}
+				}
+			}
+			while (mobsToSpawn > 0) {
+				Mob mob = createMob();
+				if (cells.size() <= 0) break;
+				HashSet<Integer> set = mob.properties().contains(Char.Property.LARGE) ? largeCells : cells;
+
+				mobsToSpawn--;
+				if (set.size() > 0) {
+					int cell = Random.element(set);
+					mob.pos = cell;
+					cells.remove(cell);
+					largeCells.remove(cell);
+					if (Challenges.EXTERMINATION.enabled()) {
+						Buff.affect(mob, Extermination.class);
+					}
+					mobs.add(mob);
+				}
+			}
+		}
 
 		for (Mob m : mobs){
 			if (map[m.pos] == Terrain.HIGH_GRASS || map[m.pos] == Terrain.FURROWED_GRASS) {
