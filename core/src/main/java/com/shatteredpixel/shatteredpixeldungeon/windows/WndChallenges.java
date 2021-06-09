@@ -76,7 +76,7 @@ public class WndChallenges extends Window {
 
     public WndChallenges(Modifiers modifiers, final boolean editable, final boolean needIncrease, ChallengePredicate editableFilter) {
         super();
-        this.modifiers=modifiers;
+        this.modifiers = modifiers;
 
         oldDifficulty = Difficulty.calculateDifficulty(modifiers);
         this.needIncrease = needIncrease;
@@ -134,8 +134,9 @@ public class WndChallenges extends Window {
                     if (infos.get(i).inside(x, y)) {
 
                         String message = Messages.get(Challenges.class, sorted[i].name + "_desc");
+                        String title = Messages.get(Challenges.class, sorted[i].name);
                         ShatteredPixelDungeon.scene().add(
-                                new WndMessage(message)
+                                new WndTitledMessage(new TextTitle(title), message)
                         );
 
                         break;
@@ -177,16 +178,16 @@ public class WndChallenges extends Window {
                 if (editable) {
                     if (!filtered) {
                         if (prevFiltered) {
-                            pos = delimiter(content, pos, Messages.get(this, checked?"unavailable_enabled":"unavailable_disabled"), 8, 0xaaaaaa);
+                            pos = delimiter(content, pos, Messages.get(this, checked ? "unavailable_enabled" : "unavailable_disabled"), 8, 0xaaaaaa);
                         } else {
-                            if(!checked && prevChecked){
+                            if (!checked && prevChecked) {
                                 pos = delimiter(content, pos, Messages.get(this, "unavailable_disabled"), 8, 0xaaaaaa);
                             }
                         }
                     } else {
                         if (!checked) {
                             if (prevChecked || tier != prevTier) {
-                                    pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
+                                pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
                             }
                         }
                     }

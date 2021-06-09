@@ -21,11 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
@@ -42,8 +45,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMys
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.InventoryStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.utils.killers.SharedPain;
+import com.watabou.utils.Random;
 
-public enum Challenges {
+import java.util.ArrayList;
+import java.util.HashSet;
+
+public enum Challenges implements Hero.Doom {
     // T1
     ON_DIET(0, 1, 1),
     FAITH_ARMOR(1, 1, 2),
@@ -136,7 +145,7 @@ public enum Challenges {
     },
     EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
-    STACKING(18, 1, 1.5f){
+    STACKING(18, 1, 1.5f) {
         @Override
         protected float _nMobsMult() {
             return 1.5f;
@@ -172,7 +181,7 @@ public enum Challenges {
     REBIRTH(30, 2, 4f),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
-    BIGGER_LEVELS(37, 2, 3, BIG_LEVELS) {
+    BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
         @Override
         protected float _nMobsMult() {
             return 2;
@@ -188,7 +197,7 @@ public enum Challenges {
             return 2;
         }
     },
-    LINEAR(52, 37.5f, 2, 2f, BIGGER_LEVELS) {
+    LINEAR(52, 37.5f, 2, 2f, BIG_LEVELS) {
         @Override
         protected float _nRoomsMult() {
             return 1.5f;
@@ -246,7 +255,7 @@ public enum Challenges {
             return 1.5f;
         }
     },
-    HUGE_LEVELS(38, 3, 7f, BIGGER_LEVELS) {
+    HUGE_LEVELS(38, 3, 5f, BIGGER_LEVELS) {
         @Override
         protected float _nMobsMult() {
             return 3;
@@ -264,7 +273,9 @@ public enum Challenges {
     },
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
+    SHARED_PAIN(58, 3, 7f),
 
+    // T4
     INFINITY_MOBS(55, 4, 16f) {
         @Override
         protected float _nMobsMult() {
@@ -272,7 +283,7 @@ public enum Challenges {
         }
     },
 
-    //Last id 56
+    //Last id 58
     ;
     private static final Challenges[] mappings;
 
@@ -548,6 +559,37 @@ public enum Challenges {
         return nMobsMultiplier() > 16;
     }
 
+    public static int distributeDamage(Mob target, HashSet<Mob> mobs, int amount) {
+
+        amount = (int) Math.ceil(amount / 2f);
+
+        int damage = amount / mobs.size();
+        int leftovers = amount % mobs.size();
+        int targetDmg = amount;
+
+
+        ArrayList<Char> targets = new ArrayList<>(mobs);
+        if (Dungeon.hero.isAlive()) {
+            targets.add(0, Dungeon.hero);
+        }
+        if (leftovers > 0) {
+            Random.shuffle(targets);
+        }
+        for (Char targ : targets) {
+            if (targ instanceof NPC) {
+                continue;
+            }
+            int dmg = damage;
+            if (leftovers-- > 0) {
+                dmg++;
+            }
+            if (dmg > 0) {
+                targ.damage(dmg, SharedPain.INSTANCE);
+            }
+        }
+        return targetDmg;
+    }
+
     protected float _nMobsMult() {
         return 1;
     }
@@ -590,6 +632,12 @@ public enum Challenges {
 
     protected boolean _isItemBlocked(Item item) {
         return false;
+    }
+
+    @Override
+    public void onDeath() {
+        Dungeon.fail(getClass());
+        GLog.n(Messages.get(this, "ondeath"));
     }
 
     public static class DuplicateChallengeException extends Error {

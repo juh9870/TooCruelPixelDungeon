@@ -73,6 +73,7 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.utils.killers.SharedPain;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -653,6 +654,10 @@ public abstract class Mob extends Char {
 		if (state != HUNTING && !(src instanceof Corruption)) {
 			alerted = true;
 		}
+
+		if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE) {
+			dmg = Challenges.distributeDamage(this, Dungeon.level.mobs, dmg);
+		}
 		
 		super.damage( dmg, src );
 	}
@@ -682,7 +687,7 @@ public abstract class Mob extends Char {
 				Dungeon.hero.earnExp(exp, getClass());
 			}
 		}
-		if (Challenges.MIRROR_OF_RAGE.enabled() && Actor.findChar(pos) == null && canAscend() && Random.Int(Challenges.SPIRITUAL_CONNECTION.enabled() ? 2 : 3) == 0) {
+		if (Challenges.MIRROR_OF_RAGE.enabled() && canAscend() && Random.Int(Challenges.SPIRITUAL_CONNECTION.enabled() ? 2 : 3) == 0) {
 			MirrorWraith.spawnAt(pos, OVERKILL);
 		}
 	}
