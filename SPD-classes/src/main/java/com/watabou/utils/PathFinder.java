@@ -67,6 +67,8 @@ public class PathFinder {
 
 		NEIGHBOURS4 = new int[]{-width, -1, +1, +width};
 		NEIGHBOURS5 = new int[]{-width, -1, 0, +1, +width};
+		NEIGHBOURS8 = new int[]{-width-1, -width, -width+1, -1, +1, +width-1, +width, +width+1};
+		NEIGHBOURS9 = new int[]{-width-1, -width, -width+1, -1, 0, +1, +width-1, +width, +width+1};
 		
 		CIRCLE4 = new int[]{-width, +1, +width, -1};
 		CIRCLE8 = new int[]{-width-1, -width, -width+1, +1, +width+1, +width, +width-1, -1};
