@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -32,6 +33,8 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
@@ -141,11 +144,22 @@ public class WndHero extends WndTabbed {
 			else
 				title.label((hero.name() + "\n" + Messages.get(this, "title", hero.lvl, hero.className())).toUpperCase(Locale.ENGLISH));
 			title.color(Window.TITLE_COLOR);
-			title.setRect(0, 0, WIDTH, 0);
+
+			title.setRect( 0, 0, WIDTH-16, 0 );
 			add(title);
-			
-			pos = title.bottom() + 2 * GAP;
-			
+
+			IconButton infoButton = new IconButton(Icons.get(Icons.INFO)){
+				@Override
+				public void onClick() {
+					super.onClick();
+					ShatteredPixelDungeon.scene().addToFront(new WndHeroInfo(hero.heroClass));
+				}
+			};
+			infoButton.setRect(title.right(), 0, 16, 16);
+			add(infoButton);
+
+			pos = title.bottom() + 2*GAP;
+
 			if (Challenges.ANALGESIA.enabled()) {
 				statSlot(Messages.get(this, "str"), "??");
 				if (hero.shielding() > 0) statSlot(Messages.get(this, "health"), "??+??/??");
@@ -153,12 +167,11 @@ public class WndHero extends WndTabbed {
 				statSlot(Messages.get(this, "exp"), "??/??");
 			} else {
 				statSlot(Messages.get(this, "str"), hero.STR());
-				if (hero.shielding() > 0)
-					statSlot(Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT);
+				if (hero.shielding() > 0) statSlot(Messages.get(this, "health"), hero.HP + "+" + hero.shielding() + "/" + hero.HT);
 				else statSlot(Messages.get(this, "health"), (hero.HP) + "/" + hero.HT);
 				statSlot(Messages.get(this, "exp"), hero.exp + "/" + hero.maxExp());
 			}
-			
+
 			pos += GAP;
 			
 			if (Challenges.AMNESIA.enabled()) {

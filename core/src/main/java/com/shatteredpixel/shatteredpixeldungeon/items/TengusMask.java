@@ -22,30 +22,29 @@
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndChooseSubclass;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
 
 import java.util.ArrayList;
 
-public class ArmorKit extends Item {
-
-	private static final String TXT_UPGRADED		= "you applied the armor kit to upgrade your %s";
+public class TengusMask extends Item {
 	
-	private static final float TIME_TO_UPGRADE = 2;
-	
-	private static final String AC_APPLY = "APPLY";
+	public static final String AC_WEAR	= "WEAR";
 	
 	{
-		image = ItemSpriteSheet.KIT;
+		stackable = false;
+		image = ItemSpriteSheet.MASK;
 		
 		unique = true;
 	}
@@ -53,7 +52,7 @@ public class ArmorKit extends Item {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_APPLY );
+		actions.add( AC_WEAR );
 		return actions;
 	}
 	
@@ -62,12 +61,19 @@ public class ArmorKit extends Item {
 
 		super.execute( hero, action );
 
-		if (action.equals(AC_APPLY)) {
-
+		if (action.equals( AC_WEAR )) {
+			
 			curUser = hero;
-			GameScene.selectItem( itemSelector, WndBag.Mode.ARMOR, Messages.get(this, "prompt") );
+
+			GameScene.show( new WndChooseSubclass( this, hero ) );
 			
 		}
+	}
+	
+	@Override
+	public boolean doPickUp( Hero hero ) {
+		Badges.validateMastery();
+		return super.doPickUp( hero );
 	}
 	
 	@Override
@@ -80,40 +86,23 @@ public class ArmorKit extends Item {
 		return true;
 	}
 	
-	private void upgrade( Armor armor ) {
+	public void choose( HeroSubClass way ) {
 		
 		detach( curUser.belongings.backpack );
 		
-		curUser.sprite.centerEmitter().start( Speck.factory( Speck.KIT ), 0.05f, 10 );
-		curUser.spend( TIME_TO_UPGRADE );
+		curUser.spend( Actor.TICK );
 		curUser.busy();
 		
-		GLog.w( Messages.get(this, "upgraded", armor.name()) );
-		
-		ClassArmor classArmor = ClassArmor.upgrade( curUser, armor );
-		if (curUser.belongings.armor == armor) {
-			
-			curUser.belongings.armor = classArmor;
-			((HeroSprite)curUser.sprite).updateArmor();
-			classArmor.activate(curUser);
-			
-		} else {
-			
-			armor.detach( curUser.belongings.backpack );
-			classArmor.collect( curUser.belongings.backpack );
-			
-		}
+		curUser.subClass = way;
+		Talent.initSubclassTalents(curUser);
 		
 		curUser.sprite.operate( curUser.pos );
-		Sample.INSTANCE.play( Assets.Sounds.EVOKE );
+		Sample.INSTANCE.play( Assets.Sounds.MASTERY );
+		
+		Emitter e = curUser.sprite.centerEmitter();
+		e.pos(e.x-2, e.y-6, 4, 4);
+		e.start(Speck.factory(Speck.MASK), 0.05f, 20);
+		GLog.p( Messages.get(this, "used"));
+		
 	}
-	
-	private final WndBag.Listener itemSelector = new WndBag.Listener() {
-		@Override
-		public void onSelect( Item item ) {
-			if (item != null) {
-				ArmorKit.this.upgrade( (Armor)item );
-			}
-		}
-	};
 }

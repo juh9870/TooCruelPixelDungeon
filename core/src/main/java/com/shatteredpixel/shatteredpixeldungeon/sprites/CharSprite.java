@@ -36,7 +36,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.TorchHalo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SnowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -58,6 +57,7 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
+import java.nio.Buffer;
 import java.util.HashMap;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
@@ -282,7 +282,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 
 	public void jump( int from, int to, Callback callback ) {
-		float distance = Dungeon.level.trueDistance( from, to );
+		float distance = Math.max( 1f, Dungeon.level.trueDistance( from, to ));
 		jump( from, to, callback, distance * 2, distance * 0.1f );
 	}
 
@@ -478,6 +478,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 	}
 
+	public void aura( int color ){
+		aura(getClass(), color, 1, true);
+	}
 	public void aura( Class cl, int color, float sizeMod, boolean light ){
 		Flare aura = auras.get(cl);
 		if (aura != null){
@@ -664,7 +667,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
 		if (renderShadow) {
 			if (dirty) {
-				verticesBuffer.position(0);
+				((Buffer)verticesBuffer).position(0);
 				verticesBuffer.put(vertices);
 				if (buffer == null)
 					buffer = new Vertexbuffer(verticesBuffer);

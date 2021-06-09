@@ -123,15 +123,13 @@ public class EtherealChains extends Artifact {
 					return;
 				}
 				
-				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET | Ballistica.AFFECTED_BY_ROOK);
+				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
 				
 				if (Actor.findChar( chain.collisionPos ) != null){
 					chainEnemy( chain, curUser, Actor.findChar( chain.collisionPos ));
 				} else {
 					chainLocation( chain, curUser );
 				}
-				throwSound();
-				Sample.INSTANCE.play( Assets.Sounds.CHAINS );
 			}
 
 		}
@@ -179,6 +177,8 @@ public class EtherealChains extends Artifact {
 		}
 		
 		hero.busy();
+		throwSound();
+		Sample.INSTANCE.play( Assets.Sounds.CHAINS );
 		hero.sprite.parent.add(new Chains(hero.sprite.center(), enemy.sprite.center(), new Callback() {
 			public void call() {
 				Actor.add(new Pushing(enemy, enemy.pos, pulledPos, new Callback() {
@@ -236,6 +236,8 @@ public class EtherealChains extends Artifact {
 		}
 		
 		hero.busy();
+		throwSound();
+		Sample.INSTANCE.play( Assets.Sounds.CHAINS );
 		hero.sprite.parent.add(new Chains(hero.sprite.center(), DungeonTilemap.raisedTileCenterToWorld(newHeroPos), new Callback() {
 			public void call() {
 				Actor.add(new Pushing(hero, hero.pos, newHeroPos, new Callback() {

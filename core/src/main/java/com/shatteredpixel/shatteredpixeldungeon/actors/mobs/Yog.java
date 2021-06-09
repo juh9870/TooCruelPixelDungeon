@@ -87,8 +87,8 @@ public class Yog extends Mob {
 		BurningFist fist2 = new BurningFist();
 		
 		do {
-			fist1.pos = pos + PathFinder.NEIGHBOURS8_UNCHANGED[Random.Int( 8 )];
-			fist2.pos = pos + PathFinder.NEIGHBOURS8_UNCHANGED[Random.Int( 8 )];
+			fist1.pos = pos + PathFinder.NEIGHBOURS8[Random.Int( 8 )];
+			fist2.pos = pos + PathFinder.NEIGHBOURS8[Random.Int( 8 )];
 		} while (!Dungeon.level.passable[fist1.pos] || !Dungeon.level.passable[fist2.pos] || fist1.pos == fist2.pos);
 		
 		GameScene.add( fist1 );
@@ -366,7 +366,7 @@ public class Yog extends Mob {
 		@Override
 		public boolean act() {
 			
-			for (int i=0; i < PathFinder.NEIGHBOURS9.length; i++) {
+			for (int i=0; i < 9; i++) {
 				GameScene.add( Blob.seed( pos + PathFinder.NEIGHBOURS9[i], 2, Fire.class ) );
 			}
 			

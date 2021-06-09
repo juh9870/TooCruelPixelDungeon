@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
@@ -47,10 +48,12 @@ public abstract class InventoryScroll extends Scroll {
 
 		GameScene.selectItem( itemSelector, mode, inventoryTitle );
 	}
-
 	public static void confirmCancelation(Scroll item, WndBag.Listener itemSelector, WndBag.Mode mode, String inventoryTitle) {
-		GameScene.show(new WndOptions(Messages.titleCase(item.name()), Messages.get(InventoryScroll.class, "warning"),
-				Messages.get(InventoryScroll.class, "yes"), Messages.get(InventoryScroll.class, "no")) {
+		GameScene.show( new WndOptions(new ItemSprite(item),
+				Messages.titleCase(item.name()),
+				Messages.get(InventoryScroll.class, "warning"),
+				Messages.get(InventoryScroll.class, "yes"),
+				Messages.get(InventoryScroll.class, "no") ) {
 			@Override
 			protected void onSelect(int index) {
 				switch (index) {

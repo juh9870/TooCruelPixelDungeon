@@ -21,48 +21,84 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.watabou.utils.Bundle;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 
 public enum HeroSubClass {
 
-	NONE( null ),
+	NONE,
 	
-	GLADIATOR( "gladiator" ),
-	BERSERKER( "berserker" ),
+	GLADIATOR,
+	BERSERKER,
 	
-	WARLOCK( "warlock" ),
-	BATTLEMAGE( "battlemage" ),
+	WARLOCK,
+	BATTLEMAGE,
 	
-	ASSASSIN( "assassin" ),
-	FREERUNNER( "freerunner" ),
+	ASSASSIN,
+	FREERUNNER,
 	
-	SNIPER( "sniper" ),
-	WARDEN( "warden" );
-	
-	private String title;
-	
-	HeroSubClass( String title ) {
-		this.title = title;
-	}
+	SNIPER,
+	WARDEN;
 	
 	public String title() {
-		return Messages.get(this, title);
+		return Messages.get(this, name());
 	}
-	
+
+	public String shortDesc() {
+		return Messages.get(this, name()+"_short_desc");
+	}
+
 	public String desc() {
-		return Messages.get(this, title+"_desc");
+		//Include the staff effect description in the battlemage's desc if possible
+		if (this == BATTLEMAGE){
+			String desc = Messages.get(this, name() + "_desc");
+			if (Game.scene() instanceof GameScene){
+				MagesStaff staff = Dungeon.hero.belongings.getItem(MagesStaff.class);
+				if (staff != null && staff.wandClass() != null){
+					desc += "\n\n" + Messages.get(staff.wandClass(), "bmage_desc");
+					desc = desc.replaceAll("_", "");
+				}
+			}
+			return desc;
+		} else {
+			return Messages.get(this, name() + "_desc");
+		}
 	}
-	
-	private static final String SUBCLASS	= "subClass";
-	
-	public void storeInBundle( Bundle bundle ) {
-		bundle.put( SUBCLASS, toString() );
+
+	//FIXME shouldn't hardcode these, probably want to just have a BuffIcon class
+	public Image icon(){
+		switch (this){
+			case GLADIATOR: default:
+				return new Image(Assets.Interfaces.BUFFS_LARGE, 16, 16, 16, 16);
+			case BERSERKER:
+				return new Image(Assets.Interfaces.BUFFS_LARGE, 32, 16, 16, 16);
+
+			case WARLOCK:
+				return new Image(Assets.Interfaces.BUFFS_LARGE, 64, 32, 16, 16);
+			case BATTLEMAGE:
+				Image im = new Image(Assets.Interfaces.BUFFS_LARGE, 32, 48, 16, 16);
+				im.hardlight(1f, 1f, 0f);
+				return im;
+
+			case ASSASSIN:
+				im = new Image(Assets.Interfaces.BUFFS_LARGE, 160, 32, 16, 16);
+				im.hardlight(1f, 0f, 0f);
+				return im;
+			case FREERUNNER:
+				im = new Image(Assets.Interfaces.BUFFS_LARGE, 48, 48, 16, 16);
+				im.hardlight(1f, 1f, 0f);
+				return im;
+
+			case SNIPER:
+				return new Image(Assets.Interfaces.BUFFS_LARGE, 176, 16, 16, 16);
+			case WARDEN:
+				return new Image(Assets.Interfaces.BUFFS_LARGE, 208, 0, 16, 16);
+		}
 	}
-	
-	public static HeroSubClass restoreInBundle( Bundle bundle ) {
-		String value = bundle.getString( SUBCLASS );
-		return valueOf( value );
-	}
-	
+
 }

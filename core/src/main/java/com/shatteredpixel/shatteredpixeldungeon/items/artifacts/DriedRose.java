@@ -33,10 +33,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DirectableAlly;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShaftParticle;
@@ -434,37 +433,9 @@ public class DriedRose extends Artifact {
 			if (cell == null) return;
 			
 			Sample.INSTANCE.play( Assets.Sounds.GHOST );
-			
-			if (!Dungeon.level.heroFOV[cell]
-					|| Actor.findChar(cell) == null
-					|| (Actor.findChar(cell) != Dungeon.hero && Actor.findChar(cell).alignment != Char.Alignment.ENEMY)){
-				ghost.yell(Messages.get(ghost, "directed_position_" + Random.IntRange(1, 5)));
-				ghost.aggro(null);
-				ghost.state = ghost.WANDERING;
-				ghost.defendingPos = cell;
-				ghost.movingToDefendPos = true;
-				return;
-			}
-			
-			if (ghost.fieldOfView == null || ghost.fieldOfView.length != Dungeon.level.length()){
-				ghost.fieldOfView = new boolean[Dungeon.level.length()];
-			}
-			Dungeon.level.updateFieldOfView( ghost, ghost.fieldOfView );
-			
-			if (Actor.findChar(cell) == Dungeon.hero){
-				ghost.yell(Messages.get(ghost, "directed_follow_" + Random.IntRange(1, 5)));
-				ghost.aggro(null);
-				ghost.state = ghost.WANDERING;
-				ghost.defendingPos = -1;
-				ghost.movingToDefendPos = false;
-				
-			} else if (Actor.findChar(cell).alignment == Char.Alignment.ENEMY){
-				ghost.yell(Messages.get(ghost, "directed_attack_" + Random.IntRange(1, 5)));
-				ghost.aggro(Actor.findChar(cell));
-				ghost.setTarget(cell);
-				ghost.movingToDefendPos = false;
-				
-			}
+
+			ghost.directTocell(cell);
+
 		}
 		
 		@Override
@@ -510,21 +481,14 @@ public class DriedRose extends Artifact {
 
 	}
 
-	public static class GhostHero extends NPC {
+	public static class GhostHero extends DirectableAlly {
 
 		{
 			spriteClass = GhostSprite.class;
 
 			flying = true;
-
-			alignment = Alignment.ALLY;
-			intelligentAlly = true;
-			WANDERING = new Wandering();
 			
 			state = HUNTING;
-			
-			//before other mobs
-			actPriority = MOB_PRIO + 1;
 			
 			properties.add(Property.UNDEAD);
 		}
@@ -541,7 +505,25 @@ public class DriedRose extends Artifact {
 			updateRose();
 			HP = HT;
 		}
-		
+
+		@Override
+		public void defendPos(int cell) {
+			yell(Messages.get(this, "directed_position_" + Random.IntRange(1, 5)));
+			super.defendPos(cell);
+		}
+
+		@Override
+		public void followHero() {
+			yell(Messages.get(this, "directed_follow_" + Random.IntRange(1, 5)));
+			super.followHero();
+		}
+
+		@Override
+		public void targetChar(Char ch) {
+			yell(Messages.get(this, "directed_attack_" + Random.IntRange(1, 5)));
+			super.targetChar(ch);
+		}
+
 		private void updateRose(){
 			if (rose == null) {
 				rose = Dungeon.hero.belongings.getItem(DriedRose.class);
@@ -552,14 +534,6 @@ public class DriedRose extends Artifact {
 			if (rose == null) return;
 			HT = 20 + 8*rose.level();
 		}
-		
-		private int defendingPos = -1;
-		private boolean movingToDefendPos = false;
-		
-		public void clearDefensingPos(){
-			defendingPos = -1;
-			movingToDefendPos = false;
-		}
 
 		@Override
 		protected boolean act() {
@@ -568,31 +542,10 @@ public class DriedRose extends Artifact {
 				damage(1, this);
 			}
 			
-			if (!isAlive())
-				return true;
-			if (!Dungeon.hero.isAlive()){
-				sayHeroKilled();
-				sprite.die();
-				destroy();
+			if (!isAlive()) {
 				return true;
 			}
 			return super.act();
-		}
-		
-		@Override
-		protected Char chooseEnemy() {
-			Char enemy = super.chooseEnemy();
-			
-			int targetPos = defendingPos != -1 ? defendingPos : Dungeon.hero.pos;
-			
-			//will never attack something far from their target
-			if (enemy != null
-					&& Dungeon.level.mobs.contains(enemy)
-					&& (Dungeon.level.distance(enemy.pos, targetPos) <= 8)){
-				return enemy;
-			}
-			
-			return null;
 		}
 
 		@Override
@@ -609,10 +562,10 @@ public class DriedRose extends Artifact {
 		}
 		
 		@Override
-		protected float attackDelay() {
+		public float attackDelay() {
 			float delay = super.attackDelay();
 			if (rose != null && rose.weapon != null){
-				delay *= rose.weapon.speedFactor(this);
+				delay *= rose.weapon.delayFactor(this);
 			}
 			return delay;
 		}
@@ -677,6 +630,11 @@ public class DriedRose extends Artifact {
 			if (rose != null && rose.armor != null){
 				speed = rose.armor.speedFactor(this, speed);
 			}
+
+			//moves 2 tiles at a time when returning to the hero
+			if (state == WANDERING && defendingPos == -1){
+				speed *= 2;
+			}
 			
 			return speed;
 		}
@@ -713,10 +671,6 @@ public class DriedRose extends Artifact {
 				block += Random.NormalIntRange( 0, rose.weapon.defenseFactor( this ));
 			}
 			return block;
-		}
-		
-		private void setTarget(int cell) {
-			target = cell;
 		}
 
 		@Override
@@ -827,34 +781,14 @@ public class DriedRose extends Artifact {
 		}
 		
 		public void sayHeroKilled(){
-			if (Dungeon.bossLevel()){
-				yell( Messages.get( this, "hero_killed_boss_" + Random.IntRange(1, 3) ));
-			} else {
-				yell( Messages.get( this, "hero_killed_" + Random.IntRange(1, 3) ));
-			}
+			yell( Messages.get( this, "player_killed_" + Random.IntRange(1, 3) ));
+			GLog.newLine();
 			Sample.INSTANCE.play( Assets.Sounds.GHOST );
 		}
 		
 		public void sayAnhk(){
 			yell( Messages.get( this, "blessed_ankh_" + Random.IntRange(1, 3) ));
 			Sample.INSTANCE.play( Assets.Sounds.GHOST );
-		}
-		
-		private static final String DEFEND_POS = "defend_pos";
-		private static final String MOVING_TO_DEFEND = "moving_to_defend";
-		
-		@Override
-		public void storeInBundle(Bundle bundle) {
-			super.storeInBundle(bundle);
-			bundle.put(DEFEND_POS, defendingPos);
-			bundle.put(MOVING_TO_DEFEND, movingToDefendPos);
-		}
-		
-		@Override
-		public void restoreFromBundle(Bundle bundle) {
-			super.restoreFromBundle(bundle);
-			if (bundle.contains(DEFEND_POS)) defendingPos = bundle.getInt(DEFEND_POS);
-			movingToDefendPos = bundle.getBoolean(MOVING_TO_DEFEND);
 		}
 		
 		{
@@ -864,44 +798,6 @@ public class DriedRose extends Artifact {
 			immunities.add( ScrollOfRetribution.class );
 			immunities.add( ScrollOfPsionicBlast.class );
 			immunities.add( Corruption.class );
-		}
-		
-		private class Wandering extends Mob.Wandering {
-			
-			@Override
-			public boolean act( boolean enemyInFOV, boolean justAlerted ) {
-				if ( enemyInFOV && !movingToDefendPos ) {
-					
-					enemySeen = true;
-					
-					notice();
-					alerted = true;
-					state = HUNTING;
-					target = enemy.pos;
-					
-				} else {
-					
-					enemySeen = false;
-					
-					int oldPos = pos;
-					target = defendingPos != -1 ? defendingPos : Dungeon.hero.pos;
-					//always move towards the hero when wandering
-					if (getCloser( target )) {
-						//moves 2 tiles at a time when returning to the hero
-						if (defendingPos == -1 && !Dungeon.level.adjacent(target, pos)){
-							getCloser( target );
-						}
-						spend( 1 / speed() );
-						if (pos == defendingPos) movingToDefendPos = false;
-						return moveSprite( oldPos, pos );
-					} else {
-						spend( TICK );
-					}
-					
-				}
-				return true;
-			}
-			
 		}
 
 	}

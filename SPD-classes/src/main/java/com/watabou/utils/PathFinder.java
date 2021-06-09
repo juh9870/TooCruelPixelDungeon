@@ -43,16 +43,12 @@ public class PathFinder {
 	public static int[] NEIGHBOURS4;
 	public static int[] NEIGHBOURS5;
 	public static int[] NEIGHBOURS8;
-	public static int[] NEIGHBOURS8_UNCHANGED;
 	public static int[] NEIGHBOURS9;
-	public static int[] NEIGHBOURS9_UNCHANGED;
 
 	//similar to their equivalent neighbour arrays, but the order is clockwise.
 	//Useful for some logic functions, but is slower due to lack of array-access order.
 	public static int[] CIRCLE4;
 	public static int[] CIRCLE8;
-	
-	public static boolean noDiagonals = false;
 	
 	public static void setMapSize( int width, int height ) {
 		
@@ -71,21 +67,9 @@ public class PathFinder {
 
 		NEIGHBOURS4 = new int[]{-width, -1, +1, +width};
 		NEIGHBOURS5 = new int[]{-width, -1, 0, +1, +width};
-		NEIGHBOURS8=NEIGHBOURS8_UNCHANGED = new int[]{-width-1, -width, -width+1, -1, +1, +width-1, +width, +width+1};
-		NEIGHBOURS9=NEIGHBOURS9_UNCHANGED = new int[]{-width-1, -width, -width+1, -1, 0, +1, +width-1, +width, +width+1};
 		
 		CIRCLE4 = new int[]{-width, +1, +width, -1};
 		CIRCLE8 = new int[]{-width-1, -width, -width+1, +1, +width+1, +width, +width-1, -1};
-		
-		if(noDiagonals){
-			
-			dir=new int[]{-1,+1,-width,+width};
-			dirLR=new int[]{-1, -width, +width, +1};
-			
-			NEIGHBOURS8=NEIGHBOURS4;
-			NEIGHBOURS9=NEIGHBOURS5;
-			CIRCLE8=CIRCLE4;
-		}
 	}
 
 	public static Path find( int from, int to, boolean[] passable ) {

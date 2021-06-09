@@ -135,7 +135,7 @@ public class TalismanOfForesight extends Artifact {
 				float dist = Dungeon.level.trueDistance(curUser.pos, target);
 
 				if (dist >= 3 && dist > maxDist()){
-					Ballistica trajectory = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET| Ballistica.AFFECTED_BY_ROOK);
+					Ballistica trajectory = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
 					int i = 0;
 					while (i < trajectory.path.size()
 							&& Dungeon.level.trueDistance(curUser.pos, trajectory.path.get(i)) <= maxDist()){
@@ -147,7 +147,7 @@ public class TalismanOfForesight extends Artifact {
 
 				//starts at 200 degrees, loses 8% per tile of distance
 				float angle = Math.round(200*(float)Math.pow(0.92, dist));
-				ConeAOE cone = new ConeAOE(new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET| Ballistica.AFFECTED_BY_ROOK), angle);
+				ConeAOE cone = new ConeAOE(new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET), angle);
 
 				int earnedExp = 0;
 				boolean noticed = false;
@@ -328,6 +328,7 @@ public class TalismanOfForesight extends Artifact {
 		public void charge(int boost){
 			if (!cursed) {
 				charge = Math.min((charge + boost), chargeCap);
+				updateQuickslot();
 			}
 		}
 
@@ -353,7 +354,6 @@ public class TalismanOfForesight extends Artifact {
 	public static class CharAwareness extends FlavourBuff {
 
 		public int charID;
-		public int depth = Dungeon.depth;
 
 		private static final String CHAR_ID = "char_id";
 

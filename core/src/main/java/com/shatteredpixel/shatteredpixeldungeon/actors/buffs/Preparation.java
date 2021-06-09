@@ -73,9 +73,9 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 		//1st index is prep level, 2nd is talent level
 		private static final float[][] KOThresholds = new float[][]{
 				{.03f, .04f, .05f, .06f},
-				{.10f, .12f, .14f, .16f},
-				{.20f, .25f, .30f, .35f},
-				{.40f, .60f, .80f, 1.0f}
+				{.10f, .13f, .17f, .20f},
+				{.20f, .27f, .33f, .40f},
+				{.50f, .67f, .83f, 1.0f}
 		};
 
 		public float KOThreshold(){
@@ -84,10 +84,10 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 
 		//1st index is prep level, 2nd is talent level
 		private static final int[][] blinkRanges = new int[][]{
-				{1, 2, 3, 4},
-				{1, 3, 4, 6},
-				{2, 4, 6, 8},
-				{2, 5, 7, 10}
+				{1, 1, 2, 2},
+				{2, 3, 4, 5},
+				{3, 4, 6, 7},
+				{4, 6, 8, 10}
 		};
 
 		public int blinkDistance(){
@@ -144,6 +144,10 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 	public void detach() {
 		super.detach();
 		ActionIndicator.clearAction(this);
+	}
+
+	public int attackLevel(){
+		return AttackLevel.getLvl(turnsInvis).ordinal()+1;
 	}
 	
 	public int damageRoll( Char attacker ){
@@ -298,6 +302,7 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 				Dungeon.level.occupyCell(Dungeon.hero);
 				//prevents the hero from being interrupted by seeing new enemies
 				Dungeon.observe();
+				GameScene.updateFog();
 				Dungeon.hero.checkVisibleMobs();
 				
 				Dungeon.hero.sprite.place( Dungeon.hero.pos );

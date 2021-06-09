@@ -251,7 +251,6 @@ public class Ghoul extends Mob {
 
 			turnsToRevive--;
 			if (turnsToRevive <= 0){
-				ghoul.HP = Math.round(ghoul.HT/10f);
 				if (Actor.findChar( ghoul.pos ) != null) {
 					ArrayList<Integer> candidates = new ArrayList<>();
 					for (int n : PathFinder.NEIGHBOURS8) {
@@ -270,6 +269,7 @@ public class Ghoul extends Mob {
 						return true;
 					}
 				}
+				ghoul.HP = Math.round(ghoul.HT/10f);
 				Actor.add(ghoul);
 				ghoul.spend(-ghoul.cooldown());
 				Dungeon.level.mobs.add(ghoul);

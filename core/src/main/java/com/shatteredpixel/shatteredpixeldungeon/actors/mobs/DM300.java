@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -51,7 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.NewCavesBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
@@ -74,12 +75,12 @@ import com.watabou.utils.Rect;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewDM300 extends Mob {
+public class DM300 extends Mob {
 
 	{
 		spriteClass = DM300Sprite.class;
 
-		HP = HT = 300;
+		HP = HT = Challenges.STRONGER_BOSSES.enabled() ? 400 : 300;
 		EXP = 30;
 		defenseSkill = 15;
 
@@ -107,11 +108,11 @@ public class NewDM300 extends Mob {
 	public boolean supercharged = false;
 	public boolean chargeAnnounced = false;
 
+	private final int MIN_COOLDOWN = 5;
+	private final int MAX_COOLDOWN = Challenges.STRONGER_BOSSES.enabled() ? 7 : 9;
+
 	private int turnsSinceLastAbility = -1;
 	private int abilityCooldown = Random.NormalIntRange(MIN_COOLDOWN, MAX_COOLDOWN);
-
-	private static final int MIN_COOLDOWN = 5;
-	private static final int MAX_COOLDOWN = 9;
 
 	private int lastAbility = 0;
 	private static final int NONE = 0;
@@ -150,7 +151,7 @@ public class NewDM300 extends Mob {
 
 		if (turnsSinceLastAbility != -1){
 			BossHealthBar.assignBoss(this);
-			if (!supercharged && pylonsActivated == 2) BossHealthBar.bleed(true);
+			if (!supercharged && pylonsActivated == totalPylonsToActivate()) BossHealthBar.bleed(true);
 		}
 	}
 
@@ -201,7 +202,7 @@ public class NewDM300 extends Mob {
 					//try to fire gas at an enemy we can't reach
 					if (turnsSinceLastAbility >= MIN_COOLDOWN){
 						//use a coneAOE to try and account for trickshotting angles
-						ConeAOE aim = new ConeAOE(new Ballistica(pos, enemy.pos, Ballistica.PROJECTILE), 30);
+						ConeAOE aim = new ConeAOE(new Ballistica(pos, enemy.pos, Ballistica.WONT_STOP), Float.POSITIVE_INFINITY, 30, Ballistica.STOP_SOLID);
 						if (aim.cells.contains(enemy.pos)) {
 							lastAbility = GAS;
 							turnsSinceLastAbility = 0;
@@ -216,7 +217,8 @@ public class NewDM300 extends Mob {
 								return true;
 							}
 						//if we can't gas, then drop rocks
-						} else {
+						//unless enemy is already stunned, we don't want to stunlock them
+						} else if (enemy.paralysed <= 0) {
 							lastAbility = ROCKS;
 							turnsSinceLastAbility = 0;
 							GLog.w(Messages.get(this, "rocks"));
@@ -314,7 +316,7 @@ public class NewDM300 extends Mob {
 		if (Dungeon.level.map[step] == Terrain.INACTIVE_TRAP && state == HUNTING) {
 
 			//don't gain energy from cells that are energized
-			if (NewCavesBossLevel.PylonEnergy.volumeAt(pos, NewCavesBossLevel.PylonEnergy.class) > 0){
+			if (CavesBossLevel.PylonEnergy.volumeAt(pos, CavesBossLevel.PylonEnergy.class) > 0){
 				return;
 			}
 
@@ -363,15 +365,17 @@ public class NewDM300 extends Mob {
 
 		Ballistica trajectory = new Ballistica(pos, target.pos, Ballistica.STOP_TARGET);
 
+		int gasMulti = Challenges.STRONGER_BOSSES.enabled() ? 2 : 1;
+
 		for (int i : trajectory.subPath(0, trajectory.dist)){
-			GameScene.add(Blob.seed(i, 20, ToxicGas.class));
-			gasVented += 20;
+			GameScene.add(Blob.seed(i, 20*gasMulti, ToxicGas.class));
+			gasVented += 20*gasMulti;
 		}
 
-		GameScene.add(Blob.seed(trajectory.collisionPos, 100, ToxicGas.class));
+		GameScene.add(Blob.seed(trajectory.collisionPos, 100*gasMulti, ToxicGas.class));
 
-		if (gasVented < 250){
-			int toVentAround = (int)Math.ceil((250 - gasVented)/8f);
+		if (gasVented < 250*gasMulti){
+			int toVentAround = (int)Math.ceil(((250*gasMulti) - gasVented)/8f);
 			for (int i : PathFinder.NEIGHBOURS8){
 				GameScene.add(Blob.seed(pos+i, toVentAround, ToxicGas.class));
 			}
@@ -407,7 +411,7 @@ public class NewDM300 extends Mob {
 			safeCell = rockCenter + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
 		} while (safeCell == pos
 				|| (Dungeon.level.solid[safeCell] && Random.Int(2) == 0)
-				|| (Blob.volumeAt(safeCell, NewCavesBossLevel.PylonEnergy.class) > 0 && Random.Int(2) == 0));
+				|| (Blob.volumeAt(safeCell, CavesBossLevel.PylonEnergy.class) > 0 && Random.Int(2) == 0));
 
 		ArrayList<Integer> rockCells = new ArrayList<>();
 
@@ -448,13 +452,22 @@ public class NewDM300 extends Mob {
 			if (lock != null && !isImmune(src.getClass())) lock.addTime(dmgTaken*1.5f);
 		}
 
-		int threshold = HT/3 * (2- pylonsActivated);
+		int threshold;
+		if (Challenges.STRONGER_BOSSES.enabled()){
+			threshold = HT / 4 * (3 - pylonsActivated);
+		} else {
+			threshold = HT / 3 * (2 - pylonsActivated);
+		}
 
 		if (HP < threshold){
 			HP = threshold;
 			supercharge();
 		}
 
+	}
+
+	public int totalPylonsToActivate(){
+		return Challenges.STRONGER_BOSSES.enabled() ? 3 : 2;
 	}
 
 	@Override
@@ -468,10 +481,10 @@ public class NewDM300 extends Mob {
 
 	public void supercharge(){
 		supercharged = true;
-		((NewCavesBossLevel)Dungeon.level).activatePylon();
+		((CavesBossLevel)Dungeon.level).activatePylon();
 		pylonsActivated++;
 
-		spend(3f);
+		spend(Challenges.STRONGER_BOSSES.enabled() ? 2f : 3f);
 		yell(Messages.get(this, "charging"));
 		sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "invulnerable"));
 		((DM300Sprite)sprite).updateChargeState(true);
@@ -488,7 +501,7 @@ public class NewDM300 extends Mob {
 		supercharged = false;
 		((DM300Sprite)sprite).updateChargeState(false);
 
-		if (pylonsActivated < 2){
+		if (pylonsActivated < totalPylonsToActivate()){
 			yell(Messages.get(this, "charge_lost"));
 		} else {
 			yell(Messages.get(this, "pylons_destroyed"));
@@ -498,7 +511,7 @@ public class NewDM300 extends Mob {
 
 	@Override
 	public boolean isAlive() {
-		return HP > 0 || pylonsActivated < 2;
+		return super.isAlive() || pylonsActivated < totalPylonsToActivate();
 	}
 
 	@Override
@@ -549,7 +562,7 @@ public class NewDM300 extends Mob {
 			if (bestpos != pos){
 				Sample.INSTANCE.play( Assets.Sounds.ROCKS );
 
-				Rect gate = NewCavesBossLevel.gate;
+				Rect gate = CavesBossLevel.gate;
 				for (int i : PathFinder.NEIGHBOURS9){
 					if (Dungeon.level.map[pos+i] == Terrain.WALL || Dungeon.level.map[pos+i] == Terrain.WALL_DECO){
 						Point p = Dungeon.level.cellToPoint(pos+i);
@@ -562,7 +575,7 @@ public class NewDM300 extends Mob {
 				}
 				Dungeon.level.cleanWalls();
 				Dungeon.observe();
-				spend(3f);
+				spend(Challenges.STRONGER_BOSSES.enabled() ? 2f : 3f);
 
 				bestpos = pos;
 				for (int i : PathFinder.NEIGHBOURS8){
@@ -626,8 +639,8 @@ public class NewDM300 extends Mob {
 				CellEmitter.get( i ).start( Speck.factory( Speck.ROCK ), 0.07f, 10 );
 
 				Char ch = Actor.findChar(i);
-				if (ch != null && !(ch instanceof NewDM300)){
-					Buff.prolong( ch, Paralysis.class, 3 );
+				if (ch != null && !(ch instanceof DM300)){
+					Buff.prolong( ch, Paralysis.class, Challenges.STRONGER_BOSSES.enabled() ? 5 : 3 );
 				}
 			}
 

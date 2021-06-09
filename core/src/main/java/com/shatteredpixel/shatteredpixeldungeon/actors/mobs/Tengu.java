@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -48,12 +49,12 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.TomeOfMastery;
+import com.shatteredpixel.shatteredpixeldungeon.items.TengusMask;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.NewPrisonBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -69,6 +70,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
@@ -76,12 +78,12 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class NewTengu extends Mob {
+public class Tengu extends Mob {
 	
 	{
 		spriteClass = TenguSprite.class;
 		
-		HP = HT = 200;
+		HP = HT = Challenges.STRONGER_BOSSES.enabled() ? 250 : 200;
 		EXP = 20;
 		defenseSkill = 15;
 		
@@ -139,7 +141,7 @@ public class NewTengu extends Mob {
 			return;
 		}
 
-		NewPrisonBossLevel.State state = ((NewPrisonBossLevel)Dungeon.level).state();
+		PrisonBossLevel.State state = ((PrisonBossLevel)Dungeon.level).state();
 		
 		int hpBracket = HT / 8;
 		
@@ -154,12 +156,12 @@ public class NewTengu extends Mob {
 		
 		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
 		if (lock != null) {
-			int multiple = state == NewPrisonBossLevel.State.FIGHT_START ? 1 : 4;
+			int multiple = state == PrisonBossLevel.State.FIGHT_START ? 1 : 4;
 			lock.addTime(dmg*multiple);
 		}
 		
 		//phase 2 of the fight is over
-		if (HP == 0 && state == NewPrisonBossLevel.State.FIGHT_ARENA) {
+		if (HP == 0 && state == PrisonBossLevel.State.FIGHT_ARENA) {
 			//let full attack action complete first
 			Actor.add(new Actor() {
 				
@@ -170,7 +172,7 @@ public class NewTengu extends Mob {
 				@Override
 				protected boolean act() {
 					Actor.remove(this);
-					((NewPrisonBossLevel)Dungeon.level).progress();
+					((PrisonBossLevel)Dungeon.level).progress();
 					return true;
 				}
 			});
@@ -178,10 +180,10 @@ public class NewTengu extends Mob {
 		}
 		
 		//phase 1 of the fight is over
-		if (state == NewPrisonBossLevel.State.FIGHT_START && HP <= HT/2){
+		if (state == PrisonBossLevel.State.FIGHT_START && HP <= HT/2){
 			HP = (HT/2);
 			yell(Messages.get(this, "interesting"));
-			((NewPrisonBossLevel)Dungeon.level).progress();
+			((PrisonBossLevel)Dungeon.level).progress();
 			BossHealthBar.bleed(true);
 			
 			//if tengu has lost a certain amount of hp, jump
@@ -192,14 +194,14 @@ public class NewTengu extends Mob {
 	
 	@Override
 	public boolean isAlive() {
-		return HP > 0 || Dungeon.level.mobs.contains(this); //Tengu has special death rules, see prisonbosslevel.progress()
+		return super.isAlive() || Dungeon.level.mobs.contains(this); //Tengu has special death rules, see prisonbosslevel.progress()
 	}
 
 	@Override
 	public void die( Object cause ) {
 		
 		if (Dungeon.hero.subClass == HeroSubClass.NONE) {
-			Dungeon.level.drop( new TomeOfMastery(), pos ).sprite.drop();
+			Dungeon.level.drop( new TengusMask(), pos ).sprite.drop();
 		}
 		
 		GameScene.bossSlain();
@@ -232,17 +234,17 @@ public class NewTengu extends Mob {
 		if (enemy == null) return;
 		
 		int newPos;
-		if (Dungeon.level instanceof NewPrisonBossLevel){
-			NewPrisonBossLevel level = (NewPrisonBossLevel) Dungeon.level;
+		if (Dungeon.level instanceof PrisonBossLevel){
+			PrisonBossLevel level = (PrisonBossLevel) Dungeon.level;
 			
 			//if we're in phase 1, want to warp around within the room
-			if (level.state() == NewPrisonBossLevel.State.FIGHT_START) {
+			if (level.state() == PrisonBossLevel.State.FIGHT_START) {
 				
 				level.cleanTenguCell();
 
 				int tries = 100;
 				do {
-					newPos = ((NewPrisonBossLevel)Dungeon.level).randomTenguCellPos();
+					newPos = ((PrisonBossLevel)Dungeon.level).randomTenguCellPos();
 					tries--;
 				} while ( tries > 0 && (level.trueDistance(newPos, enemy.pos) <= 3.5f
 						|| level.trueDistance(newPos, Dungeon.hero.pos) <= 3.5f
@@ -434,8 +436,9 @@ public class NewTengu extends Mob {
 			
 			abilityCooldown--;
 			
-			if (targetAbilityUses() - abilitiesUsed >= 4){
+			if (targetAbilityUses() - abilitiesUsed >= 4 && !Challenges.STRONGER_BOSSES.enabled()){
 				//Very behind in ability uses, use one right away!
+				//but not on bosses challenge, we already cast quickly then
 				abilityCooldown = 0;
 				
 			} else if (targetAbilityUses() - abilitiesUsed >= 3){
@@ -475,6 +478,8 @@ public class NewTengu extends Mob {
 				abilityToUse = BOMB_ABILITY;
 			} else if (abilitiesUsed == 1){
 				abilityToUse = SHOCKER_ABILITY;
+			} else if (Challenges.STRONGER_BOSSES.enabled()) {
+				abilityToUse = Random.Int(2)*2; //0 or 2, can't roll fire ability with challenge
 			} else {
 				abilityToUse = Random.Int(3);
 			}
@@ -483,34 +488,46 @@ public class NewTengu extends Mob {
 			if (abilityToUse != lastAbility || Random.Int(10) == 0){
 				switch (abilityToUse){
 					case BOMB_ABILITY : default:
-						abilityUsed = throwBomb(NewTengu.this, enemy);
+						abilityUsed = throwBomb(Tengu.this, enemy);
 						//if Tengu cannot use his bomb ability first, use fire instead.
 						if (abilitiesUsed == 0 && !abilityUsed){
 							abilityToUse = FIRE_ABILITY;
-							abilityUsed = throwFire(NewTengu.this, enemy);
+							abilityUsed = throwFire(Tengu.this, enemy);
 						}
 						break;
 					case FIRE_ABILITY:
-						abilityUsed = throwFire(NewTengu.this, enemy);
+						abilityUsed = throwFire(Tengu.this, enemy);
 						break;
 					case SHOCKER_ABILITY:
-						abilityUsed = throwShocker(NewTengu.this, enemy);
+						abilityUsed = throwShocker(Tengu.this, enemy);
 						//if Tengu cannot use his shocker ability second, use fire instead.
 						if (abilitiesUsed == 1 && !abilityUsed){
 							abilityToUse = FIRE_ABILITY;
-							abilityUsed = throwFire(NewTengu.this, enemy);
+							abilityUsed = throwFire(Tengu.this, enemy);
 						}
 						break;
+				}
+				//always use the fire ability with the bosses challenge
+				if (abilityUsed && abilityToUse != FIRE_ABILITY && Challenges.STRONGER_BOSSES.enabled()){
+					throwFire(Tengu.this, enemy);
 				}
 			}
 			
 		}
 		
-		//spend only 1 turn if seriously behind on ability uses
-		if (targetAbilityUses() - abilitiesUsed >= 4){
-			spend(TICK);
+		//spend 1 less turn if seriously behind on ability uses
+		if (Challenges.STRONGER_BOSSES.enabled()){
+			if (targetAbilityUses() - abilitiesUsed >= 4) {
+				//spend no time
+			} else {
+				spend(TICK);
+			}
 		} else {
-			spend(2 * TICK);
+			if (targetAbilityUses() - abilitiesUsed >= 4) {
+				spend(TICK);
+			} else {
+				spend(2 * TICK);
+			}
 		}
 		
 		lastAbility = abilityToUse;
@@ -527,14 +544,12 @@ public class NewTengu extends Mob {
 		
 		int targetCell = -1;
 		
-		//Targets closest cell which is adjacent to target, and at least 3 tiles away
+		//Targets closest cell which is adjacent to target
 		for (int i : PathFinder.NEIGHBOURS8){
 			int cell = target.pos + i;
-			if (Dungeon.level.distance(cell, thrower.pos) >= 3 && !Dungeon.level.solid[cell]){
-				if (targetCell == -1 ||
-						Dungeon.level.trueDistance(cell, thrower.pos) < Dungeon.level.trueDistance(targetCell, thrower.pos)){
-					targetCell = cell;
-				}
+			if (targetCell == -1 ||
+					Dungeon.level.trueDistance(cell, thrower.pos) < Dungeon.level.trueDistance(targetCell, thrower.pos)){
+				targetCell = cell;
 			}
 		}
 		
@@ -587,7 +602,7 @@ public class NewTengu extends Mob {
 
 					if (PathFinder.distance[cell] < Integer.MAX_VALUE) {
 						Char ch = Actor.findChar(cell);
-						if (ch != null && !(ch instanceof NewTengu)) {
+						if (ch != null && !(ch instanceof Tengu)) {
 							int dmg = Random.NormalIntRange(5 + Dungeon.depth, 10 + Dungeon.depth * 2);
 							dmg -= ch.drRoll();
 
@@ -596,7 +611,7 @@ public class NewTengu extends Mob {
 							}
 
 							if (ch == Dungeon.hero && !ch.isAlive()) {
-								Dungeon.fail(NewTengu.class);
+								Dungeon.fail(Tengu.class);
 							}
 						}
 
@@ -704,7 +719,7 @@ public class NewTengu extends Mob {
 		for (int i = 0; i < PathFinder.CIRCLE8.length; i++){
 			if (aim.sourcePos+PathFinder.CIRCLE8[i] == aim.path.get(1)){
 				thrower.sprite.zap(target.pos);
-				Buff.append(thrower, NewTengu.FireAbility.class).direction = i;
+				Buff.append(thrower, Tengu.FireAbility.class).direction = i;
 				
 				thrower.sprite.emitter().start(Speck.factory(Speck.STEAM), .03f, 10);
 				return true;
@@ -811,7 +826,7 @@ public class NewTengu extends Mob {
 				for (int i = area.left; i < area.right; i++){
 					for (int j = area.top; j < area.bottom; j++){
 						cell = i + j* Dungeon.level.width();
-						off[cell] = cur[cell] > 0 ? cur[cell] - 1 : 0;
+						off[cell] = (int)GameMath.gate(0, cur[cell] - 1, 1);
 						
 						if (off[cell] > 0) {
 							volume += off[cell];
@@ -820,7 +835,7 @@ public class NewTengu extends Mob {
 						if (cur[cell] > 0 && off[cell] == 0){
 							
 							Char ch = Actor.findChar( cell );
-							if (ch != null && !ch.isImmune(Fire.class) && !(ch instanceof NewTengu)) {
+							if (ch != null && !ch.isImmune(Fire.class) && !(ch instanceof Tengu)) {
 								Buff.affect( ch, Burning.class ).reignite( ch );
 							}
 							
@@ -1001,11 +1016,11 @@ public class NewTengu extends Mob {
 							shocked = true;
 							
 							Char ch = Actor.findChar(cell);
-							if (ch != null && !(ch instanceof NewTengu)){
+							if (ch != null && !(ch instanceof Tengu)){
 								ch.damage(2 + Dungeon.depth, new Electricity());
 								
 								if (ch == Dungeon.hero && !ch.isAlive()) {
-									Dungeon.fail(NewTengu.class);
+									Dungeon.fail(Tengu.class);
 									GLog.n( Messages.get(Electricity.class, "ondeath") );
 								}
 							}

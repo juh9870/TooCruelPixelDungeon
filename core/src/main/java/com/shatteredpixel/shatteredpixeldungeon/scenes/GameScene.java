@@ -420,7 +420,7 @@ public class GameScene extends PixelScene {
 				int pos = Dungeon.level.randomRespawnCell( null );
 				if (item instanceof Potion) {
 					((Potion)item).shatter( pos );
-				} else if (item instanceof Plant.Seed) {
+				} else if (item instanceof Plant.Seed && !Challenges.BARREN_LAND.enabled()) {
 					Dungeon.level.plant( (Plant.Seed)item, pos );
 				} else if (item instanceof Honeypot) {
 					Dungeon.level.drop(((Honeypot) item).shatter(null, pos), pos);
@@ -619,6 +619,10 @@ public class GameScene extends PixelScene {
 	//sometimes UI changes can be prompted by the actor thread.
 	// We queue any removed element destruction, rather than destroying them in the actor thread.
 	private ArrayList<Gizmo> toDestroy = new ArrayList<>();
+
+	//the actor thread processes at a maximum of 60 times a second
+	//this caps the speed of resting for higher refresh rate displays
+	private float notifyDelay = 1/60f;
 	
 	@Override
 	public synchronized void update() {
@@ -628,6 +632,7 @@ public class GameScene extends PixelScene {
 
 		super.update();
 
+		if (notifyDelay > 0) notifyDelay -= Game.elapsed;
 		if (!timerPaused && Challenges.MARATHON.enabled() && Dungeon.hero.ready) {
 			timeCounter.visible=true;
 			timer -= Game.elapsed;
@@ -660,7 +665,8 @@ public class GameScene extends PixelScene {
 				Thread.currentThread().setName("SHPD Render Thread");
 				Actor.keepActorThreadAlive = true;
 				actorThread.start();
-			} else {
+			} else if (notifyDelay <= 0f) {
+				notifyDelay += 1/60f;
 				synchronized (actorThread) {
 					actorThread.notify();
 				}
@@ -719,6 +725,7 @@ public class GameScene extends PixelScene {
 
 		float pos = scene.toolbar.top();
 
+		//FIXME adjusting this to position even without visibility resulted in deadlocks
 		if (scene.tagAttack){
 			scene.attack.setPos( tagLeft, pos - scene.attack.height());
 			scene.attack.flip(tagLeft == 0);
@@ -738,7 +745,7 @@ public class GameScene extends PixelScene {
 		}
 
 		if (scene.tagResume) {
-			scene.resume.setPos( tagLeft, pos - scene.resume.height() );
+			scene.resume.setPos(tagLeft, pos - scene.resume.height());
 			scene.resume.flip(tagLeft == 0);
 		}
 	}
@@ -1195,8 +1202,10 @@ public class GameScene extends PixelScene {
 		} else if (objects.size() == 1){
 			examineObject(objects.get(0));
 		} else {
-			GameScene.show(new WndOptions(Messages.get(GameScene.class, "choose_examine"),
-					Messages.get(GameScene.class, "multiple_examine"), names.toArray(new String[names.size()])){
+			GameScene.show(new WndOptions(Icons.get(Icons.INFO),
+					Messages.get(GameScene.class, "choose_examine"),
+					Messages.get(GameScene.class, "multiple_examine"),
+					names.toArray(new String[names.size()])){
 				@Override
 				protected void onSelect(int index) {
 					examineObject(objects.get(index));

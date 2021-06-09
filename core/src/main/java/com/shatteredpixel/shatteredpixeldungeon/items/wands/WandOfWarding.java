@@ -32,7 +32,7 @@ public class WandOfWarding extends Wand {
 	}
 
 	@Override
-	protected int collisionProperties(int target) {
+	public int collisionProperties(int target) {
 		if (Dungeon.level.heroFOV[target])  return Ballistica.STOP_TARGET;
 		else                                return Ballistica.PROJECTILE;
 	}
@@ -77,7 +77,7 @@ public class WandOfWarding extends Wand {
 	}
 	
 	@Override
-	protected void onZap(Ballistica bolt) {
+	public void onZap(Ballistica bolt) {
 
 		int target = bolt.collisionPos;
 		Char ch = Actor.findChar(target);
@@ -122,7 +122,7 @@ public class WandOfWarding extends Wand {
 	}
 
 	@Override
-	protected void fx(Ballistica bolt, Callback callback) {
+	public void fx(Ballistica bolt, Callback callback) {
 		MagicMissile m = MagicMissile.boltFromChar(curUser.sprite.parent,
 				MagicMissile.WARD,
 				curUser.sprite,
@@ -232,7 +232,11 @@ public class WandOfWarding extends Wand {
 
 		}
 
-		private void wandHeal( int wandLevel ){
+		public void wandHeal( int wandLevel ){
+			wandHeal( wandLevel, 1f );
+		}
+
+		public void wandHeal( int wandLevel, float healFactor ){
 			if (this.wandLevel < wandLevel){
 				this.wandLevel = wandLevel;
 			}
@@ -242,13 +246,13 @@ public class WandOfWarding extends Wand {
 				default:
 					return;
 				case 4:
-					heal = 9;
+					heal = Math.round(9 * healFactor);
 					break;
 				case 5:
-					heal = 12;
+					heal = Math.round(12 * healFactor);
 					break;
 				case 6:
-					heal = 16;
+					heal = Math.round(16 * healFactor);
 					break;
 			}
 
@@ -275,17 +279,8 @@ public class WandOfWarding extends Wand {
 		}
 
 		@Override
-		protected float attackDelay() {
-			if (tier > 3){
-				return 1f;
-			} else {
-				return 2f;
-			}
-		}
-
-		@Override
 		protected boolean canAttack( Char enemy ) {
-			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT| Ballistica.AFFECTED_BY_ROOK).collisionPos == enemy.pos;
+			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
 		}
 
 		@Override
@@ -307,7 +302,7 @@ public class WandOfWarding extends Wand {
 			int dmg = Random.NormalIntRange( 2 + wandLevel, 8 + 4*wandLevel );
 			enemy.damage( dmg, this );
 			if (enemy.isAlive()){
-				Wand.processSoulMark(enemy, wandLevel, 1);
+				Wand.wandProc(enemy, wandLevel, 1);
 			}
 
 			if (!enemy.isAlive() && enemy == Dungeon.hero) {
@@ -382,7 +377,8 @@ public class WandOfWarding extends Wand {
 			Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-					GameScene.show(new WndOptions( Messages.get(Ward.this, "dismiss_title"),
+					GameScene.show(new WndOptions( sprite(),
+							Messages.get(Ward.this, "dismiss_title"),
 							Messages.get(Ward.this, "dismiss_body"),
 							Messages.get(Ward.this, "dismiss_confirm"),
 							Messages.get(Ward.this, "dismiss_cancel") ){

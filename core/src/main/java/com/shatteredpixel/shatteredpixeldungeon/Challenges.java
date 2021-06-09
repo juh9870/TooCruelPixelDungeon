@@ -136,7 +136,7 @@ public enum Challenges {
     },
     EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
-    ROOK(18, 1, 1.5f),
+    ROOK_DISABLED(18, 1, 1.5f),
     CHAMPION_ENEMIES(19, 1, 2f),
     NO_PERKS(20, 1, 3f),
     BLOODBAG(41, 1, 2f),
@@ -226,6 +226,7 @@ public enum Challenges {
     THOUGHTLESS(48, 2, 2.5f),
     EXHIBITIONISM(49, 2, 2f, RESURRECTION),
     MARATHON(50, 2, 3f),
+    STRONGER_BOSSES(56,2,3f),
 
 
     //T3
@@ -265,7 +266,7 @@ public enum Challenges {
         }
     },
 
-    //Last id 55
+    //Last id 56
     ;
     private static final Challenges[] mappings;
 

@@ -81,7 +81,7 @@ public class Legion extends Buff {
         turnsToNextWave += progress;
         if (turnsToNextWave > WAVE_DELAY - turnsSinceLastWave) {
             turnsToNextWave = WAVE_DELAY - turnsSinceLastWave;
-        } else if (Dungeon.hero.isAlive()) {
+        } else if (Dungeon.hero.isAlive() && Math.round(progress) > 0) {
             Dungeon.hero.sprite.showStatus(CharSprite.NEUTRAL, Messages.get(this, "delay", Math.round(progress)));
         }
     }

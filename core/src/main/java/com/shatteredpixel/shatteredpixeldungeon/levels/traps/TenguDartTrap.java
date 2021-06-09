@@ -21,8 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.NewTengu;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 
 public class TenguDartTrap extends PoisonDartTrap {
 	
@@ -33,11 +35,15 @@ public class TenguDartTrap extends PoisonDartTrap {
 	
 	@Override
 	protected int poisonAmount() {
-		return 8; //17 damage total
+		if (Challenges.STRONGER_BOSSES.enabled()){
+			return 15; //50 damage total, equal to poison dart traps on floor 10
+		} else {
+			return 8; //17 damage total
+		}
 	}
 	
 	@Override
 	protected boolean canTarget(Char ch) {
-		return !(ch instanceof NewTengu);
+		return !(ch instanceof Tengu);
 	}
 }

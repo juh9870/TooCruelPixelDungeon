@@ -21,7 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RatSprite;
 import com.watabou.utils.Random;
 
@@ -35,7 +37,16 @@ public class Rat extends Mob {
 		
 		maxLvl = 5;
 	}
-	
+
+	@Override
+	protected boolean act() {
+		if (Dungeon.level.heroFOV[pos] && Dungeon.hero.armorAbility instanceof Ratmogrify){
+			alignment = Alignment.ALLY;
+			if (state == SLEEPING) state = WANDERING;
+		}
+		return super.act();
+	}
+
 	@Override
 	public int damageRoll() {
 		return Random.NormalIntRange( 1, 4 );

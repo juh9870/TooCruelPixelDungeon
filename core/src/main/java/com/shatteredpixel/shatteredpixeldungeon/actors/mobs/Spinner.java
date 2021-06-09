@@ -208,21 +208,13 @@ public class Spinner extends Mob {
 		}
 		next();
 	}
-	
+
 	private int left(int direction){
-		if(!PathFinder.noDiagonals) {
-			return direction == 0 ? 7 : direction - 1;
-		} else {
-			return direction == 0 ? 3 : direction-1;
-		}
+		return direction == 0 ? 7 : direction - 1;
 	}
-	
+
 	private int right(int direction){
-		if(!PathFinder.noDiagonals) {
-			return direction == 7 ? 0 : direction + 1;
-		} else {
-			return direction == 3 ? 0 : direction + 1;
-		}
+		return direction == 7 ? 0 : direction + 1;
 	}
 
 	{
