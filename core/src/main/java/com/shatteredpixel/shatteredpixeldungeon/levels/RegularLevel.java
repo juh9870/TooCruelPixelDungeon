@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.RegularBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.TunnelRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.PitRoom;
@@ -65,6 +66,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WornDartTrap;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -110,7 +112,8 @@ public abstract class RegularLevel extends Level {
 
         boolean painted = painter().paint(this, rooms);
         if (length > Level.SIZE_LIMIT) {
-            nRooms -= 0.3334f;
+            float mult = Challenges.roomSizeMult();
+            nRooms -= 0.3334f * mult;
         }
         return painted;
     }
@@ -235,60 +238,99 @@ public abstract class RegularLevel extends Level {
         //on floor 1, 8 pre-set mobs are created so the player can get level 2.
         int mobsToSpawn = Dungeon.depth == 1 ? (int) (8 * Challenges.nMobsMultiplier()) : nMobs();
 
+        boolean allowEntrance = Challenges.EXHIBITIONISM.enabled();
+        boolean allowCorridors = Challenges.isTooManyMobs();
         ArrayList<Room> stdRooms = new ArrayList<>();
         for (Room room : rooms) {
-            if (room instanceof StandardRoom && room != roomEntrance) {
+            if (room instanceof StandardRoom && (room != roomEntrance || allowEntrance)) {
                 for (int i = 0; i < ((StandardRoom) room).sizeCat.roomValue; i++) {
                     stdRooms.add(room);
                 }
+            } else if(allowCorridors && room instanceof TunnelRoom){
+                stdRooms.add(room);
             }
         }
         Random.shuffle(stdRooms);
         Iterator<Room> stdRoomIter = stdRooms.iterator();
 
-        while (mobsToSpawn > 0) {
-            Mob mob = createMob();
-            Room roomToSpawn;
 
-            if (!stdRoomIter.hasNext()) {
-                stdRoomIter = stdRooms.iterator();
-            }
-            roomToSpawn = stdRoomIter.next();
+        if(!Challenges.isTooManyMobs()) {
+            while (mobsToSpawn > 0) {
+                Mob mob = createMob();
+                Room roomToSpawn;
 
-            int tries = 30;
-            do {
-                mob.pos = pointToCell(roomToSpawn.random());
-                tries--;
-            } while (tries >= 0 && (findMob(mob.pos) != null || !passable[mob.pos] || solid[mob.pos] || mob.pos == exit
-                    || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE))));
-
-            if (tries >= 0) {
-                mobsToSpawn--;
-                if (Challenges.EXTERMINATION.enabled()) {
-                    Buff.affect(mob, Extermination.class);
+                if (!stdRoomIter.hasNext()) {
+                    stdRoomIter = stdRooms.iterator();
                 }
-                mobs.add(mob);
+                roomToSpawn = stdRoomIter.next();
 
-                //add a second mob to this room
-                if (mobsToSpawn > 0 && Random.Int(4) == 0) {
-                    mob = createMob();
+                int tries = 30;
+                do {
+                    mob.pos = pointToCell(roomToSpawn.random());
+                    tries--;
+                } while (tries >= 0 && (!passable[mob.pos] || solid[mob.pos] || mob.pos == exit
+                        || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE)) || findMob(mob.pos) != null));
 
-                    tries = 30;
-                    do {
-                        mob.pos = pointToCell(roomToSpawn.random());
-                        tries--;
-                    } while (tries >= 0 && (findMob(mob.pos) != null || !passable[mob.pos] || solid[mob.pos] || mob.pos == exit
-                            || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE))));
-
-                    if (tries >= 0) {
-                        mobsToSpawn--;
-
-                        if (Challenges.EXTERMINATION.enabled()) {
-                            Buff.affect(mob, Extermination.class);
-                        }
-
-                        mobs.add(mob);
+                if (tries >= 0) {
+                    mobsToSpawn--;
+                    if (Challenges.EXTERMINATION.enabled()) {
+                        Buff.affect(mob, Extermination.class);
                     }
+                    mobs.add(mob);
+
+                    //add a second mob to this room
+                    if (mobsToSpawn > 0 && Random.Int(4) == 0) {
+                        mob = createMob();
+
+                        tries = 30;
+                        do {
+                            mob.pos = pointToCell(roomToSpawn.random());
+                            tries--;
+                        } while (tries >= 0 && (findMob(mob.pos) != null || !passable[mob.pos] || solid[mob.pos] || mob.pos == exit
+                                || (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE))));
+
+                        if (tries >= 0) {
+                            mobsToSpawn--;
+
+                            if (Challenges.EXTERMINATION.enabled()) {
+                                Buff.affect(mob, Extermination.class);
+                            }
+
+                            mobs.add(mob);
+                        }
+                    }
+                }
+            }
+        } else {
+            HashSet<Integer> cells = new HashSet<>();
+            HashSet<Integer> largeCells = new HashSet<>();
+            while (stdRoomIter.hasNext()) {
+                Room r = stdRoomIter.next();
+                for (int i = r.left; i < r.right; i++) {
+                    for (int j = r.top; j < r.bottom; j++) {
+                        int c = pointToCell(new Point(i, j));
+                        if (passable[c] && !solid[c] && c != exit && c != entrance) {
+                            cells.add(c);
+                            if (openSpace[c]) largeCells.add(c);
+                        }
+                    }
+                }
+            }
+            while (mobsToSpawn > 0) {
+                Mob mob = createMob();
+                if (cells.size() <= 0) break;
+                HashSet<Integer> set = mob.properties().contains(Char.Property.LARGE) ? largeCells : cells;
+
+                mobsToSpawn--;
+                if (set.size() > 0) {
+                    int cell = Random.element(set);
+                    mob.pos = cell;
+                    cells.remove(cell);
+                    largeCells.remove(cell);
+                    if (Challenges.EXTERMINATION.enabled()) {
+                        Buff.affect(mob, Extermination.class);
+                    }
+                    mobs.add(mob);
                 }
             }
         }
@@ -589,10 +631,11 @@ public abstract class RegularLevel extends Level {
             }
             if (room != roomEntrance) {
                 int pos = pointToCell(room.random());
+                boolean allowMobs = Challenges.isTooManyMobs();
                 if (passable[pos] && !solid[pos]
                         && pos != exit
                         && heaps.get(pos) == null
-                        && findMob(pos) == null) {
+                        && (allowMobs || findMob(pos) == null)) {
 
                     Trap t = traps.get(pos);
 

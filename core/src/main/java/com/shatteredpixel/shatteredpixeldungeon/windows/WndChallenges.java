@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class WndChallenges extends Window {
     ;
-    public static final int[] TIER_COLORS = new int[]{0x79e3d2, 0xff0000};
+    public static final int[] TIER_COLORS = new int[]{0x79e3d2, 0xff0000, 0x000000};
     private static final int TTL_HEIGHT = 18;
     private static final int BTN_HEIGHT = 18;
     private static final int GAP = 1;

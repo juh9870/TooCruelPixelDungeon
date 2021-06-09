@@ -84,6 +84,31 @@ public enum Challenges {
             return 2;
         }
     },
+    BIG_ROOMS(53, 13.5f, 1, 1) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            float mult = 1;
+            if (BIG_LEVELS.enabled()) mult *= 0.87f;
+            if (BIGGER_LEVELS.enabled()) mult *= 0.87f;
+            if (HUGE_LEVELS.enabled()) mult *= 0.7;
+            return mult;
+        }
+
+        @Override
+        protected float _roomSizeMult() {
+            return 2;
+        }
+    },
     SMALL_LEVELS(39, 13.5f, 1, 1f) {
         @Override
         protected float _nRoomsMult() {
@@ -158,10 +183,40 @@ public enum Challenges {
             return 2;
         }
     },
-    LINEAR(52, 37.5f, 2, 2f, BIGGER_LEVELS){
+    LINEAR(52, 37.5f, 2, 2f, BIGGER_LEVELS) {
         @Override
         protected float _nRoomsMult() {
             return 1.5f;
+        }
+
+        @Override
+        protected float _nMobsMult() {
+            return 1.5f;
+        }
+    },
+    BIGGER_ROOMS(54, 37.6f, 2, 3, BIG_ROOMS) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _roomSizeMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            float mult = 1;
+            if (BIG_LEVELS.enabled()) mult *= 0.87f;
+            if (BIGGER_LEVELS.enabled()) mult *= 0.87f;
+            if (HUGE_LEVELS.enabled()) mult *= 0.7;
+            return mult;
         }
     },
     ARROWHEAD(40, 2, 2.5f),
@@ -203,7 +258,14 @@ public enum Challenges {
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
 
-    //Last id 52
+    INFINITY_MOBS(55, 4, 16f){
+        @Override
+        protected float _nMobsMult() {
+            return 1000;
+        }
+    },
+
+    //Last id 55
     ;
     private static final Challenges[] mappings;
 
@@ -347,6 +409,14 @@ public enum Challenges {
         return mult;
     }
 
+    public static float roomSizeMult() {
+        float mult = 1;
+        for (Challenges ch : values()) {
+            if (ch.enabled()) mult *= ch._roomSizeMult();
+        }
+        return mult;
+    }
+
     public static float nTrapsMultiplier() {
         float mult = 1;
         for (Challenges ch : values()) {
@@ -466,6 +536,10 @@ public enum Challenges {
         return 1e64;
     }
 
+    public static boolean isTooManyMobs(){
+        return nMobsMultiplier()>16;
+    }
+
     protected float _nMobsMult() {
         return 1;
     }
@@ -475,6 +549,10 @@ public enum Challenges {
     }
 
     protected float _nRoomsMult() {
+        return 1;
+    }
+
+    protected float _roomSizeMult() {
         return 1;
     }
 

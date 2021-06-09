@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -34,12 +35,12 @@ import java.util.ArrayList;
 public abstract class StandardRoom extends Room {
 	
 	public enum SizeCategory {
-		
+//
 		NORMAL(4, 10, 1),
 		LARGE(10, 14, 2),
 		GIANT(14, 18, 3);
-		
 		public final int minDim, maxDim;
+
 		public final int roomValue;
 		
 		SizeCategory(int min, int max, int val){
@@ -94,12 +95,12 @@ public abstract class StandardRoom extends Room {
 	}
 	
 	@Override
-	public int minWidth() { return sizeCat.minDim; }
-	public int maxWidth() { return sizeCat.maxDim; }
+	public int minWidth() { return (int)(sizeCat.minDim* Challenges.roomSizeMult()); }
+	public int maxWidth() { return (int)(sizeCat.maxDim* Challenges.roomSizeMult()); }
 	
 	@Override
-	public int minHeight() { return sizeCat.minDim; }
-	public int maxHeight() { return sizeCat.maxDim; }
+	public int minHeight() { return (int)(sizeCat.minDim* Challenges.roomSizeMult()); }
+	public int maxHeight() { return (int)(sizeCat.maxDim* Challenges.roomSizeMult()); }
 
 	@Override
 	public boolean canMerge(Level l, Point p, int mergeTerrain) {
