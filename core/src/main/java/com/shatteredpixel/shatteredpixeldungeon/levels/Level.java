@@ -103,7 +103,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 public abstract class Level implements Bundlable {
-	public static final int SIZE_LIMIT = 16383000;
+	public static final int SIZE_LIMIT = 16383;
 	public static enum Feeling {
 		NONE,
 		CHASM,
