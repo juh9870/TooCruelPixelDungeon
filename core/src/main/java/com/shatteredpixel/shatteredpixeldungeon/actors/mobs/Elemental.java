@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Freezing;
@@ -309,7 +310,7 @@ public abstract class Elemental extends Mob {
 			spriteClass = ElementalSprite.Chaos.class;
 			
 			loot = new ScrollOfTransmutation();
-			lootChance = 1f;
+			lootChance = 1f * Challenges.rareLootChanceMultiplier();
 		}
 		
 		@Override
@@ -324,7 +325,7 @@ public abstract class Elemental extends Mob {
 	}
 	
 	public static Class<? extends Elemental> random(){
-		if (Random.Int( 50 ) == 0){
+		if (Random.Int( Challenges.EVOLUTION.enabled() ? 0 : Challenges.MUTAGEN.enabled() ? 4 : 50 ) == 0){
 			return ChaosElemental.class;
 		}
 		

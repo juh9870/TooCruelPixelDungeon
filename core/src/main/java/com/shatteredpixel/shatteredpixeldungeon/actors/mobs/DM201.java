@@ -114,11 +114,10 @@ public class DM201 extends DM200 {
 	@Override
 	public void rollToDropLoot() {
 		if (Dungeon.hero.lvl > maxLvl + 2) return;
-		
-		lootChance*= Challenges.rareLootChanceMultiplier();
 
 		super.rollToDropLoot();
 
+		if (Random.Float() >= Challenges.rareLootChanceMultiplier()) return;
 		int ofs;
 		do {
 			ofs = PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];

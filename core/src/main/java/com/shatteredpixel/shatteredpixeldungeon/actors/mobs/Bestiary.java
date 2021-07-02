@@ -231,8 +231,8 @@ public class Bestiary {
 	private static void swapMobAlts(ArrayList<Class<?extends Mob>> rotation){
 		for (int i = 0; i < rotation.size(); i++){
 			int max = 50;
-			if (Challenges.MUTAGEN.enabled())max=4;
-			if(Challenges.EVOLUTION.enabled())max=0;
+			if (Challenges.MUTAGEN.enabled()) max = 4;
+			if (Challenges.EVOLUTION.enabled()) max = 0;
 			if (Random.Int( max ) == 0) {
 				Class<? extends Mob> cl = rotation.get(i);
 				if (cl == Rat.class) {
