@@ -92,6 +92,7 @@ public enum Rankings {
         if (dyn != null) {
             dyn.records.add(rec);
             if (!win) dyn.finished = true;
+            else rec.score *= dyn.scoreMultiplier();
         }
 		int size = records.size();
 		while (size > TABLE_SIZE) {
@@ -415,6 +416,14 @@ public enum Rankings {
 			}
 			return score;
 		}
+
+        public float scoreMultiplier() {
+            if (epic) {
+                return (float) Math.pow(1.25f, (length()-1));
+            } else {
+                return 1 + (0.1f * (length()-1));
+            }
+        }
 
 		public float maxDifficulty() {
 			float max = 0;
