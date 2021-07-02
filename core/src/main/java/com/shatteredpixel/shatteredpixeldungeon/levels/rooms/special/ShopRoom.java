@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -181,7 +182,7 @@ public class ShopRoom extends SpecialRoom {
 			break;
 		}
 		w.enchant(null);
-		w.cursed = false;
+		w.cursed = Challenges.CURSED.enabled();
 		w.level(0);
 		w.identify();
 		itemsToSpawn.add(w);
@@ -265,8 +266,8 @@ public class ShopRoom extends SpecialRoom {
 			default:
 				rare = new Stylus();
 		}
-		rare.cursed = false;
-		rare.cursedKnown = true;
+		rare.cursed = Challenges.CURSED.enabled();
+		rare.cursedKnown = !Challenges.CURSED.enabled();
 		itemsToSpawn.add( rare );
 
 		//hard limit is 63 items + 1 shopkeeper, as shops can't be bigger than 8x8=64 internally

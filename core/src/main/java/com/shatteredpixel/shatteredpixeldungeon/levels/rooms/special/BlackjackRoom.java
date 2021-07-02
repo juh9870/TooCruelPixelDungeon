@@ -151,8 +151,10 @@ public class BlackjackRoom extends SpecialRoom {
                     CellEmitter.get( c ).burst( ElmoParticle.FACTORY, 2 );
                 Level.set(c,terrain[c]);
                 if ((h=Dungeon.level.heaps.get(c))!=null){
-                    CellEmitter.get( c ).burst( ElmoParticle.FACTORY, 4 );
-                    h.destroy();
+                    if(h.type==Heap.Type.FOR_SALE) {
+                        CellEmitter.get(c).burst(ElmoParticle.FACTORY, 4);
+                        h.destroy();
+                    }
                 }
             }
         }

@@ -82,7 +82,7 @@ public class TrapsRoom extends SpecialRoom {
 		if (Challenges.CURSED.enabled()) {
 			prize.cursed = true;
 		}
-		prize.cursedKnown = true;
+		prize.cursedKnown = !Challenges.CURSED.enabled();
 
 
 		//33% chance for an extra update.

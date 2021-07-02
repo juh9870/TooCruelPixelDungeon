@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -103,7 +104,7 @@ public class WndTradeItem extends WndInfoItem {
 
 		float pos = height;
 
-		final boolean isBJ = Dungeon.level instanceof RegularLevel &&
+		final boolean isBJ = Challenges.BLACKJACK.enabled() && Dungeon.level instanceof RegularLevel &&
 				((RegularLevel) Dungeon.level).room(heap.pos) instanceof BlackjackRoom;
 		
 		final int price = Shopkeeper.sellPrice( item );

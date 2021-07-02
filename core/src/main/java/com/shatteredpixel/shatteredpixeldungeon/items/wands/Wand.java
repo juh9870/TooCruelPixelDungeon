@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.wands;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -414,7 +415,7 @@ public abstract class Wand extends Item {
 		curCharges += n;
 		
 		//30% chance to be cursed
-		if (Random.Float() < 0.3f) {
+		if (Random.Float() < 0.3f || Challenges.CURSED.enabled()) {
 			cursed = true;
 		}
 

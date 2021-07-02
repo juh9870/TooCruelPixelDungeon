@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -175,9 +176,11 @@ public class CrystalMimic extends Mimic {
 	@Override
 	protected void generatePrize() {
 		//Crystal mimic already contains a prize item. Just guarantee it isn't cursed.
-		for (Item i : items){
-			i.cursed = false;
-			i.cursedKnown = true;
+		if (!Challenges.CURSED.enabled()) {
+			for (Item i : items) {
+				i.cursed = false;
+				i.cursedKnown = true;
+			}
 		}
 	}
 
