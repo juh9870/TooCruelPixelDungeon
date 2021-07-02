@@ -33,7 +33,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
-public class WornDartTrap extends Trap {
+public class WornDartTrap extends TargetingTrap {
 
 	{
 		color = GREY;
@@ -43,57 +43,16 @@ public class WornDartTrap extends Trap {
 	}
 
 	@Override
-	public void activate() {
-		Char target = Actor.findChar(pos);
-
-		if (target == null){
-			float closestDist = Float.MAX_VALUE;
-			for (Char ch : Actor.chars()){
-				float curDist = Dungeon.level.trueDistance(pos, ch.pos);
-				if (ch.invisible > 0) curDist += 1000;
-				Ballistica bolt = new Ballistica(pos, ch.pos, Ballistica.PROJECTILE);
-				if (bolt.collisionPos == ch.pos && curDist < closestDist){
-					target = ch;
-					closestDist = curDist;
-				}
-			}
+	protected void hit(Char target, boolean heroFov) {
+		int dmg = Random.NormalIntRange(4, 8) - target.drRoll();
+		target.damage(dmg, this);
+		if (target == Dungeon.hero && !target.isAlive()){
+			Dungeon.fail( getClass()  );
 		}
-		if (target != null) {
-			final Char finalTarget = target;
-			final WornDartTrap trap = this;
-			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[target.pos]) {
-				Actor.add(new Actor() {
-					
-					{
-						//it's a visual effect, gets priority no matter what
-						actPriority = VFX_PRIO;
-					}
-					
-					@Override
-					protected boolean act() {
-						final Actor toRemove = this;
-						((MissileSprite) ShatteredPixelDungeon.scene().recycle(MissileSprite.class)).
-							reset(pos, finalTarget.sprite, new Dart(), new Callback() {
-								@Override
-								public void call() {
-								int dmg = Random.NormalIntRange(4, 8) - finalTarget.drRoll();
-								finalTarget.damage(dmg, trap);
-								if (finalTarget == Dungeon.hero && !finalTarget.isAlive()){
-									Dungeon.fail( trap.getClass()  );
-								}
-								Sample.INSTANCE.play(Assets.Sounds.HIT, 1, 1, Random.Float(0.8f, 1.25f));
-								finalTarget.sprite.bloodBurstA(finalTarget.sprite.center(), dmg);
-								finalTarget.sprite.flash();
-								Actor.remove(toRemove);
-								next();
-								}
-							});
-						return false;
-					}
-				});
-			} else {
-				finalTarget.damage(Random.NormalIntRange(4, 8) - finalTarget.drRoll(), trap);
-			}
+		if(heroFov) {
+			Sample.INSTANCE.play(Assets.Sounds.HIT, 1, 1, Random.Float(0.8f, 1.25f));
+			target.sprite.bloodBurstA(target.sprite.center(), dmg);
+			target.sprite.flash();
 		}
 	}
 }

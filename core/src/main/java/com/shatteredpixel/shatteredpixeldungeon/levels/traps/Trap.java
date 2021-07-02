@@ -22,12 +22,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
+
+import java.util.List;
 
 public abstract class Trap implements Bundlable {
 
@@ -51,6 +56,43 @@ public abstract class Trap implements Bundlable {
 	public static final int CROSSHAIR   = 5;
 	public static final int LARGE_DOT   = 6;
 
+	public static Class<? extends Trap>[] trapClasses = new Class[]{
+			AlarmTrap.class,
+			BlazingTrap.class,
+			BurningTrap.class,
+			AlarmTrap.class,
+			BlazingTrap.class,
+			BurningTrap.class,
+			ChillingTrap.class,
+			ConfusionTrap.class,
+			CorrosionTrap.class,
+			CursedWandTrap.class,
+			CursingTrap.class,
+			DisarmingTrap.class,
+			DisintegrationTrap.class,
+			DistortionTrap.class,
+			ExplosiveTrap.class,
+			FlashingTrap.class,
+			FlockTrap.class,
+			FrostTrap.class,
+			GrimTrap.class,
+			GrippingTrap.class,
+			GuardianTrap.class,
+			OozeTrap.class,
+			PitfallTrap.class,
+			PoisonDartTrap.class,
+			RockfallTrap.class,
+			ShockingTrap.class,
+			StormTrap.class,
+			SummoningTrap.class,
+			TeleportationTrap.class,
+			TenguDartTrap.class,
+			ToxicTrap.class,
+			WarpingTrap.class,
+			WeakeningTrap.class,
+			WornDartTrap.class,
+	};
+
 	public int color;
 	public int shape;
 
@@ -62,13 +104,26 @@ public abstract class Trap implements Bundlable {
 	public boolean canBeHidden = true;
 	public boolean canBeSearched = true;
 
+
+	private void applyChallengedSprite(){
+		if (Challenges.INDIFFERENT_DESIGN.enabled()) {
+			Random.pushGenerator(Dungeon.seed + Dungeon.depth);
+			color = Random.Int(8);
+			shape = Random.Int(7);
+			Random.popGenerator();
+		}
+
+	}
+
 	public Trap set(int pos){
 		this.pos = pos;
+		applyChallengedSprite();
 		return this;
 	}
 
 	public Trap reveal() {
 		visible = true;
+		applyChallengedSprite();
 		GameScene.updateMap(pos);
 		return this;
 	}
@@ -90,7 +145,32 @@ public abstract class Trap implements Bundlable {
 			}
 			disarm();
 			reveal();
-			activate();
+			if(!Challenges.CHAOTIC_CONSTRUCTION.enabled()){
+				activate();
+				return;
+			}
+
+			Random.pushGenerator(Dungeon.seed + Dungeon.depth);
+			int repeats = Challenges.TRAP_TESTING_FACILITY.enabled() ? Random.NormalIntRange(2, 5) : 1;
+			Class<? extends Trap>[] traps = new Class[repeats];
+			for (int i = 0; i < repeats; i++) {
+				traps[i] = Random.element(trapClasses);
+			}
+			Random.popGenerator();
+			for (Class<? extends Trap> trap : traps) {
+				Trap t = Reflection.newInstance(trap);
+
+				// No grim trap here
+				if(t instanceof GrimTrap) t = new CursedWandTrap();
+				if(Dungeon.depth < 10 && t instanceof TenguDartTrap) t = new CursedWandTrap();
+				if(Dungeon.depth < 15 && t instanceof DisintegrationTrap) t = new CursedWandTrap();
+				if(t==null){
+					activate();
+					return;
+				}
+				t.pos=pos;
+				t.activate();
+			}
 		}
 	}
 
@@ -102,10 +182,12 @@ public abstract class Trap implements Bundlable {
 	}
 
 	public String name(){
+		if (Challenges.INDIFFERENT_DESIGN.enabled()) return Messages.get(this, "name_unknown");
 		return Messages.get(this, "name");
 	}
 
 	public String desc() {
+		if (Challenges.INDIFFERENT_DESIGN.enabled()) return Messages.get(this, "desc_unknown");
 		return Messages.get(this, "desc");
 	}
 
@@ -120,6 +202,7 @@ public abstract class Trap implements Bundlable {
 		if (bundle.contains(ACTIVE)){
 			active = bundle.getBoolean(ACTIVE);
 		}
+		applyChallengedSprite();
 	}
 
 	@Override

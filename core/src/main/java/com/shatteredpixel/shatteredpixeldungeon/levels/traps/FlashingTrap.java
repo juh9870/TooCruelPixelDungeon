@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -44,6 +45,10 @@ public class FlashingTrap extends Trap {
 	
 	@Override
 	public void trigger() {
+		if(Challenges.CHAOTIC_CONSTRUCTION.enabled()){
+			super.trigger();
+			return;
+		}
 		if (Dungeon.level.heroFOV[pos]){
 			Sample.INSTANCE.play(Assets.Sounds.TRAP);
 		}

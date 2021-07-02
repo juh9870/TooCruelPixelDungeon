@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
@@ -35,7 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 
-public class GrimTrap extends Trap {
+public class GrimTrap extends TargetingTrap {
 
 	{
 		color = GREY;
@@ -45,76 +46,41 @@ public class GrimTrap extends Trap {
 	}
 
 	@Override
-	public void activate() {
-		Char target = Actor.findChar(pos);
-
-		//find the closest char that can be aimed at
-		if (target == null){
-			float closestDist = Float.MAX_VALUE;
-			for (Char ch : Actor.chars()){
-				float curDist = Dungeon.level.trueDistance(pos, ch.pos);
-				if (ch.invisible > 0) curDist += 1000;
-				Ballistica bolt = new Ballistica(pos, ch.pos, Ballistica.PROJECTILE);
-				if (bolt.collisionPos == ch.pos && curDist < closestDist){
-					target = ch;
-					closestDist = curDist;
-				}
-			}
+	protected void hit(Char target, boolean heroFov) {
+		int damage;
+		//almost kill the player
+		if (target == Dungeon.hero && ((float)target.HP/target.HT) >= 0.9f){
+			damage = target.HP-1;
+			//kill 'em
+		} else {
+			damage = target.HP;
 		}
 
-		if (target != null){
-			final Char finalTarget = target;
-			final GrimTrap trap = this;
-			int damage;
-			
-			//almost kill the player
-			if (finalTarget == Dungeon.hero && ((float)finalTarget.HP/finalTarget.HT) >= 0.9f){
-				damage = finalTarget.HP-1;
-			//kill 'em
-			} else {
-				damage = finalTarget.HP;
+		target.damage(damage, this);
+		if (target == Dungeon.hero) {
+			Sample.INSTANCE.play(Assets.Sounds.CURSED);
+			if (!target.isAlive()) {
+				Dungeon.fail( GrimTrap.class );
+				GLog.n( Messages.get(GrimTrap.class, "ondeath") );
 			}
-			
-			final int finalDmg = damage;
-			
-			Actor.add(new Actor() {
-				
-				{
-					//it's a visual effect, gets priority no matter what
-					actPriority = VFX_PRIO;
-				}
-				
-				@Override
-				protected boolean act() {
-					final Actor toRemove = this;
-					((MagicMissile)finalTarget.sprite.parent.recycle(MagicMissile.class)).reset(
-							MagicMissile.SHADOW,
-							DungeonTilemap.tileCenterToWorld(pos),
-							finalTarget.sprite.center(),
-							new Callback() {
-								@Override
-								public void call() {
-									finalTarget.damage(finalDmg, trap);
-									if (finalTarget == Dungeon.hero) {
-										Sample.INSTANCE.play(Assets.Sounds.CURSED);
-										if (!finalTarget.isAlive()) {
-											Dungeon.fail( GrimTrap.class );
-											GLog.n( Messages.get(GrimTrap.class, "ondeath") );
-										}
-									} else {
-										Sample.INSTANCE.play(Assets.Sounds.BURNING);
-									}
-									finalTarget.sprite.emitter().burst(ShadowParticle.UP, 10);
-									Actor.remove(toRemove);
-									next();
-								}
-							});
-					return false;
-				}
-			});
 		} else {
-			CellEmitter.get(pos).burst(ShadowParticle.UP, 10);
 			Sample.INSTANCE.play(Assets.Sounds.BURNING);
 		}
+		target.sprite.emitter().burst(ShadowParticle.UP, 10);
+	}
+
+	@Override
+	protected void noTarget(boolean heroFov) {
+		CellEmitter.get(pos).burst(ShadowParticle.UP, 10);
+		Sample.INSTANCE.play(Assets.Sounds.BURNING);
+	}
+
+	@Override
+	protected void shootProjectile(Char target, Callback callback) {
+		((MagicMissile) ShatteredPixelDungeon.scene().recycle(MagicMissile.class)).reset(
+				MagicMissile.SHADOW,
+				DungeonTilemap.tileCenterToWorld(pos),
+				target.sprite.center(),
+				callback);
 	}
 }

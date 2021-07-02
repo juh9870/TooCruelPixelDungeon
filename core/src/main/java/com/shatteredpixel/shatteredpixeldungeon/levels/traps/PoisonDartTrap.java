@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.PoisonDart;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
@@ -35,7 +36,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
-public class PoisonDartTrap extends Trap {
+public class PoisonDartTrap extends TargetingTrap {
 
 	{
 		color = GREEN;
@@ -47,70 +48,25 @@ public class PoisonDartTrap extends Trap {
 	protected int poisonAmount(){
 		return 8 + Math.round(2*Dungeon.depth / 3f);
 	}
-	
-	protected boolean canTarget( Char ch ){
-		return true;
+
+
+	protected void shootProjectile(Char target, Callback callback){
+		((MissileSprite) ShatteredPixelDungeon.scene().recycle(MissileSprite.class)).
+				reset(pos, target.sprite, new PoisonDart(), callback);
 	}
-	
+
 	@Override
-	public void activate() {
-		Char target = Actor.findChar(pos);
-		
-		if (target != null && !canTarget(target)){
-			target = null;
+	protected void hit(Char target, boolean heroFov) {
+		int dmg = Random.NormalIntRange(4, 8) - target.drRoll();
+		target.damage(dmg, this);
+		if (target == Dungeon.hero && !target.isAlive()){
+			Dungeon.fail( getClass() );
 		}
-		
-		//find the closest char that can be aimed at
-		if (target == null){
-			float closestDist = Float.MAX_VALUE;
-			for (Char ch : Actor.chars()){
-				float curDist = Dungeon.level.trueDistance(pos, ch.pos);
-				if (ch.invisible > 0) curDist += 1000;
-				Ballistica bolt = new Ballistica(pos, ch.pos, Ballistica.PROJECTILE);
-				if (canTarget(ch) && bolt.collisionPos == ch.pos && curDist < closestDist){
-					target = ch;
-					closestDist = curDist;
-				}
-			}
-		}
-		if (target != null) {
-			final Char finalTarget = target;
-			final PoisonDartTrap trap = this;
-			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[target.pos]) {
-				Actor.add(new Actor() {
-					
-					{
-						//it's a visual effect, gets priority no matter what
-						actPriority = VFX_PRIO;
-					}
-					
-					@Override
-					protected boolean act() {
-						final Actor toRemove = this;
-						((MissileSprite) ShatteredPixelDungeon.scene().recycle(MissileSprite.class)).
-							reset(pos, finalTarget.sprite, new PoisonDart(), new Callback() {
-								@Override
-								public void call() {
-									int dmg = Random.NormalIntRange(4, 8) - finalTarget.drRoll();
-									finalTarget.damage(dmg, trap);
-									if (finalTarget == Dungeon.hero && !finalTarget.isAlive()){
-										Dungeon.fail( trap.getClass() );
-									}
-									Buff.affect( finalTarget, Poison.class ).set( poisonAmount() );
-									Sample.INSTANCE.play(Assets.Sounds.HIT, 1, 1, Random.Float(0.8f, 1.25f));
-									finalTarget.sprite.bloodBurstA(finalTarget.sprite.center(), dmg);
-									finalTarget.sprite.flash();
-									Actor.remove(toRemove);
-									next();
-								}
-							});
-						return false;
-					}
-				});
-			} else {
-				finalTarget.damage(Random.NormalIntRange(4, 8) - finalTarget.drRoll(), trap);
-				Buff.affect( finalTarget, Poison.class ).set( poisonAmount() );
-			}
+		Buff.affect( target, Poison.class ).set( poisonAmount() );
+		if(heroFov){
+			Sample.INSTANCE.play(Assets.Sounds.HIT, 1, 1, Random.Float(0.8f, 1.25f));
+			target.sprite.bloodBurstA(target.sprite.center(), dmg);
+			target.sprite.flash();
 		}
 	}
 }

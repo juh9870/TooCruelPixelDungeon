@@ -209,7 +209,9 @@ public abstract class RegularLevel extends Level {
 	protected abstract Painter painter();
 	
 	protected int nTraps() {
-        if (Challenges.EXTREME_DANGER.enabled()) {
+		if(Challenges.TRAP_TESTING_FACILITY.enabled()){
+			return (int) ((3 + (Dungeon.depth / 3)) * Challenges.nTrapsMultiplier());
+		} else if (Challenges.EXTREME_DANGER.enabled()) {
             return (int) (Random.NormalIntRange(1 + (Dungeon.depth / 6), 3 + (Dungeon.depth / 3)) * Challenges.nTrapsMultiplier());
         } else
             return (int) (Random.NormalIntRange(2, 3 + (Dungeon.depth / 5)) * Challenges.nTrapsMultiplier());

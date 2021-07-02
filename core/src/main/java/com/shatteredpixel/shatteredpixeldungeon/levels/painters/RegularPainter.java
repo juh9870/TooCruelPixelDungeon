@@ -316,11 +316,14 @@ public abstract class RegularPainter extends Painter {
     protected void paintWater(Level l, ArrayList<Room> rooms) {
         boolean[] lake = Patch.generate(l.width(), l.height(), waterFill, waterSmoothness, true);
 
+        boolean holes = Challenges.EXTREME_DANGER.enabled();
+
         if (!rooms.isEmpty()) {
             for (Room r : rooms) {
                 for (Point p : r.waterPlaceablePoints()) {
                     int i = l.pointToCell(p);
                     if (lake[i] && l.map[i] == Terrain.EMPTY) {
+                        if (holes && Random.Int(5) == 0) continue;
                         l.map[i] = Terrain.WATER;
                     }
                 }
@@ -328,6 +331,7 @@ public abstract class RegularPainter extends Painter {
         } else {
             for (int i = 0; i < l.length(); i++) {
                 if (lake[i] && l.map[i] == Terrain.EMPTY) {
+                    if (holes && Random.Int(5) == 0) continue;
                     l.map[i] = Terrain.WATER;
                 }
             }
@@ -338,6 +342,7 @@ public abstract class RegularPainter extends Painter {
     protected void paintGrass(Level l, ArrayList<Room> rooms) {
         boolean[] grass = Patch.generate(l.width(), l.height(), grassFill, grassSmoothness, true);
 
+        boolean holes = Challenges.EXTREME_DANGER.enabled();
         ArrayList<Integer> grassCells = new ArrayList<>();
 
         if (!rooms.isEmpty()) {
@@ -345,6 +350,7 @@ public abstract class RegularPainter extends Painter {
                 for (Point p : r.grassPlaceablePoints()) {
                     int i = l.pointToCell(p);
                     if (grass[i] && l.map[i] == Terrain.EMPTY) {
+                        if (holes && Random.Int(5) == 0) continue;
                         grassCells.add(i);
                     }
                 }
@@ -352,6 +358,7 @@ public abstract class RegularPainter extends Painter {
         } else {
             for (int i = 0; i < l.length(); i++) {
                 if (grass[i] && l.map[i] == Terrain.EMPTY) {
+                    if (holes && Random.Int(5) == 0) continue;
                     grassCells.add(i);
                 }
             }
@@ -376,6 +383,15 @@ public abstract class RegularPainter extends Painter {
         }
     }
 
+    private boolean canPlaceTrapAtPos(Level l, int pos){
+        int terr = l.map[pos];
+        if(!Challenges.EXTREME_DANGER.enabled()) return terr == Terrain.EMPTY;
+        return terr == Terrain.EMPTY || terr == Terrain.GRASS ||
+                terr == Terrain.EMBERS || terr == Terrain.EMPTY_DECO ||
+                terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS ||
+                terr == Terrain.WATER;
+    }
+
     protected void paintTraps(Level l, ArrayList<Room> rooms) {
         ArrayList<Integer> validCells = new ArrayList<>();
 
@@ -383,25 +399,28 @@ public abstract class RegularPainter extends Painter {
             for (Room r : rooms) {
                 for (Point p : r.trapPlaceablePoints()) {
                     int i = l.pointToCell(p);
-                    if (l.map[i] == Terrain.EMPTY) {
+                    if (canPlaceTrapAtPos(l, i)) {
                         validCells.add(i);
                     }
                 }
             }
         } else {
             for (int i = 0; i < l.length(); i++) {
-                if (l.map[i] == Terrain.EMPTY) {
+                if (canPlaceTrapAtPos(l, i)) {
                     validCells.add(i);
                 }
             }
         }
 
-        //no more than one trap every 5 valid tiles.
-        nTraps = Math.min(nTraps, validCells.size() / 5);
-
-        if (Challenges.EXTREME_CAUTION.enabled()) {
-            //or 2 with Extreme Caution
+        if (Challenges.TRAP_TESTING_FACILITY.enabled()) {
+            //every cell is fine
+            nTraps = Math.min(nTraps, validCells.size());
+        } else if (Challenges.EXTREME_CAUTION.enabled()) {
+            //or every other cell with Extreme Caution
             nTraps = Math.min(nTraps, validCells.size() / 2);
+        } else {
+            //no more than one trap every 5 valid tiles.
+            nTraps = Math.min(nTraps, validCells.size() / 5);
         }
 
         for (int i = 0; i < nTraps; i++) {
@@ -420,6 +439,7 @@ public abstract class RegularPainter extends Painter {
             for (int i = 0; i < 4 * nTraps; i++) {
 
                 Integer trapPos = Random.element(validCells);
+                if (trapPos == null) break;
                 validCells.remove(trapPos); //removes the integer object, not at the index
 
                 Trap trap = Reflection.newInstance(trapClasses[Random.chances(trapChances)]).reveal();

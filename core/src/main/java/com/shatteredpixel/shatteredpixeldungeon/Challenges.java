@@ -144,6 +144,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
+    INDIFFERENT_DESIGN(63, 16.6f, 1, 1f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     STACKING(18, 1, 1.5f) {
         @Override
@@ -179,9 +180,10 @@ public enum Challenges implements Hero.Doom {
     INVASION(27, 2, 2f),
     EVOLUTION(29, 2, 5f, MUTAGEN),
     REBIRTH(30, 2, 4f),
+    CHAOTIC_CONSTRUCTION(64, 30.5f, 2, 2f, INDIFFERENT_DESIGN),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
     STACKING_SPAWN(57, 33.1f, 2, 2f),
-    STACKING_CHAMPIONS(60,33.2f,2,2f, STACKING, CHAMPION_ENEMIES),
+    STACKING_CHAMPIONS(60, 33.2f, 2, 2f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
     BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
         @Override
@@ -277,7 +279,13 @@ public enum Challenges implements Hero.Doom {
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
     SHARED_PAIN(58, 3, 7f),
-    DESERT(62, 3, 2f, SCORCHED_EARTH),
+    DESERT(62, 3, 6f, SCORCHED_EARTH),
+    TRAP_TESTING_FACILITY(65, 3, 6f, EXTREME_DANGER){
+        @Override
+        protected float _nTrapsMult() {
+            return 3;
+        }
+    },
 
     // T4
     INFINITY_MOBS(55, 4, 16f) {
@@ -287,15 +295,19 @@ public enum Challenges implements Hero.Doom {
         }
     },
 
-    //Last id 62
+    //Last id 64
     ;
     private static final Challenges[] mappings;
 
     static {
         mappings = new Challenges[Challenges.values().length];
-        for (Challenges value : Challenges.values()) {
-            if (mappings[value.id] != null) throw new DuplicateChallengeException(mappings[value.id], value);
-            mappings[value.id] = value;
+        try {
+            for (Challenges value : Challenges.values()) {
+                if (mappings[value.id] != null) throw new DuplicateChallengeException(mappings[value.id], value);
+                mappings[value.id] = value;
+            }
+        } catch (IndexOutOfBoundsException e) {
+            throw new ChallengeOutOfBoundsException(e);
         }
         for (int i = 0; i < mappings.length; i++) {
             if (mappings[i] == null) throw new MissingChallengeException(i);
@@ -653,6 +665,12 @@ public enum Challenges implements Hero.Doom {
     public static class MissingChallengeException extends Error {
         public MissingChallengeException(int id) {
             super("Challenge id " + id + " is empty.");
+        }
+    }
+
+    public static class ChallengeOutOfBoundsException extends Error {
+        public ChallengeOutOfBoundsException(Throwable cause) {
+            super("One of challenges is out of bounds.", cause);
         }
     }
 }
