@@ -28,8 +28,9 @@ public class Legion extends Buff {
 
     @Override
     public boolean act() {
-        if (!Dungeon.bossLevel() && Dungeon.depth != 21) {
+        if (!Dungeon.bossLevel()) {
             turnsToNextWave -= TICK;
+            turnsSinceLastWave += TICK;
 
 //			GLog.i(Math.floor(turnsToNextWave)+"");
 
@@ -66,7 +67,6 @@ public class Legion extends Buff {
             }
         }
         spend(TICK);
-        turnsSinceLastWave += TICK;
         return true;
     }
 
