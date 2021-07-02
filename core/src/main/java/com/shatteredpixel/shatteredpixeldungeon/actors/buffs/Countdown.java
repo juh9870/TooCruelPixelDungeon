@@ -35,6 +35,15 @@ public class Countdown extends FlavourBuff implements Hero.Doom {
     }
 
     @Override
+    public float iconFadePercent() {
+        float p = Math.min(0, (DESCEND_TIME / 2 - visualcooldown()) / (DESCEND_TIME / 2));
+        if (p <= 0) {
+            p = 1;
+        }
+        return p;
+    }
+
+    @Override
     public int icon() {
         if (cooldown() > 0) {
             return BuffIndicator.COUNTDOWN1;

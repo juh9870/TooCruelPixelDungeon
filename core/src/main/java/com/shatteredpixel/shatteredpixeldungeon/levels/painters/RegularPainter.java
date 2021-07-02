@@ -56,12 +56,14 @@ public abstract class RegularPainter extends Painter {
 
     public RegularPainter setWater(float fill, int smoothness) {
         waterFill = fill;
+        if (Challenges.DESERT.enabled()) waterFill /= 2;
         waterSmoothness = smoothness;
         return this;
     }
 
     public RegularPainter setGrass(float fill, int smoothness) {
         grassFill = fill;
+        if (Challenges.DESERT.enabled()) grassFill /= 2;
         grassSmoothness = smoothness;
         return this;
     }

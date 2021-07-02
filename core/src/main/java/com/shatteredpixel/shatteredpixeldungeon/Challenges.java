@@ -181,7 +181,7 @@ public enum Challenges implements Hero.Doom {
     REBIRTH(30, 2, 4f),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
     STACKING_SPAWN(57, 33.1f, 2, 2f),
-    STACKING_CHAMPIONS(60,33.2f,2,3f, STACKING, CHAMPION_ENEMIES),
+    STACKING_CHAMPIONS(60,33.2f,2,2f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
     BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
         @Override
@@ -244,6 +244,7 @@ public enum Challenges implements Hero.Doom {
     MARATHON(50, 2, 3f),
     STRONGER_BOSSES(56, 2, 3f),
     ROOM_LOCK(59, 2, 2f),
+    SCORCHED_EARTH(61, 2, 2f),
 
 
     //T3
@@ -276,6 +277,7 @@ public enum Challenges implements Hero.Doom {
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
     SHARED_PAIN(58, 3, 7f),
+    DESERT(62, 3, 2f, SCORCHED_EARTH),
 
     // T4
     INFINITY_MOBS(55, 4, 16f) {
@@ -285,7 +287,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
 
-    //Last id 59
+    //Last id 62
     ;
     private static final Challenges[] mappings;
 

@@ -59,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PermaBlind;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RacingTheDeath;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ScorchedEarth;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
@@ -405,6 +406,9 @@ public class Hero extends Char {
 		}
 		if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
 			Buff.affect(this, GrowingRage.class);
+		}
+		if (Challenges.SCORCHED_EARTH.enabled()) {
+			Buff.affect(this, ScorchedEarth.class);
 		}
 	}
 	

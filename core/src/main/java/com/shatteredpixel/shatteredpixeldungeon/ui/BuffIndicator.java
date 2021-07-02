@@ -101,8 +101,10 @@ public class BuffIndicator extends Component {
 	public static final int COUNTDOWN1  = 51;
 	public static final int COUNTDOWN2  = 52;
 	public static final int INTOXICATION= 53;
-	
+
 	public static final int MOMENTUM    = 54;
+
+	public static final int THERMOMETER = 55;
 
 	public static final int SIZE    = 7;
 	

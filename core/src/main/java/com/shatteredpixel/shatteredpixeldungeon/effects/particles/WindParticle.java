@@ -37,6 +37,16 @@ public class WindParticle extends PixelParticle {
 			((WindParticle)emitter.recycle( WindParticle.class )).reset( x, y );
 		}
 	};
+	public static Emitter.Factory FACTORY(int color) {
+		return new Factory() {
+			@Override
+			public void emit( Emitter emitter, int index, float x, float y ) {
+				WindParticle p = ((WindParticle)emitter.recycle( WindParticle.class ));
+				p.color(color);
+				p.reset( x, y );
+			}
+		};
+	}
 	
 	private static float angle = Random.Float( PointF.PI2 );
 	private static PointF speed = new PointF().polar( angle, 5 );

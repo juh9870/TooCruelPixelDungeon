@@ -57,6 +57,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMappi
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -121,6 +122,9 @@ public enum HeroClass {
 		if (Challenges.CURSE_ENCHANT.enabled()){
 			((Weapon)hero.belongings.weapon).enchant();
 			hero.belongings.armor.inscribe();
+		}
+		if(Challenges.SCORCHED_EARTH.enabled()){
+			new AquaBlast().quantity(2).collect();
 		}
 
 		if (DeviceCompat.isDebug()) {

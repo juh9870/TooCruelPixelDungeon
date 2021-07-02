@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WellWater;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
@@ -958,9 +959,33 @@ public abstract class Level implements Bundlable {
 	}
 
 	public boolean setCellToWater( boolean includeTraps, int cell ){
-		Point p = cellToPoint(cell);
-
 		//if a custom tilemap is over that cell, don't put water there
+		if(hasCustomTerrain(cell)) return false;
+
+		int terr = map[cell];
+		Blob droughtBlob = blobs.get(Desert.class);
+		if (terr == Terrain.EMPTY || terr == Terrain.GRASS ||
+				terr == Terrain.EMBERS || terr == Terrain.EMPTY_SP ||
+				terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS
+				|| terr == Terrain.EMPTY_DECO){
+			set(cell, Terrain.WATER);
+			droughtBlob.clear(cell);
+			GameScene.updateMap(cell);
+			return true;
+		} else if (includeTraps && (terr == Terrain.SECRET_TRAP ||
+				terr == Terrain.TRAP || terr == Terrain.INACTIVE_TRAP)){
+			set(cell, Terrain.WATER);
+			Dungeon.level.traps.remove(cell);
+			droughtBlob.clear(cell);
+			GameScene.updateMap(cell);
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean hasCustomTerrain(int cell){
+		Point p = cellToPoint(cell);
 		for (CustomTilemap cust : customTiles){
 			Point custPoint = new Point(p);
 			custPoint.x -= cust.tileX;
@@ -968,28 +993,21 @@ public abstract class Level implements Bundlable {
 			if (custPoint.x >= 0 && custPoint.y >= 0
 					&& custPoint.x < cust.tileW && custPoint.y < cust.tileH){
 				if (cust.image(custPoint.x, custPoint.y) != null){
-					return false;
+					return true;
 				}
 			}
 		}
-
-		int terr = map[cell];
-		if (terr == Terrain.EMPTY || terr == Terrain.GRASS ||
-				terr == Terrain.EMBERS || terr == Terrain.EMPTY_SP ||
-				terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS
-				|| terr == Terrain.EMPTY_DECO){
-			set(cell, Terrain.WATER);
-			GameScene.updateMap(cell);
-			return true;
-		} else if (includeTraps && (terr == Terrain.SECRET_TRAP ||
-				terr == Terrain.TRAP || terr == Terrain.INACTIVE_TRAP)){
-			set(cell, Terrain.WATER);
-			Dungeon.level.traps.remove(cell);
-			GameScene.updateMap(cell);
-			return true;
-		}
-
 		return false;
+	}
+
+	public boolean removeWater( int cell ){
+		int terr = map[cell];
+		if (terr != Terrain.WATER) return false;
+		if(hasCustomTerrain(cell)) return false;
+
+		set(cell, Terrain.EMPTY);
+		GameScene.updateMap(cell);
+		return true;
 	}
 	
 	public int fallCell( boolean fallIntoPit ) {

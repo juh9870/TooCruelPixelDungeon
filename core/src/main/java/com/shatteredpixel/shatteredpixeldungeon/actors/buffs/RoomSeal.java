@@ -6,7 +6,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
@@ -21,12 +20,12 @@ import java.util.HashSet;
 
 public class RoomSeal extends Buff implements Hero.Doom {
     private static final String CELLS = "cells";
-    private static final int LIMIT = 5;
+    private static final float LIMIT = 5;
     private static final int ARENA_SIZE = 3;
     private static final String COOLDOWN = "cooldown";
     private final HashMap<Integer, Emitter> emitters = new HashMap<>();
     private final HashSet<Integer> cells = new HashSet<>();
-    private int cooldown = LIMIT;
+    private float cooldown = LIMIT;
     private boolean fx;
     private Emitter spriteEmitter;
 
@@ -41,7 +40,7 @@ public class RoomSeal extends Buff implements Hero.Doom {
                 target.damage((Statistics.deepestFloor / 5 + 1) * 3, this);
             }
 
-            if (cooldown-- <= 0) {
+            if ((cooldown -= TICK) <= 0) {
                 unlock();
             }
         }
@@ -136,6 +135,11 @@ public class RoomSeal extends Buff implements Hero.Doom {
             target.sprite.killEmitter(getClass());
             spriteEmitter = null;
         }
+    }
+
+    @Override
+    public float iconFadePercent() {
+        return Math.min(0, (LIMIT - cooldown) / LIMIT);
     }
 
     @Override
