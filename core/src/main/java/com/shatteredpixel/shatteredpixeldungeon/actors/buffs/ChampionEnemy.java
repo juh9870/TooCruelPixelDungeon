@@ -131,15 +131,16 @@ public abstract class ChampionEnemy extends Buff {
 
 		Dungeon.mobsToChampion++;
 
-
 		int existingChamps = 0;
-		for (Mob e : existing) {
-			if (!e.buffs(ChampionEnemy.class).isEmpty()) {
-				existingChamps++;
-			}
-			//elite champions counts as 2
-			if (!e.buffs(EliteChampion.class).isEmpty()) {
-				existingChamps++;
+		if (Challenges.ELITE_CHAMPIONS.enabled()) {
+			for (Mob e : existing) {
+				if (!e.buffs(ChampionEnemy.class).isEmpty()) {
+					existingChamps++;
+				}
+				//elite champions counts as 2
+				if (!e.buffs(EliteChampion.class).isEmpty()) {
+					existingChamps++;
+				}
 			}
 		}
 

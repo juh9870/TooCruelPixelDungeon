@@ -180,6 +180,8 @@ public enum Challenges implements Hero.Doom {
     EVOLUTION(29, 2, 5f, MUTAGEN),
     REBIRTH(30, 2, 4f),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
+    STACKING_SPAWN(57, 33.1f, 2, 2f),
+    STACKING_CHAMPIONS(60,33.2f,2,3f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
     BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
         @Override
@@ -241,7 +243,6 @@ public enum Challenges implements Hero.Doom {
     EXHIBITIONISM(49, 2, 2f, RESURRECTION),
     MARATHON(50, 2, 3f),
     STRONGER_BOSSES(56, 2, 3f),
-    STACKING_SPAWN(57, 2, 2f),
     ROOM_LOCK(59, 2, 2f),
 
 

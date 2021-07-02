@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -10,6 +11,7 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Stacking extends Buff {
     private static final String COUNT = "count";
@@ -52,6 +54,8 @@ public class Stacking extends Buff {
 
         int enemy = target instanceof Mob ? ((Mob) target).enemyPos() : -1;
 
+        HashSet<? extends ChampionEnemy> championBuffs = target.buffs(ChampionEnemy.class);
+
         for (int i = 0; i < count; i++) {
             Mob mob;
             do {
@@ -65,6 +69,11 @@ public class Stacking extends Buff {
             mob.state = mob.HUNTING;
             if (enemy > 0) {
                 mob.beckon(enemy);
+            }
+            if (Challenges.STACKING_CHAMPIONS.enabled()) {
+                for (ChampionEnemy championBuff : championBuffs) {
+                    Buff.affect(mob, championBuff.getClass());
+                }
             }
         }
         detach();
