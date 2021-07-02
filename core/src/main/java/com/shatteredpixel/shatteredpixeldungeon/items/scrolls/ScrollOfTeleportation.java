@@ -122,6 +122,7 @@ public class ScrollOfTeleportation extends Scroll {
 				
 				Dungeon.observe();
 				GameScene.updateFog();
+				Dungeon.hero.interrupt();
 			}
 			
 		}

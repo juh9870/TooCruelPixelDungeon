@@ -104,7 +104,7 @@ public class DeathMark extends ArmorAbility {
 
 		if (Dungeon.hero.hasTalent(Talent.FEAR_THE_REAPER)) {
 			if (Dungeon.hero.pointsInTalent(Talent.FEAR_THE_REAPER) >= 2) {
-				Buff.prolong(ch, Terror.class, 5f).target = Dungeon.hero;
+				Buff.prolong(ch, Terror.class, 5f).object = Dungeon.hero.id();
 			}
 			Buff.prolong(ch, Cripple.class, 5f);
 
@@ -116,7 +116,7 @@ public class DeathMark extends ArmorAbility {
 					if (near != ch && near.alignment == Char.Alignment.ENEMY
 							&& PathFinder.distance[near.pos] != Integer.MAX_VALUE) {
 						if (Dungeon.hero.pointsInTalent(Talent.FEAR_THE_REAPER) == 4) {
-							Buff.prolong(near, Terror.class, 5f).target = Dungeon.hero;
+							Buff.prolong(near, Terror.class, 5f).object = Dungeon.hero.id();
 						}
 						Buff.prolong(near, Cripple.class, 5f);
 					}
@@ -164,8 +164,19 @@ public class DeathMark extends ArmorAbility {
 		}
 
 		@Override
+		public boolean attachTo(Char target) {
+			if (super.attachTo(target)){
+				target.deathMarked = true;
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
 		public void detach() {
 			super.detach();
+			target.deathMarked = false;
 			if (!target.isAlive()){
 				target.sprite.flash();
 				target.sprite.bloodBurstA(target.sprite.center(), target.HT*2);

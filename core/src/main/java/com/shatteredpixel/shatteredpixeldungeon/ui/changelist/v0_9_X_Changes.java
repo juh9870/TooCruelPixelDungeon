@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.ui.changelist;
 
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -58,6 +60,74 @@ public class v0_9_X_Changes {
 		ChangeInfo changes = new ChangeInfo("v0.9.3", true, "");
 		changes.hardlight(Window.TITLE_COLOR);
 		changeInfos.add(changes);
+
+		changes = new ChangeInfo("", false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo("v0.9.3c", false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		if (Gdx.app.getType() == Application.ApplicationType.Android && Gdx.app.getVersion() < 14) {
+			changes.addButton(new ChangeButton(Icons.get(Icons.WARNING), "Android 2.3 and 3 Support",
+					"v0.9.3c is the final version of Shattered Pixel Dungeon which supports Android 2.3 Gingerbread and Android 3 Honeycomb. I don't currently have plans to end support for other Android versions.\n\n" +
+					"If you'd like to keep up to date on future updates, check out the blog at _ShatteredPixel.com_"));
+		}
+
+		changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+				"_-_ The hero can now collect dew on stairs, even if they are at full HP.\n\n" +
+				"_-_ In the Google Play version of the game, the player can now separately enable Google Play Games and opt-out of sharing gameplay data."));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed (caused by v0.9.3):\n" +
+				"_-_ Various errors with warp beacon\n" +
+				"_-_ Quick use window being usable after hero death\n" +
+				"_-_ Rare cases of rankings failing to load\n" +
+				"_-_ Fear from death mark lasting far longer than intended\n" +
+				"_-_ Errors with the Lightweight Cloak talent\n\n" +
+				"Fixed (existed prior to v0.9.3):\n" +
+				"_-_ Necromancers sometimes losing track of their skeleton\n" +
+				"_-_ Deaths to Dwarf King rarely not being recorded in rankings\n" +
+				"_-_ Various minor text errors"));
+
+		changes = new ChangeInfo("v0.9.3b", false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+				"It is now possible to access a quick-use window by quickslotting a bag or by long-pressing the inventory! A few items that were missing quick actions have also been given them, and bags can now appear in the rankings.\n\n" +
+				"_-_ Runestones of flock now also activate before triggering traps"));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed (caused by v0.9.3):\n" +
+				"_-_ Deactivating cloak ending preparation when Assassin is invisible by other means as well\n" +
+				"_-_ Flying transmogrified enemies not falling if above chasms\n\n" +
+				"Fixed (existed prior to v0.9.3):\n" +
+				"_-_ Various rare crash bugs\n" +
+				"_-_ Chaos elemental teleportation not interrupting the hero\n" +
+				"_-_ Pacifist badge not triggering if hero descended by falling"));
+
+		changes = new ChangeInfo("v0.9.3a", false, null);
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+				"_-_ Runestones now press tiles when they are thrown (stones of disarming specifically activate before triggering traps)"));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+				"Fixed (caused by v0.9.3):\n" +
+				"_-_ Various freeze bugs that were common for certain users\n" +
+				"_-_ Various rare crashes\n" +
+				"_-_ Giant swarms still duplicating into enclosed spaces in rare cases\n" +
+				"_-_ Game freeze bugs with wild magic\n" +
+				"_-_ Various bugs with warp beacon telefragging\n" +
+				"_-_ Ethereal chains causing quickslot UI issues\n\n" +
+				"Fixed (existed prior to v0.9.3):\n" +
+				"_-_ On-hit effects triggering on invulnerable pylons\n" +
+				"_-_ Wells of healing not fully healing the hero in all cases\n" +
+				"_-_ Lightweight cloak getting cancelled when equipped/unequipped\n" +
+				"_-_ Displacing darts sometimes teleporting enemies into unreachable places"));
 
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
 		changes.hardlight(Window.TITLE_COLOR);

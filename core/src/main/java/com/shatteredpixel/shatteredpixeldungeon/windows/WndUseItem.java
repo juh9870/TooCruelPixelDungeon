@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,7 @@ public class WndUseItem extends WndInfoItem {
 	
 	private static final float GAP	= 2;
 	
-	public WndUseItem(final WndBag owner, final Item item ) {
+	public WndUseItem( final Window owner, final Item item ) {
 		
 		super(item);
 		

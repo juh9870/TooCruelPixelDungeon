@@ -647,11 +647,13 @@ public abstract class Char extends Actor {
 		if (src != Chasm.class) sprite.die();
 	}
 	
+	//we cache this info to prevent having to call buff(...) in isAlive.
+	//This is relevant because we call isAlive during drawing, which has both performance
+	//and thread coordination implications
+	public boolean deathMarked = false;
+	
 	public boolean isAlive() {
-		if (buff(DeathMark.DeathMarkTracker.class) != null){
-			return true;
-		}
-		return HP > 0;
+		return HP > 0 || deathMarked;
 	}
 	
 	@Override

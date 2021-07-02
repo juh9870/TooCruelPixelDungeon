@@ -390,6 +390,7 @@ public class GameScene extends PixelScene {
 			ScrollOfTeleportation.appear(  Dungeon.hero, Dungeon.hero.pos );
 			break;
 		case DESCEND:
+			case FALL:
 			switch (Dungeon.depth) {
 			case 1:
 				WndStory.showChapter( WndStory.ID_SEWERS );
@@ -411,7 +412,6 @@ public class GameScene extends PixelScene {
 				Badges.validateNoKilling();
 			}
 			break;
-		default:
 		}
 
 		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon.depth );

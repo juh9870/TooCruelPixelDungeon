@@ -49,6 +49,8 @@ public class Stylus extends Item {
 		
 		stackable = true;
 
+		defaultAction = AC_INSCRIBE;
+
 		bones = true;
 	}
 	
