@@ -41,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RoomSeal;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stacking;
@@ -210,12 +211,18 @@ public abstract class Mob extends Char {
 		enemy = chooseEnemy();
 		
 		boolean enemyInFOV = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
-		if(enemyInFOV) {
+
+		boolean result = state.act( enemyInFOV, justAlerted );
+
+		if(focusingHero()) {
 			Stacking stack = buff(Stacking.class);
 			if (stack != null) stack.proc();
+			if(Challenges.ROOM_LOCK.enabled()){
+				Buff.affect(Dungeon.hero,RoomSeal.class).lock(this);
+			}
 		}
 
-		return state.act( enemyInFOV, justAlerted );
+		return result;
 	}
 	
 	//FIXME this is sort of a band-aid correction for allies needing more intelligent behaviour

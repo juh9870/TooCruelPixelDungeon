@@ -111,8 +111,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected TorchHalo light;
 	protected ShieldHalo shield;
 	protected AlphaTweener invisible;
+	protected HashMap<Class,Emitter> emitters;
 	protected HashMap<Class,Flare> auras;
-	
+
 	protected EmoIcon emo;
 	protected CharHealthIndicator health;
 
@@ -131,7 +132,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public CharSprite() {
 		super();
 		listener = this;
-		auras=new HashMap<>();
+		auras = new HashMap<>();
+		emitters = new HashMap<>();
 	}
 	
 	@Override
@@ -502,6 +504,25 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			auras.remove(cl);
 		}
 	}
+
+	public Emitter emit(Class cl){
+		Emitter emitter = emitters.get(cl);
+		if(emitter!=null) {
+			emitter.killAndErase();
+		}
+		emitter = emitter();
+		emitters.put(cl, emitter);
+		return emitter;
+	}
+
+	public void killEmitter(Class cl){
+		Emitter emitter = emitters.get(cl);
+		if(emitter!=null) {
+			emitter.on=false;
+			emitter.autoKill=true;
+			emitters.remove(cl);
+		}
+	}
 	
 	@Override
 	public void update() {
@@ -538,6 +559,11 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			if (aura != null){
 				aura.visible = visible;
 				aura.point(center());
+			}
+		}
+		for (Emitter emitter : emitters.values()) {
+			if (emitter != null){
+				emitter.visible = visible;
 			}
 		}
 		if (sleeping) {

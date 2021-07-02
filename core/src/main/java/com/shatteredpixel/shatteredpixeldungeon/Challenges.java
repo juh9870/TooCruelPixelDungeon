@@ -242,6 +242,7 @@ public enum Challenges implements Hero.Doom {
     MARATHON(50, 2, 3f),
     STRONGER_BOSSES(56, 2, 3f),
     STACKING_SPAWN(57, 2, 2f),
+    ROOM_LOCK(59, 2, 2f),
 
 
     //T3
@@ -283,7 +284,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
 
-    //Last id 58
+    //Last id 59
     ;
     private static final Challenges[] mappings;
 

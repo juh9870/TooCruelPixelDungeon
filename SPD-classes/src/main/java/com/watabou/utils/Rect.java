@@ -23,12 +23,16 @@ package com.watabou.utils;
 
 import java.util.ArrayList;
 
-public class Rect {
+public class Rect implements Bundlable {
 
 	public int left;
 	public int top;
 	public int right;
 	public int bottom;
+	private static final String LEFT = "left";
+	private static final String TOP = "top";
+	private static final String RIGHT = "right";
+	private static final String BOTTOM = "bottom";
 	
 	public Rect() {
 		this( 0, 0, 0, 0 );
@@ -155,5 +159,20 @@ public class Rect {
 				points.add(new Point(i, j));
 		return points;
 	}
-	
+
+	@Override
+	public void restoreFromBundle(Bundle bundle) {
+		left = bundle.getInt(LEFT);
+		top = bundle.getInt(TOP);
+		right = bundle.getInt(RIGHT);
+		bottom = bundle.getInt(BOTTOM);
+	}
+
+	@Override
+	public void storeInBundle(Bundle bundle) {
+		bundle.put(LEFT,left);
+		bundle.put(TOP,top);
+		bundle.put(RIGHT,right);
+		bundle.put(BOTTOM,bottom);
+	}
 }
