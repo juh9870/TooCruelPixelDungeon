@@ -161,9 +161,9 @@ public abstract class Trap implements Bundlable {
 				Trap t = Reflection.newInstance(trap);
 
 				// No grim trap here
-				if(t instanceof GrimTrap) t = new CursedWandTrap();
 				if(Dungeon.depth < 10 && t instanceof TenguDartTrap) t = new CursedWandTrap();
 				if(Dungeon.depth < 15 && t instanceof DisintegrationTrap) t = new CursedWandTrap();
+				if(Dungeon.depth < 20 && t instanceof GrimTrap) t = new CursedWandTrap();
 				if(t==null){
 					activate();
 					return;

@@ -66,6 +66,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourg
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
@@ -201,6 +202,9 @@ public abstract class Level implements Bundlable {
 
             if (Challenges.DARKNESS.enabled()) {
 				addItemToSpawn( new Torch() );
+			}
+            if (Challenges.DESERT.enabled()) {
+				addItemToSpawn( new AquaBlast() );
 			}
 
 			if (Dungeon.posNeeded()) {

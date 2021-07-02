@@ -280,7 +280,7 @@ public enum Challenges implements Hero.Doom {
     ON_A_BEAT(51, 3, 7f, MARATHON, COUNTDOWN),
     SHARED_PAIN(58, 3, 7f),
     DESERT(62, 3, 6f, SCORCHED_EARTH),
-    TRAP_TESTING_FACILITY(65, 3, 6f, EXTREME_DANGER){
+    TRAP_TESTING_FACILITY(65, 3, 6f, EXTREME_DANGER, CHAOTIC_CONSTRUCTION) {
         @Override
         protected float _nTrapsMult() {
             return 3;

@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MirrorWraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
@@ -36,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.BlackjackkeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.RatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SuccubusSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
@@ -46,6 +48,8 @@ import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TextureFilm;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.noosa.ui.Component;
 import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
@@ -64,7 +68,66 @@ public class Cruel_Changes {
     }
 
     public static void add_v0_4_0_Changes(ArrayList<ChangeInfo> changeInfos) {
-        ChangeInfo changes = new ChangeInfo("v0.4.2", true, "");
+        ChangeInfo changes = new ChangeInfo("v0.4.3", true, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "Fixed:\n" +
+                        "_-_ Fixed bugs related to cursed challenge\n" +
+                        "_-_ Fixed Mutagen/Evolution bugged drop rates"
+        ));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 13 new challenges\n" +
+                        "_-_ Added multiplier for dynasty runs\n" +
+                        "_-_ Removed Rook challenge"
+        ));
+
+        changes = new ChangeInfo("Challenges", false, null);
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        Image _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
+        _mapicon.scale = new PointF(1f, 1f);
+        changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "big_rooms"), Messages.get(Challenges.class, "big_rooms_desc")));
+        _mapicon = new Image(Assets.Sprites.ITEM_ICONS, 56, 16, 8, 8);
+        _mapicon.scale = new PointF(1.2f, 1.2f);
+        changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "bigger_rooms"), Messages.get(Challenges.class, "bigger_rooms_desc")));
+
+        MobSprite sp = new SwarmSprite();
+        changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "infinity_mobs"), Messages.get(Challenges.class, "infinity_mobs_desc")));
+
+        sp = new RatSprite();
+
+        changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "stacking"), Messages.get(Challenges.class, "stacking_desc")));
+
+        sp = new RatSprite();
+        changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "stacking_spawn"), Messages.get(Challenges.class, "stacking_spawn_desc")));
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL), Messages.get(Challenges.class, "stacking_champions"), Messages.get(Challenges.class, "stacking_champions_desc")));
+
+        Image blood1 = new Image(Assets.Interfaces.BUFFS_LARGE);
+        blood1.frame(film.get(BuffIndicator.BLEEDING));
+        blood1.invert();
+        changes.addButton(new ChangeButton(blood1, Messages.get(Challenges.class, "shared_pain"), Messages.get(Challenges.class, "shared_pain_desc")));
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_ON), Messages.get(Challenges.class, "room_lock"), Messages.get(Challenges.class, "room_lock_desc")));
+
+        Image thermometer = new Image(Assets.Interfaces.BUFFS_LARGE);
+        thermometer.frame(film.get(BuffIndicator.THERMOMETER));
+        changes.addButton(new ChangeButton(thermometer, Messages.get(Challenges.class, "scorched_earth"), Messages.get(Challenges.class, "scorched_earth_desc")));
+
+        Image fire = new Image(Assets.Interfaces.BUFFS_LARGE);
+        fire.frame(film.get(BuffIndicator.FIRE));
+        changes.addButton(new ChangeButton(fire, Messages.get(Challenges.class, "desert"), Messages.get(Challenges.class, "desert_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 0, 80, 16, 16), Messages.get(Challenges.class, "indifferent_design"), Messages.get(Challenges.class, "indifferent_design_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 128, 16, 16, 16), Messages.get(Challenges.class, "chaotic_construction"), Messages.get(Challenges.class, "chaotic_construction_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 112, 48, 16, 16), Messages.get(Challenges.class, "trap_testing_facility"), Messages.get(Challenges.class, "trap_testing_facility_desc")));
+
+        changes = new ChangeInfo("v0.4.2", true, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
@@ -86,11 +149,11 @@ public class Cruel_Changes {
                         "_-_ Fixed Marathon & On a Beat timer reset exploit\n" +
                         "_-_ Fixed levelgen bug with too big levels"
         ));
-        changes.addButton( new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),
+        changes.addButton(new ChangeButton(Icons.get(Icons.LANGS), Messages.get(ChangesScene.class, "language"),
                 "_-_ Added Chinese translations for challenges.\n" +
-                "_-_ Added Korean translations for challenges."
+                        "_-_ Added Korean translations for challenges."
         ));
-        Image _mapicon = new Image(Assets.Effects.EFFECTS, 16, 24, 16, 6);
+        _mapicon = new Image(Assets.Effects.EFFECTS, 16, 24, 16, 6);
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "linear"), Messages.get(Challenges.class, "linear_desc")));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
@@ -118,7 +181,7 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
-        MobSprite sp = new SwarmSprite();
+        sp = new SwarmSprite();
 //		sp.add(CharSprite.State.INVISIBLE);
         changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "manifesting_myriads"), Messages.get(Challenges.class, "manifesting_myriads_desc")));
         sp.aura(Cruel_Changes.class, 0xFF0000, 1.0f, false);
@@ -132,7 +195,7 @@ public class Cruel_Changes {
         _mapicon = new Image(Assets.Effects.SPELL_ICONS, 16, 0, 16, 16);
 //        _mapicon.scale = new PointF(1.5f, 1.5f);
         _mapicon.color(0xFFFF00);
-        _mapicon.aa=1;
+        _mapicon.aa = 1;
         changes.addButton(new ChangeButton(_mapicon, Messages.get(Challenges.class, "huge_levels"), Messages.get(Challenges.class, "huge_levels_desc")));
 
         Image blood = new Image(Assets.Interfaces.BUFFS_LARGE);

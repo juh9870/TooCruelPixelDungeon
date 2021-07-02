@@ -4,8 +4,12 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -77,6 +81,35 @@ public class Stacking extends Buff {
             }
         }
         detach();
+    }
+
+    @Override
+    public void fx(boolean on) {
+        if (on) {
+            target.sprite.emit(Stacking.class).pour(SmokeParticle.FACTORY, 0.2f);
+        } else {
+            target.sprite.killEmitter(Stacking.class);
+        }
+    }
+
+    @Override
+    public int icon() {
+        return BuffIndicator.UPGRADE;
+    }
+
+    @Override
+    public void tintIcon(Image icon) {
+        icon.invert();
+    }
+
+    @Override
+    public String toString() {
+        return Messages.get(this, "name");
+    }
+
+    @Override
+    public String desc() {
+        return Messages.get(this, "desc", count + 1);
     }
 
     @Override

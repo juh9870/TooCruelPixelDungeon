@@ -49,15 +49,16 @@ public class Desert extends Blob {
     public static void wither(int cell) {
         if (Dungeon.level.map[cell] == Terrain.WATER) {
             Dungeon.level.removeWater(cell);
+            CellEmitter.get(cell).burst(FlameParticle.FACTORY(0x666666), 3);
         }
         if ((Dungeon.level.map[cell] == Terrain.GRASS ||
                 Dungeon.level.map[cell] == Terrain.FURROWED_GRASS ||
                 Dungeon.level.map[cell] == Terrain.HIGH_GRASS) &&
                 !Dungeon.level.hasCustomTerrain(cell)) {
-            Level.set(cell, Terrain.EMBERS);
+            Level.set(cell, Terrain.EMPTY);
             GameScene.updateMap(cell);
             if (Dungeon.level.heroFOV[cell]) {
-                CellEmitter.get(cell).burst(FlameParticle.FACTORY, 3);
+                CellEmitter.get(cell).burst(FlameParticle.FACTORY(0xAA4700), 3);
             }
         }
         Plant plant = Dungeon.level.plants.get(cell);
