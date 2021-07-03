@@ -84,7 +84,7 @@ public class Cruel_Changes {
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
                 "_-_ Added 13 new challenges\n" +
-                        "_-_ Added multiplier for dynasty runs\n" +
+                        "_-_ Added score multiplier for dynasty runs\n" +
                         "_-_ Removed Rook challenge"
         ));
 

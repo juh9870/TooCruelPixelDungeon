@@ -59,12 +59,13 @@ public class WndRanking extends WndTabbed {
 	private String error = null;
 	
 	private Image busy;
+	private Rankings.Record rec;
 	
 	public WndRanking( final Rankings.Record rec ) {
 		
 		super();
 		resize( WIDTH, HEIGHT );
-		
+		this.rec = rec;
 		if (thread != null){
 			hide();
 			return;
@@ -222,10 +223,14 @@ public class WndRanking extends WndTabbed {
 			}
 
 			pos += GAP;
-			
+
+			pos = statSlot(this, Messages.get(this, "score"), Integer.toString(rec.score), pos);
+
+			pos += GAP;
+
 			pos = statSlot( this, Messages.get(this, "str"), Integer.toString( Dungeon.hero.STR() ), pos );
 			pos = statSlot( this, Messages.get(this, "health"), Integer.toString( Dungeon.hero.HT ), pos );
-			
+
 			pos += GAP;
 			
 			pos = statSlot( this, Messages.get(this, "duration"), Integer.toString( (int)Statistics.duration ), pos );
