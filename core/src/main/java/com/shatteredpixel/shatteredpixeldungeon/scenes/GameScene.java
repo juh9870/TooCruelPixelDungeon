@@ -418,6 +418,7 @@ public class GameScene extends PixelScene {
 		if (dropped != null) {
 			for (Item item : dropped) {
 				int pos = Dungeon.level.randomRespawnCell( null );
+				if (Challenges.isTooManyMobs()) pos = Dungeon.level.fallCell(false);
 				if (item instanceof Potion) {
 					((Potion)item).shatter( pos );
 				} else if (item instanceof Plant.Seed && !Challenges.BARREN_LAND.enabled()) {

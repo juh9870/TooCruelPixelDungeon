@@ -8,7 +8,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,22 +21,34 @@ public class Modifiers implements Bundlable {
 
     public Modifiers() {
         challenges = new boolean[Challenges.values().length];
-        dynastyId="";
+        dynastyId = "";
         clear();
     }
 
     public Modifiers(boolean[] challenges) {
         this();
-        System.arraycopy(challenges, 0,this.challenges, 0, challenges.length);
+        System.arraycopy(challenges, 0, this.challenges, 0, challenges.length);
     }
 
-    public Modifiers(Modifiers old){
-        challenges=old.challenges.clone();
-        dynastyId=old.dynastyId;
+    public Modifiers(Modifiers old) {
+        challenges = old.challenges.clone();
+        dynastyId = old.dynastyId;
     }
 
-    public static Modifiers Empty(){
+    public static Modifiers Empty() {
         return new Modifiers();
+    }
+
+    public static ChallengesDifference challengesDifference(Modifiers a, Modifiers b) {
+        ChallengesDifference diff = new ChallengesDifference();
+        for (Challenges chal : Challenges.values()) {
+            boolean la = a.isChallenged(chal.id);
+            boolean lb = b.isChallenged(chal.id);
+            if (la == lb) continue;
+            if (!lb) diff.removed.add(chal);
+            if (!la) diff.added.add(chal);
+        }
+        return diff;
     }
 
     public Rankings.Dynasty getDynasty() {
@@ -64,14 +75,14 @@ public class Modifiers implements Bundlable {
         return false;
     }
 
-    public boolean canEnable(Challenges challenge){
+    public boolean canEnable(Challenges challenge) {
         for (int req : challenge.requirements) {
-            if(!isChallenged(req))return false;
+            if (!isChallenged(req)) return false;
         }
         return true;
     }
 
-    public Set<Challenges> requirements(Challenges challenge){
+    public Set<Challenges> requirements(Challenges challenge) {
         Set<Challenges> set = new HashSet<>();
         for (int requirement : challenge.requirements) {
             set.add(Challenges.fromId(requirement));
@@ -79,33 +90,32 @@ public class Modifiers implements Bundlable {
         return set;
     }
 
-    public Set<Challenges> recursiveRequirements(Challenges challenge){
+    public Set<Challenges> recursiveRequirements(Challenges challenge) {
         Set<Challenges> set = requirements(challenge);
-        for (Challenges entry : set) {
+        for (Challenges entry : new HashSet<>(set)) {
             set.addAll(recursiveRequirements(entry));
         }
         return set;
     }
 
-
-    public boolean canDisable(Challenges challenge){
+    public boolean canDisable(Challenges challenge) {
         for (Challenges value : Challenges.values()) {
-            if(isChallenged(value.id) && value.requires(challenge))return false;
+            if (isChallenged(value.id) && value.requires(challenge)) return false;
         }
         return true;
     }
 
-    public Set<Challenges> dependants(Challenges challenge){
+    public Set<Challenges> dependants(Challenges challenge) {
         Set<Challenges> set = new HashSet<>();
         for (Challenges value : Challenges.values()) {
-            if(value.requires(challenge))set.add(value);
+            if (value.requires(challenge)) set.add(value);
         }
         return set;
     }
 
-    public Set<Challenges> recursiveDependants(Challenges challenge){
+    public Set<Challenges> recursiveDependants(Challenges challenge) {
         Set<Challenges> set = dependants(challenge);
-        for (Challenges entry : set) {
+        for (Challenges entry : new HashSet<>(set)) {
             set.addAll(recursiveDependants(entry));
         }
         return set;
@@ -116,48 +126,22 @@ public class Modifiers implements Bundlable {
         Random.pushGenerator(seed);
         Random.shuffle(values);
 
-        for (int i = 0; i < Random.NormalIntRange(1, values.length/2); i++) {
+        for (int i = 0; i < Random.NormalIntRange(1, values.length / 2); i++) {
             challenges[values[i].id] = true;
             for (int req : values[i].requirements) {
-                challenges[req]=true;
+                challenges[req] = true;
             }
         }
 
         Random.popGenerator();
     }
 
-    public static class ChallengesDifference {
-        public List<Challenges> removed;
-        public List<Challenges> added;
-
-        public ChallengesDifference() {
-            this.removed = new ArrayList<>();
-            this.added = new ArrayList<>();
-        }
-        public ChallengesDifference(List<Challenges> removed, List<Challenges> added) {
-            this.removed = removed;
-            this.added = added;
-        }
-    }
-
-    public static ChallengesDifference challengesDifference(Modifiers a, Modifiers b){
-        ChallengesDifference diff = new ChallengesDifference();
-        for (Challenges chal : Challenges.values()) {
-            boolean la = a.isChallenged(chal.id);
-            boolean lb = b.isChallenged(chal.id);
-            if(la==lb)continue;
-            if(!lb)diff.removed.add(chal);
-            if(!la)diff.added.add(chal);
-        }
-        return diff;
-    }
-
-    public WndChallenges.ChallengePredicate select(int amount,int old) {
+    public WndChallenges.ChallengePredicate select(int amount, int old) {
         HashSet<Challenges> selectable = new HashSet<>();
         HashSet<Challenges> canDisable = new HashSet<>();
         for (Challenges value : Challenges.values()) {
-            if(isChallenged(value.id) && canDisable(value))canDisable.add(value);
-            if(!isChallenged(value.id) && canEnable(value))selectable.add(value);
+            if (isChallenged(value.id) && canDisable(value)) canDisable.add(value);
+            if (!isChallenged(value.id) && canEnable(value)) selectable.add(value);
         }
 
         Random.pushGenerator(Dungeon.seed);
@@ -190,5 +174,20 @@ public class Modifiers implements Bundlable {
     public void storeInBundle(Bundle bundle) {
         bundle.put(CHALLENGES, Challenges.saveString(challenges));
         bundle.put(DYNASTY, dynastyId);
+    }
+
+    public static class ChallengesDifference {
+        public List<Challenges> removed;
+        public List<Challenges> added;
+
+        public ChallengesDifference() {
+            this.removed = new ArrayList<>();
+            this.added = new ArrayList<>();
+        }
+
+        public ChallengesDifference(List<Challenges> removed, List<Challenges> added) {
+            this.removed = removed;
+            this.added = added;
+        }
     }
 }

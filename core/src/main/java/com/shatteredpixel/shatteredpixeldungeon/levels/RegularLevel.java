@@ -691,7 +691,24 @@ public abstract class RegularLevel extends Level {
 				}
 			}
 		}
-		
+		if(Challenges.isTooManyMobs()){
+			HashSet<Integer> cells = new HashSet<>();
+			for (Room r : rooms) {
+				if(r instanceof SpecialRoom) continue;
+				for (int i = r.left; i < r.right; i++) {
+					for (int j = r.top; j < r.bottom; j++) {
+						int c = pointToCell(new Point(i, j));
+						if (passable[c] && !solid[c]) {
+							cells.add(c);
+						}
+					}
+				}
+			}
+			for (Mob mob : mobs) {
+				cells.remove(mob.pos);
+			}
+			return Random.element(cells);
+		}
 		return super.fallCell( false );
 	}
 	

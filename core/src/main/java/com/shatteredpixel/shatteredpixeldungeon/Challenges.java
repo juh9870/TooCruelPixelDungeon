@@ -577,8 +577,8 @@ public enum Challenges implements Hero.Doom {
 
     public static int distributeDamage(Mob target, HashSet<Mob> mobs, int amount) {
 
+        if(mobs.size()==0)return amount;
         amount = (int) Math.ceil(amount / 2f);
-
         int damage = amount / mobs.size();
         int leftovers = amount % mobs.size();
         int targetDmg = amount;
