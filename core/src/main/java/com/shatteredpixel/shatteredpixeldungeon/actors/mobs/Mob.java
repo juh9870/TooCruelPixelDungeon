@@ -721,7 +721,7 @@ public abstract class Mob extends Char {
             Ascension buff = Buff.affect(this, Ascension.class);
             if (buff.level < Challenges.maxAscension(this) && Random.Float() < Challenges.ascendingChance(this)) {
 
-                buff.level=6;
+                buff.level++;
                 HT *= 2;
                 HP = HT;
 
