@@ -14,7 +14,7 @@ allprojects {
         appName = 'Too Cruel Pixel Dungeon'
         appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
 
-        appVersionCode = 555
+        appVersionCode = 556
         appVersionName = '0.4.3b'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
