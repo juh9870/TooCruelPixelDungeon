@@ -476,12 +476,16 @@ public enum Challenges implements Hero.Doom {
     }
 
     public static int checkExterminators() {
+        return checkExterminators(false);
+    }
+
+    public static int checkExterminators(boolean reveal) {
         int left = 0;
         if (EXTERMINATION.enabled())
             for (Mob m : Dungeon.level.mobs) {
                 if (m.buff(Extermination.class) != null) {
                     left++;
-                    Buff.affect(m, Revealing.class, 1f);
+                    if (reveal) Buff.affect(m, Revealing.class, 1f);
                 }
             }
         return left;
@@ -577,7 +581,7 @@ public enum Challenges implements Hero.Doom {
 
     public static int distributeDamage(Mob target, HashSet<Mob> mobs, int amount) {
 
-        if(mobs.size()==0)return amount;
+        if (mobs.size() == 0) return amount;
         amount = (int) Math.ceil(amount / 2f);
         int damage = amount / mobs.size();
         int leftovers = amount % mobs.size();
