@@ -88,7 +88,8 @@ public class Cruel_Changes {
                 "Balance Changes:\n" +
                         "_-_ Summoning trap will now spawn more mobs is challenges increase mob count\n" +
                         "_-_ Stacking Threat challenge now allow enemies to spawn on top of one another\n" +
-                        "_-_ Champions can now have multiple of the same title"
+                        "_-_ Champions can now have multiple of the same title\n" +
+                        "_-_ Increased Scorched Earth proc delay"
         ));
 
 

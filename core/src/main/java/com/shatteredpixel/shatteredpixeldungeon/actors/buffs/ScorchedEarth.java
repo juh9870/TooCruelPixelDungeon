@@ -26,7 +26,7 @@ public class ScorchedEarth extends Buff {
             turnsLeft = maxTime();
         } else {
             if (turnsLeft <= 0) {
-                turnsLeft += maxTime() / 4;
+                turnsLeft += maxTime();
                 for (int i : PathFinder.NEIGHBOURS4) {
                     int c = target.pos + i;
                     if (Dungeon.level.water[c]) {

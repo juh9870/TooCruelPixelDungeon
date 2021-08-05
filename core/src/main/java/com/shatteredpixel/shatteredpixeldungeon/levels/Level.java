@@ -974,7 +974,7 @@ public abstract class Level implements Bundlable {
 				terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS
 				|| terr == Terrain.EMPTY_DECO){
 			set(cell, Terrain.WATER);
-			droughtBlob.clear(cell);
+			if(droughtBlob!=null) droughtBlob.clear(cell);
 			GameScene.updateMap(cell);
 			return true;
 		} else if (includeTraps && (terr == Terrain.SECRET_TRAP ||
