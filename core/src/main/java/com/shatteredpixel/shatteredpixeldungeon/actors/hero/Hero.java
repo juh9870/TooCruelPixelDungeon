@@ -67,10 +67,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.N
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
@@ -1486,7 +1489,19 @@ public class Hero extends Char {
 			justMoved = true;
 			
 			search(false);
-			
+
+			if(Challenges.BARRIER_BREAKER.enabled() &&
+					(
+						Dungeon.level.map[step]==Terrain.DOOR ||
+						Dungeon.level.map[step]==Terrain.OPEN_DOOR
+					)
+			){
+				Level.set(step, Terrain.EMBERS);
+				Sample.INSTANCE.play(Assets.Sounds.BLAST);
+				CellEmitter.center(step).burst(SmokeParticle.FACTORY, 5);
+				spend(1);
+			}
+
 			return true;
 			
 		} else {

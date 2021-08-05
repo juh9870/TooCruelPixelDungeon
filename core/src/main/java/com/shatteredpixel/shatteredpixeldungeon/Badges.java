@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
@@ -152,8 +153,9 @@ public class Badges {
 		CHAMPION_4(115, true),
 		CHAMPION_5(116, true),
 		CHAMPION_6(117, true),
-		CHAMPION_7(118, true);
-		
+		CHAMPION_7(118, true),
+		AMULET_LEVEL_15(119, true);
+
 		public boolean meta;
 		
 		public int image;
@@ -452,6 +454,10 @@ public class Badges {
 		}
 		if (!local.contains(Badge.ITEM_LEVEL_4) && item.level() >= 12) {
 			badge = Badge.ITEM_LEVEL_4;
+			local.add(badge);
+		}
+		if(!local.contains(Badge.AMULET_LEVEL_15) && item instanceof Amulet && item.level()==15){
+			badge = Badge.AMULET_LEVEL_15;
 			local.add(badge);
 		}
 		
@@ -912,7 +918,7 @@ public class Badges {
 	private static final Badge[][] tierBadgeReplacements = new Badge[][]{
 			{Badge.MONSTERS_SLAIN_1, Badge.MONSTERS_SLAIN_2, Badge.MONSTERS_SLAIN_3, Badge.MONSTERS_SLAIN_4},
 			{Badge.GOLD_COLLECTED_1, Badge.GOLD_COLLECTED_2, Badge.GOLD_COLLECTED_3, Badge.GOLD_COLLECTED_4},
-			{Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4},
+			{Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4, Badge.AMULET_LEVEL_15},
 			{Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4},
 			{Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4},
 			{Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4},
@@ -947,7 +953,7 @@ public class Badges {
 		leaveBest(badges, Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4);
 		leaveBest(badges, Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4);
 		leaveBest(badges, Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4);
-		leaveBest(badges, Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4);
+		leaveBest(badges, Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4, Badge.AMULET_LEVEL_15);
 		leaveBest(badges, Badge.POTIONS_COOKED_1, Badge.POTIONS_COOKED_2, Badge.POTIONS_COOKED_3, Badge.POTIONS_COOKED_4);
 		leaveBest(badges, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4);
 		leaveBest(badges, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3);

@@ -696,6 +696,7 @@ public abstract class Mob extends Char {
 		}
 		if (Challenges.MIRROR_OF_RAGE.enabled() && canAscend() && Random.Int(Challenges.SPIRITUAL_CONNECTION.enabled() ? 2 : 3) == 0) {
 			MirrorWraith.spawnAt(pos, OVERKILL);
+			Sample.INSTANCE.play(Assets.Sounds.CURSED);
 		}
 	}
 	

@@ -325,6 +325,8 @@ public class Item implements Bundlable {
 	public void level( int value ){
 		level = value;
 
+		limitLevel();
+
 		updateQuickslot();
 	}
 	
@@ -332,9 +334,16 @@ public class Item implements Bundlable {
 		
 		this.level++;
 
+		limitLevel();
+
 		updateQuickslot();
 		
 		return this;
+	}
+
+	protected void limitLevel(){
+		if (Challenges.LIMITED_UPGRADES.enabled() && !(this instanceof Amulet))
+			level = Math.min(level, Challenges.LEVEL_LIMIT);
 	}
 	
 	final public Item upgrade( int n ) {
@@ -373,6 +382,8 @@ public class Item implements Bundlable {
 	}
 	
 	public boolean isUpgradable() {
+		if (Challenges.LIMITED_UPGRADES.enabled())
+			return level < Challenges.LEVEL_LIMIT;
 		return true;
 	}
 	

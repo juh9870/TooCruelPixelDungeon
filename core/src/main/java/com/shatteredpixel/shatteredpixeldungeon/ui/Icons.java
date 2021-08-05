@@ -46,6 +46,7 @@ public enum Icons {
 	
 	CHALLENGE_HELL,
 	CHALLENGE_HELL2,
+	CHALLENGE_HELL3,
 	DIAMOND_CHECKED,
 	RED_CHECKED,
 	
@@ -254,6 +255,9 @@ public enum Icons {
 		case CHALLENGE_HELL2:
 			icon.frame( icon.texture.uvRect( 76, 82, 90, 94  ) );
 			break;
+		case CHALLENGE_HELL3:
+			icon.frame( icon.texture.uvRect( 62, 82, 76, 94  ) );
+			break;
 		case RED_CHECKED:
 			icon.frame( icon.texture.uvRect( 104, 82, 116, 94 ) );
 			break;
@@ -261,7 +265,7 @@ public enum Icons {
 			icon.frame( icon.texture.uvRect( 116, 82, 128, 94 ) );
 			break;
 		case NOTES:
-			icon.frame( icon.texture.uvRect( 64, 81, 76, 94 ) );
+			icon.frame( icon.texture.uvRect( 51, 81, 62, 94 ) );
 			break;
 		}
 		return icon;

@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AmuletScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.watabou.noosa.Game;
 
 import java.io.IOException;
@@ -41,7 +42,9 @@ public class Amulet extends Item {
 	
 	{
 		image = ItemSpriteSheet.AMULET;
-		
+
+		defaultAction = AC_END;
+
 		unique = true;
 	}
 	
@@ -116,7 +119,13 @@ public class Amulet extends Item {
 	
 	@Override
 	public boolean isUpgradable() {
-		return false;
+		return Dungeon.modifiers.difficulty().margin >= Difficulty.HARD_2.margin;
 	}
 
+	@Override
+	public Item upgrade() {
+		super.upgrade();
+		Badges.validateItemLevelAquired(this);
+		return this;
+	}
 }

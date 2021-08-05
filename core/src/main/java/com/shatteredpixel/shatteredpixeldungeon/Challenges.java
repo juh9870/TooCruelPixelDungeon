@@ -69,7 +69,7 @@ public enum Challenges implements Hero.Doom {
     AMNESIA(7, 1, 1.5f),
     CURSED(8, 1, 2),
     BLACKJACK(9, 1, 2),
-    HORDE(10, 1, 1.5f) {
+    HORDE(10, 1, 1f) {
         @Override
         protected float _nMobsMult() {
             return 2;
@@ -93,7 +93,7 @@ public enum Challenges implements Hero.Doom {
             return 2;
         }
     },
-    BIG_ROOMS(53, 13.5f, 1, 1) {
+    BIG_ROOMS(53, 13.5f, 1, 2f) {
         @Override
         protected float _nMobsMult() {
             return 2;
@@ -156,6 +156,8 @@ public enum Challenges implements Hero.Doom {
     NO_PERKS(20, 1, 3f),
     BLOODBAG(41, 1, 2f),
     MIRROR_OF_RAGE(45, 1, 2f),
+    RETIERED(66, 1, 1f),
+    BARRIER_BREAKER(68, 1, 1f),
 
 
     //T2
@@ -247,6 +249,8 @@ public enum Challenges implements Hero.Doom {
     STRONGER_BOSSES(56, 2, 3f),
     ROOM_LOCK(59, 2, 2f),
     SCORCHED_EARTH(61, 2, 2f),
+    UNTIERED(67, 2, 2f, RETIERED),
+    LIMITED_UPGRADES(69,2,2f),
 
 
     //T3
@@ -295,7 +299,11 @@ public enum Challenges implements Hero.Doom {
         }
     },
 
-    //Last id 64
+
+    // Modifiers
+
+
+    //Last id 67
     ;
     private static final Challenges[] mappings;
 
@@ -554,8 +562,11 @@ public enum Challenges implements Hero.Doom {
             return Icons.CHALLENGE_ON;
         } else if (l == 2) {
             return Icons.CHALLENGE_HELL;
+        } else if (l == 3) {
+            return Icons.CHALLENGE_HELL2;
+        } else {
+            return Icons.CHALLENGE_HELL3;
         }
-        return Icons.CHALLENGE_HELL2;
     }
 
     public static boolean isActionBanned(Item item, String action) {
@@ -677,4 +688,6 @@ public enum Challenges implements Hero.Doom {
             super("One of challenges is out of bounds.", cause);
         }
     }
+
+    public static int LEVEL_LIMIT = 3;
 }

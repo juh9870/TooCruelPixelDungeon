@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -265,7 +266,9 @@ public class SpiritBow extends Weapon {
 
 	@Override
 	public int level() {
-		return (Dungeon.hero == null ? 0 : Dungeon.hero.lvl/5) + (curseInfusionBonus ? 1 : 0);
+		int lvl = (Dungeon.hero == null ? 0 : Dungeon.hero.lvl/5);
+		if(Challenges.LIMITED_UPGRADES.enabled())lvl = Math.min(lvl,3);
+		return lvl + (curseInfusionBonus ? 1 : 0);
 	}
 
 	@Override

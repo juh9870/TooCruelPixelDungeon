@@ -29,7 +29,7 @@ public enum Difficulty {
 	
 	
 	static {
-		MODIFIERS =new HashSet<>();
+		MODIFIERS = new HashSet<>();
 
 		for (Challenges value : Challenges.values()) {
 			modifier(value.difficulty,req(value));

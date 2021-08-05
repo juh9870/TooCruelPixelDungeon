@@ -111,6 +111,11 @@ public class Artifact extends KindofMisc {
 	}
 
 	@Override
+	public int level() {
+        return super.level();
+	}
+
+	@Override
 	public int visiblyUpgraded() {
 		return levelKnown ? Math.round((level()*10)/(float)levelCap): 0;
 	}
@@ -135,19 +140,19 @@ public class Artifact extends KindofMisc {
 	public String info() {
 		if (cursed && cursedKnown && !isEquipped( Dungeon.hero )) {
 			return desc() + "\n\n" + Messages.get(Artifact.class, "curse_known");
-			
+
 		} else if (!isIdentified() && cursedKnown && !isEquipped( Dungeon.hero)) {
 			return desc()+ "\n\n" + Messages.get(Artifact.class, "not_cursed");
-			
+
 		} else {
 			return desc();
-			
+
 		}
 	}
 
 	@Override
 	public String status() {
-		
+
 		//if the artifact isn't IDed, or is cursed, don't display anything
 		if (!isIdentified() || cursed){
 			return null;
@@ -177,7 +182,7 @@ public class Artifact extends KindofMisc {
 	@Override
 	public Item random() {
 		//always +0
-		
+
 		//30% chance to be cursed
 		if (Random.Float() < 0.3f || Challenges.CURSED.enabled()) {
 			cursed = true;
@@ -205,7 +210,7 @@ public class Artifact extends KindofMisc {
 	}
 
 	protected ArtifactBuff activeBuff() {return null; }
-	
+
 	public void charge(Hero target, float amount){
 		//do nothing by default;
 	}
@@ -225,7 +230,7 @@ public class Artifact extends KindofMisc {
 		}
 
 	}
-	
+
 	private static final String EXP = "exp";
 	private static final String CHARGE = "charge";
 	private static final String PARTIALCHARGE = "partialcharge";

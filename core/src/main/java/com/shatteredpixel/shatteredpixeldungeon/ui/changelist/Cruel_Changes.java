@@ -84,13 +84,18 @@ public class Cruel_Changes {
                         "_-_ Fixed crash causes by using Mind Blast in Demon Halls\n" +
                         "_-_ Fixed excessive mob revealing with Extermination"
         ));
-        changes.addButton(new ChangeButton(new TimekeepersHourglass(), Messages.get(ChangesScene.class, "changes"),
+        changes.addButton(new ChangeButton(new TimekeepersHourglass(), "Balance changes",
                 "Balance Changes:\n" +
                         "_-_ Summoning trap will now spawn more mobs is challenges increase mob count\n" +
                         "_-_ Stacking Threat challenge now allow enemies to spawn on top of one another\n" +
                         "_-_ Champions can now have multiple of the same title\n" +
                         "_-_ Increased Scorched Earth proc delay"
         ));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+                "_-_ Amulet of Yendor can now be upgraded\n" +
+                        "_-_ Added bag for upgrading Amulet of Yendor to +15"
+                        ));
 
 
         changes = new ChangeInfo("v0.4.3a & v0.4.3b", false, "");
