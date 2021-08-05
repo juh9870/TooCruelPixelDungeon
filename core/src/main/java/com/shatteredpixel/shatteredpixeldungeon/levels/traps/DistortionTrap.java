@@ -92,7 +92,9 @@ public class DistortionTrap extends MobSummonTrap{
 	public static class SpawnerActor extends MobSummonTrap.SpawnerActor{
 		private ArrayList<Integer> summonCells;
 		private int summoned = 0;
-		private int pos;
+		public SpawnerActor(){
+			super();
+		}
 		public SpawnerActor(int tries, int count, int pos) {
 			super(tries, count);
 			this.pos = pos;
@@ -167,14 +169,12 @@ public class DistortionTrap extends MobSummonTrap{
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
 			bundle.put(SUMMONED,summoned);
-			bundle.put(POS,pos);
 		}
 
 		@Override
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
 			summoned = bundle.getInt(SUMMONED);
-			pos = bundle.getInt(POS);
 		}
 	}
 }

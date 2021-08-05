@@ -40,6 +40,7 @@ public class SummoningTrap extends MobSummonTrap {
 	private int maxDistance = 1;
 	private float delay = DELAY;
 	private int amount = -1;
+	private MobSpawnedAction action;
 
 	{
 		color = TEAL;
@@ -69,15 +70,20 @@ public class SummoningTrap extends MobSummonTrap {
 	}
 
 	public static void summonMobs(int pos, int amount, int maxDistance){
-		summonMobs(pos,amount,maxDistance,Integer.MAX_VALUE,DELAY);
+		summonMobs(pos,amount,maxDistance,null);
 	}
-	public static void summonMobs(int pos, int amount, int maxDistance, int maxTries, float delay){
+	public static void summonMobs(int pos, int amount, int maxDistance, MobSpawnedAction action){
+		summonMobs(pos,amount,maxDistance,Integer.MAX_VALUE,DELAY,action);
+	}
+
+	public static void summonMobs(int pos, int amount, int maxDistance, int maxTries, float delay, MobSpawnedAction action) {
 		SummoningTrap trap = new SummoningTrap();
 		trap.pos = pos;
 		trap.amount = amount;
 		trap.maxDistance = maxDistance;
 		trap.maxTries = maxTries;
 		trap.delay = delay;
+		trap.action = action;
 		trap.activate();
 	}
 
@@ -111,18 +117,26 @@ public class SummoningTrap extends MobSummonTrap {
 
 	@Override
 	protected MobSummonTrap.SpawnerActor getSpawner(int amount, int maxTries) {
-		return new SpawnerActor(maxTries, amount, delay, pos, maxDistance);
+		return new SpawnerActor(maxTries, amount, delay, pos, maxDistance, action);
+	}
+
+	public interface MobSpawnedAction {
+		void Invoke(Mob mob);
 	}
 
 	public static class SpawnerActor extends MobSummonTrap.SpawnerActor{
 		private ArrayList<Integer> summonCells;
 		private float delay;
-		private int pos;
 		private int maxDistance;
+		private MobSpawnedAction mobSpawned;
 
-		public SpawnerActor(int tries, int count, float delay, int pos, int maxDistance) {
+		public SpawnerActor(){
+			super();
+		}
+		public SpawnerActor(int tries, int count, float delay, int pos, int maxDistance, MobSpawnedAction mobSpawned) {
 			super(tries, count);
 			this.delay = delay;
+			this.mobSpawned = mobSpawned;
 			this.pos = pos;
 			this.maxDistance = maxDistance;
 		}
@@ -139,6 +153,8 @@ public class SummoningTrap extends MobSummonTrap {
 			Mob mob = summonMob(cell, delay);
 			if (mob == null) return false;
 			mobsToPlace.add(mob);
+			if (mobSpawned != null)
+				mobSpawned.Invoke(mob);
 			return true;
 		}
 
@@ -147,14 +163,12 @@ public class SummoningTrap extends MobSummonTrap {
 			super.actBegin();
 			summonCells = getSummonCells(pos, maxDistance);
 		}
-		private static final String POS = "pos";
 		private static final String DELAY = "delay";
 		private static final String DISTANCE = "distance";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
-			bundle.put(POS,pos);
 			bundle.put(DELAY,delay);
 			bundle.put(DISTANCE,maxDistance);
 		}
@@ -162,7 +176,6 @@ public class SummoningTrap extends MobSummonTrap {
 		@Override
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
-			pos = bundle.getInt(POS);
 			maxDistance = bundle.getInt(DISTANCE);
 			delay = bundle.getInt(DELAY);
 		}

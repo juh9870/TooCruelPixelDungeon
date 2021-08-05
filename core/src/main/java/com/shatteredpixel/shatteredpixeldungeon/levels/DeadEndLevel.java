@@ -90,7 +90,7 @@ public class DeadEndLevel extends Level {
 	}
 	
 	@Override
-	public int randomRespawnCell( Char ch ) {
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		return entrance-width();
 	}
 

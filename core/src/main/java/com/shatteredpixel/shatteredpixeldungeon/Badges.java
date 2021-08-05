@@ -956,7 +956,7 @@ public class Badges {
 		leaveBest(badges, Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4, Badge.AMULET_LEVEL_15);
 		leaveBest(badges, Badge.POTIONS_COOKED_1, Badge.POTIONS_COOKED_2, Badge.POTIONS_COOKED_3, Badge.POTIONS_COOKED_4);
 		leaveBest(badges, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4);
-		leaveBest(badges, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3);
+		leaveBest(badges, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3, Badge.CHAMPION_4, Badge.CHAMPION_5, Badge.CHAMPION_6, Badge.CHAMPION_7);
 		
 		for (Badge[] tierReplace : tierBadgeReplacements) {
 			leaveBest(badges, tierReplace);

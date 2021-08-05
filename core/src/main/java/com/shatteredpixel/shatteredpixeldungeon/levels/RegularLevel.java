@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stacking;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
@@ -372,10 +373,12 @@ public abstract class RegularLevel extends Level {
 	}
 
 	@Override
-	public int randomRespawnCell( Char ch ) {
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		int count = 0;
 		int cell = -1;
-        boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
+		boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
+		boolean mindVision = Dungeon.hero.buff(MindVision.class) != null;
+		boolean allowStacking = ignoreMobs || Challenges.STACKING.enabled();
 
 		while (true) {
 
@@ -389,8 +392,8 @@ public abstract class RegularLevel extends Level {
 			}
 
 			cell = pointToCell(room.random(1));
-            if ((!heroFOV[cell] || allowHeroFov)
-					&& Actor.findChar( cell ) == null
+            if ((!heroFOV[cell] || allowHeroFov || mindVision)
+					&& (allowStacking || Actor.findChar( cell ) == null)
 					&& passable[cell]
 					&& !solid[cell]
 					&& (!Char.hasProp(ch, Char.Property.LARGE) || openSpace[cell])

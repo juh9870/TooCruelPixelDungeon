@@ -31,6 +31,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RunicBlade;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AlbinoSprite;
@@ -42,6 +45,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.RatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SuccubusSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.TerrainFeaturesTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -89,13 +93,20 @@ public class Cruel_Changes {
                         "_-_ Summoning trap will now spawn more mobs is challenges increase mob count\n" +
                         "_-_ Stacking Threat challenge now allow enemies to spawn on top of one another\n" +
                         "_-_ Champions can now have multiple of the same title\n" +
-                        "_-_ Increased Scorched Earth proc delay"
+                        "_-_ Increased Scorched Earth proc delay\n" +
+                        "_-_ Manifesting Myriads no longer remove EXP and loot from Legion waves"
         ));
 
-        changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
-                "_-_ Amulet of Yendor can now be upgraded\n" +
-                        "_-_ Added bag for upgrading Amulet of Yendor to +15"
-                        ));
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 4 new challenges\n"+
+                        "_-_ Amulet of Yendor can now be upgraded on runs with difficulty of Hard or above\n" +
+                        "_-_ Added a badge for upgrading Amulet of Yendor to +15\n" +
+                        "_-_ Legion waves are now spawned in clusters of 50 mobs instead of spreading around the level"
+        ));
+        changes.addButton(new ChangeButton(new RunicBlade(), Messages.get(Challenges.class, "retiered"), Messages.get(Challenges.class, "retiered_desc")));
+        changes.addButton(new ChangeButton(new Flail(), Messages.get(Challenges.class, "untiered"), Messages.get(Challenges.class, "untiered_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Environment.TILES_SEWERS, 0, 80, 16, 16), Messages.get(Challenges.class, "barrier_breaker"), Messages.get(Challenges.class, "barrier_breaker_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Effects.SPECKS, 28, 0, 7, 7), Messages.get(Challenges.class, "limited_upgrades"), Messages.get(Challenges.class, "limited_upgrades_desc")));
 
 
         changes = new ChangeInfo("v0.4.3a & v0.4.3b", false, "");

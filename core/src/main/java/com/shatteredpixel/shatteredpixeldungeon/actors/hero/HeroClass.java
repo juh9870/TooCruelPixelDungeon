@@ -71,11 +71,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DistortionTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
@@ -155,7 +157,7 @@ public enum HeroClass {
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(10).identify().collect();
 			new PotionOfInvisibility().quantity(10).identify().collect();
-			new ReclaimTrap().setStoredTrap(SummoningTrap.class).collect();
+			new ReclaimTrap().setStoredTrap(GuardianTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 			Generator.randomWeapon(0).identify().collect();
 			Generator.randomWeapon(1).identify().collect();
@@ -169,7 +171,9 @@ public enum HeroClass {
 //			Buff.affect(hero, MindVision.class,1000000);
 //			Buff.affect(hero, Invisibility.class,1000000);
 
-			new Amulet().collect();
+			new Amulet().upgrade(13).collect();
+			new ScrollOfUpgrade().quantity(10).collect();
+			new Greatshield().random().upgrade(20).identify().collect();
 		}
 
 		for (int s = 0; s < QuickSlot.SIZE; s++){

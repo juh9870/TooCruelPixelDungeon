@@ -28,9 +28,10 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.LevelObject;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WellWater;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
@@ -156,6 +157,7 @@ public abstract class Level implements Bundlable {
 	public boolean locked = false;
 	
 	public HashSet<Mob> mobs;
+	public HashSet<LevelObject> objects;
 	public SparseArray<Heap> heaps;
 	public HashMap<Class<? extends Blob>,Blob> blobs;
 	public SparseArray<Plant> plants;
@@ -187,6 +189,7 @@ public abstract class Level implements Bundlable {
 	private static final String MOBS		= "mobs";
 	private static final String BLOBS		= "blobs";
 	private static final String FEELING		= "feeling";
+	private static final String OBJECTS		= "levelObjects";
 
 	public void create() {
 
@@ -270,6 +273,7 @@ public abstract class Level implements Bundlable {
 			width = height = length = 0;
 
 			mobs = new HashSet<>();
+			objects = new HashSet<>();
 			heaps = new SparseArray<>();
 			blobs = new HashMap<>();
 			plants = new SparseArray<>();
@@ -342,6 +346,7 @@ public abstract class Level implements Bundlable {
 		setSize( bundle.getInt(WIDTH), bundle.getInt(HEIGHT));
 		
 		mobs = new HashSet<>();
+		objects = new HashSet<>();
 		heaps = new SparseArray<>();
 		blobs = new HashMap<>();
 		plants = new SparseArray<>();
@@ -397,6 +402,14 @@ public abstract class Level implements Bundlable {
 				mobs.add( mob );
 			}
 		}
+
+		collection = bundle.getCollection( OBJECTS );
+		for (Bundlable m : collection) {
+			LevelObject obj = (LevelObject)m;
+			if (obj != null) {
+				objects.add( obj );
+			}
+		}
 		
 		collection = bundle.getCollection( BLOBS );
 		for (Bundlable b : collection) {
@@ -420,7 +433,6 @@ public abstract class Level implements Bundlable {
 
 		buildFlagMaps();
 		cleanWalls();
-
 	}
 	
 	@Override
@@ -440,6 +452,7 @@ public abstract class Level implements Bundlable {
 		bundle.put( CUSTOM_TILES, customTiles );
 		bundle.put( CUSTOM_WALLS, customWalls );
 		bundle.put( MOBS, mobs );
+		bundle.put( OBJECTS, objects );
 		bundle.put( BLOBS, blobs.values() );
 		bundle.put( FEELING, feeling );
 		bundle.put( "mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
@@ -658,11 +671,14 @@ public abstract class Level implements Bundlable {
 			return TIME_TO_RESPAWN;
 		}
 	}
-	
-	public int randomRespawnCell( Char ch ) {
+
+	public int randomRespawnCell(Char ch) {
+		return randomRespawnCell(ch, false);
+	}
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		int cell;
         boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
-        boolean allowStacking = Challenges.STACKING.enabled();
+        boolean allowStacking = ignoreMobs || Challenges.STACKING.enabled();
 		do {
 			cell = Random.Int( length() );
         } while ((Dungeon.level == this && (heroFOV[cell] && !allowHeroFov))
@@ -939,6 +955,18 @@ public abstract class Level implements Bundlable {
 		GameScene.updateMap( pos );
 	}
 
+	public <T extends LevelObject> T setObject(T obj, int pos) {
+		obj.pos = pos;
+		Actor.add(obj);
+		objects.add(obj);
+		return obj;
+	}
+
+	public void removeObject(LevelObject obj) {
+		objects.remove(obj);
+		Actor.remove(obj);
+	}
+
 	public Trap setTrap( Trap trap, int pos ){
 		Trap existingTrap = traps.get(pos);
 		if (existingTrap != null){
@@ -1018,7 +1046,7 @@ public abstract class Level implements Bundlable {
 	public int fallCell( boolean fallIntoPit ) {
 		int result;
 		do {
-			result = randomRespawnCell( null );
+			result = randomRespawnCell( null);
 		} while (traps.get(result) != null
 				|| findMob(result) != null);
 		return result;

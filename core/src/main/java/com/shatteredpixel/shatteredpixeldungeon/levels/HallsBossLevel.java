@@ -164,14 +164,14 @@ public class HallsBossLevel extends Level {
 		if (item != null) {
 			int pos;
 			do {
-				pos = randomRespawnCell(null);
+				pos = randomRespawnCell(null );
 			} while (pos == entrance);
 			drop( item, pos ).setHauntedIfCursed().type = Heap.Type.REMAINS;
 		}
 	}
 
 	@Override
-	public int randomRespawnCell( Char ch ) {
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		int pos = entrance;
 		int cell;
 		do {

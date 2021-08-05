@@ -236,14 +236,14 @@ public class CityBossLevel extends Level {
 		if (item != null) {
 			int pos;
 			do {
-				pos = randomRespawnCell(null);
+				pos = randomRespawnCell(null );
 			} while (pos == entrance);
 			drop( item, pos ).setHauntedIfCursed().type = Heap.Type.REMAINS;
 		}
 	}
 
 	@Override
-	public int randomRespawnCell( Char ch ) {
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		int cell;
 		do {
 			cell = entrance + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];

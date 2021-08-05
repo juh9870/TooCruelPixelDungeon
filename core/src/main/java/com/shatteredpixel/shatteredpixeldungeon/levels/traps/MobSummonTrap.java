@@ -2,26 +2,23 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.LevelObject;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
 public abstract class MobSummonTrap extends Trap {
     protected int maxTries = Integer.MAX_VALUE;
 
-    protected abstract SpawnerActor getSpawner(int amount, int maxTries);
-
-    protected void summonMobs(int amount) {
-        Actor.add(getSpawner(amount,maxTries));
-    }
-
-    public static void placeMob(Iterable<Mob> mobs){
+    public static void placeMob(Iterable<Mob> mobs) {
         //important to process the visuals and pressing of cells last, so spawned mobs have a chance to occupy cells first
         Trap t;
-        for (Mob mob : mobs){
+        for (Mob mob : mobs) {
             //manually trigger traps first to avoid sfx spam
-            if ((t = Dungeon.level.traps.get(mob.pos)) != null && t.active){
+            if ((t = Dungeon.level.traps.get(mob.pos)) != null && t.active) {
                 t.disarm();
                 t.reveal();
                 t.activate();
@@ -31,19 +28,30 @@ public abstract class MobSummonTrap extends Trap {
         }
     }
 
-    protected abstract static class SpawnerActor extends Actor{
+    protected abstract SpawnerActor getSpawner(int amount, int maxTries);
+
+    protected void summonMobs(int amount) {
+        Dungeon.level.setObject(getSpawner(amount, maxTries), pos);
+    }
+
+    public abstract static class SpawnerActor extends LevelObject {
+        private static final String TRIES = "tries";
+        private static final String COUNT = "spawnsLeft";
+        protected ArrayList<Mob> mobsToPlace;
         private int tries;
         private int count;
-        protected ArrayList<Mob> mobsToPlace;
-
-        public SpawnerActor(int tries, int count) {
-            this.tries = tries;
-            this.count = count;
-        }
 
         {
             //it's technically a visual effect, gets priority no matter what
             actPriority = VFX_PRIO;
+        }
+
+        public SpawnerActor() {
+        }
+
+        public SpawnerActor(int tries, int count) {
+            this.tries = tries;
+            this.count = count;
         }
 
         @Override
@@ -61,7 +69,7 @@ public abstract class MobSummonTrap extends Trap {
                 }
                 actEnd();
             }
-            Actor.remove(this);
+            Dungeon.level.removeObject(this);
             return true;
         }
 
@@ -70,8 +78,23 @@ public abstract class MobSummonTrap extends Trap {
         protected void actBegin() {
             mobsToPlace = new ArrayList<>();
         }
+
         protected void actEnd() {
             placeMob(mobsToPlace);
+        }
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(TRIES, tries);
+            bundle.put(COUNT, count);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            tries = bundle.getInt(TRIES);
+            count = bundle.getInt(COUNT);
         }
     }
 }

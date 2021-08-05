@@ -172,6 +172,7 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
-		tier = bundle.getInt(TIER);
+		if (bundle.contains(TIER))
+			tier = bundle.getInt(TIER);
 	}
 }

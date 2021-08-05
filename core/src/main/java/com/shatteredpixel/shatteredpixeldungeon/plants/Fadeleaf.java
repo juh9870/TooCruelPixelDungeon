@@ -80,7 +80,7 @@ public class Fadeleaf extends Plant {
 				int count = 20;
 				int newPos;
 				do {
-					newPos = Dungeon.level.randomRespawnCell(ch);
+					newPos = Dungeon.level.randomRespawnCell(ch );
 					if (count-- <= 0) {
 						break;
 					}

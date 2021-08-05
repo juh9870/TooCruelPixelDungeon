@@ -193,14 +193,14 @@ public class CavesBossLevel extends Level {
 		if (item != null) {
 			int pos;
 			do {
-				pos = randomRespawnCell(null);
+				pos = randomRespawnCell(null );
 			} while (pos == entrance);
 			drop( item, pos ).setHauntedIfCursed().type = Heap.Type.REMAINS;
 		}
 	}
 
 	@Override
-	public int randomRespawnCell( Char ch ) {
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		//this check is mainly here for DM-300, to prevent an infinite loop
 		if (Char.hasProp(ch, Char.Property.LARGE) && map[entrance] != Terrain.ENTRANCE){
 			return -1;

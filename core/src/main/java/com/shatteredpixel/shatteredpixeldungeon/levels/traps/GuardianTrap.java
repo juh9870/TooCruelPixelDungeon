@@ -33,8 +33,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.StatueSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
-import java.util.ArrayList;
-
 public class GuardianTrap extends MobSummonTrap {
 
 	{
@@ -110,6 +108,9 @@ public class GuardianTrap extends MobSummonTrap {
 
 	public static class SpawnerActor extends MobSummonTrap.SpawnerActor{
 
+		public SpawnerActor(){
+			super();
+		}
 		public SpawnerActor(int tries, int count) {
 			super(tries, count);
 		}
@@ -117,7 +118,7 @@ public class GuardianTrap extends MobSummonTrap {
 		@Override
 		protected boolean spawnMob() {
 			Guardian guardian = new Guardian();
-			int pos = Dungeon.level.randomRespawnCell(guardian);
+			int pos = Dungeon.level.randomRespawnCell(guardian );
 			if (pos == -1) return false;
 			guardian.state = guardian.WANDERING;
 			guardian.pos = pos;

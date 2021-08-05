@@ -5,8 +5,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -26,6 +26,11 @@ public class Legion extends Buff {
         type = buffType.NEUTRAL;
     }
 
+    private float delay() {
+        if (Challenges.MANIFESTING_MYRIADS.enabled()) return WAVE_DELAY / 2f;
+        return WAVE_DELAY;
+    }
+
     @Override
     public boolean act() {
         if (!Dungeon.bossLevel()) {
@@ -34,11 +39,8 @@ public class Legion extends Buff {
 
 //			GLog.i(Math.floor(turnsToNextWave)+"");
 
-            if (turnsToNextWave <= 0 || turnsSinceLastWave >= WAVE_DELAY) {
-                turnsToNextWave = WAVE_DELAY;
-                if (Challenges.MANIFESTING_MYRIADS.enabled()) {
-                    turnsToNextWave /= 2f;
-                }
+            if (turnsToNextWave <= 0 || turnsSinceLastWave >= delay()) {
+                turnsToNextWave = delay();
                 int wantSpawn = waveSize();
                 for (Mob mob : Dungeon.level.mobs) {
                     if (mob.alignment == Char.Alignment.ENEMY) wantSpawn--;
@@ -48,21 +50,18 @@ public class Legion extends Buff {
                     GLog.n(Messages.get(Challenges.class, "horde_wave"));
                 }
 
-                while (wantSpawn > 0) {
-                    Mob mob = Dungeon.level.createMob();
-                    if (Challenges.MANIFESTING_MYRIADS.enabled()) {
-                        Buff.affect(mob, NoReward.class);
-                    }
-                    mob.state = mob.WANDERING;
-                    mob.pos = Dungeon.level.randomRespawnCell(mob);
-                    if (Dungeon.hero.isAlive() && mob.pos != -1 && Dungeon.level.distance(Dungeon.hero.pos, mob.pos) >= 4) {
-                        GameScene.add(mob);
-                        wantSpawn--;
-                        mob.beckon(Dungeon.hero.pos);
-                    }
+                int nAreas = wantSpawn / 50;
+                int mobsPerArea = wantSpawn / nAreas;
+
+                for (int i = 0; i < nAreas; i++) {
+                    int nMobs = mobsPerArea;
+                    if (i == 0) nMobs += wantSpawn - mobsPerArea * nAreas;
+                    int pos = Dungeon.level.randomRespawnCell(null, true);
+                    SummoningTrap.summonMobs(pos, nMobs, 5, (Mob mob) -> {
+                        if (Dungeon.hero.isAlive())
+                            mob.beckon(Dungeon.hero.pos);
+                    });
                 }
-                turnsToNextWave = WAVE_DELAY;
-                if (Challenges.MANIFESTING_MYRIADS.enabled()) turnsToNextWave /= 2;
                 turnsSinceLastWave = 0;
             }
         }
@@ -77,7 +76,7 @@ public class Legion extends Buff {
     }
 
     public void consumeDeath() {
-        float progress = Math.round(WAVE_DELAY / 2 / (waveSize() * PROGRESS_PERCENTAGE));
+        float progress = Math.round(delay() / 2 / (waveSize() * PROGRESS_PERCENTAGE));
         turnsToNextWave += progress;
         if (turnsToNextWave > WAVE_DELAY - turnsSinceLastWave) {
             turnsToNextWave = WAVE_DELAY - turnsSinceLastWave;
@@ -108,6 +107,11 @@ public class Legion extends Buff {
     @Override
     public void tintIcon(Image icon) {
         icon.hardlight(0xFFFF00);
+    }
+
+    @Override
+    public float iconFadePercent() {
+        return 1f - Math.min(delay() - turnsSinceLastWave, turnsToNextWave) / delay();
     }
 
     @Override

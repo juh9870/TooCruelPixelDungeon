@@ -45,6 +45,8 @@ public class Amulet extends Item {
 
 		defaultAction = AC_END;
 
+		levelKnown = true;
+
 		unique = true;
 	}
 	
@@ -120,6 +122,11 @@ public class Amulet extends Item {
 	@Override
 	public boolean isUpgradable() {
 		return Dungeon.modifiers.difficulty().margin >= Difficulty.HARD_2.margin;
+	}
+
+	@Override
+	public int buffedLvl() {
+		return level();
 	}
 
 	@Override

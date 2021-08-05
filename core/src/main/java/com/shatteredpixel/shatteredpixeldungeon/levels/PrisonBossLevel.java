@@ -615,7 +615,7 @@ public class PrisonBossLevel extends Level {
 	}
 	
 	@Override
-	public int randomRespawnCell( Char ch ) {
+	public int randomRespawnCell(Char ch, boolean ignoreMobs) {
 		int pos = ENTRANCE_POS; //random cell adjacent to the entrance.
 		int cell;
 		do {
