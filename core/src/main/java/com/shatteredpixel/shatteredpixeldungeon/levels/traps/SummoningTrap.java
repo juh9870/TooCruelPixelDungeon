@@ -21,21 +21,25 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class SummoningTrap extends Trap {
+public class SummoningTrap extends MobSummonTrap {
 
-	private static final float DELAY = 2f;
+	public static final float DELAY = 2f;
+	private int maxDistance = 1;
+	private float delay = DELAY;
+	private int amount = -1;
 
 	{
 		color = TEAL;
@@ -45,50 +49,53 @@ public class SummoningTrap extends Trap {
 	@Override
 	public void activate() {
 
+		float multiplier = Challenges.nMobsMultiplier();
 		int nMobs = 1;
-		if (Random.Int( 2 ) == 0) {
-			nMobs++;
-			if (Random.Int( 2 ) == 0) {
+		if(amount<0) {
+			if (Random.Int(2) == 0) {
 				nMobs++;
+				if (Random.Int(2) == 0) {
+					nMobs++;
+				}
 			}
-		}
 
-		
+			nMobs *= multiplier;
+			maxTries = multiplier == 1 ? 1 : maxTries;
+		} else nMobs = amount;
 
-		ArrayList<Integer> candidates = getSummonCells(pos,1);
-		ArrayList<Integer> respawnPoints = new ArrayList<>();
 
-		while (nMobs > 0 && candidates.size() > 0) {
-			int index = Random.index( candidates );
 
-			respawnPoints.add( candidates.remove( index ) );
-			nMobs--;
-		}
-
-		ArrayList<Mob> mobs = new ArrayList<>();
-
-		for (Integer point : respawnPoints) {
-			Mob mob = summonMob(point,DELAY);
-			if(mob!=null)mobs.add(mob);
-		}
-
-		placeMob(mobs);
+		summonMobs(nMobs);
 	}
-	
+
+	public static void summonMobs(int pos, int amount, int maxDistance){
+		summonMobs(pos,amount,maxDistance,Integer.MAX_VALUE,DELAY);
+	}
+	public static void summonMobs(int pos, int amount, int maxDistance, int maxTries, float delay){
+		SummoningTrap trap = new SummoningTrap();
+		trap.pos = pos;
+		trap.amount = amount;
+		trap.maxDistance = maxDistance;
+		trap.maxTries = maxTries;
+		trap.delay = delay;
+		trap.activate();
+	}
+
 	public static ArrayList<Integer> getSummonCells(int center, int maxDistance){
 		ArrayList<Integer> candidates = new ArrayList<>();
-		
+
 		PathFinder.buildDistanceMap(center, BArray.or(Dungeon.level.passable,Dungeon.level.avoid,null),maxDistance);
-		
+		boolean allowStacking = Challenges.STACKING.enabled();
+
 		for (int p = 0; p < PathFinder.distance.length; p++) {
-			if (PathFinder.distance[p]<=maxDistance && Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p]) && !Dungeon.level.pit[p]) {
+			if (PathFinder.distance[p]<=maxDistance && (allowStacking || Actor.findChar( p ) == null) && (Dungeon.level.passable[p] || Dungeon.level.avoid[p]) && !Dungeon.level.pit[p]) {
 				candidates.add( p );
 			}
 		}
-		
+
 		return candidates;
 	}
-	
+
 	public static Mob summonMob(int point, float delay){
 		Mob mob;
 		do {
@@ -101,19 +108,63 @@ public class SummoningTrap extends Trap {
 		}
 		return mob;
 	}
-	
-	public static void placeMob(Iterable<Mob> mobs){
-		//important to process the visuals and pressing of cells last, so spawned mobs have a chance to occupy cells first
-		Trap t;
-		for (Mob mob : mobs){
-			//manually trigger traps first to avoid sfx spam
-			if ((t = Dungeon.level.traps.get(mob.pos)) != null && t.active){
-				t.disarm();
-				t.reveal();
-				t.activate();
-			}
-			ScrollOfTeleportation.appear(mob, mob.pos);
-			Dungeon.level.occupyCell(mob);
+
+	@Override
+	protected MobSummonTrap.SpawnerActor getSpawner(int amount, int maxTries) {
+		return new SpawnerActor(maxTries, amount, delay, pos, maxDistance);
+	}
+
+	public static class SpawnerActor extends MobSummonTrap.SpawnerActor{
+		private ArrayList<Integer> summonCells;
+		private float delay;
+		private int pos;
+		private int maxDistance;
+
+		public SpawnerActor(int tries, int count, float delay, int pos, int maxDistance) {
+			super(tries, count);
+			this.delay = delay;
+			this.pos = pos;
+			this.maxDistance = maxDistance;
+		}
+
+		@Override
+		protected boolean spawnMob() {
+			if (summonCells.size() == 0) return false;
+			int i = Random.index(summonCells);
+			int cell;
+			if (Challenges.STACKING.enabled())
+				cell = summonCells.get(i);
+			else
+				cell = summonCells.remove(i);
+			Mob mob = summonMob(cell, delay);
+			if (mob == null) return false;
+			mobsToPlace.add(mob);
+			return true;
+		}
+
+		@Override
+		protected void actBegin() {
+			super.actBegin();
+			summonCells = getSummonCells(pos, maxDistance);
+		}
+		private static final String POS = "pos";
+		private static final String DELAY = "delay";
+		private static final String DISTANCE = "distance";
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put(POS,pos);
+			bundle.put(DELAY,delay);
+			bundle.put(DISTANCE,maxDistance);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			pos = bundle.getInt(POS);
+			maxDistance = bundle.getInt(DISTANCE);
+			delay = bundle.getInt(DELAY);
 		}
 	}
 }

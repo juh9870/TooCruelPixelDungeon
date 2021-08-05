@@ -46,7 +46,7 @@ public class LineBuilder extends RegularBuilder {
         multiConnections.addAll(mainPathRooms);
         mainPathRooms.clear();
 
-        float step = 360 * revolutions / multiConnections.size();
+        float step = Math.min(90,360 * revolutions / multiConnections.size());
 
         if (entrance == null) {
             return null;
@@ -103,7 +103,7 @@ public class LineBuilder extends RegularBuilder {
             float angle;
             int tries = 4;
             do {
-                angle = placeRoom(rooms, curr, r, direction + Random.Float(-pathVariance, pathVariance));
+                angle = placeRoom(rooms, curr, r, direction += Random.Float(-pathVariance, pathVariance));
                 tries--;
             } while (angle == -1 && tries >= 0);
             if (angle == -1) {

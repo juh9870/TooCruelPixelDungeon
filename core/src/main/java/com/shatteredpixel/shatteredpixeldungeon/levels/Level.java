@@ -662,12 +662,13 @@ public abstract class Level implements Bundlable {
 	public int randomRespawnCell( Char ch ) {
 		int cell;
         boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
+        boolean allowStacking = Challenges.STACKING.enabled();
 		do {
 			cell = Random.Int( length() );
         } while ((Dungeon.level == this && (heroFOV[cell] && !allowHeroFov))
 				|| !passable[cell]
 				|| (Char.hasProp(ch, Char.Property.LARGE) && !openSpace[cell])
-				|| Actor.findChar( cell ) != null);
+				|| (allowStacking || Actor.findChar( cell ) != null));
 		return cell;
 	}
 	
@@ -1176,7 +1177,7 @@ public abstract class Level implements Bundlable {
 			if (c instanceof Hero){
 				viewDist *= 1f + 0.25f*((Hero) c).pointsInTalent(Talent.FARSIGHT);
 			}
-			
+
 			ShadowCaster.castShadow( cx, cy, fieldOfView, blocking, viewDist );
 		} else {
 			BArray.setFalse(fieldOfView);

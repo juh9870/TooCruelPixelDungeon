@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
@@ -78,7 +79,14 @@ public class Cruel_Changes {
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "Fixed:\n" +
                         "_-_ Fixed patch room causing level generation to stuck\n" +
-                        "_-_ Fixed champions having all titles at once"
+                        "_-_ Fixed champions having all titles at once\n" +
+                        "_-_ Fixed crash causes by using Mind Blast in Demon Halls\n" +
+                        "_-_ Fixed excessive mob revealing with Exterminationa"
+        ));
+        changes.addButton(new ChangeButton(new TimekeepersHourglass(), Messages.get(ChangesScene.class, "changes"),
+                "Balance Changes:\n" +
+                        "_-_ Summoning trap will now spawn more mobs is challenges increase mob count\n" +
+                        "_-_ Stacking Threat challenge now allow enemies to spawn on top of one another"
         ));
 
 

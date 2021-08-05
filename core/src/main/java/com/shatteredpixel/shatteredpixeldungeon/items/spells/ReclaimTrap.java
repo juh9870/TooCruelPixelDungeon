@@ -83,6 +83,11 @@ public class ReclaimTrap extends TargetedSpell {
 			
 		}
 	}
+
+	public ReclaimTrap setStoredTrap(Class<? extends Trap> trapClass){
+		storedTrap = trapClass;
+		return this;
+	}
 	
 	@Override
 	public String desc() {

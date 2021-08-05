@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -42,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
@@ -49,7 +51,7 @@ import com.watabou.utils.Reflection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class DistortionTrap extends Trap{
+public class DistortionTrap extends MobSummonTrap{
 
 	private static final float DELAY = 2f;
 
@@ -76,28 +78,41 @@ public class DistortionTrap extends Trap{
 			}
 		}
 
-		ArrayList<Integer> candidates = new ArrayList<>();
+		nMobs *= Math.sqrt(Challenges.nMobsMultiplier());
 
-		for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-			int p = pos + PathFinder.NEIGHBOURS8[i];
-			if (Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
-				candidates.add( p );
-			}
+		summonMobs(nMobs);
+
+	}
+
+	@Override
+	protected MobSummonTrap.SpawnerActor getSpawner(int amount, int maxTries) {
+		return new SpawnerActor(maxTries,amount,pos);
+	}
+
+	public static class SpawnerActor extends MobSummonTrap.SpawnerActor{
+		private ArrayList<Integer> summonCells;
+		private int summoned = 0;
+		private int pos;
+		public SpawnerActor(int tries, int count, int pos) {
+			super(tries, count);
+			this.pos = pos;
 		}
 
-		ArrayList<Integer> respawnPoints = new ArrayList<>();
-
-		while (nMobs > 0 && candidates.size() > 0) {
-			int index = Random.index( candidates );
-
-			respawnPoints.add( candidates.remove( index ) );
-			nMobs--;
+		@Override
+		protected void actBegin() {
+			super.actBegin();
+			summonCells = SummoningTrap.getSummonCells(pos, 1);
 		}
 
-		ArrayList<Mob> mobs = new ArrayList<>();
-
-		int summoned = 0;
-		for (Integer point : respawnPoints) {
+		@Override
+		protected boolean spawnMob() {
+			if (summonCells.size() == 0) return false;
+			int index = Random.index(summonCells);
+			int point;
+			if (Challenges.STACKING.enabled())
+				point = summonCells.get(index);
+			else
+				point = summonCells.remove(index);
 			summoned++;
 			Mob mob;
 			switch (summoned){
@@ -117,7 +132,7 @@ public class DistortionTrap extends Trap{
 					switch (Random.Int(4)){
 						case 0: default:
 							Wraith.spawnAt(point);
-							continue; //wraiths spawn themselves, no need to do more
+							return true; //wraiths spawn themselves, no need to do more
 						case 1:
 							//yes it's intended that these are likely to die right away
 							mob = new Piranha();
@@ -137,29 +152,29 @@ public class DistortionTrap extends Trap{
 					break;
 			}
 
-			if (Char.hasProp(mob, Char.Property.LARGE) && !Dungeon.level.openSpace[point]){
-				continue;
-			}
-
 			mob.maxLvl = Hero.MAX_LEVEL;
 			mob.state = mob.WANDERING;
 			mob.pos = point;
 			GameScene.add(mob, DELAY);
-			mobs.add(mob);
+			mobsToPlace.add(mob);
+			return true;
 		}
 
-		//important to process the visuals and pressing of cells last, so spawned mobs have a chance to occupy cells first
-		Trap t;
-		for (Mob mob : mobs){
-			//manually trigger traps first to avoid sfx spam
-			if ((t = Dungeon.level.traps.get(mob.pos)) != null && t.active){
-				t.disarm();
-				t.reveal();
-				t.activate();
-			}
-			ScrollOfTeleportation.appear(mob, mob.pos);
-			Dungeon.level.occupyCell(mob);
+		private static final String SUMMONED = "summoned";
+		private static final String POS = "pos";
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put(SUMMONED,summoned);
+			bundle.put(POS,pos);
 		}
 
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			summoned = bundle.getInt(SUMMONED);
+			pos = bundle.getInt(POS);
+		}
 	}
 }

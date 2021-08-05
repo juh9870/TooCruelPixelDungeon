@@ -33,7 +33,9 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.StatueSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
-public class GuardianTrap extends Trap {
+import java.util.ArrayList;
+
+public class GuardianTrap extends MobSummonTrap {
 
 	{
 		color = RED;
@@ -54,14 +56,12 @@ public class GuardianTrap extends Trap {
 
 		Sample.INSTANCE.play( Assets.Sounds.ALERT );
 
-		for (int i = 0; i < (Dungeon.depth - 5)/5; i++){
-			Guardian guardian = new Guardian();
-			guardian.state = guardian.WANDERING;
-			guardian.pos = Dungeon.level.randomRespawnCell( guardian );
-			GameScene.add(guardian);
-			guardian.beckon(Dungeon.hero.pos );
-		}
+		summonMobs((Dungeon.depth - 5)/5);
+	}
 
+	@Override
+	protected MobSummonTrap.SpawnerActor getSpawner(int amount, int maxTries) {
+		return new SpawnerActor(maxTries,amount);
 	}
 
 	public static class Guardian extends Statue {
@@ -104,6 +104,27 @@ public class GuardianTrap extends Trap {
 		public void resetColor() {
 			super.resetColor();
 			tint(0, 0, 1, 0.2f);
+		}
+	}
+
+
+	public static class SpawnerActor extends MobSummonTrap.SpawnerActor{
+
+		public SpawnerActor(int tries, int count) {
+			super(tries, count);
+		}
+
+		@Override
+		protected boolean spawnMob() {
+			Guardian guardian = new Guardian();
+			int pos = Dungeon.level.randomRespawnCell(guardian);
+			if (pos == -1) return false;
+			guardian.state = guardian.WANDERING;
+			guardian.pos = pos;
+			GameScene.add(guardian);
+			guardian.beckon(Dungeon.hero.pos);
+			mobsToPlace.add(guardian);
+			return true;
 		}
 	}
 }

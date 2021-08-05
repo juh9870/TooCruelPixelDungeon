@@ -62,6 +62,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Spell;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -71,6 +73,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DistortionTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
 
@@ -149,6 +153,8 @@ public enum HeroClass {
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(10).identify().collect();
 			new PotionOfInvisibility().quantity(10).identify().collect();
+//			new ReclaimTrap().setStoredTrap(SummoningTrap.class).collect();
+			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 
 			Dungeon.gold=1000000;
 

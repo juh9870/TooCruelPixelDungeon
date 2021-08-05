@@ -1034,9 +1034,8 @@ public class Hero extends Char {
 			//TODO this is slightly brittle, it assumes there are no disjointed sets of exit tiles
 		} else if ((Dungeon.level.map[pos] == Terrain.EXIT || Dungeon.level.map[pos] == Terrain.UNLOCKED_EXIT)) {
 			
-			int exterminators = Challenges.checkExterminators();
+			int exterminators = Challenges.checkExterminators(true);
 			if (exterminators > 0) {
-				
 				String text = exterminators > 1 ? Messages.get(Challenges.class, "extermination_lock", exterminators) :
 						Messages.get(Challenges.class, "extermination_lock_last");
 				
