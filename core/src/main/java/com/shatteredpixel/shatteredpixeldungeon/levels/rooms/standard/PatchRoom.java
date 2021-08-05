@@ -33,6 +33,8 @@ public abstract class PatchRoom extends StandardRoom {
 	protected boolean[] patch;
 	
 	protected void setupPatch(Level level, float fill, int clustering, boolean ensurePath){
+		// Never go over 90% fill
+		while (fill > .9f) fill /= 1.5f;
 
 		int attempts = 0;
 		if (ensurePath){
