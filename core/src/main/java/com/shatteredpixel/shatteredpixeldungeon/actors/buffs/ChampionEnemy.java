@@ -174,12 +174,10 @@ public abstract class ChampionEnemy extends Buff {
 			}
 			m.state = m.WANDERING;
 		}
-
-
-		int c = 20;
+		
 		//go crazy at t3
 		if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
-			while (c-->0) {
+			while (added < 8 && Random.Int(3 + added) == 0) {
 				if (Random.Int(2) == 0) {
 					Buff.affect(m, randomElite());
 					elite = true;
