@@ -110,16 +110,16 @@ public abstract class ChampionEnemy extends Buff {
         if (Dungeon.mobsToChampion % nthChampion == 0) {
             //Every 3'rd champion is an elite champion
             if (Challenges.ELITE_CHAMPIONS.enabled() && Dungeon.mobsToChampion % 3 == 0) {
-                Buff.affect(m, randomElite());
+                Buff.append(m, randomElite());
                 elite = true;
                 added += 2;
                 //Every elite champion is also a regular champion at t3
                 if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
-                    Buff.affect(m, randomChampion());
+                    Buff.append(m, randomChampion());
                     added++;
                 }
             } else {
-                Buff.affect(m, randomChampion());
+                Buff.append(m, randomChampion());
                 added++;
             }
             m.state = m.WANDERING;
@@ -127,13 +127,13 @@ public abstract class ChampionEnemy extends Buff {
 
         //go crazy at t3
         if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
-            while (added < 8 && Random.Int(3 + added) == 0) {
+            while (added < 8 && Random.Int(3 + added) <= 0) {
                 if (Random.Int(2) == 0) {
-                    Buff.affect(m, randomElite());
+                    Buff.append(m, randomElite());
                     elite = true;
                     added += 2;
                 } else {
-                    Buff.affect(m, randomChampion());
+                    Buff.append(m, randomChampion());
                     added++;
                 }
                 m.state = m.WANDERING;

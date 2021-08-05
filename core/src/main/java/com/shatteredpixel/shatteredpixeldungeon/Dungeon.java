@@ -73,7 +73,6 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -184,9 +183,9 @@ public class Dungeon {
 		mobsToChampion = -1;
 
         seed = DungeonSeed.randomSeed();
-        if(DeviceCompat.isDebug()){
-        	seed = 2829233296842L;
-		}
+//        if(DeviceCompat.isDebug()){
+//        	seed = 2829233296842L;
+//		}
 //        seed = 3596304741126l;
 
         modifiers = SPDSettings.modifiers();
@@ -789,8 +788,8 @@ public class Dungeon {
 		GameScene.updateFog(l, t, width, height);
 		
         boolean mw = hero.buff(MindVision.class) != null;
-			for (Mob m : level.mobs.toArray(new Mob[0])){
-            if(mw || m.properties().contains(Char.Property.ALWAYS_VISIBLE) || m.buff(Revealing.class)!=null) {
+        for (Mob m : level.mobs.toArray(new Mob[0])){
+			if (mw || m.properties().contains(Char.Property.ALWAYS_VISIBLE) || m.buff(Revealing.class) != null) {
 				BArray.or( level.visited, level.heroFOV, m.pos - 1 - level.width(), 3, level.visited );
 				BArray.or( level.visited, level.heroFOV, m.pos, 3, level.visited );
 				BArray.or( level.visited, level.heroFOV, m.pos - 1 + level.width(), 3, level.visited );

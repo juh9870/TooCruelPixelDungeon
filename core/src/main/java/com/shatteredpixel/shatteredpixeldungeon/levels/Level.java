@@ -1249,7 +1249,7 @@ public abstract class Level implements Bundlable {
 						heroMindFov[mob.pos + i] = true;
 					}
 				}
-			} else if (((Hero) c).hasTalent(Talent.HEIGHTENED_SENSES)) {
+			} else {
 				Hero h = (Hero) c;
 				int range = 1+h.pointsInTalent(Talent.HEIGHTENED_SENSES);
 				for (Mob mob : mobs) {
@@ -1258,7 +1258,7 @@ public abstract class Level implements Bundlable {
                         for (int i : PathFinder.NEIGHBOURS9) heroMindFov[p + i] = true;
                     }
                     if (((Hero) c).hasTalent(Talent.HEIGHTENED_SENSES))
-                        if (!fieldOfView[p] && distance(c.pos, p) <= 1 + ((Hero) c).pointsInTalent(Talent.HEIGHTENED_SENSES)) {
+                        if (!fieldOfView[p] && distance(c.pos, p) <= 1 + range) {
 						for (int i : PathFinder.NEIGHBOURS9) {
 							heroMindFov[mob.pos + i] = true;
 						}

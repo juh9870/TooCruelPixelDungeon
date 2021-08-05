@@ -153,13 +153,13 @@ public enum HeroClass {
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(10).identify().collect();
 			new PotionOfInvisibility().quantity(10).identify().collect();
-//			new ReclaimTrap().setStoredTrap(SummoningTrap.class).collect();
-			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
+			new ReclaimTrap().setStoredTrap(SummoningTrap.class).collect();
+//			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 
 			Dungeon.gold=1000000;
 
-			Buff.affect(hero, MindVision.class,1000000);
-			Buff.affect(hero, Invisibility.class,1000000);
+//			Buff.affect(hero, MindVision.class,1000000);
+//			Buff.affect(hero, Invisibility.class,1000000);
 
 			new Amulet().collect();
 		}
