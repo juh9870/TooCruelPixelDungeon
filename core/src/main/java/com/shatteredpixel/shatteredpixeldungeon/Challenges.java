@@ -590,26 +590,31 @@ public enum Challenges implements Hero.Doom {
         return nMobsMultiplier() > 16;
     }
 
-    public static int distributeDamage(Mob target, HashSet<Mob> mobs, int amount) {
+    public static int distributeDamage(Mob target, HashSet<Char> mobs, int amount) {
 
         if (mobs.size() == 0) return amount;
+
+        HashSet<Char> cloneSet = new HashSet<>(mobs);
+        for (Char mob : mobs) {
+            if(mob instanceof NPC || mob.properties().contains(Char.Property.BOSS)){
+                cloneSet.remove(mob);
+            }
+        }
+        if (Dungeon.hero.isAlive()) {
+            cloneSet.add(Dungeon.hero);
+        }
+        mobs = cloneSet;
+
         amount = (int) Math.ceil(amount / 2f);
         int damage = amount / mobs.size();
         int leftovers = amount % mobs.size();
         int targetDmg = amount;
 
-
         ArrayList<Char> targets = new ArrayList<>(mobs);
-        if (Dungeon.hero.isAlive()) {
-            targets.add(0, Dungeon.hero);
-        }
         if (leftovers > 0) {
             Random.shuffle(targets);
         }
         for (Char targ : targets) {
-            if (targ instanceof NPC) {
-                continue;
-            }
             int dmg = damage;
             if (leftovers-- > 0) {
                 dmg++;

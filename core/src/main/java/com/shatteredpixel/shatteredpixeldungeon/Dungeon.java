@@ -73,6 +73,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -217,8 +218,8 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-//		if (DeviceCompat.isDebug())
-//			depth = 21;
+		if (DeviceCompat.isDebug())
+			depth = 19;
 		gold = 0;
 
 		droppedItems = new SparseArray<>();
