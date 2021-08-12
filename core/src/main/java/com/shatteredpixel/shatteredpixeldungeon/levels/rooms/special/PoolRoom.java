@@ -31,7 +31,12 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibili
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class PoolRoom extends SpecialRoom {
 
@@ -39,12 +44,12 @@ public class PoolRoom extends SpecialRoom {
 	
 	@Override
 	public int minWidth() {
-		return 6;
+		return (int)(6 + /*Math.sqrt*/(Challenges.roomSizeMult()));
 	}
 	
 	@Override
 	public int minHeight() {
-		return 6;
+		return (int)(6 + /*Math.sqrt*/(Challenges.roomSizeMult()));
 	}
 	
 	public void paint(Level level ) {
@@ -89,13 +94,32 @@ public class PoolRoom extends SpecialRoom {
 		Painter.set( level, pos, Terrain.PEDESTAL );
 		
 		level.addItemToSpawn( new PotionOfInvisibility() );
-		
-		for (int i=0; i < NPIRANHAS; i++) {
-			Piranha piranha = new Piranha();
-			do {
-				piranha.pos = level.pointToCell(random());
-			} while (level.map[piranha.pos] != Terrain.WATER|| level.findMob( piranha.pos ) != null);
-			level.mobs.add( piranha );
+
+		int nFish = NPIRANHAS;
+		float mult = Challenges.nMobsMultiplier();
+		nFish = (int) Math.max(nFish * Math.sqrt(mult), nFish + mult);
+
+		if (nFish > 10) {
+			HashSet<Integer> path = new HashSet<>(new Ballistica(level.pointToCell(door), pos, Ballistica.STOP_TARGET, level).path);
+			ArrayList<Point> points = points(1);
+			Random.shuffle(points);
+			for (int i = (int) (points.size() * 0.1f); i < points.size() && nFish > 0; i++) {
+				int cell = level.pointToCell(points.get(i));
+				if (level.map[cell] != Terrain.WATER || level.findMob(cell) != null || path.contains(cell)) continue;
+
+				Piranha piranha = new Piranha();
+				piranha.pos = cell;
+				level.mobs.add(piranha);
+				nFish--;
+			}
+		} else {
+			for (int i = 0; i < nFish; i++) {
+				Piranha piranha = new Piranha();
+				do {
+					piranha.pos = level.pointToCell(random());
+				} while (level.map[piranha.pos] != Terrain.WATER || level.findMob(piranha.pos) != null);
+				level.mobs.add(piranha);
+			}
 		}
 	}
 	

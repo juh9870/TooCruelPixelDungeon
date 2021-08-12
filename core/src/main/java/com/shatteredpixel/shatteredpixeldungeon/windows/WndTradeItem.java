@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 
 public class WndTradeItem extends WndInfoItem {
 
@@ -42,11 +43,17 @@ public class WndTradeItem extends WndInfoItem {
 	private static final int BTN_HEIGHT	= 16;
 
 	private WndBag owner;
+	private Currency currency;
 
 	//selling
 	public WndTradeItem( final Item item, WndBag owner ) {
+		this(item,owner,Currency.GOLD);
+	}
+	public WndTradeItem( final Item item, WndBag owner, Currency currency ) {
 
 		super(item);
+
+		this.currency = currency;
 
 		this.owner = owner;
 
@@ -100,16 +107,15 @@ public class WndTradeItem extends WndInfoItem {
 
 		super(heap);
 
+		currency = heap.currency;
+
 		Item item = heap.peek();
 
 		float pos = height;
-
-		final boolean isBJ = Challenges.BLACKJACK.enabled() && Dungeon.level instanceof RegularLevel &&
-				((RegularLevel) Dungeon.level).room(heap.pos) instanceof BlackjackRoom;
 		
-		final int price = Shopkeeper.sellPrice( item );
+		final int price = currency.sellPrice(item);
 
-		RedButton btnBuy = new RedButton( Messages.get(this, "buy", price) ) {
+		RedButton btnBuy = new RedButton( currency.buyText(price) ) {
 			@Override
 			protected void onClick() {
 				hide();
@@ -117,13 +123,13 @@ public class WndTradeItem extends WndInfoItem {
 			}
 		};
 		btnBuy.setRect( 0, pos + GAP, width, BTN_HEIGHT );
-		btnBuy.enable( price <= Dungeon.gold );
+		btnBuy.enable(currency.have(price));
 		add( btnBuy );
 
 		pos = btnBuy.bottom();
 
 		final MasterThievesArmband.Thievery thievery = Dungeon.hero.buff(MasterThievesArmband.Thievery.class);
-		if (!isBJ && thievery != null && !thievery.isCursed() && !(Dungeon.level instanceof RegularLevel && ((RegularLevel) Dungeon.level).room(heap.pos) instanceof BlackjackRoom)) {
+		if (currency == Currency.GOLD && thievery != null && !thievery.isCursed() && !(Dungeon.level instanceof RegularLevel && ((RegularLevel) Dungeon.level).room(heap.pos) instanceof BlackjackRoom)) {
 			final float chance = thievery.stealChance(price);
 			RedButton btnSteal = new RedButton(Messages.get(this, "steal", Math.min(100, (int) (chance * 100)))) {
 				@Override
@@ -180,7 +186,7 @@ public class WndTradeItem extends WndInfoItem {
 		//selling items in the sell interface doesn't spend time
 		hero.spend(-hero.cooldown());
 
-		new Gold( item.value() ).doPickUp( hero );
+		currency.receive(item.value(), hero);
 	}
 	
 	private void sellOne( Item item ) {
@@ -196,7 +202,7 @@ public class WndTradeItem extends WndInfoItem {
 			//selling items in the sell interface doesn't spend time
 			hero.spend(-hero.cooldown());
 
-			new Gold( item.value() ).doPickUp( hero );
+			currency.receive(item.value(), hero);
 		}
 	}
 	
@@ -206,7 +212,7 @@ public class WndTradeItem extends WndInfoItem {
 		if (item == null) return;
 		
 		int price = Shopkeeper.sellPrice( item );
-		Dungeon.gold -= price;
+		currency.remove(price);
 		
 		if (!item.doPickUp( Dungeon.hero )) {
 			Dungeon.level.drop( item, heap.pos ).sprite.drop();

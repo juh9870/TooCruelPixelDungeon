@@ -724,7 +724,7 @@ public abstract class Mob extends Char {
             alerted = true;
         }
 
-        if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE && !properties().contains(Property.BOSS)) {
+        if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE) {
             dmg = Challenges.distributeDamage(this, new HashSet<>(Dungeon.level.mobs), dmg);
         }
 

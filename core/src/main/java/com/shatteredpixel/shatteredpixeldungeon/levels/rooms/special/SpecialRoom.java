@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -91,7 +92,13 @@ public abstract class SpecialRoom extends Room {
 	
 	public static void initForRun() {
 		runSpecials = (ArrayList<Class<?extends Room>>)ALL_SPEC.clone();
-		
+		if(DeviceCompat.isDebug()){
+			runSpecials = new ArrayList<>();
+			for (int i = 0; i < 100; i++) {
+				runSpecials.add(StatueRoom.class);
+			}
+		}
+
 		pitNeededDepth = -1;
 		Random.shuffle(runSpecials);
 	}

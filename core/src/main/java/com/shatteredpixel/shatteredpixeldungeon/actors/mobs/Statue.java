@@ -23,7 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon.Enchantment;
@@ -34,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.StatueSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class Statue extends Mob {
@@ -119,6 +122,13 @@ public class Statue extends Mob {
 
 		if (state == PASSIVE) {
 			state = HUNTING;
+
+			for (int i = 0; i < PathFinder.NEIGHBOURS9.length; i++) {
+				Char c = Actor.findChar(i+pos);
+				if(c instanceof Statue){
+					((Statue) c).state = ((Statue) c).HUNTING;
+				}
+			}
 		}
 		
 		super.damage( dmg, src );
@@ -142,12 +152,14 @@ public class Statue extends Mob {
 	
 	@Override
 	public void die( Object cause ) {
-		weapon.identify();
-		if(Challenges.CURSED.enabled()) {
-			weapon.cursed = true;
-			weapon.enchant(Enchantment.randomCurse());
+		if (buff(NoReward.class) == null) {
+			weapon.identify();
+			if (Challenges.CURSED.enabled()) {
+				weapon.cursed = true;
+				weapon.enchant(Enchantment.randomCurse());
+			}
+			Dungeon.level.drop(weapon, pos).sprite.drop();
 		}
-		Dungeon.level.drop( weapon, pos ).sprite.drop();
 		super.die( cause );
 	}
 	
@@ -178,7 +190,7 @@ public class Statue extends Mob {
 	}
 
 	public static Statue random(){
-		if (Random.Int(10) == 0 && Challenges.FAITH_ARMOR.enabled()){
+		if (Random.Int(10) == 0){
 			return new ArmoredStatue();
 		} else {
 			return new Statue();

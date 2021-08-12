@@ -21,10 +21,15 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.watabou.utils.Point;
+import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class AquariumRoom extends StandardRoom {
 	
@@ -52,13 +57,18 @@ public class AquariumRoom extends StandardRoom {
 		
 		int minDim = Math.min(width(), height());
 		int numFish = (minDim - 4)/3; //1-3 fish, depending on room size
-		
-		for (int i=0; i < numFish; i++) {
+		float mult = Challenges.nMobsMultiplier();
+		numFish = (int) Math.max(numFish * Math.sqrt(mult), numFish+mult);
+		ArrayList<Point> points = points(3);
+		Random.shuffle(points);
+		for (int i = 0; i < points.size() && numFish > 0; i++) {
+			int cell = level.pointToCell(points.get(i));
+			if (level.map[cell] != Terrain.WATER || level.findMob(cell) != null) continue;
+
 			Piranha piranha = new Piranha();
-			do {
-				piranha.pos = level.pointToCell(random(3));
-			} while (level.map[piranha.pos] != Terrain.WATER|| level.findMob( piranha.pos ) != null);
-			level.mobs.add( piranha );
+			piranha.pos = cell;
+			level.mobs.add(piranha);
+			numFish--;
 		}
 		
 		for (Door door : connected.values()) {

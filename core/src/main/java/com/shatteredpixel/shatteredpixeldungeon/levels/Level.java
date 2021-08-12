@@ -60,6 +60,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.PokerToken;
 import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
@@ -86,6 +87,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
@@ -516,10 +518,10 @@ public abstract class Level implements Bundlable {
             h = heaps.get(c);
             if (h != null) {
                 if (h.type == Heap.Type.FOR_SALE) continue;
-                int goldCount = 0;
+                int tokensCount = 0;
                 for (Item i : (LinkedList<Item>) h.items.clone()) {
-                    if (i.value() > 0) {
-                        goldCount += (int) (Shopkeeper.sellPrice(i) * Random.NormalFloat(0.25f, 1f));
+                    if (Currency.TOKENS.sellPrice(i) > 0) {
+                        tokensCount += (int) (Currency.TOKENS.sellPrice(i) * Random.NormalFloat(0.33f, 1f));
                         switch (h.type) {
                             case LOCKED_CHEST:
                                 room.chestItems.add(i);
@@ -536,8 +538,8 @@ public abstract class Level implements Bundlable {
                 if (h.items.size() == 0) {
                     heaps.remove(c);
                 }
-                if (goldCount > 0) {
-                    Heap gold = drop(new Gold(goldCount), c);
+                if (tokensCount > 0) {
+                    Heap gold = drop(new PokerToken(tokensCount), c);
                     gold.haunted = h.haunted;
                     if (h.type == Heap.Type.SKELETON
                             || h.type == Heap.Type.REMAINS

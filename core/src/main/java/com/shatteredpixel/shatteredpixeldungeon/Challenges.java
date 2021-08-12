@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.utils.killers.SharedPain;
 import com.watabou.utils.Random;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -250,7 +251,7 @@ public enum Challenges implements Hero.Doom {
     ROOM_LOCK(59, 2, 2f),
     SCORCHED_EARTH(61, 2, 2f),
     UNTIERED(67, 2, 2f, RETIERED),
-    LIMITED_UPGRADES(69,2,2f),
+    LIMITED_UPGRADES(69, 2, 2f),
 
 
     //T3
@@ -306,6 +307,7 @@ public enum Challenges implements Hero.Doom {
     //Last id 67
     ;
     private static final Challenges[] mappings;
+    public static int LEVEL_LIMIT = 3;
 
     static {
         mappings = new Challenges[Challenges.values().length];
@@ -328,7 +330,6 @@ public enum Challenges implements Hero.Doom {
     public final float difficulty;
     public final int tier;
     public final int[] requirements;
-
 
     Challenges(int id, int tier, float difficulty, Challenges... requirements) {
         this(id, id, tier, difficulty, requirements);
@@ -524,6 +525,10 @@ public enum Challenges implements Hero.Doom {
         }
         return s.toString();
     }
+    public static String displayString(boolean[] challenges) {
+        String str = new StringBuilder(saveString(challenges)).reverse().toString();
+        return new BigInteger(str,2).toString(36).toUpperCase();
+    }
 
     public static boolean[] fromString(String challenges) {
         boolean[] ret = new boolean[Challenges.values().length];
@@ -596,7 +601,7 @@ public enum Challenges implements Hero.Doom {
 
         HashSet<Char> cloneSet = new HashSet<>(mobs);
         for (Char mob : mobs) {
-            if(mob instanceof NPC || mob.properties().contains(Char.Property.BOSS)){
+            if (mob instanceof NPC || mob.properties().contains(Char.Property.BOSS)) {
                 cloneSet.remove(mob);
             }
         }
@@ -605,10 +610,13 @@ public enum Challenges implements Hero.Doom {
         }
         mobs = cloneSet;
 
+        int targetDmg = amount;
         amount = (int) Math.ceil(amount / 2f);
+        if (!target.properties().contains(Char.Property.BOSS)) {
+            targetDmg = amount;
+        }
         int damage = amount / mobs.size();
         int leftovers = amount % mobs.size();
-        int targetDmg = amount;
 
         ArrayList<Char> targets = new ArrayList<>(mobs);
         if (leftovers > 0) {
@@ -693,6 +701,4 @@ public enum Challenges implements Hero.Doom {
             super("One of challenges is out of bounds.", cause);
         }
     }
-
-    public static int LEVEL_LIMIT = 3;
 }

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
@@ -225,7 +226,21 @@ public class WndBag extends WndTabbed {
 		amt.y = (TITLE_HEIGHT - amt.baseLine())/2f - 1;
 		PixelScene.align(amt);
 		add(amt);
-		
+		if(Challenges.BLACKJACK.enabled()) {
+			ItemSprite token = new ItemSprite(ItemSpriteSheet.POKER_TOKEN, null);
+			token.x = amt.x - token.width() - 3;
+			token.y = (TITLE_HEIGHT - token.height()) / 2f - 1;
+			PixelScene.align(token);
+			add(token);
+
+			amt = new BitmapText(Integer.toString(Dungeon.tokens), PixelScene.pixelFont);
+			amt.hardlight(TITLE_COLOR);
+			amt.measure();
+			amt.x = token.x - amt.width() - 2;
+			amt.y = (TITLE_HEIGHT - amt.baseLine()) / 2f - 1;
+			PixelScene.align(amt);
+			add(amt);
+		}
 		RenderedTextBlock txtTitle = PixelScene.renderTextBlock(
 				title != null ? Messages.titleCase(title) : Messages.titleCase( bag.name() ), 8 );
 		txtTitle.hardlight( TITLE_COLOR );

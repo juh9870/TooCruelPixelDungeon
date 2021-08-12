@@ -165,22 +165,21 @@ public enum HeroClass {
 			new PotionOfInvisibility().quantity(10).identify().collect();
 			new ReclaimTrap().setStoredTrap(GuardianTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
-			Generator.randomWeapon(0).identify().collect();
-			Generator.randomWeapon(1).identify().collect();
-			Generator.randomWeapon(2).identify().collect();
-			Generator.randomWeapon(3).identify().collect();
-			Generator.randomWeapon(4).identify().collect();
-			new ForceCube().identify().collect();
-			new Blindweed.Seed().collect();
-			hero.STR = 22;
-			new Flail().random().identify().collect();
+//			Generator.randomWeapon(0).identify().collect();
+//			Generator.randomWeapon(1).identify().collect();
+//			Generator.randomWeapon(2).identify().collect();
+//			Generator.randomWeapon(3).identify().collect();
+//			Generator.randomWeapon(4).identify().collect();
+//			new ForceCube().identify().collect();
+//			new Blindweed.Seed().collect();
+//			hero.STR = 22;
 
 			while(hero.lvl<30){
 				hero.earnExp(hero.maxExp(), PotionOfExperience.class);
 			}
 //			hero.earnExp(Hero.maxExp(30),hero.getClass());
-			new PlateArmor().upgrade(100).collect();
-			new Longsword().upgrade(10).identify().collect();
+//			new PlateArmor().upgrade(100).collect();
+//			new Longsword().upgrade(10).identify().collect();
 			new PotionOfHealing().quantity(100).collect();
 
 			Dungeon.gold=1000000;
@@ -188,8 +187,8 @@ public enum HeroClass {
 //			Buff.affect(hero, MindVision.class,1000000);
 //			Buff.affect(hero, Invisibility.class,1000000);
 
-			new Amulet().upgrade(13).collect();
-			new ScrollOfUpgrade().quantity(10).collect();
+//			new Amulet().upgrade(13).collect();
+//			new ScrollOfUpgrade().quantity(10).collect();
 		}
 
 		for (int s = 0; s < QuickSlot.SIZE; s++){

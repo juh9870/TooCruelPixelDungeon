@@ -21,13 +21,19 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Point;
+import com.watabou.utils.Random;
+
+import java.util.Arrays;
 
 public class StatueRoom extends SpecialRoom {
 
@@ -66,9 +72,42 @@ public class StatueRoom extends SpecialRoom {
 			cy = top + 2;
 			
 		}
-		
-		Statue statue = Statue.random();
-		statue.pos = cx + cy * level.width();
-		level.mobs.add( statue );
+
+		int nStatues = 1;
+		float mult = Challenges.nMobsMultiplier();
+		nStatues = (int) Math.max(nStatues * Math.sqrt(mult), nStatues + mult);
+
+		if (nStatues > 1) {
+			// 1 drop per 8 statues in a room
+			int dropStatues = (int) Math.ceil(nStatues / 8f);
+			// Offset target center a bit to randomize statues distribution around the main statue
+			final float fcx = cx + Random.Float()/10 - 0.05f;
+			final float fcy = cy + Random.Float()/10 - 0.05f;
+			Point[] points = points(1).toArray(new Point[0]);
+			Arrays.sort(points,(a,b)-> {
+				float adx=fcx-a.x;
+				float ady=fcy-a.y;
+				float bdx=fcx-b.x;
+				float bdy=fcy-b.y;
+				return (int) Math.signum(adx * adx + ady * ady - (bdx * bdx + bdy * bdy));
+			});
+			for (int i = 0; i < points.length && nStatues > 0; i++) {
+				int cell = level.pointToCell(points[i]);
+
+				if ((Terrain.flags[level.map[cell]] & Terrain.PASSABLE) == 0) continue;
+				Statue statue = Statue.random();
+				statue.pos = cell;
+				level.mobs.add(statue);
+				if (dropStatues <= 0) {
+					Buff.affect(statue, NoReward.class);
+				}
+				dropStatues--;
+				nStatues--;
+			}
+		} else {
+			Statue statue = Statue.random();
+			statue.pos = cx + cy * level.width();
+			level.mobs.add(statue);
+		}
 	}
 }

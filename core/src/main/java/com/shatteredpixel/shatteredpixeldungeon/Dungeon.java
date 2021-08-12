@@ -168,7 +168,8 @@ public class Dungeon {
 	
 	public static int depth;
 	public static int gold;
-	
+	public static int tokens;
+
 	public static HashSet<Integer> chapters;
 
 	public static SparseArray<ArrayList<Item>> droppedItems;
@@ -185,9 +186,8 @@ public class Dungeon {
 
         seed = DungeonSeed.randomSeed();
 //        if(DeviceCompat.isDebug()){
-//        	seed = 2829233296842L;
+//        	seed = 22503614417L;
 //		}
-//        seed = 3596304741126l;
 
         modifiers = SPDSettings.modifiers();
         challengesInform = false;
@@ -219,8 +219,9 @@ public class Dungeon {
 		
 		depth = 0;
 		if (DeviceCompat.isDebug())
-			depth = 19;
+			depth = 0;
 		gold = 0;
+		tokens = 0;
 
 		droppedItems = new SparseArray<>();
 		portedItems = new SparseArray<>();
@@ -472,6 +473,7 @@ public class Dungeon {
 	private static final String MOBS_TO_CHAMPION	= "mobs_to_champion";
 	private static final String HERO		= "hero";
 	private static final String GOLD		= "gold";
+	private static final String BJTOKENS	= "bj_tokens";
 	private static final String DEPTH		= "depth";
 	private static final String DROPPED     = "dropped%d";
 	private static final String PORTED      = "ported%d";
@@ -492,6 +494,7 @@ public class Dungeon {
 			bundle.put( MOBS_TO_CHAMPION, mobsToChampion );
 			bundle.put( HERO, hero );
 			bundle.put( GOLD, gold );
+			bundle.put( BJTOKENS, tokens );
 			bundle.put( DEPTH, depth );
 
 			for (int d : droppedItems.keyArray()) {
@@ -649,6 +652,7 @@ public class Dungeon {
 		hero = (Hero)bundle.get( HERO );
 		
 		gold = bundle.getInt( GOLD );
+		tokens = bundle.getInt( BJTOKENS );
 		depth = bundle.getInt( DEPTH );
 		
 		Statistics.restoreFromBundle( bundle );

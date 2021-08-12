@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Point;
@@ -115,6 +116,7 @@ public class BlackjackRoom extends SpecialRoom {
             items.remove(0);
             h.type = type;
             h.paid = paid;
+            h.currency = Currency.TOKENS;
             h.sprite.link();
             h.sprite.drop();
             CellEmitter.get( c ).burst( ElmoParticle.FACTORY, 4 );

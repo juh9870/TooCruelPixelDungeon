@@ -24,14 +24,15 @@ package com.shatteredpixel.shatteredpixeldungeon.mechanics;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
-import com.watabou.utils.PathFinder;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Ballistica {
-	
+
+
+	private Level level;
 	//note that the path is the FULL path of the projectile, including tiles after collision.
 	//make sure to generate a subPath for the common case of going source to collision.
 	public ArrayList<Integer> path = new ArrayList<>();
@@ -54,6 +55,10 @@ public class Ballistica {
 
 
 	public Ballistica( int from, int to, int params ){
+		this(from, to, params, Dungeon.level);
+	}
+	public Ballistica( int from, int to, int params, Level level ){
+		this.level = level;
 		sourcePos = from;
 		collisionProperties = params;
 		build(from, to,
@@ -74,7 +79,7 @@ public class Ballistica {
 
 
 	private void build( int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain, boolean ignoreSoftSolid ) {
-		int w = Dungeon.level.width();
+		int w = level.width();
 		
 		int x0 = from % w;
 		int x1 = to % w;
@@ -114,18 +119,18 @@ public class Ballistica {
 		int cell = from;
 		
 		int err = dA / 2;
-		while (Dungeon.level.insideMap(cell)) {
+		while (level.insideMap(cell)) {
 			
 			//if we're in a wall, collide with the previous cell along the path.
 			//we don't use solid here because we don't want to stop short of closed doors
-			if (stopTerrain && cell != sourcePos && !Dungeon.level.passable[cell] && !Dungeon.level.avoid[cell]) {
+			if (stopTerrain && cell != sourcePos && !level.passable[cell] && !level.avoid[cell]) {
 				collide(path.get(path.size() - 1));
 			}
 			
 			path.add(cell);
 
-			if (stopTerrain && cell != sourcePos && Dungeon.level.solid[cell]) {
-				if (ignoreSoftSolid && (Dungeon.level.passable[cell] || Dungeon.level.avoid[cell])) {
+			if (stopTerrain && cell != sourcePos && level.solid[cell]) {
+				if (ignoreSoftSolid && (level.passable[cell] || level.avoid[cell])) {
 					//do nothing
 				} else {
 					collide(cell);
