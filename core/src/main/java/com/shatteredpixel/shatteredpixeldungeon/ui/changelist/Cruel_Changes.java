@@ -86,7 +86,7 @@ public class Cruel_Changes {
         ));
         changes.addButton(new ChangeButton(new TimekeepersHourglass(), "Balance changes",
                 "Balance Changes:\n" +
-                        "_-_ Ring of Force is now affected by Untiered"
+                        "_-_ Ring of Force and missile weapons are now affected by Untiered"
         ));
 
         changes = new ChangeInfo("v0.4.3c", false, "");

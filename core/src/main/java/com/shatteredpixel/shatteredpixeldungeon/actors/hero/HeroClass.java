@@ -82,6 +82,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DistortionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
 import com.watabou.utils.DeviceCompat;
 
 public enum HeroClass {
@@ -167,6 +168,7 @@ public enum HeroClass {
 			Generator.randomWeapon(3).identify().collect();
 			Generator.randomWeapon(4).identify().collect();
 			new ForceCube().identify().collect();
+			new Blindweed.Seed().collect();
 			hero.STR = 22;
 			new Flail().random().identify().collect();
 

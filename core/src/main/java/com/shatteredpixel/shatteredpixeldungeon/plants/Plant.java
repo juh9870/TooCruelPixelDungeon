@@ -207,6 +207,7 @@ public abstract class Plant implements Bundlable {
 
 		@Override
 		public String desc() {
+			if (Challenges.LOBOTOMY.enabled()) return Messages.get(PlaceHolder.class,"desc");
 			String desc = Messages.get(plantClass, "desc");
 			if (Dungeon.hero.subClass == HeroSubClass.WARDEN){
 				desc += "\n\n" + Messages.get(plantClass, "warden_desc");
@@ -222,7 +223,7 @@ public abstract class Plant implements Bundlable {
 		
 		@Override
 		public String name() {
-			if (Challenges.LOBOTOMY.enabled())return Messages.get(PlaceHolder.class,"name");
+			if (Challenges.LOBOTOMY.enabled()) return Messages.get(PlaceHolder.class,"name");
 			return super.name();
 		}
 		
