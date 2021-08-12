@@ -186,7 +186,7 @@ public class Dungeon {
 
         seed = DungeonSeed.randomSeed();
 //        if(DeviceCompat.isDebug()){
-//        	seed = 22503614417L;
+//        	seed = 5196518027969l;
 //		}
 
         modifiers = SPDSettings.modifiers();
@@ -219,7 +219,7 @@ public class Dungeon {
 		
 		depth = 0;
 		if (DeviceCompat.isDebug())
-			depth = 0;
+			depth = 5;
 		gold = 0;
 		tokens = 0;
 

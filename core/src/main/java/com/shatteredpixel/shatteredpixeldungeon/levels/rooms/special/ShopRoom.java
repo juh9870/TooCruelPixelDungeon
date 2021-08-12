@@ -64,7 +64,7 @@ import java.util.HashMap;
 
 public class ShopRoom extends SpecialRoom {
 
-	private ArrayList<Item> itemsToSpawn;
+	private static ArrayList<Item> itemsToSpawn;
 	
 	@Override
 	public int minWidth() {
@@ -146,6 +146,7 @@ public class ShopRoom extends SpecialRoom {
 			level.drop( item, cell ).type = Heap.Type.FOR_SALE;
 		}
 
+		itemsToSpawn = null;
 	}
 	
 	protected static ArrayList<Item> generateItems() {
