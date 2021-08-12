@@ -231,6 +231,8 @@ abstract public class MissileWeapon extends Weapon {
 				quantity++;
 			}
 		}
+
+		tier = fixTier(tier);
 		return this;
 	}
 	
@@ -364,7 +366,13 @@ abstract public class MissileWeapon extends Weapon {
 		parent = null;
 		return super.doPickUp(hero);
 	}
-	
+
+	@Override
+	public boolean collect() {
+		tier = fixTier(tier);
+		return super.collect();
+	}
+
 	@Override
 	public boolean isIdentified() {
 		return true;
@@ -422,11 +430,13 @@ abstract public class MissileWeapon extends Weapon {
 	}
 	
 	private static final String DURABILITY = "durability";
+	private static final String TIER = "tier";
 	
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(DURABILITY, durability);
+		bundle.put(TIER, tier);
 	}
 	
 	private static boolean bundleRestoring = false;
@@ -437,5 +447,7 @@ abstract public class MissileWeapon extends Weapon {
 		super.restoreFromBundle(bundle);
 		bundleRestoring = false;
 		durability = bundle.getInt(DURABILITY);
+		if (bundle.contains(TIER))
+			tier = bundle.getInt(TIER);
 	}
 }

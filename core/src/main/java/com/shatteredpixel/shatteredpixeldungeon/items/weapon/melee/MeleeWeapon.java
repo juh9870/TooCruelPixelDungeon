@@ -26,9 +26,11 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
 public class MeleeWeapon extends Weapon {
@@ -138,27 +140,14 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public Item random() {
 		super.random();
-		if (Challenges.RETIERED.enabled()) {
-			if (tier != 1)
-				switch (Random.Int(4)) {
-					case 0:
-						// 25% chance for tier + 1
-						tier++;
-						break;
-					case 1:
-						//25% chance for tier to remain the same
-						break;
-					default:
-						// 50% chance for tier - 1
-						tier--;
-				}
-		}
-		if (Challenges.UNTIERED.enabled()) {
-			int upgrade = tier - 1;
-			tier = 1;
-			upgrade(upgrade);
-		}
+		tier = fixTier(tier);
 		return this;
+	}
+
+	@Override
+	public boolean collect() {
+		tier = fixTier(tier);
+		return super.collect();
 	}
 
 	private static final String TIER = "tier";

@@ -50,12 +50,9 @@ public class Legion extends Buff {
                     GLog.n(Messages.get(Challenges.class, "horde_wave"));
                 }
 
-                int nAreas = wantSpawn / 50;
-                int mobsPerArea = wantSpawn / nAreas;
-
-                for (int i = 0; i < nAreas; i++) {
-                    int nMobs = mobsPerArea;
-                    if (i == 0) nMobs += wantSpawn - mobsPerArea * nAreas;
+                while (wantSpawn>0){
+                    int nMobs = Math.min(50,wantSpawn);
+                    wantSpawn-=nMobs;
                     int pos = Dungeon.level.randomRespawnCell(null, true);
                     SummoningTrap.summonMobs(pos, nMobs, 5, (Mob mob) -> {
                         if (Dungeon.hero.isAlive())

@@ -58,6 +58,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -128,6 +129,32 @@ abstract public class Weapon extends KindOfWeapon {
 			//gains enough uses to ID over 0.5 levels
 			availableUsesToID = Math.min(USES_TO_ID/2f, availableUsesToID + levelPercent * USES_TO_ID);
 		}
+	}
+
+	protected int fixTier(int tier){
+		if (Challenges.RETIERED.enabled()) {
+			if (tier != 1) {
+				switch (Random.Int(4)) {
+					case 0:
+						// 25% chance for tier + 1
+						tier++;
+						break;
+					case 1:
+						//25% chance for tier to remain the same
+						break;
+					default:
+						// 50% chance for tier - 1
+						tier--;
+				}
+				tier = GameMath.gate(1, tier, 5);
+			}
+		}
+		if (Challenges.UNTIERED.enabled()) {
+			int upgrade = tier - 1;
+			tier = 1;
+			upgrade(upgrade);
+		}
+		return tier;
 	}
 	
 	private static final String USES_LEFT_TO_ID = "uses_left_to_id";

@@ -77,6 +77,18 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
+        changes = new ChangeInfo("v0.4.3d", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "Fixed:\n" +
+                        "_-_ Fixed Retiered/Untiered sometimes not applying their bonus"
+        ));
+        changes.addButton(new ChangeButton(new TimekeepersHourglass(), "Balance changes",
+                "Balance Changes:\n" +
+                        "_-_ Ring of Force is now affected by Untiered"
+        ));
+
         changes = new ChangeInfo("v0.4.3c", false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);

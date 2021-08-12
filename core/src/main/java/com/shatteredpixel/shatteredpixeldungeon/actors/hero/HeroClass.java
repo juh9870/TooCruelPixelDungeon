@@ -56,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -74,6 +75,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Greatshield;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ForceCube;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DistortionTrap;
@@ -164,6 +166,8 @@ public enum HeroClass {
 			Generator.randomWeapon(2).identify().collect();
 			Generator.randomWeapon(3).identify().collect();
 			Generator.randomWeapon(4).identify().collect();
+			new ForceCube().identify().collect();
+			hero.STR = 22;
 			new Flail().random().identify().collect();
 
 			Dungeon.gold=1000000;
@@ -173,7 +177,6 @@ public enum HeroClass {
 
 			new Amulet().upgrade(13).collect();
 			new ScrollOfUpgrade().quantity(10).collect();
-			new Greatshield().random().upgrade(20).identify().collect();
 		}
 
 		for (int s = 0; s < QuickSlot.SIZE; s++){
