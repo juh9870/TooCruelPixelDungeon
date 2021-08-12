@@ -82,11 +82,18 @@ public class Cruel_Changes {
         changeInfos.add(changes);
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "Fixed:\n" +
-                        "_-_ Fixed Retiered/Untiered sometimes not applying their bonus"
+                        "_-_ Fixed Retiered/Untiered sometimes not applying their bonus\n" +
+                        "_-_ Fixed Patch room causing freeze with negative fill\n" +
+                        "_-_ Fixed seeds description when Lobotomy is enabled\n" +
+                        "_-_ Fixed Dwarf King freeze with Shared Pain"
         ));
         changes.addButton(new ChangeButton(new TimekeepersHourglass(), "Balance changes",
                 "Balance Changes:\n" +
-                        "_-_ Ring of Force and missile weapons are now affected by Untiered"
+                        "_-_ Ring of Force and missile weapons are now affected by Untiered\n" +
+                        "_-_ Blackjack shops now use their own currency instead of gold\n" +
+                        "_-_ Piranhas and Living Statues are now affected by challenges that increase mob count\n" +
+                        "_-_ Bosses can't receive damage from SharedPain anymore.\n" +
+                        "_-_ Bosses receive full damage with shared pain"
         ));
 
         changes = new ChangeInfo("v0.4.3c", false, "");
