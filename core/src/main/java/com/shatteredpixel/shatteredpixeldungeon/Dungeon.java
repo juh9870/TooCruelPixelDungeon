@@ -186,7 +186,7 @@ public class Dungeon {
 
         seed = DungeonSeed.randomSeed();
 //        if(DeviceCompat.isDebug()){
-//        	seed = 5196518027969l;
+//        	seed = 60765904783L;
 //		}
 
         modifiers = SPDSettings.modifiers();
@@ -195,6 +195,10 @@ public class Dungeon {
             modifiers.randomize(seed);
             challengesInform = true;
         }
+
+//        if(DeviceCompat.isDebug()){
+//        	modifiers.fromBigIntString("4ODAY0KCG");
+//		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 
 		Actor.clear();
@@ -219,7 +223,7 @@ public class Dungeon {
 		
 		depth = 0;
 		if (DeviceCompat.isDebug())
-			depth = 5;
+			depth = 10;
 		gold = 0;
 		tokens = 0;
 

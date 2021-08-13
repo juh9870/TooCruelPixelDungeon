@@ -527,7 +527,7 @@ public enum Challenges implements Hero.Doom {
     }
     public static String displayString(boolean[] challenges) {
         String str = new StringBuilder(saveString(challenges)).reverse().toString();
-        return new BigInteger(str,2).toString(36).toUpperCase();
+        return new BigInteger(str,2).toString(36);
     }
 
     public static boolean[] fromString(String challenges) {

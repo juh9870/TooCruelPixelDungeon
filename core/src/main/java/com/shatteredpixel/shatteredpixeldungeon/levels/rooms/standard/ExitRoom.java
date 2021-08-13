@@ -28,7 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 
 public class ExitRoom extends StandardRoom {
-	
+	{
+		important = true;
+	}
 	@Override
 	public int minWidth() {
 		return Math.max(super.minWidth(), 5);

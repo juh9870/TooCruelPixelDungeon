@@ -97,7 +97,7 @@ public class PoolRoom extends SpecialRoom {
 
 		int nFish = NPIRANHAS;
 		float mult = Challenges.nMobsMultiplier();
-		nFish = (int) Math.max(nFish * Math.sqrt(mult), nFish + mult);
+		nFish = (int) Math.max(nFish * Math.sqrt(mult), nFish + mult - 1);
 
 		if (nFish > 10) {
 			HashSet<Integer> path = new HashSet<>(new Ballistica(level.pointToCell(door), pos, Ballistica.STOP_TARGET, level).path);

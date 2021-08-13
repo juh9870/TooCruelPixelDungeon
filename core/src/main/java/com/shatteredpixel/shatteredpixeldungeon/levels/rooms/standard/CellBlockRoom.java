@@ -45,6 +45,8 @@ public class CellBlockRoom extends StandardRoom {
 
 		int rows = (internal.width() - 1)/3;
 		int cols = (internal.height() - 1)/3;
+		rows = Math.min(rows, 3);
+		cols = Math.min(cols, 3);
 
 		if (internal.height() == 11) cols--;
 		if (internal.width() == 11) rows--;

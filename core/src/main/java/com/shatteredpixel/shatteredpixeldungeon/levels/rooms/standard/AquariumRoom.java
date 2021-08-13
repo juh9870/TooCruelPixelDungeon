@@ -58,7 +58,7 @@ public class AquariumRoom extends StandardRoom {
 		int minDim = Math.min(width(), height());
 		int numFish = (minDim - 4)/3; //1-3 fish, depending on room size
 		float mult = Challenges.nMobsMultiplier();
-		numFish = (int) Math.max(numFish * Math.sqrt(mult), numFish+mult);
+		numFish = (int) Math.max(numFish * Math.sqrt(mult), numFish + mult - 1);
 		ArrayList<Point> points = points(3);
 		Random.shuffle(points);
 		for (int i = 0; i < points.size() && numFish > 0; i++) {

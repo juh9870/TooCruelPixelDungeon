@@ -40,7 +40,13 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	
 	public int distance;
 	public int price = 1;
-	
+
+	// Levelgen variables
+	// Prevents room from be removed from the rooms pool on exceedingly large levels
+	public boolean important = false;
+	// Prevents room to be removed from rooms pull in all cases
+	public boolean preserve = false;
+
 	public Room(){
 		super();
 	}

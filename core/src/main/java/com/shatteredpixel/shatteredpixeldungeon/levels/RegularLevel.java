@@ -87,38 +87,70 @@ public abstract class RegularLevel extends Level {
 	protected Room roomExit;
     protected float nRooms = -1;
 
+    protected static ArrayList<Room> essentialRooms = new ArrayList<>();
+
 	@Override
 	protected boolean build() {
-		
+
 		builder = builder();
-		
-        if(builder instanceof RegularBuilder){
-            if(Challenges.LINEAR.enabled()) {
-                ((RegularBuilder) builder).setPathLength(1, new float[]{1});
-                ((RegularBuilder) builder).setPathVariance(0);
-            }
-            if(Challenges.BIGGER_LEVELS.enabled()){
-                ((RegularBuilder) builder).setExtraConnectionChance(1f);
-            }
-        }
-		ArrayList<Room> initRooms = initRooms();
-		Random.shuffle(initRooms);
-		
-		do {
-			for (Room r : initRooms){
-				r.neigbours.clear();
-				r.connected.clear();
+
+		if (builder instanceof RegularBuilder) {
+			if (Challenges.LINEAR.enabled()) {
+				((RegularBuilder) builder).setPathLength(1, new float[]{1});
+				((RegularBuilder) builder).setPathVariance(0);
 			}
-			rooms = builder.build((ArrayList<Room>)initRooms.clone());
-		} while (rooms == null);
-		
-        boolean painted = painter().paint(this, rooms);
-        if (length > Level.SIZE_LIMIT) {
-            float mult = Challenges.roomSizeMult();
-            nRooms -= 0.3334f * mult;
-        }
-        return painted;
-    }
+			if (Challenges.BIGGER_LEVELS.enabled()) {
+				((RegularBuilder) builder).setExtraConnectionChance(1f);
+			}
+		}
+		ArrayList<Room> initRooms = initRooms();
+		initRooms.addAll(essentialRooms);
+		essentialRooms.clear();
+		boolean painted = false;
+		float toRemove = 0;
+		do {
+			Random.shuffle(initRooms);
+			do {
+				for (Room r : initRooms) {
+					r.neigbours.clear();
+					r.connected.clear();
+				}
+				rooms = builder.build((ArrayList<Room>) initRooms.clone());
+			} while (rooms == null);
+
+			painted = painter().paint(this, rooms);
+			if (painted) break;
+			if (length > Level.SIZE_LIMIT) {
+				float mult = Challenges.roomSizeMult();
+				toRemove += 0.3334 * mult;
+				for (int i = 0; i < initRooms.size() && toRemove >= 1; i++) {
+					Room r = initRooms.get(i);
+					if (r instanceof StandardRoom && !r.important && !r.preserve) {
+						initRooms.remove(i);
+						i--;
+						toRemove--;
+						nRooms--;
+					}
+				}
+				// We are out of rooms to remove but level is still too large
+				if (toRemove >= 1) {
+					break;
+				}
+			} else {
+				break;
+			}
+		} while (true);
+
+		if (!painted) {
+			for (int i = 0; i < initRooms.size(); i++) {
+				Room r = initRooms.get(i);
+				if (r.preserve) {
+					essentialRooms.add(r);
+				}
+			}
+		}
+		return painted;
+	}
 		
     protected HashSet<Room> emptyRooms(){
         HashSet<Room> empty = new HashSet<>();

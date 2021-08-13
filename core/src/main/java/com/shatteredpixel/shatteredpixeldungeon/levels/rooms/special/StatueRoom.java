@@ -75,7 +75,7 @@ public class StatueRoom extends SpecialRoom {
 
 		int nStatues = 1;
 		float mult = Challenges.nMobsMultiplier();
-		nStatues = (int) Math.max(nStatues * Math.sqrt(mult), nStatues + mult);
+		nStatues = (int) Math.max(nStatues * Math.sqrt(mult), nStatues + mult - 1);
 
 		if (nStatues > 1) {
 			// 1 drop per 8 statues in a room

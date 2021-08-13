@@ -44,9 +44,8 @@ public class ArmoredStatue extends Statue {
 	public ArmoredStatue(){
 		super();
 
-		do {
-			armor = Generator.randomArmor();
-		} while (armor.cursed);
+		armor = Generator.randomArmor();
+		armor.cursed = false;
 		armor.inscribe(Armor.Glyph.random());
 
 		//double HP

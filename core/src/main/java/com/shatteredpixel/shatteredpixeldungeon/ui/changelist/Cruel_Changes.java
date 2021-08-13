@@ -77,7 +77,7 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
-        changes = new ChangeInfo("v0.4.3d", false, "");
+        changes = new ChangeInfo("v0.4.3d & v0.4.3e", false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
@@ -85,7 +85,9 @@ public class Cruel_Changes {
                         "_-_ Fixed Retiered/Untiered sometimes not applying their bonus\n" +
                         "_-_ Fixed Patch room causing freeze with negative fill\n" +
                         "_-_ Fixed seeds description when Lobotomy is enabled\n" +
-                        "_-_ Fixed Dwarf King freeze with Shared Pain"
+                        "_-_ Fixed Dwarf King freeze with Shared Pain\n" +
+                        "_-_ Fixed Armored statue causing freeze with Cursed challenge\n" +
+                        "_-_ Fixed more levelgen issues"
         ));
         changes.addButton(new ChangeButton(new TimekeepersHourglass(), "Balance changes",
                 "Balance Changes:\n" +

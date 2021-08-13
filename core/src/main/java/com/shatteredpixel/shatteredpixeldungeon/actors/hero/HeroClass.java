@@ -148,8 +148,8 @@ public enum HeroClass {
 		if (DeviceCompat.isDebug()) {
 			new ScrollOfIdentify().identify();
 
-			new ScrollOfMagicMapping().quantity(10).identify().collect();
-			new ScrollOfPsionicBlast().quantity(10).identify().collect();
+			new ScrollOfMagicMapping().quantity(64).identify().collect();
+			new ScrollOfPsionicBlast().quantity(64).identify().collect();
 //			new ScrollOfUpgrade().quantity(1).identify().collect();
 //			new ScrollOfEnchantment().quantity(1).identify().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
@@ -161,8 +161,8 @@ public enum HeroClass {
 //			new StoneOfIntuition().quantity(1).identify().collect();
 //			new StoneOfEnchantment().quantity(1).identify().collect();
 //			new Stylus().quantity(1).identify().collect();
-			new PotionOfMindVision().quantity(10).identify().collect();
-			new PotionOfInvisibility().quantity(10).identify().collect();
+			new PotionOfMindVision().quantity(64).identify().collect();
+			new PotionOfInvisibility().quantity(64).identify().collect();
 			new ReclaimTrap().setStoredTrap(GuardianTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 //			Generator.randomWeapon(0).identify().collect();
@@ -187,7 +187,7 @@ public enum HeroClass {
 //			Buff.affect(hero, MindVision.class,1000000);
 //			Buff.affect(hero, Invisibility.class,1000000);
 
-//			new Amulet().upgrade(13).collect();
+			new Amulet().upgrade(13).collect();
 //			new ScrollOfUpgrade().quantity(10).collect();
 		}
 

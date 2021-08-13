@@ -22,16 +22,20 @@
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AmuletScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.watabou.noosa.Game;
+import com.watabou.utils.DeviceCompat;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,11 +43,15 @@ import java.util.ArrayList;
 public class Amulet extends Item {
 	
 	private static final String AC_END = "END";
-	
+	private static final String AC_DESCEND = "DESCEND";
+
 	{
 		image = ItemSpriteSheet.AMULET;
 
 		defaultAction = AC_END;
+		if(DeviceCompat.isDebug()){
+			defaultAction = AC_DESCEND;
+		}
 
 		levelKnown = true;
 
@@ -54,6 +62,9 @@ public class Amulet extends Item {
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_END );
+		if(DeviceCompat.isDebug()){
+			actions.add( AC_DESCEND );
+		}
 		return actions;
 	}
 	
@@ -64,6 +75,9 @@ public class Amulet extends Item {
 
 		if (action.equals(AC_END)) {
 			showAmuletScene( false );
+		} else if (action.equals(AC_DESCEND)) {
+			InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+			Game.switchScene(InterlevelScene.class);
 		}
 	}
 	

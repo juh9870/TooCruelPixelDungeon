@@ -7,6 +7,7 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -134,6 +135,10 @@ public class Modifiers implements Bundlable {
         }
 
         Random.popGenerator();
+    }
+
+    public void fromBigIntString(String str) {
+        challenges = Challenges.fromString(new StringBuilder(new BigInteger(str, 36).toString(2)).reverse().toString());
     }
 
     public WndChallenges.ChallengePredicate select(int amount, int old) {

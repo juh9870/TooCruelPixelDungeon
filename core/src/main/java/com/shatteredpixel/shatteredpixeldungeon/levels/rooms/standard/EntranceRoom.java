@@ -32,7 +32,9 @@ import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class EntranceRoom extends StandardRoom {
-	
+	{
+		important = true;
+	}
 	@Override
 	public int minWidth() {
 		return Math.max(super.minWidth(), 5);

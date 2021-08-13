@@ -31,7 +31,10 @@ import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class BlacksmithRoom extends StandardRoom {
-	
+
+	{
+		important = preserve = true;
+	}
 	@Override
 	public int minWidth() {
 		return Math.max(super.minWidth(), 6);
