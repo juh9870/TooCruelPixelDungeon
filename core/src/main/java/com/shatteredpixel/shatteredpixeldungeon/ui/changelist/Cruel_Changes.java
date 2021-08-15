@@ -79,6 +79,12 @@ public class Cruel_Changes {
         Image danceFloorImg = new Image(Assets.Environment.DANCE_FLOOR, 0, 0, 16, 16);
         danceFloorImg.color(0xFF0000);
         changes.addButton(new ChangeButton(danceFloorImg, Messages.get(Challenges.class, "dance_floor"), Messages.get(Challenges.class, "dance_floor_desc")));
+        danceFloorImg = new Image(Assets.Environment.DANCE_FLOOR, 16, 0, 16, 16);
+        danceFloorImg.color(0x00FF00);
+        changes.addButton(new ChangeButton(danceFloorImg, Messages.get(Challenges.class, "humppa"), Messages.get(Challenges.class, "humppa_desc")));
+        danceFloorImg = new Image(Assets.Environment.DANCE_FLOOR, 32, 0, 16, 16);
+        danceFloorImg.color(0x0000FF);
+        changes.addButton(new ChangeButton(danceFloorImg, Messages.get(Challenges.class, "the_last_waltz"), Messages.get(Challenges.class, "the_last_waltz_desc")));
 
 
         changes = new ChangeInfo("v0.4.3", true, "");
