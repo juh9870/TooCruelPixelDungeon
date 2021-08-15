@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -17,6 +18,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.utils.ColorMath;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
@@ -125,7 +127,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
     }
 
     private void updateCellGraphic(int cell, int colorIndex, int timeRemaining, boolean pause) {
-        int color = colors[colorIndex * 4 + Random.Int(4)];
+        int color = colors[colorIndex * 4 /*+ Random.Int(4)*/];
         DanceTile img = squares.get(cell);
         if (Dungeon.level.heroFOV[cell] && (Dungeon.level.passable[cell] || Dungeon.level.avoid[cell])) {
             if (img == null) {
@@ -135,8 +137,17 @@ public class DanceFloor extends Blob implements Hero.Doom {
             }
             img.color(color);
             img.setFrame(colorIndex - 1);
-            if (pause) img.scale.set(0.5f);
-            else img.scale.set(1f);
+            if (!Challenges.THE_LAST_WALTZ.enabled()) {
+                if (pause) img.scale.set(0.5f);
+                else img.scale.set(1f);
+            } else {
+                img.visible = !pause;
+            }
+
+            if (!pause) {
+                float value = 4 / 5f * timeRemaining / CYCLE_LENGTH + 0.2f;
+                img.color(ColorMath.multiply(color, value));
+            }
 
         } else {
             if (img != null) {
@@ -163,6 +174,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
         if (cur == null) cur = new int[level.length()];
         if (off == null) off = new int[cur.length];
 
+        boolean waltzEnabled = Challenges.HUMPPA.enabled();
         int row = level.width();
         int[] squares = new int[row * row];
         Random.pushGenerator(Dungeon.seed + Dungeon.depth);
@@ -171,7 +183,9 @@ public class DanceFloor extends Blob implements Hero.Doom {
             if (color == RED || color == BLACK) {
                 color = color % LAST_COLOR + 1;
             }
-            squares[i] = color;
+            int time = 0;
+            if (waltzEnabled) time = Random.Int(CYCLE_LENGTH + PAUSE_LENGTH);
+            squares[i] = storeData(color, 0, time, false);
         }
         Random.popGenerator();
         int squaresPerRow = (int) Math.ceil(1f * row / SQUARE_SIZE);
@@ -179,8 +193,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
             int x = i % row;
             int y = i / row;
             int square = (x / SQUARE_SIZE) + (y / SQUARE_SIZE) * (squaresPerRow);
-            int color = squares[square];
-            cur[i] = storeData(color, 0, 0, false);
+            cur[i] = storeData(squares[square], 0, 0, false);
             volume += cur[i];
         }
         area.union(0, 0);
@@ -189,6 +202,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
 
     @Override
     public String tileDesc(int cell) {
+        if (((cur[cell] >> 12) & 1) != 0) return null;
         int curColor = cur[cell] & 0xF;
         int nextColor = curColor % LAST_COLOR + 1;
         if (((cur[cell] >> 4) & 0xF) == 0) {
