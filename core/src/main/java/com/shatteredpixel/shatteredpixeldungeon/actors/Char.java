@@ -54,6 +54,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevengeFury;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevengeRage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ShieldBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
@@ -614,14 +615,18 @@ public abstract class Char extends Actor {
 		}
 
 		if (!isAlive()) {
-			if (OVERKILL > 0 && Challenges.REVENGE.enabled()) {
+			if ((OVERKILL > 0 || Challenges.REVENGE_FURY.enabled()) && Challenges.REVENGE.enabled()) {
 				if (alignment != Char.Alignment.ALLY) {
+					boolean fury = Challenges.REVENGE_FURY.enabled();
 					for (Mob mob : Dungeon.level.mobs) {
 						if (fieldOfView[mob.pos]) {
 							if (mob instanceof NPC) continue;
 							if (mob == this) continue;
 							if (mob.alignment == Char.Alignment.ALLY) continue;
-							Buff.affect(mob, RevengeRage.class).add(OVERKILL);
+							if(OVERKILL>0)
+								Buff.affect(mob, RevengeRage.class).add(OVERKILL);
+							if(fury)
+								Buff.append(mob, RevengeFury.class, 10f);
 							mob.sprite.emitter().start(Speck.factory(Speck.UP), 0.2f, 3);
 						}
 					}

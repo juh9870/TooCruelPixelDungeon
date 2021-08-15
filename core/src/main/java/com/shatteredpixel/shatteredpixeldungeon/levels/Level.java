@@ -626,7 +626,7 @@ public abstract class Level implements Bundlable {
 				if (mob.alignment == Char.Alignment.ENEMY && !mob.properties().contains(Char.Property.MINIBOSS)) {
 					count += mob.spawningWeight();
 					Stacking stack = mob.buff(Stacking.class);
-					if (stack != null) count += stack.count / 2f;
+					if (stack != null) count += stack.count;
 				}
 			}
 

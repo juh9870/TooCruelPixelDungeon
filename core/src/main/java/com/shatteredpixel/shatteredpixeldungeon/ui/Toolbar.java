@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -141,9 +142,17 @@ public class Toolbar extends Component {
 		add(btnInventory = new Tool(0, 0, 24, 26) {
 			private GoldIndicator gold;
 
+			private void showBackpack(){
+				GameScene.show(new WndBag(Dungeon.hero.belongings.backpack, null, WndBag.Mode.ALL, null));
+			}
+			private void showQuickBag(){
+				GameScene.show(new WndQuickBag(null));
+			}
+
 			@Override
 			protected void onClick() {
-				GameScene.show(new WndBag(Dungeon.hero.belongings.backpack, null, WndBag.Mode.ALL, null));
+				if (Challenges.ON_A_BEAT.enabled()) showQuickBag();
+				else showBackpack();
 			}
 			
 			@Override
@@ -153,7 +162,8 @@ public class Toolbar extends Component {
 			
 			@Override
 			protected boolean onLongClick() {
-				GameScene.show(new WndQuickBag(null));
+				if (!Challenges.ON_A_BEAT.enabled()) showQuickBag();
+				else showBackpack();
 				return true;
 			}
 

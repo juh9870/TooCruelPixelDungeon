@@ -8,9 +8,7 @@ public interface AttackAmplificationBuff {
 	default int damageFactorPriority(){
 		return 0;
 	}
-	default int damageFactor(int dmg){
-		return dmg;
-	}
+	int damageFactor(int dmg);
 
 	public static int damageFactor(int damage, Collection<Buff> buffs){
 		SortedMap<Integer,AttackAmplificationBuff> map = new TreeMap<>();

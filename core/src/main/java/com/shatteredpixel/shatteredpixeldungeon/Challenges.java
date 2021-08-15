@@ -188,7 +188,7 @@ public enum Challenges implements Hero.Doom {
     REBIRTH(30, 2, 4f),
     CHAOTIC_CONSTRUCTION(64, 30.5f, 2, 2f, INDIFFERENT_DESIGN),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
-    STACKING_SPAWN(57, 33.1f, 2, 2f),
+    STACKING_SPAWN(57, 33.1f, 2, 2f, STACKING),
     STACKING_CHAMPIONS(60, 33.2f, 2, 2f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
     BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
@@ -257,6 +257,7 @@ public enum Challenges implements Hero.Doom {
     LIMITED_UPGRADES(69, 2, 2f),
     DANCE_FLOOR(70, 2, 4f),
     SAVING_GRACE(72, 2, 2f, TUMBLER),
+    REVENGE_FURY(77, 2, 2f, REVENGE),
 
 
     //T3

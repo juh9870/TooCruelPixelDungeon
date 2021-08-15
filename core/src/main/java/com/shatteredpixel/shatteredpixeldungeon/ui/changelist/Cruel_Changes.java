@@ -82,9 +82,11 @@ public class Cruel_Changes {
         ));
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
-                "_-_ Added 7 new challenges, for the grand total of 77 challenges!\n" +
+                "_-_ Added 8 new challenges, for the grand total of 78 challenges!\n" +
                         "_-_ Reworked Arrowhead challenge\n" +
-                        "_-_ Removed Rook challenge"
+                        "_-_ Fixed Countdown and Shared Pain descriptions\n" +
+                        "_-_ Tweaked Grouping challenge to have more adequate numbers\n" +
+                        "_-_ Switched long/short clicks for opening backpack/quick use window when On a Beat is enabled"
         ));
 
         changes = new ChangeInfo("Challenges", false, "");
@@ -107,6 +109,10 @@ public class Cruel_Changes {
         Image rage = new Image(Assets.Interfaces.BUFFS_LARGE);
         rage.frame(film.get(BuffIndicator.FURY));
         changes.addButton(new ChangeButton(rage, Messages.get(Challenges.class, "revenge"), Messages.get(Challenges.class, "revenge_desc")));
+
+        rage = new Image(Assets.Interfaces.BUFFS_LARGE);
+        rage.frame(film.get(BuffIndicator.RAGE));
+        changes.addButton(new ChangeButton(rage, Messages.get(Challenges.class, "revenge_fury"), Messages.get(Challenges.class, "revenge_fury_desc")));
 
         Image vulnerable = new Image(Assets.Interfaces.BUFFS_LARGE);
         vulnerable.frame(film.get(BuffIndicator.VULNERABLE));
@@ -133,8 +139,7 @@ public class Cruel_Changes {
                         "_-_ Ring of Force and missile weapons are now affected by Untiered\n" +
                         "_-_ Blackjack shops now use their own currency instead of gold\n" +
                         "_-_ Piranhas and Living Statues are now affected by challenges that increase mob count\n" +
-                        "_-_ Bosses can't receive damage from SharedPain anymore.\n" +
-                        "_-_ Bosses receive full damage with shared pain"
+                        "_-_ When shared pain is enabled, bosses take full damage when attacked, but no damage from shared pain caused by other mobs. When attacking a boss it still causes Shared Pain damage to other enemies as much as 50% of the damage taken by a boss."
         ));
 
         changes = new ChangeInfo("v0.4.3c", false, "");

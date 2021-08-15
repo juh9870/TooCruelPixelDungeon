@@ -69,6 +69,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsi
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Spell;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFireblast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLightning;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
@@ -174,7 +175,7 @@ public enum HeroClass {
 //			Generator.randomWeapon(3).identify().collect();
 //			Generator.randomWeapon(4).identify().collect();
 			new ForceCube().upgrade(5000).identify().collect();
-			new WandOfLightning().upgrade(5000000).identify().collect();
+			new WandOfDisintegration().upgrade(5000000).identify().collect();
 //			new Blindweed.Seed().collect();
 //			hero.STR = 22;
 
