@@ -72,6 +72,21 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "Fixed:\n" +
+                        "_-_ Fixed Dwarf King freeze in older runs"
+        ));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 7 new challenges, for the grand total of 77 challenges!\n" +
+                        "_-_ Reworked Arrowhead challenge\n" +
+                        "_-_ Removed Rook challenge"
+        ));
+
         changes = new ChangeInfo("Challenges", false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
@@ -85,7 +100,17 @@ public class Cruel_Changes {
         danceFloorImg = new Image(Assets.Environment.DANCE_FLOOR, 32, 0, 16, 16);
         danceFloorImg.color(0x0000FF);
         changes.addButton(new ChangeButton(danceFloorImg, Messages.get(Challenges.class, "the_last_waltz"), Messages.get(Challenges.class, "the_last_waltz_desc")));
+        changes.addButton(new ChangeButton(new Ankh(), Messages.get(Challenges.class, "tumbler"), Messages.get(Challenges.class, "tumbler_desc")));
+        changes.addButton(new ChangeButton(new Ankh().bless(), Messages.get(Challenges.class, "saving_grace"), Messages.get(Challenges.class, "saving_grace_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Environment.TERRAIN_FEATURES, 128, 0, 16, 16), Messages.get(Challenges.class, "repeater"), Messages.get(Challenges.class, "repeater_desc")));
 
+        Image rage = new Image(Assets.Interfaces.BUFFS_LARGE);
+        rage.frame(film.get(BuffIndicator.FURY));
+        changes.addButton(new ChangeButton(rage, Messages.get(Challenges.class, "revenge"), Messages.get(Challenges.class, "revenge_desc")));
+
+        Image vulnerable = new Image(Assets.Interfaces.BUFFS_LARGE);
+        vulnerable.frame(film.get(BuffIndicator.VULNERABLE));
+        changes.addButton(new ChangeButton(vulnerable, Messages.get(Challenges.class, "arrowhead"), Messages.get(Challenges.class, "arrowhead_desc")));
 
         changes = new ChangeInfo("v0.4.3", true, "");
         changes.hardlight(Window.TITLE_COLOR);
@@ -287,7 +312,7 @@ public class Cruel_Changes {
 
         Image blood = new Image(Assets.Interfaces.BUFFS_LARGE);
         blood.frame(film.get(BuffIndicator.BLEEDING));
-        Image vulnerable = new Image(Assets.Interfaces.BUFFS_LARGE);
+        vulnerable = new Image(Assets.Interfaces.BUFFS_LARGE);
         vulnerable.frame(film.get(BuffIndicator.VULNERABLE));
         changes.addButton(new ChangeButton(blood, Messages.get(Challenges.class, "bloodbag"), Messages.get(Challenges.class, "bloodbag_desc")));
         changes.addButton(new ChangeButton(vulnerable, Messages.get(Challenges.class, "arrowhead"), Messages.get(Challenges.class, "arrowhead_desc")));

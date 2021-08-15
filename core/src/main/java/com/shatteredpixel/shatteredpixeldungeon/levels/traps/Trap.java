@@ -24,6 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
@@ -31,8 +33,6 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
-
-import java.util.List;
 
 public abstract class Trap implements Bundlable {
 
@@ -174,6 +174,11 @@ public abstract class Trap implements Bundlable {
 				t.pos=pos;
 				t.activate();
 			}
+		}
+		if (Challenges.REPEATER.enabled()) {
+			Trap t = Reflection.newInstance(getClass());
+			Dungeon.level.setTrap(t, pos).reveal();
+			Level.set(pos, Terrain.TRAP);
 		}
 	}
 

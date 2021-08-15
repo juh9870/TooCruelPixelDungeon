@@ -230,6 +230,9 @@ public class DwarfKing extends Mob {
 					}
 					return true;
 				} else {
+					if(buff(Summoning.class)==null && getSubjects().size()==0){
+						summonSubject(3);
+					}
 					spend(TICK);
 					return true;
 				}
@@ -271,6 +274,9 @@ public class DwarfKing extends Mob {
 					spend(TICK);
 					return true;
 				} else {
+					if(buff(Summoning.class)==null && getSubjects().size()==0){
+						summonSubject(3);
+					}
 					spend(TICK);
 					return true;
 				}

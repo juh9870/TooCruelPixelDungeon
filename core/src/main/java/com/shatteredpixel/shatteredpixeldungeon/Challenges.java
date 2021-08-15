@@ -146,6 +146,7 @@ public enum Challenges implements Hero.Doom {
     },
     EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
     INDIFFERENT_DESIGN(63, 16.6f, 1, 1f, EXTREME_CAUTION),
+    REPEATER(75,16.7f, 1, 1f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     STACKING(18, 1, 1.5f) {
         @Override
@@ -160,6 +161,7 @@ public enum Challenges implements Hero.Doom {
     RETIERED(66, 1, 1f),
     BARRIER_BREAKER(68, 1, 1f),
     TUMBLER(71, 1, 1f),
+    REVENGE(76, 1, 1.5f),
 
 
     //T2
@@ -253,8 +255,8 @@ public enum Challenges implements Hero.Doom {
     SCORCHED_EARTH(61, 2, 2f),
     UNTIERED(67, 2, 2f, RETIERED),
     LIMITED_UPGRADES(69, 2, 2f),
-    DANCE_FLOOR(70,2,4f),
-    SAVING_GRACE(72,2,2f),
+    DANCE_FLOOR(70, 2, 4f),
+    SAVING_GRACE(72, 2, 2f, TUMBLER),
 
 
     //T3
@@ -294,7 +296,7 @@ public enum Challenges implements Hero.Doom {
             return 3;
         }
     },
-    HUMPPA(74,3,6f,DANCE_FLOOR),
+    HUMPPA(74, 3, 6f, DANCE_FLOOR),
 
     // T4
     INFINITY_MOBS(55, 4, 16f) {
@@ -304,13 +306,13 @@ public enum Challenges implements Hero.Doom {
         }
     },
 
-    THE_LAST_WALTZ(73,4,11f, DANCE_FLOOR, MARATHON),
+    THE_LAST_WALTZ(73, 4, 11f, DANCE_FLOOR, MARATHON),
 
 
     // Modifiers
 
 
-    //Last id 73
+    //Last id 76
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
@@ -531,9 +533,10 @@ public enum Challenges implements Hero.Doom {
         }
         return s.toString();
     }
+
     public static String displayString(boolean[] challenges) {
         String str = new StringBuilder(saveString(challenges)).reverse().toString();
-        return new BigInteger(str,2).toString(36);
+        return new BigInteger(str, 2).toString(36);
     }
 
     public static boolean[] fromString(String challenges) {
@@ -592,7 +595,7 @@ public enum Challenges implements Hero.Doom {
     public static double secondsPerTurn() {
         if (MARATHON.enabled()) {
             if (ON_A_BEAT.enabled()) return 2;
-            if(HUMPPA.enabled()) return 12;
+            if (HUMPPA.enabled()) return 12;
             return 8;
         }
         return 1e64;

@@ -63,11 +63,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Spell;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFireblast;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLightning;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -159,7 +162,7 @@ public enum HeroClass {
 //			new ScrollOfForesight().quantity(1).identify().collect();
 //			new StoneOfAugmentation().quantity(1).identify().collect();
 //			new StoneOfIntuition().quantity(1).identify().collect();
-//			new StoneOfEnchantment().quantity(1).identify().collect();
+			new ScrollOfRecharging().quantity(100).identify().collect();
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(64).identify().collect();
 			new PotionOfInvisibility().quantity(64).identify().collect();
@@ -170,7 +173,8 @@ public enum HeroClass {
 //			Generator.randomWeapon(2).identify().collect();
 //			Generator.randomWeapon(3).identify().collect();
 //			Generator.randomWeapon(4).identify().collect();
-//			new ForceCube().identify().collect();
+			new ForceCube().upgrade(5000).identify().collect();
+			new WandOfLightning().upgrade(5000000).identify().collect();
 //			new Blindweed.Seed().collect();
 //			hero.STR = 22;
 

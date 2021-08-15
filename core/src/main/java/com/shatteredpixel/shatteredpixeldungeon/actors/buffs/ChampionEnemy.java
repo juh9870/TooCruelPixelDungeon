@@ -49,7 +49,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
-public abstract class ChampionEnemy extends Buff {
+public abstract class ChampionEnemy extends Buff implements DamageAmplificationBuff, AttackAmplificationBuff {
 
     public static HashSet<Class<? extends ChampionEnemy>> normalChampions = new HashSet<>(Arrays.asList(
             Blazing.class,
@@ -191,11 +191,22 @@ public abstract class ChampionEnemy extends Buff {
         return false;
     }
 
-    public float meleeDamageFactor() {
+
+    @Override
+    public float damageMultiplier() {
+        return damageTakenFactor();
+    }
+
+    @Override
+    public int damageFactor(int dmg) {
+        return (int) (dmg * meleeDamageFactor());
+    }
+
+    protected float meleeDamageFactor() {
         return 1f;
     }
 
-    public float damageTakenFactor() {
+    protected float damageTakenFactor() {
         return 1f;
     }
 

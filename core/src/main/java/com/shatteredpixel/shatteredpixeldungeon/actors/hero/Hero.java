@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Alchemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AttackAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
@@ -46,7 +47,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Combo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Foresight;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Fury;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GrowingRage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HoldFast;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -67,12 +67,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.N
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
@@ -546,13 +544,7 @@ public class Hero extends Char {
 		}
 		if (dmg < 0) dmg = 0;
 		
-		Berserk berserk = buff(Berserk.class);
-		if (berserk != null) dmg = berserk.damageFactor(dmg);
-
-		Endure.EndureTracker endure = buff(Endure.EndureTracker.class);
-		if (endure != null) dmg = endure.damageFactor(dmg);
-		
-		return buff(Fury.class) != null ? (int) (dmg * 1.5f) : dmg;
+		return dmg;
 	}
 	
 	@Override
@@ -1276,10 +1268,6 @@ public class Hero extends Char {
 	public void damage(int dmg, Object src) {
 		if (buff(TimekeepersHourglass.timeStasis.class) != null)
 			return;
-
-		if(Challenges.ARROWHEAD.enabled()){
-			dmg*=2;
-		}
 
 
 		if (!(src instanceof Hunger || src instanceof Viscosity.DeferedDamage) && damageInterrupt) {

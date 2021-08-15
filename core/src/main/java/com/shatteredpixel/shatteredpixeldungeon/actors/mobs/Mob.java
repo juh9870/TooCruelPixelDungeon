@@ -31,11 +31,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.DanceFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Arrowhead;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
@@ -43,19 +46,23 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RoomSeal;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SavingSlumber;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stacking;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Tumblered;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DirectableAlly;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Surprise;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Wound;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -63,6 +70,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourg
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Lucky;
@@ -781,6 +789,51 @@ public abstract class Mob extends Char {
 
     @Override
     public void die(Object cause) {
+
+        // Arrowhead stacks are added even if mob is not really dead
+        if(Challenges.ARROWHEAD.enabled()){
+            Buff.affect(Dungeon.hero,Arrowhead.class).addStack();
+        }
+
+        if (cause != Chasm.class &&
+                Challenges.TUMBLER.enabled() &&
+                (Dungeon.depth % 5) != 0 &&
+                buff(Tumblered.class)==null
+        ) {
+            PotionOfHealing.cure(this);
+            Buff.detachMany(this, Paralysis.class, Corruption.class, Doom.class);
+            Buff.affect(this, Tumblered.class);
+            HP = 1;
+            int oldPos = pos;
+
+            ScrollOfTeleportation.teleportChar(this);
+            CellEmitter.get(oldPos).burst(SmokeParticle.FACTORY, 5);
+            Dungeon.level.updateFieldOfView(this, fieldOfView);
+
+            state = SLEEPING;
+            Buff.affect(this, Barrier.class).setShield(HT / 3);
+
+            if (Challenges.SAVING_GRACE.enabled()) {
+                if(Challenges.INSOMNIA.enabled()){
+                    HP = HT;
+                } else {
+                    Buff.affect(this, SavingSlumber.class);
+                }
+
+                if (fieldOfView != null) {
+                    for (Mob m : Dungeon.level.mobs) {
+                        if (m instanceof NPC) continue;
+                        if (m == this) continue;
+                        if (m.alignment == Char.Alignment.ALLY) continue;
+                        if (m.buff(SavingSlumber.class) != null) continue;
+                        if (fieldOfView[m.pos]) {
+                            m.beckon(oldPos);
+                        }
+                    }
+                }
+            }
+            return;
+        }
         if (cause != Chasm.class && canAscend()) {
             Ascension buff = Buff.affect(this, Ascension.class);
             if (buff.level < Challenges.maxAscension(this) && Random.Float() < Challenges.ascendingChance(this)) {
@@ -790,10 +843,7 @@ public abstract class Mob extends Char {
                 HP = HT;
 
                 PotionOfHealing.cure(this);
-                Buff.detach(this, Paralysis.class);
-
-                Corruption cor = buff(Corruption.class);
-                if (cor != null) cor.detach();
+                Buff.detachMany(this, Paralysis.class, Corruption.class, Doom.class, Tumblered.class);
 
                 float mult = 1f * buff.level / Challenges.maxAscension(this);
                 int raysColor = ColorMath.interpolate(0xFFFF66, 0xFF0000, mult);

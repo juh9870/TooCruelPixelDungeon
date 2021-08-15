@@ -24,7 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 
-public class Fury extends Buff {
+public class Fury extends Buff implements AttackAmplificationBuff {
 	
 	public static float LEVEL	= 0.5f;
 
@@ -62,5 +62,10 @@ public class Fury extends Buff {
 	@Override
 	public String desc() {
 		return Messages.get(this, "desc");
+	}
+
+	@Override
+	public int damageFactor(int dmg) {
+		return (int)(dmg * 1.5f);
 	}
 }

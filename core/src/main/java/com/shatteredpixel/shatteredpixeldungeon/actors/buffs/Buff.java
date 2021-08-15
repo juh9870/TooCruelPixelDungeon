@@ -28,6 +28,7 @@ import com.watabou.noosa.Image;
 import com.watabou.utils.Reflection;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class Buff extends Actor {
@@ -170,10 +171,19 @@ public class Buff extends Actor {
 		buff.countUp( count );
 		return buff;
 	}
-	
+
 	public static void detach( Char target, Class<? extends Buff> cl ) {
 		for ( Buff b : target.buffs( cl )){
 			b.detach();
+		}
+	}
+
+	@SafeVarargs
+	public static void detachMany(Char target, Class<? extends Buff>... cl) {
+		HashSet<Class<? extends Buff>> classes = new HashSet<>(Arrays.asList(cl));
+		for (Buff b : target.buffs()) {
+			if (classes.contains(b.getClass()))
+				b.detach();
 		}
 	}
 }

@@ -22,12 +22,14 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArcaneArmor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AttackAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
@@ -52,6 +54,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevengeRage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ShieldBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Stamina;
@@ -59,13 +62,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TimescaleBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.DeathMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elemental;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.AntiMagic;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Potential;
@@ -325,6 +330,8 @@ public abstract class Char extends Actor {
 				dmg = damageRoll();
 			}
 
+			dmg = AttackAmplificationBuff.damageFactor(dmg, buffs());
+
 			dmg = Math.round(dmg*dmgMulti);
 			dmg += dmgBonus;
 
@@ -466,13 +473,6 @@ public abstract class Char extends Actor {
 	// atm attack is always post-armor and defence is already pre-armor
 	
 	public int attackProc( Char enemy, int damage ) {
-		if ( buff(Weakness.class) != null ){
-			damage *= 0.67f;
-		}
-		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
-			damage *= buff.meleeDamageFactor();
-			buff.onAttackProc( enemy );
-		}
 		return damage;
 	}
 	
@@ -517,9 +517,12 @@ public abstract class Char extends Actor {
 			return;
 		}
 
-		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
-			dmg = (int) Math.ceil(dmg * buff.damageTakenFactor());
+		for (Buff buff : this.buffs()) {
+			if(buff instanceof DamageAmplificationBuff && !isImmune(buff.getClass())){
+				dmg *= ((DamageAmplificationBuff) buff).damageMultiplier();
+			}
 		}
+
 		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
 			buff.onDamageProc(dmg);
 		}
@@ -556,11 +559,6 @@ public abstract class Char extends Actor {
 		if (this.buff(MagicalSleep.class) != null){
 			Buff.detach(this, MagicalSleep.class);
 		}
-		for (Buff buff : this.buffs()) {
-			if(buff instanceof DamageAmplificationBuff && !isImmune(buff.getClass())){
-				dmg *= ((DamageAmplificationBuff) buff).damageMultiplier();
-			}
-		}
 		Endure.EndureTracker endure = buff(Endure.EndureTracker.class);
 		//reduce damage here if it isn't coming from a chacter (if it is we already reduced it)
 		if (endure != null && !(src instanceof Char)){
@@ -588,6 +586,10 @@ public abstract class Char extends Actor {
 			dmg = endure.enforceDamagetakenLimit(dmg);
 		}
 
+		if(Challenges.REVENGE.enabled()) {
+			Dungeon.level.updateFieldOfView(this, fieldOfView);
+		}
+
 		int shielded = dmg;
 		//FIXME: when I add proper damage properties, should add an IGNORES_SHIELDS property to use here.
 		if (!(src instanceof Hunger)){
@@ -607,11 +609,25 @@ public abstract class Char extends Actor {
 		}
 
 		if (HP < 0) {
-			OVERKILL=-HP;
+			OVERKILL = -HP;
 			HP = 0;
 		}
 
 		if (!isAlive()) {
+			if (OVERKILL > 0 && Challenges.REVENGE.enabled()) {
+				if (alignment != Char.Alignment.ALLY) {
+					for (Mob mob : Dungeon.level.mobs) {
+						if (fieldOfView[mob.pos]) {
+							if (mob instanceof NPC) continue;
+							if (mob == this) continue;
+							if (mob.alignment == Char.Alignment.ALLY) continue;
+							Buff.affect(mob, RevengeRage.class).add(OVERKILL);
+							mob.sprite.emitter().start(Speck.factory(Speck.UP), 0.2f, 3);
+						}
+					}
+				}
+			}
+
 			die( src );
 		} else if (HP == 0 && buff(DeathMark.DeathMarkTracker.class) != null){
 			DeathMark.processFearTheReaper(this);

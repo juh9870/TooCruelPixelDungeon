@@ -24,7 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 
-public class Weakness extends FlavourBuff {
+public class Weakness extends FlavourBuff implements AttackAmplificationBuff {
 
 	public static final float DURATION = 20f;
 
@@ -56,5 +56,10 @@ public class Weakness extends FlavourBuff {
 	@Override
 	public String desc() {
 		return Messages.get(this, "desc", dispTurns());
+	}
+
+	@Override
+	public int damageFactor(int dmg) {
+		return (int)(dmg * 0.67f);
 	}
 }

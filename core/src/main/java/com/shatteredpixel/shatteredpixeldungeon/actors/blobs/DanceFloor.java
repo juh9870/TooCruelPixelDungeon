@@ -91,6 +91,8 @@ public class DanceFloor extends Blob implements Hero.Doom {
     }
 
     private void applyEffect(Char target, int color) {
+        if (target.properties().contains(Char.Property.BOSS) ||
+                target.properties().contains(Char.Property.IMMOVABLE)) return;
         switch (color) {
             case RED:
                 if (target == Dungeon.hero)
