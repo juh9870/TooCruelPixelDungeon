@@ -159,6 +159,7 @@ public enum Challenges implements Hero.Doom {
     MIRROR_OF_RAGE(45, 1, 2f),
     RETIERED(66, 1, 1f),
     BARRIER_BREAKER(68, 1, 1f),
+//    TUMBLER(71, 1, 1f),
 
 
     //T2
@@ -253,6 +254,7 @@ public enum Challenges implements Hero.Doom {
     UNTIERED(67, 2, 2f, RETIERED),
     LIMITED_UPGRADES(69, 2, 2f),
     DANCE_FLOOR(70,2,4f),
+//    SAVING_GRACE(72,2,2f),
 
 
     //T3

@@ -219,7 +219,7 @@ public class Blob extends Actor {
 		off = new int[Dungeon.level.length()];
 	}
 	
-	public String tileDesc() {
+	public String tileDesc(int cell) {
 		return null;
 	}
 	

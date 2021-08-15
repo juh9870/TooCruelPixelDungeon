@@ -829,7 +829,7 @@ public class CavesBossLevel extends Level {
 		};
 
 		@Override
-		public String tileDesc() {
+		public String tileDesc(int cell) {
 			return Messages.get(CavesBossLevel.class, "energy_desc");
 		}
 

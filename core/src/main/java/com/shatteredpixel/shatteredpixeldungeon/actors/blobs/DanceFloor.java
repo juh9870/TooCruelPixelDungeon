@@ -16,6 +16,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
@@ -63,9 +64,9 @@ public class DanceFloor extends Blob implements Hero.Doom {
                 time--;
             } else {
                 pause = !pause;
-                if (pause) time = PAUSE_LENGTH;
+                if (!pause) time = CYCLE_LENGTH;
                 else {
-                    time = CYCLE_LENGTH;
+                    time = PAUSE_LENGTH;
                     color = color % LAST_COLOR + 1;
                     if (rotationResetColor == 0) {
                         if (color == RED || color == BLACK)
@@ -79,7 +80,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
             }
             off[cell] = storeData(color, rotationResetColor, time, pause);
             volume += off[cell];
-            if (!pause && !Dungeon.level.solid[cell]) {
+            if (!pause && (Dungeon.level.passable[cell] || Dungeon.level.avoid[cell])) {
                 Char character = Actor.findChar(cell);
                 if (character != null) applyEffect(character, color);
             }
@@ -123,10 +124,10 @@ public class DanceFloor extends Blob implements Hero.Doom {
         return (x / SQUARE_SIZE) + (y / SQUARE_SIZE) * (squaresPerRow);
     }
 
-    private void updateCellGraphic(int cell, int colorIndex, boolean hide) {
+    private void updateCellGraphic(int cell, int colorIndex, int timeRemaining, boolean pause) {
         int color = colors[colorIndex * 4 + Random.Int(4)];
         DanceTile img = squares.get(cell);
-        if (Dungeon.level.heroFOV[cell] && !Dungeon.level.solid[cell]) {
+        if (Dungeon.level.heroFOV[cell] && (Dungeon.level.passable[cell] || Dungeon.level.avoid[cell])) {
             if (img == null) {
                 img = new DanceTile(cell);
                 if (!GameScene.lowEffect(img)) return;
@@ -134,7 +135,8 @@ public class DanceFloor extends Blob implements Hero.Doom {
             }
             img.color(color);
             img.setFrame(colorIndex - 1);
-            img.visible = !hide;
+            if (pause) img.scale.set(0.5f);
+            else img.scale.set(1f);
 
         } else {
             if (img != null) {
@@ -147,7 +149,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
     public void updateFov() {
         for (int i = 0; i < cur.length; i++) {
             int value = cur[i];
-            updateCellGraphic(i, value & 0xF, ((value >> 12) & 1) != 0);
+            updateCellGraphic(i, value & 0xF, (value >> 8) & 0xF, ((value >> 12) & 1) != 0);
         }
     }
 
@@ -186,8 +188,25 @@ public class DanceFloor extends Blob implements Hero.Doom {
     }
 
     @Override
-    public void onDeath() {
+    public String tileDesc(int cell) {
+        int curColor = cur[cell] & 0xF;
+        int nextColor = curColor % LAST_COLOR + 1;
+        if (((cur[cell] >> 4) & 0xF) == 0) {
+            if (nextColor == RED || nextColor == BLACK) {
+                nextColor = nextColor % LAST_COLOR + 1;
+            }
+        }
+        return Messages.get(this, "desc",
+                Messages.get(this, "color_" + curColor + "_name"),
+                Messages.get(this, "color_" + curColor + "_desc"),
+                Messages.get(this, "color_" + nextColor + "_name")
+        );
+    }
 
+    @Override
+    public void onDeath() {
+        Dungeon.fail(getClass());
+        GLog.i(Messages.get(this, "ondeath"));
     }
 
     public static class DancingStun extends Paralysis {
