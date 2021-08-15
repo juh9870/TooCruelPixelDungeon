@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.LevelObject;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.DanceFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
@@ -53,11 +54,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogFist;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Sheep;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
-import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.PokerToken;
@@ -293,6 +292,10 @@ public abstract class Level implements Bundlable {
         if ((!(Dungeon.bossLevel())) && Challenges.BLACKJACK.enabled()) {
             blackjackHeaps();
         }
+
+		if (Challenges.DANCE_FLOOR.enabled()) {
+			GameScene.add(Blob.seed(0, 1, DanceFloor.class, this));
+		}
 
 		Random.popGenerator();
 	}
@@ -1349,8 +1352,12 @@ public abstract class Level implements Bundlable {
 			for (Heap heap : heaps.valueList())
 				if (!heap.seen && fieldOfView[heap.pos])
 					heap.seen = true;
-		}
 
+			DanceFloor dance = (DanceFloor) blobs.get(DanceFloor.class);
+			if (dance != null) {
+				dance.updateFov();
+			}
+		}
 	}
 	
 	public int distance( int a, int b ) {

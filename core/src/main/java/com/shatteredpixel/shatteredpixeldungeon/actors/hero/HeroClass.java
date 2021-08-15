@@ -174,9 +174,9 @@ public enum HeroClass {
 //			new Blindweed.Seed().collect();
 //			hero.STR = 22;
 
-			while(hero.lvl<30){
-				hero.earnExp(hero.maxExp(), PotionOfExperience.class);
-			}
+//			while(hero.lvl<30){
+//				hero.earnExp(hero.maxExp(), PotionOfExperience.class);
+//			}
 //			hero.earnExp(Hero.maxExp(30),hero.getClass());
 //			new PlateArmor().upgrade(100).collect();
 //			new Longsword().upgrade(10).identify().collect();

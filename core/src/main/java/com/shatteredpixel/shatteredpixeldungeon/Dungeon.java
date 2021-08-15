@@ -222,8 +222,8 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-		if (DeviceCompat.isDebug())
-			depth = 10;
+//		if (DeviceCompat.isDebug())
+//			depth = 10;
 		gold = 0;
 		tokens = 0;
 

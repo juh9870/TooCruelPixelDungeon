@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.DamageAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -132,7 +133,7 @@ public class DeathMark extends ArmorAbility {
 		return new Talent[]{Talent.FEAR_THE_REAPER, Talent.DEATHLY_DURABILITY, Talent.DOUBLE_MARK, Talent.HEROIC_ENERGY};
 	}
 
-	public static class DeathMarkTracker extends FlavourBuff {
+	public static class DeathMarkTracker extends FlavourBuff implements DamageAmplificationBuff {
 
 		int initialHP = 0;
 
@@ -202,6 +203,12 @@ public class DeathMark extends ArmorAbility {
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
 			initialHP = bundle.getInt(INITIAL_HP);
+		}
+
+		@Override
+		public float damageMultiplier() {
+			if (target.alignment != Char.Alignment.ALLY) return 1.25f;
+			return 1f;
 		}
 	}
 

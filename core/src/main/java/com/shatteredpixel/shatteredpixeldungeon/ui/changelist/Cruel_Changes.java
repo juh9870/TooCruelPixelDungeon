@@ -26,14 +26,12 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MirrorWraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RunicBlade;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AlbinoSprite;
@@ -45,7 +43,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.RatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RotHeartSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SuccubusSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.TerrainFeaturesTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -53,8 +50,6 @@ import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TextureFilm;
-import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.ui.Component;
 import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
@@ -73,7 +68,20 @@ public class Cruel_Changes {
     }
 
     public static void add_v0_4_0_Changes(ArrayList<ChangeInfo> changeInfos) {
-        ChangeInfo changes = new ChangeInfo("v0.4.3", true, "");
+        ChangeInfo changes = new ChangeInfo("v0.4.4", true, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo("Challenges", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        Image danceFloorImg = new Image(Assets.Environment.DANCE_FLOOR, 0, 0, 16, 16);
+        danceFloorImg.color(0xFF0000);
+        changes.addButton(new ChangeButton(danceFloorImg, Messages.get(Challenges.class, "dance_floor"), Messages.get(Challenges.class, "dance_floor_desc")));
+
+
+        changes = new ChangeInfo("v0.4.3", true, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
@@ -119,7 +127,7 @@ public class Cruel_Changes {
         ));
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
-                "_-_ Added 4 new challenges\n"+
+                "_-_ Added 4 new challenges\n" +
                         "_-_ Amulet of Yendor can now be upgraded on runs with difficulty of Hard or above\n" +
                         "_-_ Added a badge for upgrading Amulet of Yendor to +15\n" +
                         "_-_ Legion waves are now spawned in clusters of 50 mobs instead of spreading around the level"

@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.DanceFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
@@ -822,6 +823,10 @@ public abstract class Mob extends Char {
             EXP /= 2;
         }
 
+        if (buff(DanceFloor.RewardBoost.class) != null) {
+            EXP *= 2;
+        }
+
         if (alignment == Alignment.ENEMY) {
             rollToDropLoot();
 
@@ -886,6 +891,11 @@ public abstract class Mob extends Char {
 
         //lucky enchant logic
         if (Dungeon.hero.lvl <= maxLvl && buff(Lucky.LuckProc.class) != null) {
+            Dungeon.level.drop(Lucky.genLoot(), pos).sprite.drop();
+            Lucky.showFlare(sprite);
+        }
+
+        if (Dungeon.hero.lvl <= maxLvl && buff(DanceFloor.RewardBoost.class) != null) {
             Dungeon.level.drop(Lucky.genLoot(), pos).sprite.drop();
             Lucky.showFlare(sprite);
         }

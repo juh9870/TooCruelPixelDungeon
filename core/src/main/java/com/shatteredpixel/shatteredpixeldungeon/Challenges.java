@@ -252,6 +252,7 @@ public enum Challenges implements Hero.Doom {
     SCORCHED_EARTH(61, 2, 2f),
     UNTIERED(67, 2, 2f, RETIERED),
     LIMITED_UPGRADES(69, 2, 2f),
+    DANCE_FLOOR(70,2,4f),
 
 
     //T3
@@ -304,7 +305,7 @@ public enum Challenges implements Hero.Doom {
     // Modifiers
 
 
-    //Last id 67
+    //Last id 70
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
