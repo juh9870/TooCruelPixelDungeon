@@ -621,7 +621,8 @@ public class GameScene extends PixelScene {
 	}
 
 	private static Thread actorThread;
-	
+	private static boolean logActorThread;
+
 	//sometimes UI changes can be prompted by the actor thread.
 	// We queue any removed element destruction, rather than destroying them in the actor thread.
 	private ArrayList<Gizmo> toDestroy = new ArrayList<>();
@@ -676,6 +677,22 @@ public class GameScene extends PixelScene {
 				synchronized (actorThread) {
 					actorThread.notify();
 				}
+			}
+		}
+
+		if(logActorThread){
+			if (actorThread != null){
+				logActorThread = false;
+				String s = "";
+				for (StackTraceElement t : actorThread.getStackTrace()){
+					s += "\n";
+					s += t.toString();
+				}
+				ShatteredPixelDungeon.reportException(
+						new RuntimeException("Actor thread dump was requested. " +
+								"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " trace:" +
+								s)
+				);
 			}
 		}
 

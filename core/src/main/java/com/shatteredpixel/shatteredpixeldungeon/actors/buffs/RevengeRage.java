@@ -46,10 +46,10 @@ public class RevengeRage extends Buff implements AttackAmplificationBuff {
     @Override
     public void fx(boolean on) {
         if (on) {
-            target.sprite.emit(Stacking.class).pour(WindParticle.FACTORY(0xFF0000), 0.1f);
+            target.sprite.emit(RevengeRage.class).pour(WindParticle.FACTORY(0xFF0000), 0.1f);
 
         } else {
-            target.sprite.killEmitter(Stacking.class);
+            target.sprite.killEmitter(RevengeRage.class);
         }
     }
 

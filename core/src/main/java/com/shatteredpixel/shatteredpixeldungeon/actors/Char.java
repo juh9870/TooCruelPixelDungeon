@@ -587,9 +587,6 @@ public abstract class Char extends Actor {
 			dmg = endure.enforceDamagetakenLimit(dmg);
 		}
 
-		if(Challenges.REVENGE.enabled()) {
-			Dungeon.level.updateFieldOfView(this, fieldOfView);
-		}
 
 		int shielded = dmg;
 		//FIXME: when I add proper damage properties, should add an IGNORES_SHIELDS property to use here.
@@ -600,6 +597,10 @@ public abstract class Char extends Actor {
 			}
 		}
 		shielded -= dmg;
+		if (Challenges.REVENGE.enabled() && HP <= dmg) {
+			if (fieldOfView == null) fieldOfView = new boolean[Dungeon.level.length()];
+			Dungeon.level.updateFieldOfView(this, fieldOfView);
+		}
 		HP -= dmg;
 		
 		if (sprite != null) {

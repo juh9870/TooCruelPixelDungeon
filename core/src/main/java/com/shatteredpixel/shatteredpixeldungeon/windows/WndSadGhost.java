@@ -117,6 +117,8 @@ public class WndSadGhost extends Window {
             Dungeon.level.drop( reward, ghost.pos ).sprite.drop();
         }
 
+        if (Challenges.CURSED.enabled()) reward.cursed = reward.cursedKnown = true;
+
         ghost.yell( Messages.get(this, "farewell") );
         ghost.die( null );
 

@@ -66,9 +66,10 @@ public class MirrorWraith extends Mob {
     public static MirrorWraith spawnAt(int pos, int overkill) {
         if (!Dungeon.level.solid[pos] && Actor.findChar(pos) == null) {
             int level = Dungeon.hero.lvl;
+            boolean alive = Dungeon.hero.isAlive();
             MirrorWraith w = new MirrorWraith();
 
-            if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
+            if (Challenges.SPIRITUAL_CONNECTION.enabled() && alive) {
                 w.forceMult = Dungeon.hero.buff(GrowingRage.class).multiplier();
                 w.lifetime *= (w.forceMult - 1) * 2 + 1;
             }

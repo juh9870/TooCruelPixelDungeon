@@ -72,6 +72,15 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
+        changes = new ChangeInfo("v0.4.4a", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "Fixed:\n" +
+                        "_-_ Major bug influencing damage multipliers\n" +
+                        "_-_ Fixed couple of bugs caused by extreme conditions"
+        ));
+
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);

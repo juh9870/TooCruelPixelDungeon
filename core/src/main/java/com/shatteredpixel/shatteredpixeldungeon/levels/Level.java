@@ -631,6 +631,7 @@ public abstract class Level implements Bundlable {
 			}
 
 			float leftover = Dungeon.level.nMobs() - count;
+			leftover = Math.min(leftover, 1000);
 
 			if (leftover > 0) {
 
