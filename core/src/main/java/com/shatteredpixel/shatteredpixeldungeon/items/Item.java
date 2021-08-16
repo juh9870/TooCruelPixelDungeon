@@ -34,6 +34,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -180,6 +184,15 @@ public class Item implements Bundlable {
 	public boolean collect( Bag container ) {
 
 		if (quantity <= 0){
+			return true;
+		}
+
+		if(Challenges.CHAOS_WIZARD.enabled() && (this instanceof KindOfWeapon || this instanceof RingOfForce)){
+			Wand wand = (Wand) Generator.random(Generator.Category.WAND);
+			wand.cursed = true;
+			if(isIdentified()) wand.identify();
+			wand.collect();
+
 			return true;
 		}
 
@@ -405,6 +418,10 @@ public class Item implements Bundlable {
 		levelKnown = true;
 		cursedKnown = true;
 		
+		return this;
+	}
+	public Item curse() {
+		cursed = true;
 		return this;
 	}
 	

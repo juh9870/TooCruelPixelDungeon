@@ -31,9 +31,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.InventoryScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -146,7 +148,7 @@ public enum Challenges implements Hero.Doom {
     },
     EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
     INDIFFERENT_DESIGN(63, 16.6f, 1, 1f, EXTREME_CAUTION),
-    REPEATER(75,16.7f, 1, 1f, EXTREME_CAUTION),
+    REPEATER(75, 16.7f, 1, 1f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     STACKING(18, 1, 1.5f) {
         @Override
@@ -311,9 +313,16 @@ public enum Challenges implements Hero.Doom {
 
 
     // Modifiers
+    ARCHERY_SCHOOL(78, 5, -2f),
+    SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
+    CHAOS_WIZARD(80, 5, -4f, ARCHERY_SCHOOL) {
+        @Override
+        protected boolean _isItemBlocked(Item item) {
+            return item instanceof KindOfWeapon || item instanceof RingOfForce;
+        }
+    },
 
-
-    //Last id 76
+    //Last id 80
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
@@ -568,8 +577,11 @@ public enum Challenges implements Hero.Doom {
     public static Icons icon(Modifiers modifiers) {
         int l = 0;
         for (int i = 0; i < modifiers.challenges.length; i++) {
-            if (modifiers.challenges[i])
-                l = Math.max(l, fromId(i).tier);
+            if (modifiers.challenges[i]) {
+                int t = fromId(i).tier;
+                if (t < 5)
+                    l = Math.max(l, t);
+            }
         }
         if (l <= 0) {
             return Icons.CHALLENGE_OFF;

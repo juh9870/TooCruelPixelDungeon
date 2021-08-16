@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class WndChallenges extends Window {
     ;
-    public static final int[] TIER_COLORS = new int[]{0x79e3d2, 0xff0000, 0x000000};
+    public static final int[] TIER_COLORS = new int[]{0x79e3d2, 0xff0000, 0x000000, 0xFFFFFF};
     private static final int TTL_HEIGHT = 18;
     private static final int BTN_HEIGHT = 18;
     private static final int GAP = 1;
@@ -165,10 +165,10 @@ public class WndChallenges extends Window {
                     if (checked) {
                         pos = delimiter(content, pos, Messages.get(this, "enabled"), 9, TITLE_COLOR);
                     } else {
-                        pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
+                        pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
                     }
                 } else {
-                    pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
+                    pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
                 }
             } else {
                 pos += GAP;
@@ -187,7 +187,7 @@ public class WndChallenges extends Window {
                     } else {
                         if (!checked) {
                             if (prevChecked || tier != prevTier) {
-                                pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
+                                pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
                             }
                         }
                     }
@@ -198,7 +198,7 @@ public class WndChallenges extends Window {
                         }
                     } else {
                         if (tier != prevTier) {
-                            pos = delimiter(content, pos, Messages.get(this, "tier", tier), 10, TITLE_COLOR);
+                            pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
                         }
                     }
                 }
@@ -238,6 +238,12 @@ public class WndChallenges extends Window {
             if (!ea && eb) return 1;
             return simpleComparator.compare(a, b);
         };
+    }
+
+    private String tierMessage(int tier) {
+        if (tier < 5)
+            return Messages.get(this, "tier", tier);
+        return Messages.get(this, "modifiers");
     }
 
     private float delimiter(Component parent, float pos, String text, int size, int color) {

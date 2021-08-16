@@ -107,7 +107,7 @@ public class WndWandmaker extends Window {
 		} else {
 			Dungeon.level.drop( reward, wandmaker.pos ).sprite.drop();
 		}
-		
+
 		if (Challenges.CURSED.enabled()) reward.cursed = reward.cursedKnown = true;
 		
 		wandmaker.yell( Messages.get(this, "farewell", Dungeon.hero.name()) );

@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.mechanics;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -32,7 +33,7 @@ import java.util.List;
 public class Ballistica {
 
 
-	private Level level;
+	protected Level level;
 	//note that the path is the FULL path of the projectile, including tiles after collision.
 	//make sure to generate a subPath for the common case of going source to collision.
 	public ArrayList<Integer> path = new ArrayList<>();
@@ -61,11 +62,22 @@ public class Ballistica {
 		this.level = level;
 		sourcePos = from;
 		collisionProperties = params;
-		build(from, to,
+		Ballistica b = this;
+		if(Challenges.ARCHERY_SCHOOL.enabled() && getClass() != PreciseBallistica.class){
+			b = new PreciseBallistica(from,to,params,level);
+		}
+
+		b.build(from, to,
 				(params & STOP_TARGET) > 0,
 				(params & STOP_CHARS) > 0,
 				(params & STOP_SOLID) > 0,
 				(params & IGNORE_SOFT_SOLID) > 0);
+		
+		this.path = b.path;
+		this.sourcePos = b.sourcePos;
+		this.collisionPos = b.collisionPos;
+		this.dist = b.dist;
+
 		if (collisionPos != null) {
 			dist = path.indexOf(collisionPos);
 		} else if (!path.isEmpty()) {
@@ -78,7 +90,7 @@ public class Ballistica {
 	}
 
 
-	private void build( int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain, boolean ignoreSoftSolid ) {
+	protected void build( int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain, boolean ignoreSoftSolid ) {
 		int w = level.width();
 		
 		int x0 = from % w;
@@ -152,7 +164,7 @@ public class Ballistica {
 	}
 	
 	//we only want to record the first position collision occurs at.
-	private void collide(int cell) {
+	protected void collide(int cell) {
 		if (collisionPos == null)
 			collisionPos = cell;
 	}

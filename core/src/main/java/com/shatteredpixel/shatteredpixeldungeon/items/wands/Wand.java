@@ -602,6 +602,11 @@ public abstract class Wand extends Item {
 		}
 
 		private void recharge(){
+			if (Challenges.CHAOS_WIZARD.enabled()) {
+				if (!cursed) cursed = true;
+				curCharges++;
+				return;
+			}
 			int missingCharges = maxCharges - curCharges;
 			missingCharges = Math.max(0, missingCharges);
 
