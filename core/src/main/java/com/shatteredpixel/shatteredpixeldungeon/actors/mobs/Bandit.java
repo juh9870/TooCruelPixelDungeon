@@ -45,7 +45,6 @@ public class Bandit extends Thief {
 	
 	@Override
 	public void rollToDropLoot() {
-		lootChance*= Challenges.rareLootChanceMultiplier();
 		super.rollToDropLoot();
 	}
 	

@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -271,7 +272,9 @@ public class TimekeepersHourglass extends Artifact {
 
 				updateQuickslot();
 
-				Dungeon.observe();
+				if (Dungeon.hero != null) {
+					Dungeon.observe();
+				}
 
 				return true;
 			} else {
@@ -334,9 +337,18 @@ public class TimekeepersHourglass extends Artifact {
 				presses.add(cell);
 		}
 
-		private void triggerPresses(){
+		public void triggerPresses(){
 			for (int cell : presses)
 				Dungeon.level.pressCell(cell);
+
+			presses = new ArrayList<>();
+		}
+
+		public void disarmPressedTraps(){
+			for (int cell : presses){
+				Trap t = Dungeon.level.traps.get(cell);
+				if (t != null) t.disarm();
+			}
 
 			presses = new ArrayList<>();
 		}
@@ -418,6 +430,16 @@ public class TimekeepersHourglass extends Artifact {
 		@Override
 		public int value() {
 			return 20;
+		}
+
+		@Override
+		public boolean isUpgradable() {
+			return false;
+		}
+
+		@Override
+		public boolean isIdentified() {
+			return true;
 		}
 	}
 

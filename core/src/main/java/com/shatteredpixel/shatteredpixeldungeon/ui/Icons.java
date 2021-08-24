@@ -43,6 +43,7 @@ public enum Icons {
 	DATA,
 	AUDIO,
 	TALENT,
+	MAGNIFY,
 	
 	CHALLENGE_HELL,
 	CHALLENGE_HELL2,
@@ -86,9 +87,12 @@ public enum Icons {
 	WATA,
 	WARNING,
 
-	//32x32 icons for credits
+	//credits icons:
+	//16x16
 	ALEKS,
+	//32x32
 	CHARLIE,
+	KRISTJAN,
 	CUBE_CODE,
 	PURIGRO,
 	ARCNOR;
@@ -96,24 +100,32 @@ public enum Icons {
 	public Image get() {
 		return get( this );
 	}
+
+	private static Image tcpd(){
+		return new Image(Assets.Interfaces.ICONS_TCPD);
+	}
 	
 	public static Image get( Icons type ) {
 		Image icon = new Image( Assets.Interfaces.ICONS );
 		switch (type) {
 		case CHECKED:
+			icon = tcpd();
 			icon.frame( icon.texture.uvRect( 0, 0, 12, 12 ) );
 			break;
 		case UNCHECKED:
-			icon.frame( icon.texture.uvRect( 16, 0, 28, 12 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 12, 0, 24, 12 ) );
 			break;
 		case INFO:
 			icon.frame( icon.texture.uvRect( 32, 0, 46, 14 ) );
 			break;
 		case CHALLENGE_ON:
-			icon.frame( icon.texture.uvRect( 48, 0, 62, 12 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 0, 23, 14, 35 ) );
 			break;
 		case CHALLENGE_OFF:
-			icon.frame( icon.texture.uvRect( 64, 0, 78, 12 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 14, 23, 28, 35 ) );
 			break;
 		case PREFS:
 			icon.frame( icon.texture.uvRect( 80, 0, 94, 14 ) );
@@ -125,7 +137,8 @@ public enum Icons {
 			icon.frame( icon.texture.uvRect( 112, 0, 127, 11 ) );
 			break;
 		case CLOSE:
-			icon.frame( icon.texture.uvRect( 0, 16, 11, 27 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 0, 12, 11, 23 ) );
 			break;
 		case ARROW:
 			icon.frame( icon.texture.uvRect( 16, 16, 27, 27 ) );
@@ -141,6 +154,9 @@ public enum Icons {
 			break;
 		case TALENT:
 			icon.frame( icon.texture.uvRect( 80, 16, 93, 29 ) );
+			break;
+		case MAGNIFY:
+			icon.frame( icon.texture.uvRect( 96, 16, 110, 30 ) );
 			break;
 		case SKULL:
 			icon.frame( icon.texture.uvRect( 0, 32, 8, 40 ) );
@@ -227,12 +243,15 @@ public enum Icons {
 			icon.frame( icon.texture.uvRect( 34, 81, 48, 95 ) );
 			break;
 
-		//32*32 icons are scaled down to match game's size
 		case ALEKS:
+			icon.frame( icon.texture.uvRect( 48, 80, 64, 96 ) );
+			break;
+		//32*32 icons are scaled down to match game's size
+		case CHARLIE:
 			icon.frame( icon.texture.uvRect( 0, 96, 32, 128 ) );
 			icon.scale.set(PixelScene.align(0.49f));
 			break;
-		case CHARLIE:
+		case KRISTJAN:
 			icon.frame( icon.texture.uvRect( 32, 96, 64, 128 ) );
 			icon.scale.set(PixelScene.align(0.49f));
 			break;
@@ -250,22 +269,28 @@ public enum Icons {
 			break;
 			
 		case CHALLENGE_HELL:
-			icon.frame( icon.texture.uvRect( 90, 82, 104, 94 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 56, 23, 70, 35 ) );
 			break;
 		case CHALLENGE_HELL2:
-			icon.frame( icon.texture.uvRect( 76, 82, 90, 94  ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 42, 23, 56, 35  ) );
 			break;
 		case CHALLENGE_HELL3:
-			icon.frame( icon.texture.uvRect( 62, 82, 76, 94  ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 28, 23, 42, 35  ) );
 			break;
 		case RED_CHECKED:
-			icon.frame( icon.texture.uvRect( 104, 82, 116, 94 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 24, 0, 36, 12 ) );
 			break;
 		case DIAMOND_CHECKED:
-			icon.frame( icon.texture.uvRect( 116, 82, 128, 94 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 36, 0, 48, 12 ) );
 			break;
 		case NOTES:
-			icon.frame( icon.texture.uvRect( 51, 81, 62, 94 ) );
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 11, 12, 21, 23 ) );
 			break;
 		}
 		return icon;

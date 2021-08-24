@@ -77,12 +77,12 @@ public class Golem extends Mob {
 
 		//each drop makes future drops 1/2 as likely
 		// so loot chance looks like: 1/8, 1/16, 1/32, 1/64, etc.
-		lootChance *= Math.pow(1/2f, Dungeon.LimitedDrops.GOLEM_EQUIP.count);
+		lootChance *= Math.pow(1/2f, Dungeon.LimitedDrops.GOLEM_EQUIP.getCount());
 		super.rollToDropLoot();
 	}
 
 	protected Item createLoot() {
-		Dungeon.LimitedDrops.GOLEM_EQUIP.count++;
+		Dungeon.LimitedDrops.GOLEM_EQUIP.setCount(Dungeon.LimitedDrops.GOLEM_EQUIP.getCount() + 1);
 		//uses probability tables for demon halls
 		if (loot == Generator.Category.WEAPON){
 			return Generator.randomWeapon(5);

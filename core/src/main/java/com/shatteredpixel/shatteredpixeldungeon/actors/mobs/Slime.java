@@ -67,13 +67,13 @@ public class Slime extends Mob {
 	public void rollToDropLoot() {
 		//each drop makes future drops 1/3 as likely
 		// so loot chance looks like: 1/5, 1/15, 1/45, 1/135, etc.
-		lootChance *= Math.pow(1/3f, Dungeon.LimitedDrops.SLIME_WEP.count);
+		lootChance *= Math.pow(1/3f, Dungeon.LimitedDrops.SLIME_WEP.getCount());
 		super.rollToDropLoot();
 	}
 	
 	@Override
 	protected Item createLoot() {
-		Dungeon.LimitedDrops.SLIME_WEP.count++;
+		Dungeon.LimitedDrops.SLIME_WEP.setCount(Dungeon.LimitedDrops.SLIME_WEP.getCount() + 1);
 		Generator.Category c = Generator.Category.WEP_T2;
 		MeleeWeapon w = (MeleeWeapon) Reflection.newInstance(c.classes[Random.chances(c.probs)]);
 		w.random();

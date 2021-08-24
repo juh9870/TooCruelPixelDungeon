@@ -22,11 +22,18 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdateData;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
+import com.watabou.utils.ColorMath;
 
 public class ChangesButton extends Button {
 
@@ -37,6 +44,22 @@ public class ChangesButton extends Button {
 
         width = image.width;
         height = image.height;
+        if (SPDSettings.updates()) Updates.checkForUpdate();
+    }
+
+    boolean updateShown = false;
+
+    @Override
+    public void update() {
+        super.update();
+
+        if (!updateShown && (Updates.updateAvailable() || Updates.isInstallable())){
+            updateShown = true;
+        }
+
+        if (updateShown){
+            image.color(ColorMath.interpolate( 0xFFFFFF, 0xFF0000, 0.5f + (float)Math.sin(Game.timeTotal*5)/2f));
+        }
     }
 
     @Override
@@ -68,7 +91,33 @@ public class ChangesButton extends Button {
 
     @Override
     protected void onClick() {
-        ChangesScene.changesSelected = 0;
-        ShatteredPixelDungeon.switchNoFade(ChangesScene.class);
+        if (Updates.isInstallable()){
+            Updates.launchInstall();
+
+        } else if (Updates.updateAvailable()){
+            AvailableUpdateData update = Updates.updateData();
+
+            ShatteredPixelDungeon.scene().addToFront( new WndOptions(
+                    Icons.get(Icons.CHANGES),
+                    update.versionName == null ? Messages.get(this,"title") : Messages.get(this,"versioned_title", update.versionName),
+                    update.desc == null ? Messages.get(this,"desc") : update.desc,
+                    Messages.get(this,"update"),
+                    Messages.get(this,"changes")
+            ) {
+                @Override
+                protected void onSelect(int index) {
+                    if (index == 0) {
+                        Updates.launchUpdate(Updates.updateData());
+                    } else if (index == 1){
+                        ChangesScene.changesSelected = 0;
+                        ShatteredPixelDungeon.switchNoFade( ChangesScene.class );
+                    }
+                }
+            });
+
+        } else {
+            ChangesScene.changesSelected = 0;
+            ShatteredPixelDungeon.switchNoFade( ChangesScene.class );
+        }
     }
 }

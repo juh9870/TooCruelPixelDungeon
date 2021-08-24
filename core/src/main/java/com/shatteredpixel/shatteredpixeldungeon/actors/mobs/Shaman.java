@@ -75,13 +75,13 @@ public abstract class Shaman extends Mob {
 	public void rollToDropLoot() {
 		//each drop makes future drops 1/3 as likely
 		// so loot chance looks like: 1/33, 1/100, 1/300, 1/900, etc.
-		lootChance *= Math.pow(1/3f, Dungeon.LimitedDrops.SHAMAN_WAND.count);
+		lootChance *= Math.pow(1/3f, Dungeon.LimitedDrops.SHAMAN_WAND.getCount());
 		super.rollToDropLoot();
 	}
 
 	@Override
 	protected Item createLoot() {
-		Dungeon.LimitedDrops.SHAMAN_WAND.count++;
+		Dungeon.LimitedDrops.SHAMAN_WAND.setCount(Dungeon.LimitedDrops.SHAMAN_WAND.getCount() + 1);
 		return super.createLoot();
 	}
 

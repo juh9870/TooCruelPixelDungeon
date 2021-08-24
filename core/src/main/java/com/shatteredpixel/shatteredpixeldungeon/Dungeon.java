@@ -39,7 +39,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
-import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -70,10 +69,10 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -114,44 +113,64 @@ public class Dungeon {
 		GOLEM_EQUIP,
 
 		//containers
-		VELVET_POUCH,
-		SCROLL_HOLDER,
-		POTION_BANDOLIER,
-		MAGICAL_HOLSTER;
+		VELVET_POUCH(true),
+		SCROLL_HOLDER(true),
+		POTION_BANDOLIER(true),
+		MAGICAL_HOLSTER(true);
 
-		public int count = 0;
+		private int count = 0;
+
+		LimitedDrops() {
+			this(false);
+		}
+		LimitedDrops(boolean unique) {
+			this.unique = unique;
+		}
+
+		private boolean unique;
 
 		//for items which can only be dropped once, should directly access count otherwise.
 		public boolean dropped(){
-			return count != 0;
+			return getCount() != 0;
 		}
 		public void drop(){
-			count = 1;
+			setCount(1);
 		}
 
 		public static void reset(){
 			for (LimitedDrops lim : values()){
-				lim.count = 0;
+				lim.setCount(0);
 			}
 		}
 
 		public static void store( Bundle bundle ){
 			for (LimitedDrops lim : values()){
-				bundle.put(lim.name(), lim.count);
+				bundle.put(lim.name(), lim.getCount());
 			}
 		}
 
 		public static void restore( Bundle bundle ){
 			for (LimitedDrops lim : values()){
 				if (bundle.contains(lim.name())){
-					lim.count = bundle.getInt(lim.name());
+					lim.setCount(bundle.getInt(lim.name()));
 				} else {
-					lim.count = 0;
+					lim.setCount(0);
 				}
 				
 			}
 		}
 
+		public int getCount() {
+			return count;
+		}
+
+		public LimitedDrops setCount(int count) {
+			this.count = count;
+			if(!unique && Challenges.GRINDING_2.enabled()){
+				this.count = 0;
+			}
+			return this;
+		}
 	}
 
     public static Modifiers modifiers = new Modifiers();
@@ -185,6 +204,9 @@ public class Dungeon {
 		mobsToChampion = -1;
 
         seed = DungeonSeed.randomSeed();
+
+		Generator.Category.hardReset();
+
 //        if(DeviceCompat.isDebug()){
 //        	seed = 3293666607154l;
 //		}
@@ -212,6 +234,7 @@ public class Dungeon {
 
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
+			Challenges.init();
 
 		Random.resetGenerators();
 		
@@ -408,7 +431,7 @@ public class Dungeon {
 		hero.viewDistance = light == null ? level.viewDistance : Math.max( Light.DISTANCE, level.viewDistance );
 		
 		hero.curAction = hero.lastAction = null;
-		
+
 		observe();
 		try {
 			saveAll();
@@ -430,7 +453,7 @@ public class Dungeon {
 
 	public static boolean posNeeded() {
 		//2 POS each floor set
-		int posLeftThisSet = 2 - (LimitedDrops.STRENGTH_POTIONS.count - (depth / 5) * 2);
+		int posLeftThisSet = 2 - (LimitedDrops.STRENGTH_POTIONS.getCount() - (depth / 5) * 2);
 		if (posLeftThisSet <= 0) return false;
 
 		int floorThisSet = (depth % 5);
@@ -448,9 +471,9 @@ public class Dungeon {
 		int souLeftThisSet;
 		//3 SOU each floor set, 1.5 (rounded) on forbidden runes challenge
         if (Challenges.FORBIDDEN_RUNES.enabled()) {
-			souLeftThisSet = Math.round(1.5f - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 1.5f));
+			souLeftThisSet = Math.round(1.5f - (LimitedDrops.UPGRADE_SCROLLS.getCount() - (depth / 5) * 1.5f));
 		} else {
-			souLeftThisSet = 3 - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 3);
+			souLeftThisSet = 3 - (LimitedDrops.UPGRADE_SCROLLS.getCount() - (depth / 5) * 3);
 		}
 		if (souLeftThisSet <= 0) return false;
 
@@ -461,7 +484,7 @@ public class Dungeon {
 	
 	public static boolean asNeeded() {
 		//1 AS each floor set
-		int asLeftThisSet = 1 - (LimitedDrops.ARCANE_STYLI.count - (depth / 5));
+		int asLeftThisSet = 1 - (LimitedDrops.ARCANE_STYLI.getCount() - (depth / 5));
 		if (asLeftThisSet <= 0) return false;
 
 		int floorThisSet = (depth % 5);
@@ -562,7 +585,7 @@ public class Dungeon {
 	}
 	
 	public static void saveAll() throws IOException {
-		if (hero != null && hero.isAlive()) {
+		if (hero != null && (hero.isAlive() || WndResurrect.instance != null)) {
 			
 			Actor.fixTime();
 			saveGame( GamesInProgress.curSlot );
@@ -734,7 +757,7 @@ public class Dungeon {
 	}
 	
 	public static void fail( Class cause ) {
-		if (hero.belongings.getItem( Ankh.class ) == null) {
+		if (WndResurrect.instance == null) {
 			Rankings.INSTANCE.submit( false, cause );
 		}
 	}

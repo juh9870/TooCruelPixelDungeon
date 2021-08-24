@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Callback;
 
@@ -138,12 +139,10 @@ public class SpectralBlades extends ArmorAbility {
 		for (int cell : path.path){
 			Char ch = Actor.findChar(cell);
 			if (ch != null){
-				if (ch == hero || existingTargets.contains(ch)){
+				if (ch == hero || existingTargets.contains(ch) || ch.alignment == Char.Alignment.ALLY){
 					continue;
-				} else if (ch.alignment != Char.Alignment.ALLY){
-					return ch;
 				} else {
-					return null;
+					return ch;
 				}
 			}
 			if (Dungeon.level.solid[cell]){
@@ -154,6 +153,11 @@ public class SpectralBlades extends ArmorAbility {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public int icon() {
+		return HeroIcon.SPECTRAL_BLADES;
 	}
 
 	@Override

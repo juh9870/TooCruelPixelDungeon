@@ -35,6 +35,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DisintegrationTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.DistortionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlashingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GatewayTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PitfallTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.RockfallTrap;
@@ -95,7 +97,7 @@ public class CityLevel extends RegularLevel {
 				FrostTrap.class, StormTrap.class, CorrosionTrap.class, BlazingTrap.class, DisintegrationTrap.class,
 				RockfallTrap.class, FlashingTrap.class, GuardianTrap.class, WeakeningTrap.class,
 				DisarmingTrap.class, SummoningTrap.class, WarpingTrap.class,
-				CursingTrap.class, PitfallTrap.class, DistortionTrap.class };
+				CursingTrap.class, PitfallTrap.class, DistortionTrap.class, GatewayTrap.class, GeyserTrap.class };
 	}
 
 	@Override
@@ -105,13 +107,13 @@ public class CityLevel extends RegularLevel {
 					4, 4, 4, 4, 4,
 					2, 2, 2, 2,
 					1, 1, 1,
-					1, 1, 1 };
+					1, 1, 1, 1, 1 };
 		} else {
 			return new float[]{
 					4, 4, 4, 4, 4,
 					6, 6, 6, 6,
 					8, 8, 8,
-					8, 4, 3};
+					8, 4, 3, 3, 4};
 		}
 	}
 	

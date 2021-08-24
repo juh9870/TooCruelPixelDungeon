@@ -43,6 +43,7 @@ public class PoisonDartTrap extends TargetingTrap {
 		shape = CROSSHAIR;
 		
 		canBeHidden = false;
+		avoidsHallways = true;
 	}
 	
 	protected int poisonAmount(){

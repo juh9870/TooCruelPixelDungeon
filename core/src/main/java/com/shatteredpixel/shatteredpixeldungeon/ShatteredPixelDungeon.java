@@ -24,9 +24,11 @@ package com.shatteredpixel.shatteredpixeldungeon;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.WelcomeScene;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.PlatformSupport;
 
 public class ShatteredPixelDungeon extends Game {
@@ -39,11 +41,20 @@ public class ShatteredPixelDungeon extends Game {
 
 	public static final int v0_9_0b  = 489;
 	public static final int v0_9_1d  = 511;
-	public static final int v0_9_2b  = 532;
-	public static final int v0_9_3   = 544;
+	public static final int v0_9_2b  = 531;
+	public static final int v0_9_3c  = 557; //557 on iOS, 554 on other platforms
+	public static final int v1_0_0   = 565;
 	
 	public ShatteredPixelDungeon( PlatformSupport platform ) {
 		super( sceneClass == null ? TitleScene.class : sceneClass, platform );
+
+		//v1.0.0
+		com.watabou.utils.Bundle.addAlias(
+				com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFear.class,
+				"com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAffection" );
+		com.watabou.utils.Bundle.addAlias(
+				com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDeepSleep.class,
+				"com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDeepenedSleep" );
 
 		//v0.9.3
 		com.watabou.utils.Bundle.addAlias(
@@ -122,6 +133,16 @@ public class ShatteredPixelDungeon extends Game {
 
 		SPDSettings.modifiers(SPDSettings.modifiers().setDynasty(""));
 		
+	}
+
+	@Override
+	public void finish() {
+		if (!DeviceCompat.isiOS()) {
+			super.finish();
+		} else {
+			//can't exit on iOS (Apple guidelines), so just go to title screen
+			switchScene(TitleScene.class);
+		}
 	}
 
 	public static void switchNoFade(Class<? extends PixelScene> c){

@@ -87,7 +87,8 @@ public class Cruel_Changes {
                         "_-_ Improved challenges selection window\n" +
                         "_-_ Tweaked Intoxication\n" +
                         "_-_ Brimstone no longer grants immunity to Scorched Earth burning\n" +
-                        "_-_ Dance Dance no longer affect sleeping enemies"
+                        "_-_ Dance Dance no longer affect sleeping enemies\n" +
+                        "_-_ Increased amount of guaranteed loot with level-enlarging challenges"
         ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, "");

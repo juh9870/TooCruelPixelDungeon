@@ -33,6 +33,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ConfusionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CorrosionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ExplosiveTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GatewayTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrippingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PitfallTrap;
@@ -100,7 +102,7 @@ public class CavesLevel extends RegularLevel {
 		return new Class[]{
 				BurningTrap.class, PoisonDartTrap.class, FrostTrap.class, StormTrap.class, CorrosionTrap.class,
 				GrippingTrap.class, ExplosiveTrap.class, RockfallTrap.class,  GuardianTrap.class,
-				ConfusionTrap.class, SummoningTrap.class, WarpingTrap.class, PitfallTrap.class };
+				ConfusionTrap.class, SummoningTrap.class, WarpingTrap.class, PitfallTrap.class, GatewayTrap.class, GeyserTrap.class };
 	}
 
 	@Override
@@ -109,11 +111,12 @@ public class CavesLevel extends RegularLevel {
 			return new float[]{
 					4, 4, 4, 4, 4,
 					2, 0, 2, 2,
-					1, 1, 1, 1};
+					1, 1, 1, 1, 1, 1};
 		} else {
-			return new float[]{4, 2, 2, 4, 4,
+			return new float[]{
+					4, 2, 2, 4, 4,
 					8, 8, 8, 8,
-					4, 8, 4, 3};
+					4, 8, 4, 3, 3, 4};
 		}
 	}
 	

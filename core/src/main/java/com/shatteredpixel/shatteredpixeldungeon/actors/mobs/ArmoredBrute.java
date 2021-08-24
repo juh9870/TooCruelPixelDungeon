@@ -61,7 +61,7 @@ public class ArmoredBrute extends Brute {
 	
 	@Override
 	public void rollToDropLoot() {
-		lootChance*= Challenges.rareLootChanceMultiplier();
+		lootChance *= Challenges.rareLootChanceMultiplier();
 		super.rollToDropLoot();
 	}
 	

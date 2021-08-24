@@ -111,10 +111,11 @@ public class WndGameInProgress extends Window {
 		}
 		
 		pos += GAP;
-		
-		statSlot( Messages.get(this, "str"), info.str, analgesia );
-		if (info.shld > 0) statSlot( Messages.get(this, "health"), info.hp + "+" + info.shld + "/" + info.ht, analgesia );
-		else statSlot( Messages.get(this, "health"), (info.hp) + "/" + info.ht, analgesia );
+
+		if (info.strBonus > 0)  statSlot( Messages.get(this, "str"), info.str + "+" + info.strBonus, analgesia );
+		else                    statSlot( Messages.get(this, "str"), info.str, analgesia );
+		if (info.shld > 0)  statSlot( Messages.get(this, "health"), info.hp + "+" + info.shld + "/" + info.ht, analgesia );
+		else                statSlot( Messages.get(this, "health"), (info.hp) + "/" + info.ht, analgesia );
 		statSlot( Messages.get(this, "exp"), info.exp + "/" + Hero.maxExp(info.level), analgesia );
 		
 		pos += GAP;

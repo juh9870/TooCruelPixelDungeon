@@ -27,7 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
@@ -140,13 +139,13 @@ public class Swarm extends Mob {
 	@Override
 	public void rollToDropLoot() {
 		lootChance = 1f / (6 * (generation + 1));
-		lootChance *= (5f - Dungeon.LimitedDrops.SWARM_HP.count) / 5f;
+		lootChance *= (5f - Dungeon.LimitedDrops.SWARM_HP.getCount()) / 5f;
 		super.rollToDropLoot();
 	}
 	
 	@Override
 	protected Item createLoot() {
-		Dungeon.LimitedDrops.SWARM_HP.count++;
+		Dungeon.LimitedDrops.SWARM_HP.setCount(Dungeon.LimitedDrops.SWARM_HP.getCount() + 1);
 		return super.createLoot();
 	}
 }

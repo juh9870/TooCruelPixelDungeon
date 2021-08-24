@@ -196,80 +196,6 @@ public abstract class Level implements Bundlable {
 
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 		
-		if (!(Dungeon.bossLevel())) {
-
-            if (Challenges.FAMINE.enabled()) {
-                addItemToSpawn(new SmallRation());
-            } else {
-			addItemToSpawn(Generator.random(Generator.Category.FOOD));
-            }
-
-            if (Challenges.DARKNESS.enabled()) {
-				addItemToSpawn( new Torch() );
-			}
-            if (Challenges.DESERT.enabled()) {
-				addItemToSpawn( new AquaBlast() );
-			}
-
-			if (Dungeon.posNeeded()) {
-				addItemToSpawn( new PotionOfStrength() );
-				Dungeon.LimitedDrops.STRENGTH_POTIONS.count++;
-			}
-			if (Dungeon.souNeeded()) {
-				addItemToSpawn( new ScrollOfUpgrade() );
-				Dungeon.LimitedDrops.UPGRADE_SCROLLS.count++;
-			}
-			if (Dungeon.asNeeded()) {
-				addItemToSpawn( new Stylus() );
-				Dungeon.LimitedDrops.ARCANE_STYLI.count++;
-			}
-			//one scroll of transmutation is guaranteed to spawn somewhere on chapter 2-4
-			int enchChapter = (int)((Dungeon.seed / 10) % 3) + 1;
-			if ( Dungeon.depth / 5 == enchChapter &&
-					Dungeon.seed % 4 + 1 == Dungeon.depth % 5){
-				addItemToSpawn( new StoneOfEnchantment() );
-			}
-			
-			if ( Dungeon.depth == ((Dungeon.seed % 3) + 1)){
-				addItemToSpawn( new StoneOfIntuition() );
-			}
-			
-			if (Dungeon.depth > 1) {
-				//50% chance of getting a level feeling
-				//~7.15% chance for each feeling
-				switch (Random.Int( 14 )) {
-					case 0:
-                        if(Challenges.LINEAR.enabled()){
-                            feeling = Feeling.LARGE;
-                        } else {
-						feeling = Feeling.CHASM;
-                        }
-						break;
-					case 1:
-						feeling = Feeling.WATER;
-						break;
-					case 2:
-						feeling = Feeling.GRASS;
-						break;
-					case 3:
-						feeling = Feeling.DARK;
-						addItemToSpawn(new Torch());
-						viewDistance = Math.round(viewDistance/2f);
-						break;
-					case 4:
-						feeling = Feeling.LARGE;
-						addItemToSpawn(Generator.random(Generator.Category.FOOD));
-						break;
-					case 5:
-						feeling = Feeling.TRAPS;
-						break;
-					case 6:
-						feeling = Feeling.SECRETS;
-						break;
-				}
-			}
-		}
-		
 		do {
 			width = height = length = 0;
 
@@ -283,6 +209,101 @@ public abstract class Level implements Bundlable {
 			customWalls = new HashSet<>();
 			
 		} while (!build());
+
+		if (!(Dungeon.bossLevel())) {
+			int bonusNum = (int) Math.round(Math.sqrt(Challenges.nRoomsMult() * Challenges.roomSizeMult() - 1)) + 1;
+
+			if(this instanceof RegularLevel){
+				bonusNum = Math.round(((RegularLevel) this).enlargedFactor() * Challenges.roomSizeMult() - 1) / 2 + 1;
+				if(Challenges.GRINDING.enabled()){
+					bonusNum = Math.round(((RegularLevel) this).enlargedFactor() * Challenges.roomSizeMult() - 1) + 1;
+				}
+			}
+
+			if (Challenges.FAMINE.enabled()) {
+				for (int i = 0; i < bonusNum; i++) {
+					addItemToSpawn(new SmallRation());
+				}
+			} else {
+				for (int i = 0; i < bonusNum; i++) {
+					addItemToSpawn(Generator.random(Generator.Category.FOOD));
+				}
+			}
+
+			if (Challenges.DARKNESS.enabled()) {
+				for (int i = 0; i < bonusNum; i++) {
+					addItemToSpawn( new Torch() );
+				}
+			}
+			if (Challenges.DESERT.enabled()) {
+				for (int i = 0; i < bonusNum; i++) {
+					addItemToSpawn( new AquaBlast() );
+				}
+			}
+
+			if (Dungeon.posNeeded()) {
+				addItemToSpawn( new PotionOfStrength() );
+				Dungeon.LimitedDrops.STRENGTH_POTIONS.setCount(Dungeon.LimitedDrops.STRENGTH_POTIONS.getCount() + 1);
+			}
+			if (Dungeon.souNeeded()) {
+				addItemToSpawn( new ScrollOfUpgrade() );
+				Dungeon.LimitedDrops.UPGRADE_SCROLLS.setCount(Dungeon.LimitedDrops.UPGRADE_SCROLLS.getCount() + 1);
+			}
+			if (Dungeon.asNeeded()) {
+				addItemToSpawn( new Stylus() );
+				Dungeon.LimitedDrops.ARCANE_STYLI.setCount(Dungeon.LimitedDrops.ARCANE_STYLI.getCount() + 1);
+			}
+			//one scroll of transmutation is guaranteed to spawn somewhere on chapter 2-4
+			int enchChapter = (int)((Dungeon.seed / 10) % 3) + 1;
+			if ( Dungeon.depth / 5 == enchChapter &&
+					Dungeon.seed % 4 + 1 == Dungeon.depth % 5){
+				addItemToSpawn( new StoneOfEnchantment() );
+			}
+
+			if ( Dungeon.depth == ((Dungeon.seed % 3) + 1)){
+				addItemToSpawn( new StoneOfIntuition() );
+			}
+
+			if (Dungeon.depth > 1) {
+				//50% chance of getting a level feeling
+				//~7.15% chance for each feeling
+				switch (Random.Int( 14 )) {
+					case 0:
+						if(Challenges.LINEAR.enabled()){
+							feeling = Feeling.LARGE;
+						} else {
+							feeling = Feeling.CHASM;
+						}
+						break;
+					case 1:
+						feeling = Feeling.WATER;
+						break;
+					case 2:
+						feeling = Feeling.GRASS;
+						break;
+					case 3:
+						feeling = Feeling.DARK;
+						for (int i = 0; i < bonusNum; i++) {
+							addItemToSpawn(new Torch());
+						}
+						viewDistance = Math.round(viewDistance/2f);
+						break;
+					case 4:
+						feeling = Feeling.LARGE;
+						for (int i = 0; i < bonusNum; i++) {
+							addItemToSpawn(Generator.random(Generator.Category.FOOD));
+						}
+						break;
+					case 5:
+						feeling = Feeling.TRAPS;
+						break;
+					case 6:
+						feeling = Feeling.SECRETS;
+						break;
+				}
+			}
+		}
+		if(Challenges.GRINDING_2.enabled()) itemsToSpawn.clear();
 		
 		buildFlagMaps();
 		cleanWalls();
@@ -1225,9 +1246,7 @@ public abstract class Level implements Bundlable {
 			}
 			if (c.buff(MagicalSight.class) != null){
 				sense = 8;
-			}
-			if (((Hero)c).subClass == HeroSubClass.SNIPER){
-				sense *= 1.5f;
+				sense *= 1f + 0.25f*((Hero) c).pointsInTalent(Talent.FARSIGHT);
 			}
 		}
 		

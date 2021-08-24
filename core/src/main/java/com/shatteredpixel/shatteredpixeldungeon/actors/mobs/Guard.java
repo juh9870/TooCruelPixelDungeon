@@ -139,13 +139,13 @@ public class Guard extends Mob {
 	public void rollToDropLoot() {
 		//each drop makes future drops 1/2 as likely
 		// so loot chance looks like: 1/5, 1/10, 1/20, 1/40, etc.
-		lootChance *= Math.pow(1/2f, Dungeon.LimitedDrops.GUARD_ARM.count);
+		lootChance *= Math.pow(1/2f, Dungeon.LimitedDrops.GUARD_ARM.getCount());
 		super.rollToDropLoot();
 	}
 
 	@Override
 	protected Item createLoot() {
-		Dungeon.LimitedDrops.GUARD_ARM.count++;
+		Dungeon.LimitedDrops.GUARD_ARM.setCount(Dungeon.LimitedDrops.GUARD_ARM.getCount() + 1);
 		return super.createLoot();
 	}
 

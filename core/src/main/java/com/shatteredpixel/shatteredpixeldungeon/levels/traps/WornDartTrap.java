@@ -40,6 +40,7 @@ public class WornDartTrap extends TargetingTrap {
 		shape = CROSSHAIR;
 		
 		canBeHidden = false;
+		avoidsHallways = true;
 	}
 
 	@Override

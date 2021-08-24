@@ -30,22 +30,29 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.InventoryScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDivination;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMysticalEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.InventoryStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Rotberry;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.utils.killers.SharedPain;
@@ -53,6 +60,7 @@ import com.watabou.utils.Random;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 public enum Challenges implements Hero.Doom {
@@ -321,8 +329,73 @@ public enum Challenges implements Hero.Doom {
             return item instanceof KindOfWeapon || item instanceof RingOfForce;
         }
     },
+    GRINDING(81, 5, -50f),
+    GRINDING_2(82, 5, -300f) {
+        @Override
+        protected float _nLootMult() {
+            return 0f;
+        }
 
-    //Last id 80
+        @Override
+        protected void _init(boolean active) {
+            if (!active) return;
+            applyToCategory(Generator.Category.POTION,3);
+            boost(PotionOfStrength.class,Generator.Category.POTION,4);
+
+            applyToCategory(Generator.Category.SEED,5);
+            boost(Rotberry.Seed.class,Generator.Category.SEED,0);
+
+            applyToCategory(Generator.Category.SCROLL, 3);
+            boost(ScrollOfUpgrade.class,Generator.Category.SCROLL,5);
+
+            applyToCategory(Generator.Category.WAND,4);
+            deck(Generator.Category.WAND,true);
+
+            applyToCategory(Generator.Category.STONE,5);
+
+            boost(MysteryMeat.class,Generator.Category.FOOD,1);
+            deck(Generator.Category.FOOD,true);
+        }
+
+        private void applyToCategory(Generator.Category cat, float chance) {
+            Arrays.fill(cat.probs, chance);
+            if(cat.defaultProbs!=null){
+                cat.defaultProbs = cat.probs.clone();
+            }
+        }
+
+        private void boost(Class<?> itemClass, Generator.Category category, float prob) {
+            int i = -1;
+            for (int j = 0; j < category.classes.length; j++) {
+                if (category.classes[j] == itemClass) {
+                    i = j;
+                    break;
+                }
+            }
+            if (i == -1) {
+                int l = category.classes.length;
+                category.classes = Arrays.copyOf(category.classes, l + 1);
+                category.probs = Arrays.copyOf(category.probs, l + 1);
+                category.classes[l] = itemClass;
+                category.probs[l] = prob;
+            } else {
+                category.probs[i] = prob;
+            }
+            if(category.defaultProbs!=null){
+                category.defaultProbs = category.probs.clone();
+            }
+        }
+
+        private void deck(Generator.Category category, boolean enabled){
+            if(enabled){
+                category.defaultProbs = category.probs.clone();
+            } else {
+                category.defaultProbs = null;
+            }
+        }
+    },
+
+    //Last id 81
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
@@ -460,6 +533,9 @@ public enum Challenges implements Hero.Doom {
         for (Challenges ch : values()) {
             if (ch.enabled()) mult *= ch._nLootMult();
         }
+        if (Challenges.GRINDING.enabled()) {
+            mult *= Math.max(1, Challenges.roomSizeMult() * Challenges.nRoomsMult());
+        }
         return mult;
     }
 
@@ -500,6 +576,12 @@ public enum Challenges implements Hero.Doom {
             if (ch.enabled() && ch._isItemBlocked(item)) return true;
         }
         return false;
+    }
+
+    public static void init() {
+        for (Challenges ch : values()) {
+            ch._init(ch.enabled());
+        }
     }
 
     public static int checkExterminators() {
@@ -596,6 +678,27 @@ public enum Challenges implements Hero.Doom {
         }
     }
 
+    public static Item extraLoot() {
+        switch (Random.Int(15)) {
+            case 0:
+            case 1:
+            case 2:
+                return Generator.random();
+            case 3:
+                return RingOfWealth.genConsumableDrop(0);
+            case 4:
+                return RingOfWealth.genConsumableDrop(5);
+            case 5:
+                return RingOfWealth.genConsumableDrop(10);
+            case 6:
+                return RingOfWealth.genConsumableDrop(15);
+            case 7:
+                return RingOfWealth.genConsumableDrop(20);
+            default:
+                return null;
+        }
+    }
+
     public static boolean isActionBanned(Item item, String action) {
         if (item.cursed) {
             if (Challenges.CURSE_MAGNET.enabled()) {
@@ -679,6 +782,9 @@ public enum Challenges implements Hero.Doom {
 
     protected float _rareLootChanceMultiplier() {
         return 1;
+    }
+
+    protected void _init(boolean active) {
     }
 
     public boolean isModifier() {

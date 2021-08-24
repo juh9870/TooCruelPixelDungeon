@@ -37,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.watabou.noosa.Camera;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -57,8 +58,8 @@ public class HeroicLeap extends ArmorAbility {
 	public float chargeUse( Hero hero ) {
 		float chargeUse = super.chargeUse(hero);
 		if (hero.buff(DoubleJumpTracker.class) != null){
-			//reduced charge use by 24%/42%/56%/67%
-			chargeUse *= Math.pow(0.76, hero.pointsInTalent(Talent.DOUBLE_JUMP));
+			//reduced charge use by 20%/36%/50%/60%
+			chargeUse *= Math.pow(0.795, hero.pointsInTalent(Talent.DOUBLE_JUMP));
 		}
 		return chargeUse;
 	}
@@ -128,6 +129,11 @@ public class HeroicLeap extends ArmorAbility {
 	}
 
 	public static class DoubleJumpTracker extends FlavourBuff{};
+
+	@Override
+	public int icon() {
+		return HeroIcon.HEROIC_LEAP;
+	}
 
 	@Override
 	public Talent[] talents() {

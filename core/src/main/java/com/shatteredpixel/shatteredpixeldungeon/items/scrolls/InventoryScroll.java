@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -33,9 +34,8 @@ import com.watabou.noosa.audio.Sample;
 
 public abstract class InventoryScroll extends Scroll {
 
-	protected String inventoryTitle = Messages.get(this, "inv_title");
-	protected WndBag.Mode mode = WndBag.Mode.ALL;
-	
+	protected static boolean identifiedByUse = false;
+
 	@Override
 	public void doRead() {
 
@@ -46,9 +46,9 @@ public abstract class InventoryScroll extends Scroll {
 			identifiedByUse = false;
 		}
 
-		GameScene.selectItem( itemSelector, mode, inventoryTitle );
+		GameScene.selectItem( itemSelector );
 	}
-	public static void confirmCancelation(Scroll item, WndBag.Listener itemSelector, WndBag.Mode mode, String inventoryTitle) {
+	public static void confirmCancelation(Scroll item, WndBag.ItemSelector itemSelector) {
 		GameScene.show( new WndOptions(new ItemSprite(item),
 				Messages.titleCase(item.name()),
 				Messages.get(InventoryScroll.class, "warning"),
@@ -57,13 +57,13 @@ public abstract class InventoryScroll extends Scroll {
 			@Override
 			protected void onSelect(int index) {
 				switch (index) {
-					case 0:
-						curUser.spendAndNext(TIME_TO_READ);
-						identifiedByUse = false;
-						break;
-					case 1:
-						GameScene.selectItem(itemSelector, mode, inventoryTitle);
-						break;
+				case 0:
+					curUser.spendAndNext( TIME_TO_READ );
+					identifiedByUse = false;
+					break;
+				case 1:
+					GameScene.selectItem( itemSelector );
+					break;
 				}
 			}
 
@@ -71,11 +71,36 @@ public abstract class InventoryScroll extends Scroll {
 			}
 		});
 	}
+
+	private String inventoryTitle(){
+		return Messages.get(this, "inv_title");
+	}
+
+	protected Class<?extends Bag> preferredBag = null;
+
+	protected boolean usableOnItem( Item item ){
+		return true;
+	}
 	
 	protected abstract void onItemSelected( Item item );
 	
-	protected static boolean identifiedByUse = false;
-	protected static WndBag.Listener itemSelector = new WndBag.Listener() {
+	protected WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
+
+		@Override
+		public String textPrompt() {
+			return inventoryTitle();
+		}
+
+		@Override
+		public Class<? extends Bag> preferredBag() {
+			return preferredBag;
+		}
+
+		@Override
+		public boolean itemSelectable(Item item) {
+			return usableOnItem(item);
+		}
+
 		@Override
 		public void onSelect( Item item ) {
 			
@@ -94,7 +119,7 @@ public abstract class InventoryScroll extends Scroll {
 
 			} else if ((Challenges.isItemAutouse(curItem) || identifiedByUse) && !((Scroll) curItem).anonymous) {
 
-				InventoryScroll.confirmCancelation((Scroll)curItem,this,((InventoryScroll)curItem).mode,((InventoryScroll)curItem).inventoryTitle);
+				InventoryScroll.confirmCancelation((Scroll)curItem,this);
 				
 			} else if (!((Scroll)curItem).anonymous) {
 				

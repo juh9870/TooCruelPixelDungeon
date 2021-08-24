@@ -72,12 +72,12 @@ public class DM200 extends Mob {
 	public void rollToDropLoot() {
 		//each drop makes future drops 1/2 as likely
 		// so loot chance looks like: 1/8, 1/16, 1/32, 1/64, etc.
-		lootChance *= Math.pow(1/2f, Dungeon.LimitedDrops.DM200_EQUIP.count);
+		lootChance *= Math.pow(1/2f, Dungeon.LimitedDrops.DM200_EQUIP.getCount());
 		super.rollToDropLoot();
 	}
 
 	protected Item createLoot() {
-		Dungeon.LimitedDrops.DM200_EQUIP.count++;
+		Dungeon.LimitedDrops.DM200_EQUIP.setCount(Dungeon.LimitedDrops.DM200_EQUIP.getCount() + 1);
 		//uses probability tables for dwarf city
 		if (loot == Generator.Category.WEAPON){
 			return Generator.randomWeapon(4);

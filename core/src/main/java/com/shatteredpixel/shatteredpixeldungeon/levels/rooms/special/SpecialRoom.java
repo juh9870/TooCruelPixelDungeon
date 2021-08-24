@@ -92,12 +92,12 @@ public abstract class SpecialRoom extends Room {
 	
 	public static void initForRun() {
 		runSpecials = (ArrayList<Class<?extends Room>>)ALL_SPEC.clone();
-		if(DeviceCompat.isDebug()){
-			runSpecials = new ArrayList<>();
-			for (int i = 0; i < 100; i++) {
-				runSpecials.add(StatueRoom.class);
-			}
-		}
+//		if(DeviceCompat.isDebug()){
+//			runSpecials = new ArrayList<>();
+//			for (int i = 0; i < 100; i++) {
+//				runSpecials.add(StatueRoom.class);
+//			}
+//		}
 
 		pitNeededDepth = -1;
 		Random.shuffle(runSpecials);
@@ -124,6 +124,10 @@ public abstract class SpecialRoom extends Room {
 	}
 	
 	public static SpecialRoom createRoom(){
+
+		if(floorSpecials.size() == 0){
+			floorSpecials = (ArrayList<Class<?extends Room>>) runSpecials.clone();
+		}
 		if (Dungeon.depth == pitNeededDepth){
 			pitNeededDepth = -1;
 			
@@ -148,7 +152,7 @@ public abstract class SpecialRoom extends Room {
 			if (Dungeon.bossLevel(Dungeon.depth + 1)){
 				floorSpecials.remove(WeakFloorRoom.class);
 			}
-			
+
 			Room r = null;
 			int index = floorSpecials.size();
 			for (int i = 0; i < 4; i++){

@@ -77,13 +77,13 @@ public class Bat extends Mob {
 	
 	@Override
 	public void rollToDropLoot() {
-		lootChance *= ((7f - Dungeon.LimitedDrops.BAT_HP.count) / 7f);
+		lootChance *= ((7f - Dungeon.LimitedDrops.BAT_HP.getCount()) / 7f);
 		super.rollToDropLoot();
 	}
 	
 	@Override
 	protected Item createLoot(){
-		Dungeon.LimitedDrops.BAT_HP.count++;
+		Dungeon.LimitedDrops.BAT_HP.setCount(Dungeon.LimitedDrops.BAT_HP.getCount() + 1);
 		return super.createLoot();
 	}
 	

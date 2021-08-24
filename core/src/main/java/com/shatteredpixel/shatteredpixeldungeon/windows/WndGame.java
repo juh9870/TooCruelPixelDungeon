@@ -51,6 +51,7 @@ public class WndGame extends Window {
 		
 		super();
 
+		//settings
 		RedButton curBtn;
 		addButton( curBtn = new RedButton( Messages.get(this, "settings") ) {
 			@Override
@@ -110,41 +111,20 @@ public class WndGame extends Window {
 			curBtn.icon(Icons.get(Icons.RANKINGS));
 		}
 
-		addButtons(
-				// Main menu
-				new RedButton( Messages.get(this, "menu") ) {
-					@Override
-					protected void onClick() {
-						try {
-							Dungeon.saveAll();
-						} catch (IOException e) {
-							ShatteredPixelDungeon.reportException(e);
-						}
-						Game.switchScene(TitleScene.class);
-					}
-				},
-				// Quit
-				new RedButton( Messages.get(this, "exit") ) {
-					@Override
-					protected void onClick() {
-						try {
-							Dungeon.saveAll();
-						} catch (IOException e) {
-							ShatteredPixelDungeon.reportException(e);
-						}
-						Game.instance.finish();
-					}
-				}
-		);
-
-		// Cancel
-		addButton( new RedButton( Messages.get(this, "return") ) {
+		// Main menu
+		addButton(curBtn = new RedButton( Messages.get(this, "menu") ) {
 			@Override
 			protected void onClick() {
-				hide();
+				try {
+					Dungeon.saveAll();
+				} catch (IOException e) {
+					ShatteredPixelDungeon.reportException(e);
+				}
+				Game.switchScene(TitleScene.class);
 			}
 		} );
-		
+		curBtn.icon(Icons.get(Icons.DISPLAY));
+
 		resize( WIDTH, pos );
 	}
 

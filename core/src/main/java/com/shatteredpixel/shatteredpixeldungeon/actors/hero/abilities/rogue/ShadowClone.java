@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -41,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.TextureFilm;
@@ -123,6 +125,11 @@ public class ShadowClone extends ArmorAbility {
 	}
 
 	@Override
+	public int icon() {
+		return HeroIcon.SHADOW_CLONE;
+	}
+
+	@Override
 	public Talent[] talents() {
 		return new Talent[]{Talent.SHADOW_BLADE, Talent.CLONED_ARMOR, Talent.PERFECT_COPY, Talent.HEROIC_ENERGY};
 	}
@@ -142,6 +149,8 @@ public class ShadowClone extends ArmorAbility {
 			spriteClass = ShadowSprite.class;
 
 			HP = HT = 100;
+
+			immunities.add(Corruption.class);
 		}
 
 		public ShadowAlly(){
@@ -150,7 +159,7 @@ public class ShadowClone extends ArmorAbility {
 
 		public ShadowAlly( int heroLevel ){
 			super();
-			int hpBonus = 20 + 5*heroLevel;
+			int hpBonus = 15 + 5*heroLevel;
 			hpBonus = Math.round(0.1f * Dungeon.hero.pointsInTalent(Talent.PERFECT_COPY) * hpBonus);
 			if (hpBonus > 0){
 				HT += hpBonus;
@@ -192,7 +201,7 @@ public class ShadowClone extends ArmorAbility {
 			int damage = Random.NormalIntRange(10, 20);
 			int heroDamage = Dungeon.hero.damageRoll();
 			heroDamage /= Dungeon.hero.attackDelay(); //normalize hero damage based on atk speed
-			heroDamage = Math.round(0.0625f * Dungeon.hero.pointsInTalent(Talent.SHADOW_BLADE) * heroDamage);
+			heroDamage = Math.round(0.075f * Dungeon.hero.pointsInTalent(Talent.SHADOW_BLADE) * heroDamage);
 			if (heroDamage > 0){
 				damage += heroDamage;
 			}
@@ -203,8 +212,8 @@ public class ShadowClone extends ArmorAbility {
 		public int attackProc( Char enemy, int damage ) {
 			damage = super.attackProc( enemy, damage );
 			if (Random.Int(4) < Dungeon.hero.pointsInTalent(Talent.SHADOW_BLADE)
-					&& Dungeon.hero.belongings.weapon != null){
-				return Dungeon.hero.belongings.weapon.proc( this, enemy, damage );
+					&& Dungeon.hero.belongings.weapon() != null){
+				return Dungeon.hero.belongings.weapon().proc( this, enemy, damage );
 			} else {
 				return damage;
 			}
@@ -214,7 +223,7 @@ public class ShadowClone extends ArmorAbility {
 		public int drRoll() {
 			int dr = super.drRoll();
 			int heroRoll = Dungeon.hero.drRoll();
-			heroRoll = Math.round(0.125f * Dungeon.hero.pointsInTalent(Talent.CLONED_ARMOR) * heroRoll);
+			heroRoll = Math.round(0.15f * Dungeon.hero.pointsInTalent(Talent.CLONED_ARMOR) * heroRoll);
 			if (heroRoll > 0){
 				dr += heroRoll;
 			}
@@ -225,11 +234,23 @@ public class ShadowClone extends ArmorAbility {
 		public int defenseProc(Char enemy, int damage) {
 			damage = super.defenseProc(enemy, damage);
 			if (Random.Int(4) < Dungeon.hero.pointsInTalent(Talent.CLONED_ARMOR)
-					&& Dungeon.hero.belongings.armor != null){
-				return Dungeon.hero.belongings.armor.proc( enemy, this, damage );
+					&& Dungeon.hero.belongings.armor() != null){
+				return Dungeon.hero.belongings.armor().proc( enemy, this, damage );
 			} else {
 				return damage;
 			}
+		}
+
+		@Override
+		public float speed() {
+			float speed = super.speed();
+
+			//moves 2 tiles at a time when returning to the hero
+			if (state == WANDERING && defendingPos == -1){
+				speed *= 2;
+			}
+
+			return speed;
 		}
 
 		@Override

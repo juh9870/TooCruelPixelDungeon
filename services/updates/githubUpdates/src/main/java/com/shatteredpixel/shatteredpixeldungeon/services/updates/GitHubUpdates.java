@@ -44,7 +44,12 @@ public class GitHubUpdates extends UpdateService {
 	}
 
 	@Override
-	public void checkForUpdate(boolean useMetered, UpdateResultCallback callback) {
+	public boolean supportsBetaChannel() {
+		return true;
+	}
+
+	@Override
+	public void checkForUpdate(boolean useMetered, boolean includeBetas, UpdateResultCallback callback) {
 
 		if (!useMetered && !Game.platform.connectedToUnmeteredNetwork()){
 			callback.onConnectionFailed();
@@ -52,7 +57,7 @@ public class GitHubUpdates extends UpdateService {
 		}
 
 		Net.HttpRequest httpGet = new Net.HttpRequest(Net.HttpMethods.GET);
-		httpGet.setUrl("https://api.github.com/repos/00-Evan/shattered-pixel-dungeon/releases");
+		httpGet.setUrl("https://api.github.com/repos/juh9870/TooCruelPixelDungeon/releases");
 		httpGet.setHeader("Accept", "application/vnd.github.v3+json");
 
 		Gdx.net.sendHttpRequest(httpGet, new Net.HttpResponseListener() {
@@ -62,15 +67,13 @@ public class GitHubUpdates extends UpdateService {
 					Bundle latestRelease = null;
 					int latestVersionCode = Game.versionCode;
 
-					boolean includePrereleases = Game.version.contains("-BETA-") || Game.version.contains("-RC-");
-
 					for (Bundle b : Bundle.read( httpResponse.getResultAsStream() ).getBundleArray()){
 						Matcher m = versionCodePattern.matcher(b.getString("body"));
 
 						if (m.find()){
 							int releaseVersion = Integer.parseInt(m.group(1));
 							if (releaseVersion > latestVersionCode
-									&& (includePrereleases || !b.getBoolean("prerelease"))){
+									&& (includeBetas || !b.getBoolean("prerelease"))){
 								latestRelease = b;
 								latestVersionCode = releaseVersion;
 							}
@@ -136,8 +139,18 @@ public class GitHubUpdates extends UpdateService {
 	}
 
 	@Override
+	public boolean supportsReviews() {
+		return false;
+	}
+
+	@Override
 	public void initializeReview(ReviewResultCallback callback) {
 		//does nothing, no review functionality here
 		callback.onComplete();
+	}
+
+	@Override
+	public void openReviewURI() {
+		//does nothing
 	}
 }

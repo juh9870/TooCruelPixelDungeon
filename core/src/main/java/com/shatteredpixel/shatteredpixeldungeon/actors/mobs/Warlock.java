@@ -134,8 +134,8 @@ public class Warlock extends Mob implements Callback {
 	public Item createLoot(){
 
 		// 1/6 chance for healing, scaling to 0 over 8 drops
-		if (Random.Int(2) == 0 && Random.Int(8) > Dungeon.LimitedDrops.WARLOCK_HP.count ){
-			Dungeon.LimitedDrops.WARLOCK_HP.count++;
+		if (Random.Int(2) == 0 && Random.Int(8) > Dungeon.LimitedDrops.WARLOCK_HP.getCount()){
+			Dungeon.LimitedDrops.WARLOCK_HP.setCount(Dungeon.LimitedDrops.WARLOCK_HP.getCount() + 1);
 			return new PotionOfHealing();
 		} else {
 			Item i = Generator.random(Generator.Category.POTION);

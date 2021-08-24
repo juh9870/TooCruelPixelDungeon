@@ -41,23 +41,10 @@ public class FlashingTrap extends Trap {
 	{
 		color = GREY;
 		shape = STARS;
+
+		disarmedByActivation = false;
+		avoidsHallways = true;
 	}
-	
-	@Override
-	public void trigger() {
-		if(Challenges.CHAOTIC_CONSTRUCTION.enabled()){
-			super.trigger();
-			return;
-		}
-		if (Dungeon.level.heroFOV[pos]){
-			Sample.INSTANCE.play(Assets.Sounds.TRAP);
-		}
-		//this trap is not disarmed by being triggered
-		reveal();
-		Level.set(pos, Terrain.TRAP);
-		activate();
-	}
-	
 	@Override
 	public void activate() {
 		

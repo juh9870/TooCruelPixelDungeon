@@ -143,7 +143,7 @@ public class Toolbar extends Component {
 			private GoldIndicator gold;
 
 			private void showBackpack(){
-				GameScene.show(new WndBag(Dungeon.hero.belongings.backpack, null, WndBag.Mode.ALL, null));
+				GameScene.show(new WndBag(Dungeon.hero.belongings.backpack));
 			}
 			private void showQuickBag(){
 				GameScene.show(new WndQuickBag(null));

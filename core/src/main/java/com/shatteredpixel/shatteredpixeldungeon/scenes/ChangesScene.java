@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_6_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_7_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_8_X_Changes;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v0_9_X_Changes;
+import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.v1_X_Changes;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.audio.Music;
@@ -57,8 +58,11 @@ public class ChangesScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
-		
-		Music.INSTANCE.play( Assets.Music.THEME, true );
+
+		Music.INSTANCE.playTracks(
+				new String[]{Assets.Music.THEME_1, Assets.Music.THEME_2},
+				new float[]{1, 1},
+				false);
 
 		int w = Camera.main.width;
 		int h = Camera.main.height;
@@ -94,6 +98,7 @@ public class ChangesScene extends PixelScene {
 				Cruel_Changes.addAllChanges(changeInfos);
 				break;
 			case 1:
+				v1_X_Changes.addAllChanges(changeInfos);
 				v0_9_X_Changes.addAllChanges(changeInfos);
 				v0_8_X_Changes.addAllChanges(changeInfos);
 				v0_7_X_Changes.addAllChanges(changeInfos);
@@ -156,8 +161,7 @@ public class ChangesScene extends PixelScene {
 				panel.innerWidth() + 2,
 				panel.innerHeight() + 2);
 		list.scrollTo(0, 0);
-		
-		StyledButton btn0_9 = new StyledButton(Chrome.Type.TAB_SELECTED,"Too Cruel PD"){
+		StyledButton tcpd = new StyledButton(Chrome.Type.TAB_SELECTED,"Too Cruel PD"){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -167,12 +171,11 @@ public class ChangesScene extends PixelScene {
 				}
 			}
 		};
+		if (changesSelected != 0) tcpd.textColor( 0xBBBBBB );
+		tcpd.setRect(list.left()-4f, list.bottom(), pw/2-1, changesSelected == 0 ? 19 : 15);
+		addToBack(tcpd);
 
-		if (changesSelected != 0) btn0_9.textColor( 0xBBBBBB );
-		btn0_9.setRect(list.left()-4f, list.bottom(), pw/2-1, changesSelected == 0 ? 19 : 15);
-		addToBack(btn0_9);
-
-		StyledButton btn0_8 = new StyledButton(Chrome.Type.TAB_SELECTED, "Shattered PD"){
+		StyledButton shpd = new StyledButton(Chrome.Type.TAB_SELECTED, "Shattered PD"){
 			@Override
 			protected void onClick() {
 				super.onClick();
@@ -182,9 +185,9 @@ public class ChangesScene extends PixelScene {
 				}
 			}
 		};
-		if (changesSelected != 1) btn0_8.textColor( 0xBBBBBB );
-		btn0_8.setRect(btn0_9.right() + 1, list.bottom(), pw/2-1, changesSelected == 1 ? 19 : 15);
-		addToBack(btn0_8);
+		if (changesSelected != 1) shpd.textColor( 0xBBBBBB );
+		shpd.setRect(tcpd.right() + 1, list.bottom(), pw/2-1, changesSelected == 1 ? 19 : 15);
+		addToBack(shpd);
 
 		Archs archs = new Archs();
 		archs.setSize( Camera.main.width, Camera.main.height );

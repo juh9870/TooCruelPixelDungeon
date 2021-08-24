@@ -481,7 +481,10 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 
 	public void aura( int color ){
-		aura(getClass(), color, 1, true);
+		aura(getClass(), color);
+	}
+	public void aura( Class cl, int color ){
+		aura(cl, color, 1, true);
 	}
 	public void aura( Class cl, int color, float sizeMod, boolean light ){
 		Flare aura = auras.get(cl);
@@ -493,7 +496,11 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		size*=sizeMod;
 		aura = new Flare(5, size);
 		aura.angularSpeed = 90;
-		aura.color(color, light).show(this, 0);
+		aura.color(color, light);
+
+		if (parent != null) {
+			aura.show(this, 0);
+		}
 		auras.put(cl,aura);
 	}
 
@@ -557,6 +564,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 		for (Flare aura : auras.values()) {
 			if (aura != null){
+				if (aura.parent == null){
+					aura.show(this, 0);
+				}
 				aura.visible = visible;
 				aura.point(center());
 			}

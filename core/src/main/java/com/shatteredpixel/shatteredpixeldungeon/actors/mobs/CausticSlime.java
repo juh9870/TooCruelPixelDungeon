@@ -53,8 +53,6 @@ public class CausticSlime extends Slime {
 	public void rollToDropLoot() {
 		if (Dungeon.hero.lvl > maxLvl + 2) return;
 		
-		lootChance *= Challenges.rareLootChanceMultiplier();
-		
 		super.rollToDropLoot();
 
 		if (Random.Float() >= Challenges.rareLootChanceMultiplier()) return;

@@ -129,6 +129,7 @@ public class GamesInProgress {
 		
 		info.level = hero.lvl;
 		info.str = hero.STR;
+		info.strBonus = hero.STR() - hero.STR;
 		info.exp = hero.exp;
 		info.hp = hero.HP;
 		info.ht = hero.HT;
@@ -160,6 +161,7 @@ public class GamesInProgress {
 		
 		public int level;
 		public int str;
+		public int strBonus;
 		public int exp;
 		public int hp;
 		public int ht;

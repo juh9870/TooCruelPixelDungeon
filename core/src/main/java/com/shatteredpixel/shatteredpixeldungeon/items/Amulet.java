@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Modifiers;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -135,7 +136,7 @@ public class Amulet extends Item {
 	
 	@Override
 	public boolean isUpgradable() {
-		return Dungeon.modifiers.difficulty().margin >= Difficulty.HARD_2.margin;
+		return Dungeon.modifiers.difficulty().margin >= Difficulty.HARD_2.margin && !Dungeon.modifiers.isModified();
 	}
 
 	@Override

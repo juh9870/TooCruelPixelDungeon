@@ -525,13 +525,13 @@ public class Potion extends Item {
 
 			while (result instanceof PotionOfHealing
 					&& (Challenges.PHARMACOPHOBIA.enabled()
-					|| Random.Int(10) < Dungeon.LimitedDrops.COOKING_HP.count)) {
+					|| Random.Int(10) < Dungeon.LimitedDrops.COOKING_HP.getCount())) {
 
 				result = (Potion) Generator.randomUsingDefaults(Generator.Category.POTION);
 			}
 			
 			if (result instanceof PotionOfHealing) {
-				Dungeon.LimitedDrops.COOKING_HP.count++;
+				Dungeon.LimitedDrops.COOKING_HP.setCount(Dungeon.LimitedDrops.COOKING_HP.getCount() + 1);
 			}
 			
 			Statistics.potionsCooked++;

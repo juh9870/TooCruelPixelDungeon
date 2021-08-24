@@ -101,10 +101,10 @@ public abstract class Trap implements Bundlable {
 
 	public boolean visible;
 	public boolean active = true;
+	public boolean disarmedByActivation = true;
 	
 	public boolean canBeHidden = true;
 	public boolean canBeSearched = true;
-
 
 	private void applyChallengedSprite(){
 		if (Challenges.INDIFFERENT_DESIGN.enabled()) {
@@ -115,6 +115,7 @@ public abstract class Trap implements Bundlable {
 		}
 
 	}
+	public boolean avoidsHallways = false; //whether this trap should avoid being placed in hallways
 
 	public Trap set(int pos){
 		this.pos = pos;
@@ -144,7 +145,7 @@ public abstract class Trap implements Bundlable {
 			if (Dungeon.level.heroFOV[pos]) {
 				Sample.INSTANCE.play(Assets.Sounds.TRAP);
 			}
-			disarm();
+			if ((disarmedByActivation || Challenges.CHAOTIC_CONSTRUCTION.enabled()) && !Challenges.REPEATER.enabled()) disarm();
 			reveal();
 			if(!Challenges.CHAOTIC_CONSTRUCTION.enabled()){
 				activate();
@@ -180,11 +181,6 @@ public abstract class Trap implements Bundlable {
 				t.pos=pos;
 				t.activate();
 			}
-		}
-		if (Challenges.REPEATER.enabled()) {
-			Trap t = Reflection.newInstance(getClass());
-			Dungeon.level.setTrap(t, pos).reveal();
-			Level.set(pos, Terrain.TRAP);
 		}
 	}
 

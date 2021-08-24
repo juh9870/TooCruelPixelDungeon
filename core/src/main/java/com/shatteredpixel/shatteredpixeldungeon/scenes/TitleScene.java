@@ -65,7 +65,10 @@ public class TitleScene extends PixelScene {
 
 		super.create();
 
-		Music.INSTANCE.play( Assets.Music.THEME, true );
+		Music.INSTANCE.playTracks(
+				new String[]{Assets.Music.THEME_1, Assets.Music.THEME_2},
+				new float[]{1, 1},
+				false);
 
 		uiCamera.visible = false;
 
@@ -194,6 +197,8 @@ public class TitleScene extends PixelScene {
 		ExitButton btnExit = new ExitButton();
 		btnExit.setPos( w - btnExit.width(), 0 );
 		add( btnExit );
+
+		Updates.checkForUpdate();
 
 		fadeIn();
 	}

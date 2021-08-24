@@ -24,11 +24,12 @@ package com.shatteredpixel.shatteredpixeldungeon;
 import com.watabou.noosa.NinePatch;
 
 public class Chrome {
-	
+
 	public enum  Type {
 		TOAST,
 		TOAST_TR,
 		TOAST_EMPTY,
+		TOAST_WHITE,
 		WINDOW,
 		WINDOW_SILVER,
 		RED_BUTTON,
@@ -49,44 +50,45 @@ public class Chrome {
 		}
 	}
 
-	
+
 	public static NinePatch get( Type type ) {
-		String Asset = Assets.Interfaces.CHROME;
-		switch (type) {
-			case WINDOW:
-				return new NinePatch( Asset, 0, 0, 20, 20, 6 );
-			case WINDOW_SILVER:
-				return new NinePatch( Asset, 86, 0, 22, 22, 7 );
-			case TOAST:
-				return new NinePatch( Asset, 22, 0, 18, 18, 5 );
-			case TOAST_TR:
-				return new NinePatch( Asset, 40, 0, 18, 18, 5 );
-			case TOAST_EMPTY:
-				return new NinePatch( Asset, 109, 1, 16, 16, 5 );
-			case RED_BUTTON:
-				return new NinePatch( Asset, 58, 0, 6, 6, 2 );
-			case GREY_BUTTON:
-				return new NinePatch( Asset, 58, 6, 6, 6, 2 );
-			case TAG:
-				return new NinePatch( Asset, 22, 18, 16, 14, 3 );
-			case GEM:
-				return new NinePatch( Asset, 0, 32, 32, 32, 13 );
-			case GREY_BUTTON_TR:
-				return new NinePatch( Asset, 53, 20, 9, 9, 5 );
-			case SCROLL:
-				return new NinePatch( Asset, 32, 32, 32, 32, 5, 11, 5, 11 );
-			case TAB_SET:
-				return new NinePatch( Asset, 64, 0, 20, 20, 6 );
-			case TAB_SELECTED:
-				return new NinePatch( Asset, 65, 22, 8, 13, 3, 7, 3, 5 );
-			case TAB_UNSELECTED:
-				return new NinePatch( Asset, 75, 22, 8, 13, 3, 7, 3, 5 );
-			case OUTLINE:
-				return new NinePatch( Asset, 0, 22, 9, 9, 3 );
-			case OUTLINE_THIN:
-				return new NinePatch( Asset, 10, 22, 3, 3, 1 );
-			default:
-				return null;
-		}
+        String Asset = Assets.Interfaces.CHROME;
+        switch (type) {
+            case WINDOW:
+                return new NinePatch(Asset, 0, 0, 20, 20, 6);
+            case WINDOW_SILVER:
+                return new NinePatch(Asset, 86, 0, 22, 22, 7);
+            case TOAST:
+                return new NinePatch(Asset, 20, 0, 9, 9, 4);
+            case TOAST_TR:
+            case GREY_BUTTON_TR:
+                return new NinePatch(Asset, 20, 9, 9, 9, 4);
+            case TOAST_WHITE:
+                return new NinePatch(Asset, 29, 0, 9, 9, 4);
+            case TOAST_EMPTY:
+                return new NinePatch(Asset, 109, 1, 16, 16, 5);
+            case RED_BUTTON:
+                return new NinePatch(Asset, 38, 0, 6, 6, 2);
+            case GREY_BUTTON:
+                return new NinePatch(Asset, 38, 6, 6, 6, 2);
+            case TAG:
+                return new NinePatch(Asset, 22, 18, 16, 14, 3);
+            case GEM:
+                return new NinePatch(Asset, 0, 32, 32, 32, 13);
+            case SCROLL:
+                return new NinePatch(Asset, 32, 32, 32, 32, 5, 11, 5, 11);
+            case TAB_SET:
+                return new NinePatch(Asset, 64, 0, 20, 20, 6);
+            case TAB_SELECTED:
+                return new NinePatch(Asset, 65, 22, 8, 13, 3, 7, 3, 5);
+            case TAB_UNSELECTED:
+                return new NinePatch(Asset, 75, 22, 8, 13, 3, 7, 3, 5);
+            case OUTLINE:
+                return new NinePatch(Asset, 0, 22, 9, 9, 3);
+            case OUTLINE_THIN:
+                return new NinePatch(Asset, 10, 22, 3, 3, 1);
+            default:
+                return null;
+        }
 	}
 }

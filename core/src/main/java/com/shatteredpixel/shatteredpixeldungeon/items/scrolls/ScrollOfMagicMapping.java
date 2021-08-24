@@ -27,12 +27,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.DeviceCompat;
 
 public class ScrollOfMagicMapping extends Scroll {
 
@@ -47,6 +49,11 @@ public class ScrollOfMagicMapping extends Scroll {
 		int[] map = Dungeon.level.map;
 		boolean[] mapped = Dungeon.level.mapped;
 		boolean[] discoverable = Dungeon.level.discoverable;
+
+		boolean debug = DeviceCompat.isDebug();
+		if(DeviceCompat.isDebug()){
+			mapped = Dungeon.level.visited;
+		}
 		
 		boolean noticed = false;
 		
@@ -57,6 +64,10 @@ public class ScrollOfMagicMapping extends Scroll {
 			if (discoverable[i]) {
 				
 				mapped[i] = true;
+				if(debug){
+					Heap h = Dungeon.level.heaps.get(i);
+					if (h != null) h.seen = true;
+				}
 				if ((Terrain.flags[terr] & Terrain.SECRET) != 0) {
 					
 					Dungeon.level.discover( i );
