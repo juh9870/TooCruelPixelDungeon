@@ -41,7 +41,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.InventoryScroll;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
@@ -330,36 +329,39 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING(81, 5, -50f),
-    GRINDING_2(82, 5, -300f) {
+    GRINDING_2(82, 5, -300f, GRINDING) {
         @Override
         protected float _nLootMult() {
-            return 0f;
+            return 5f;
         }
 
         @Override
         protected void _init(boolean active) {
             if (!active) return;
-            applyToCategory(Generator.Category.POTION,3);
-            boost(PotionOfStrength.class,Generator.Category.POTION,4);
+            applyToCategory(Generator.Category.POTION, 3);
+            boost(PotionOfStrength.class, Generator.Category.POTION, 8);
 
-            applyToCategory(Generator.Category.SEED,5);
-            boost(Rotberry.Seed.class,Generator.Category.SEED,0);
+            applyToCategory(Generator.Category.SEED, 5);
+            boost(Rotberry.Seed.class, Generator.Category.SEED, 0);
 
             applyToCategory(Generator.Category.SCROLL, 3);
-            boost(ScrollOfUpgrade.class,Generator.Category.SCROLL,5);
+            if (Challenges.GRINDING_3.enabled())
+                boost(ScrollOfUpgrade.class, Generator.Category.SCROLL, 30);
+            else
+                boost(ScrollOfUpgrade.class, Generator.Category.SCROLL, 10);
 
-            applyToCategory(Generator.Category.WAND,4);
-            deck(Generator.Category.WAND,true);
+            applyToCategory(Generator.Category.WAND, 4);
+            deck(Generator.Category.WAND, true);
 
-            applyToCategory(Generator.Category.STONE,5);
+            applyToCategory(Generator.Category.STONE, 5);
 
-            boost(MysteryMeat.class,Generator.Category.FOOD,1);
-            deck(Generator.Category.FOOD,true);
+            boost(MysteryMeat.class, Generator.Category.FOOD, 1);
+            deck(Generator.Category.FOOD, true);
         }
 
         private void applyToCategory(Generator.Category cat, float chance) {
             Arrays.fill(cat.probs, chance);
-            if(cat.defaultProbs!=null){
+            if (cat.defaultProbs != null) {
                 cat.defaultProbs = cat.probs.clone();
             }
         }
@@ -381,21 +383,22 @@ public enum Challenges implements Hero.Doom {
             } else {
                 category.probs[i] = prob;
             }
-            if(category.defaultProbs!=null){
+            if (category.defaultProbs != null) {
                 category.defaultProbs = category.probs.clone();
             }
         }
 
-        private void deck(Generator.Category category, boolean enabled){
-            if(enabled){
+        private void deck(Generator.Category category, boolean enabled) {
+            if (enabled) {
                 category.defaultProbs = category.probs.clone();
             } else {
                 category.defaultProbs = null;
             }
         }
     },
+    GRINDING_3(83, 5, 0, GRINDING_2),
 
-    //Last id 81
+    //Last id 83
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
@@ -679,7 +682,33 @@ public enum Challenges implements Hero.Doom {
     }
 
     public static Item extraLoot() {
-        switch (Random.Int(15)) {
+        int max = 0;
+        int min = 0;
+        switch (Dungeon.depth) {
+            case 1:
+            case 2:
+                max = 10;
+                break;
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+                max = 8;
+                min = 1;
+                break;
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                max = 6;
+                min = 2;
+                break;
+            default:
+                max = 5;
+                min = 3;
+
+        }
+        switch (Random.Int(max) + min) {
             case 0:
             case 1:
             case 2:

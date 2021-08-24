@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.bags;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
@@ -45,6 +46,9 @@ public class VelvetPouch extends Bag {
 	}
 
 	public int capacity(){
+		if(Challenges.GRINDING_2.enabled()){
+			return 38;
+		}
 		return 19;
 	}
 	

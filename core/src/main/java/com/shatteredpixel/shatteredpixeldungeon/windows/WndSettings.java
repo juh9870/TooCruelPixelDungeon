@@ -550,6 +550,7 @@ public class WndSettings extends WndTabbed {
 				}
 			};
 			chkNews.checked(SPDSettings.news());
+			chkNews.enable(false);
 			add(chkNews);
 
 			if (Updates.supportsUpdates() && Updates.isUpdateable()) {

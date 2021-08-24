@@ -218,6 +218,9 @@ public abstract class Level implements Bundlable {
 				if(Challenges.GRINDING.enabled()){
 					bonusNum = Math.round(((RegularLevel) this).enlargedFactor() * Challenges.roomSizeMult() - 1) + 1;
 				}
+				if(Challenges.GRINDING_2.enabled()){
+					bonusNum *= 2;
+				}
 			}
 
 			if (Challenges.FAMINE.enabled()) {
@@ -303,7 +306,6 @@ public abstract class Level implements Bundlable {
 				}
 			}
 		}
-		if(Challenges.GRINDING_2.enabled()) itemsToSpawn.clear();
 		
 		buildFlagMaps();
 		cleanWalls();
@@ -1036,7 +1038,7 @@ public abstract class Level implements Bundlable {
 				terr == Terrain.TRAP || terr == Terrain.INACTIVE_TRAP)){
 			set(cell, Terrain.WATER);
 			Dungeon.level.traps.remove(cell);
-			droughtBlob.clear(cell);
+			if (droughtBlob != null) droughtBlob.clear(cell);
 			GameScene.updateMap(cell);
 			return true;
 		}

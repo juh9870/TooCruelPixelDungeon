@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
@@ -195,6 +196,10 @@ public abstract class Mob extends Char {
     protected boolean act() {
 
         super.act();
+
+        if(Challenges.GRINDING_2.enabled()){
+            Buff.affect(this, MMO.class);
+        }
 
         boolean justAlerted = alerted;
         alerted = false;
@@ -681,6 +686,10 @@ public abstract class Mob extends Char {
             alerted = true;
         }
 
+        if (Challenges.GRINDING_3.enabled() && dmg >= HP && dmg < HP * 2 && HP > HT/2) {
+            dmg /= (Dungeon.depth + 1) * Math.log(Dungeon.depth + 1);
+        }
+
         if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE) {
             dmg = Challenges.distributeDamage(this, new HashSet<>(Dungeon.level.mobs), dmg);
         }
@@ -706,7 +715,11 @@ public abstract class Mob extends Char {
                     Dungeon.hero.buff(Legion.class).consumeDeath();
                 }
 
-                int exp = Dungeon.hero.lvl <= maxLvl && buff(NoReward.class) == null ? EXP : 0;
+                int exp = EXP;
+                if(Dungeon.hero.lvl > maxLvl || buff(NoReward.class) != null) exp = 0;
+                if(Challenges.GRINDING_2.enabled()){
+                    exp = MMO.exp(this);
+                }
                 if (exp > 0) {
                     Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "exp", exp));
                 }
@@ -873,10 +886,16 @@ public abstract class Mob extends Char {
             if (loot != null) {
                 Dungeon.level.drop(loot, pos).sprite.drop();
             }
-        } else if(extraGrind){
-            Item extra = Challenges.extraLoot();
-            if (extra != null) {
-                Dungeon.level.drop(extra, pos).sprite.drop();
+        }
+        if(extraGrind){
+            int amount = Random.Int(3) + 1;
+            if (Challenges.GRINDING_3.enabled())
+                amount += (int)Math.round(Math.max(Math.sqrt(MMO.modifier()),Dungeon.depth));
+            for (int i = 0; i < amount; i++) {
+                Item extra = Challenges.extraLoot();
+                if (extra != null) {
+                    Dungeon.level.drop(extra, pos).sprite.drop();
+                }
             }
         }
 

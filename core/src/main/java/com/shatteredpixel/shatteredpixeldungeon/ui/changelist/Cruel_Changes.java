@@ -72,23 +72,38 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
-        changes = new ChangeInfo("v0.4.4a", false, "");
+        changes = new ChangeInfo("v0.4.4b", false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "Fixed:\n" +
-                        "_-_ Major bug influencing damage multipliers\n" +
+                        "_-_ Crash related to new trap"
+        ));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Completely reworked Korean MMO modifier and split it into two"
+        ));
+
+        changes = new ChangeInfo("v0.4.4a", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+                "_-_ Updated to SHPD v1.0.0\n" +
+                        "_-_ Enabled update checker"));
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "Fixed:\n" +
+                        "_-_ Fixed major bug influencing damage multipliers\n" +
                         "_-_ Fixed couple of bugs caused by extreme conditions\n" +
                         "_-_ Fixed even more levelgen issues"
         ));
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
-                "_-_ Added modifers system and 3 modifiers!\n" +
+                "_-_ Added modifiers system and 5 modifiers!\n" +
                         "_-_ Improved challenges selection window\n" +
                         "_-_ Tweaked Intoxication\n" +
                         "_-_ Brimstone no longer grants immunity to Scorched Earth burning\n" +
                         "_-_ Dance Dance no longer affect sleeping enemies\n" +
-                        "_-_ Increased amount of guaranteed loot with level-enlarging challenges"
+                        "_-_ Increased amount of guaranteed loot (food, torches) with level-enlarging challenges"
         ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, "");

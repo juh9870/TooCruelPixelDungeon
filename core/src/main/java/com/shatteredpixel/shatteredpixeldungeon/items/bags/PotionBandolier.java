@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.bags;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.LiquidMetal;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
@@ -42,6 +43,9 @@ public class PotionBandolier extends Bag {
 	}
 
 	public int capacity(){
+		if(Challenges.GRINDING_2.enabled()){
+			return 38;
+		}
 		return 19;
 	}
 

@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.bags;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
@@ -43,6 +44,9 @@ public class ScrollHolder extends Bag {
 	}
 
 	public int capacity(){
+		if(Challenges.GRINDING_2.enabled()){
+			return 38;
+		}
 		return 19;
 	}
 	

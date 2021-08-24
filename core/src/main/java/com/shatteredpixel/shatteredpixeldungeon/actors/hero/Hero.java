@@ -36,7 +36,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Alchemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amnesia;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AttackAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
@@ -55,6 +54,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Intoxication;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
@@ -72,10 +72,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
@@ -228,6 +226,9 @@ public class Hero extends Char {
 		
 		HT = 20 + 5 * (lvl - 1) + HTBoost;
 		float multiplier = RingOfMight.HTMultiplier(this);
+		if(Challenges.GRINDING_2.enabled()){
+			multiplier *= Math.pow(MMO.getHeroScaling(), lvl);
+		}
 		HT = Math.round(multiplier * HT);
 		
 		if (buff(ElixirOfMight.HTBoost.class) != null) {
@@ -889,43 +890,47 @@ public class Hero extends Char {
 			
 			Heap heap = Dungeon.level.heaps.get(pos);
 			if (heap != null) {
-				Item item = heap.peek();
-				if (item.doPickUp(this)) {
-					heap.pickUp();
-					
-					if (item instanceof Dewdrop
-							|| item instanceof TimekeepersHourglass.sandBag
-							|| item instanceof DriedRose.Petal
-							|| item instanceof Key) {
-						//Do Nothing
-					} else {
-						//TODO make all unique items important? or just POS / SOU?
-						boolean important = item.unique && item.isIdentified() &&
-								(item instanceof Scroll || item instanceof Potion);
-						
-						if (important) {
-							GLog.p(Messages.get(this, "you_now_have", item.name()));
+				boolean batch = Challenges.GRINDING_2.enabled();
+				do {
+					Item item = heap.peek();
+					if (item.doPickUp(this)) {
+						heap.pickUp();
+
+						if (item instanceof Dewdrop
+								|| item instanceof TimekeepersHourglass.sandBag
+								|| item instanceof DriedRose.Petal
+								|| item instanceof Key) {
+							//Do Nothing
 						} else {
-							GLog.i(Messages.get(this, "you_now_have", item.name()));
+							//TODO make all unique items important? or just POS / SOU?
+							boolean important = !batch && item.unique && item.isIdentified() &&
+									(item instanceof Scroll || item instanceof Potion);
+
+							if (important) {
+								GLog.p(Messages.get(this, "you_now_have", item.name()));
+							} else {
+								GLog.i(Messages.get(this, "you_now_have", item.name()));
+							}
 						}
-					}
-					
-					curAction = null;
-				} else {
-					
-					if (item instanceof Dewdrop
-							|| item instanceof TimekeepersHourglass.sandBag
-							|| item instanceof DriedRose.Petal
-							|| item instanceof Key) {
-						//Do Nothing
+						if(batch) spend(-Item.TIME_TO_PICK_UP);
+
+						curAction = null;
 					} else {
-						GLog.newLine();
-						GLog.n(Messages.get(this, "you_cant_have", item.name()));
+
+						if (item instanceof Dewdrop
+								|| item instanceof TimekeepersHourglass.sandBag
+								|| item instanceof DriedRose.Petal
+								|| item instanceof Key) {
+							//Do Nothing
+						} else if(!batch) {
+							GLog.newLine();
+							GLog.n(Messages.get(this, "you_cant_have", item.name()));
+						}
+
+						heap.sprite.drop();
+						ready();
 					}
-					
-					heap.sprite.drop();
-					ready();
-				}
+				} while (batch && !heap.isEmpty());
 			} else {
 				ready();
 			}
@@ -1627,7 +1632,7 @@ public class Hero extends Char {
 		boolean levelUp = false;
 		while (this.exp >= maxExp()) {
 			this.exp -= maxExp();
-			if (lvl < MAX_LEVEL) {
+			if (lvl < MAX_LEVEL || Challenges.GRINDING_2.enabled()) {
 				lvl++;
 				levelUp = true;
 				
@@ -1638,6 +1643,10 @@ public class Hero extends Char {
 				updateHT(true);
 				attackSkill++;
 				defenseSkill++;
+				if(Challenges.GRINDING_2.enabled()){
+					attackSkill = (int) Math.pow(MMO.getHeroScaling(), lvl - 1) * (10 + lvl - 1);
+					defenseSkill = (int) Math.pow(MMO.getHeroScaling(), lvl - 1) * (5 + lvl - 1);
+				}
 				
 			} else {
 				Buff.prolong(this, Bless.class, Bless.DURATION);

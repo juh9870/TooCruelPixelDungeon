@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
@@ -56,63 +57,73 @@ public class ScrollOfUpgrade extends InventoryScroll {
 	@Override
 	protected void onItemSelected( Item item ) {
 
-		upgrade( curUser );
-
-		Degrade.detach( curUser, Degrade.class );
-
-		//logic for telling the user when item properties change from upgrades
-		//...yes this is rather messy
-		if (item instanceof Weapon){
-			Weapon w = (Weapon) item;
-			boolean wasCursed = w.cursed;
-			boolean hadCursedEnchant = w.hasCurseEnchant();
-			boolean hadGoodEnchant = w.hasGoodEnchant();
-
-			w.upgrade();
-
-			if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()){
-				removeCurse( Dungeon.hero );
-			} else if (w.cursedKnown && wasCursed && !w.cursed){
-				weakenCurse( Dungeon.hero );
+		int repeats = 1;
+		if(Challenges.GRINDING_2.enabled()){
+			Item stack = curUser.belongings.getItem(ScrollOfUpgrade.class);
+			if (stack != null && stack.quantity() > 10) {
+				repeats = (stack.quantity() + 1) / 2;
+				stack.quantity(stack.quantity() - repeats + 1);
 			}
-			if (hadGoodEnchant && !w.hasGoodEnchant()){
-				GLog.w( Messages.get(Weapon.class, "incompatible") );
-			}
-
-		} else if (item instanceof Armor){
-			Armor a = (Armor) item;
-			boolean wasCursed = a.cursed;
-			boolean hadCursedGlyph = a.hasCurseGlyph();
-			boolean hadGoodGlyph = a.hasGoodGlyph();
-
-			a.upgrade();
-
-			if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()){
-				removeCurse( Dungeon.hero );
-			} else if (a.cursedKnown && wasCursed && !a.cursed){
-				weakenCurse( Dungeon.hero );
-			}
-			if (hadGoodGlyph && !a.hasGoodGlyph()){
-				GLog.w( Messages.get(Armor.class, "incompatible") );
-			}
-
-		} else if (item instanceof Wand || item instanceof Ring) {
-			boolean wasCursed = item.cursed;
-
-			item.upgrade();
-
-			if (wasCursed && !item.cursed){
-				removeCurse( Dungeon.hero );
-			}
-
-		} else {
-			item.upgrade();
 		}
+		while (repeats-- > 0) {
+			upgrade(curUser);
 
-		Talent.onUpgradeScrollUsed( Dungeon.hero );
-		
-		Badges.validateItemLevelAquired( item );
-		Statistics.upgradesUsed++;
+			Degrade.detach(curUser, Degrade.class);
+
+			//logic for telling the user when item properties change from upgrades
+			//...yes this is rather messy
+			if (item instanceof Weapon) {
+				Weapon w = (Weapon) item;
+				boolean wasCursed = w.cursed;
+				boolean hadCursedEnchant = w.hasCurseEnchant();
+				boolean hadGoodEnchant = w.hasGoodEnchant();
+
+				w.upgrade();
+
+				if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()) {
+					removeCurse(Dungeon.hero);
+				} else if (w.cursedKnown && wasCursed && !w.cursed) {
+					weakenCurse(Dungeon.hero);
+				}
+				if (hadGoodEnchant && !w.hasGoodEnchant()) {
+					GLog.w(Messages.get(Weapon.class, "incompatible"));
+				}
+
+			} else if (item instanceof Armor) {
+				Armor a = (Armor) item;
+				boolean wasCursed = a.cursed;
+				boolean hadCursedGlyph = a.hasCurseGlyph();
+				boolean hadGoodGlyph = a.hasGoodGlyph();
+
+				a.upgrade();
+
+				if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()) {
+					removeCurse(Dungeon.hero);
+				} else if (a.cursedKnown && wasCursed && !a.cursed) {
+					weakenCurse(Dungeon.hero);
+				}
+				if (hadGoodGlyph && !a.hasGoodGlyph()) {
+					GLog.w(Messages.get(Armor.class, "incompatible"));
+				}
+
+			} else if (item instanceof Wand || item instanceof Ring) {
+				boolean wasCursed = item.cursed;
+
+				item.upgrade();
+
+				if (wasCursed && !item.cursed) {
+					removeCurse(Dungeon.hero);
+				}
+
+			} else {
+				item.upgrade();
+			}
+
+			Talent.onUpgradeScrollUsed(Dungeon.hero);
+
+			Badges.validateItemLevelAquired(item);
+			Statistics.upgradesUsed++;
+		}
 //		Badges.validateMageUnlock();
 	}
 	

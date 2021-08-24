@@ -46,12 +46,16 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfStormClouds;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -102,6 +106,14 @@ public enum HeroClass {
 
 		new VelvetPouch().collect();
 		Dungeon.LimitedDrops.VELVET_POUCH.drop();
+		if(Challenges.GRINDING_2.enabled()){
+			new ScrollHolder().collect();
+			new PotionBandolier().collect();
+			new MagicalHolster().collect();
+			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
+			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
+			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
+		}
 
 		Waterskin waterskin = new Waterskin();
 		waterskin.collect();
@@ -138,7 +150,7 @@ public enum HeroClass {
 
 			new ScrollOfMagicMapping().quantity(64).identify().collect();
 			new ScrollOfPsionicBlast().quantity(64).identify().collect();
-//			new ScrollOfUpgrade().quantity(1).identify().collect();
+			new ScrollOfUpgrade().quantity(100).identify().collect();
 //			new ScrollOfEnchantment().quantity(1).identify().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
 //			new ScrollOfRemoveCurse().quantity(1).identify().collect();
@@ -150,7 +162,7 @@ public enum HeroClass {
 			new ScrollOfRecharging().quantity(100).identify().collect();
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(64).identify().collect();
-			new PotionOfInvisibility().quantity(64).identify().collect();
+			new PotionOfStormClouds().quantity(64).identify().collect();
 			new ReclaimTrap().setStoredTrap(GuardianTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 //			Generator.randomWeapon(0).identify().collect();

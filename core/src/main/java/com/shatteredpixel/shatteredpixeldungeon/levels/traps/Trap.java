@@ -24,8 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
@@ -76,6 +74,8 @@ public abstract class Trap implements Bundlable {
 			FlashingTrap.class,
 			FlockTrap.class,
 			FrostTrap.class,
+			GatewayTrap.class,
+			GeyserTrap.class,
 			GrimTrap.class,
 			GrippingTrap.class,
 			GuardianTrap.class,
@@ -170,8 +170,11 @@ public abstract class Trap implements Bundlable {
 				// No tengu traps before caves
 				if(Dungeon.depth <= 10 && t instanceof TenguDartTrap) t = new CursedWandTrap();
 
+				// Gateway doesn't work with randomization
+				if (t instanceof GatewayTrap) t = new TeleportationTrap();
+
 				if(DeviceCompat.isDebug()){
-					t = new SummoningTrap();
+					t = new GeyserTrap();
 				}
 
 				if(t==null){
