@@ -8,8 +8,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
+
+import java.util.HashSet;
 
 public class ScorchedEarth extends Buff {
     private static final float WATER_TIME = 20;
@@ -32,7 +35,7 @@ public class ScorchedEarth extends Buff {
                     if (Dungeon.level.water[c]) {
                         Dungeon.level.removeWater(c);
                     }
-                    Buff.affect(target, Burning.class).reignite(target);
+                    Buff.affect(target, DesertBurning.class).reignite(target);
                     GameScene.add(Blob.seed(c, 4, Fire.class));
                 }
             }
@@ -76,5 +79,19 @@ public class ScorchedEarth extends Buff {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         turnsLeft = bundle.getFloat(LEFT);
+    }
+
+    public static class DesertBurning extends Burning {
+        @Override
+        public void tintIcon(Image icon) {
+            icon.tint(0xff6600);
+        }
+
+        @Override
+        public HashSet<Class> immunities() {
+            HashSet<Class> immunities = super.immunities();
+            immunities.add(Burning.class);
+            return immunities;
+        }
     }
 }

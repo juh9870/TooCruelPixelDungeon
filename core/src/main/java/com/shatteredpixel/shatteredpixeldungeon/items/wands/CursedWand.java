@@ -318,7 +318,7 @@ public class CursedWand {
 
 			//summon monsters
 			case 3:
-				new SummoningTrap().set( targetPos ).activate();
+				new SummoningTrap().maxTries( 1 ).set( targetPos ).activate();
 				return true;
 		}
 	}

@@ -186,7 +186,7 @@ public class Dungeon {
 
         seed = DungeonSeed.randomSeed();
 //        if(DeviceCompat.isDebug()){
-//        	seed = 60765904783L;
+//        	seed = 3293666607154l;
 //		}
 
         modifiers = SPDSettings.modifiers();
@@ -197,7 +197,7 @@ public class Dungeon {
         }
 
 //        if(DeviceCompat.isDebug()){
-//        	modifiers.fromBigIntString("4ODAY0KCG");
+//        	modifiers.fromBigIntString("17jjtep4ea9lr747");
 //		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 

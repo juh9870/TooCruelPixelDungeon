@@ -64,6 +64,24 @@ public class ScrollPane extends Component {
 		thumb.y = this.y + height * content.camera.scroll.y / content.height();
 	}
 
+	public void fixScroll(){
+		Camera c = content.camera;
+		if (c.scroll.x + width > content.width()) {
+			c.scroll.x = content.width() - width;
+		}
+		if (c.scroll.x < 0) {
+			c.scroll.x = 0;
+		}
+		if (c.scroll.y + height > content.height()) {
+			c.scroll.y = content.height() - height;
+		}
+		if (c.scroll.y < 0) {
+			c.scroll.y = 0;
+		}
+
+		thumb.y = y + height * c.scroll.y / content.height();
+	}
+
 	@Override
 	protected void createChildren() {
 		controller = new PointerController();
@@ -159,20 +177,8 @@ public class ScrollPane extends Component {
 			Camera c = content.camera;
 			
 			c.shift( PointF.diff( lastPos, current ).invScale( c.zoom ) );
-			if (c.scroll.x + width > content.width()) {
-				c.scroll.x = content.width() - width;
-			}
-			if (c.scroll.x < 0) {
-				c.scroll.x = 0;
-			}
-			if (c.scroll.y + height > content.height()) {
-				c.scroll.y = content.height() - height;
-			}
-			if (c.scroll.y < 0) {
-				c.scroll.y = 0;
-			}
-			
-			thumb.y = y + height * c.scroll.y / content.height();
+
+			fixScroll();
 			
 			lastPos.set( current );
 			

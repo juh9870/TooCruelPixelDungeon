@@ -10,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Godspeed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.DanceTile;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -93,11 +94,13 @@ public class DanceFloor extends Blob implements Hero.Doom {
     private void applyEffect(Char target, int color) {
         if (target.properties().contains(Char.Property.BOSS) ||
                 target.properties().contains(Char.Property.IMMOVABLE)) return;
+        if (target instanceof Mob && ((Mob) target).state == ((Mob) target).SLEEPING) return;
         switch (color) {
             case RED:
-                if (target == Dungeon.hero)
+                if (target == Dungeon.hero) {
                     target.damage(target.HT / (CYCLE_LENGTH + 1), this);
-                else
+                    Dungeon.hero.interrupt();
+                } else
                     target.damage((Dungeon.depth / 5 + 1) * 3, this);
             case GREEN:
                 Buff.prolong(target, DanceSpeed.class, 1);
@@ -109,6 +112,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
                 int dmg = (Dungeon.depth / 5 + 1) * 5;
                 if (target == Dungeon.hero) {
                     dmg = target.HT / (CYCLE_LENGTH - 1);
+                    Dungeon.hero.interrupt();
                 }
                 Buff.affect(target, DancingDeferedDamage.class).prolong(dmg);
                 break;

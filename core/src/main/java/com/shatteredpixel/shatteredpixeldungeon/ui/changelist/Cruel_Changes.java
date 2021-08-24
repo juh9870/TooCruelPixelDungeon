@@ -78,7 +78,16 @@ public class Cruel_Changes {
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
                 "Fixed:\n" +
                         "_-_ Major bug influencing damage multipliers\n" +
-                        "_-_ Fixed couple of bugs caused by extreme conditions"
+                        "_-_ Fixed couple of bugs caused by extreme conditions\n" +
+                        "_-_ Fixed even more levelgen issues"
+        ));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added modifers system and 3 modifiers!\n" +
+                        "_-_ Improved challenges selection window\n" +
+                        "_-_ Tweaked Intoxication\n" +
+                        "_-_ Brimstone no longer grants immunity to Scorched Earth burning\n" +
+                        "_-_ Dance Dance no longer affect sleeping enemies"
         ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, "");

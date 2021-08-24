@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -167,6 +168,11 @@ public abstract class Trap implements Bundlable {
 				if(Dungeon.depth <= 15 && t instanceof DistortionTrap) t = new SummoningTrap();
 				// No tengu traps before caves
 				if(Dungeon.depth <= 10 && t instanceof TenguDartTrap) t = new CursedWandTrap();
+
+				if(DeviceCompat.isDebug()){
+					t = new SummoningTrap();
+				}
+
 				if(t==null){
 					activate();
 					return;

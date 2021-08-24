@@ -315,7 +315,7 @@ public enum Challenges implements Hero.Doom {
     // Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
-    CHAOS_WIZARD(80, 5, -4f, ARCHERY_SCHOOL) {
+    CHAOS_WIZARD(80, 5, -4f) {
         @Override
         protected boolean _isItemBlocked(Item item) {
             return item instanceof KindOfWeapon || item instanceof RingOfForce;
@@ -679,6 +679,10 @@ public enum Challenges implements Hero.Doom {
 
     protected float _rareLootChanceMultiplier() {
         return 1;
+    }
+
+    public boolean isModifier() {
+        return tier == 5;
     }
 
     public boolean enabled() {

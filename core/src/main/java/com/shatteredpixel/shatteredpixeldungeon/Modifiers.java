@@ -9,6 +9,7 @@ import com.watabou.utils.Random;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,7 +24,7 @@ public class Modifiers implements Bundlable {
     public Modifiers() {
         challenges = new boolean[Challenges.values().length];
         dynastyId = "";
-        clear();
+        clearChallenges();
     }
 
     public Modifiers(boolean[] challenges) {
@@ -61,7 +62,7 @@ public class Modifiers implements Bundlable {
         return this;
     }
 
-    public void clear() {
+    public void clearChallenges() {
         BArray.setFalse(challenges);
     }
 
@@ -72,6 +73,13 @@ public class Modifiers implements Bundlable {
     public boolean isChallenged() {
         for (boolean challenge : challenges) {
             if (challenge) return true;
+        }
+        return false;
+    }
+
+    public boolean isModified() {
+        for (int i = 0; i < challenges.length; i++) {
+            if (challenges[i] && Challenges.fromId(i).isModifier()) return true;
         }
         return false;
     }
@@ -126,11 +134,25 @@ public class Modifiers implements Bundlable {
         Challenges[] values = Challenges.values();
         Random.pushGenerator(seed);
         Random.shuffle(values);
+        float targetDifficulty = Random.Float(Difficulty.NORMAL_1.margin, Difficulty.VERY_HARD_3.margin);
+        float maxOvershoot = targetDifficulty / 2f;
 
-        for (int i = 0; i < Random.NormalIntRange(1, values.length / 2); i++) {
-            challenges[values[i].id] = true;
-            for (int req : values[i].requirements) {
-                challenges[req] = true;
+        BArray.setFalse(challenges);
+
+        boolean[] oldChals;
+
+        for (Challenges value : values) {
+            if (value.isModifier()) continue;
+            oldChals = Arrays.copyOf(challenges, challenges.length);
+            challenges[value.id] = true;
+            for (Challenges req : recursiveRequirements(value)) {
+                challenges[req.id] = true;
+            }
+            float diff = Difficulty.calculateDifficulty(this);
+            if (diff > targetDifficulty + maxOvershoot) {
+                challenges = oldChals;
+            } else if (diff > targetDifficulty) {
+                break;
             }
         }
 
@@ -145,6 +167,7 @@ public class Modifiers implements Bundlable {
         HashSet<Challenges> selectable = new HashSet<>();
         HashSet<Challenges> canDisable = new HashSet<>();
         for (Challenges value : Challenges.values()) {
+            if (value.isModifier()) continue;
             if (isChallenged(value.id) && canDisable(value)) canDisable.add(value);
             if (!isChallenged(value.id) && canEnable(value)) selectable.add(value);
         }

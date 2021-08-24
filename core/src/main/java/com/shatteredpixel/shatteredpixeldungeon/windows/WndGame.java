@@ -51,8 +51,6 @@ public class WndGame extends Window {
 		
 		super();
 
-		GameScene.timerPaused = true;
-
 		RedButton curBtn;
 		addButton( curBtn = new RedButton( Messages.get(this, "settings") ) {
 			@Override
@@ -153,7 +151,6 @@ public class WndGame extends Window {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
-		GameScene.timerPaused = false;
 	}
 
 	private void addButton(RedButton btn ) {

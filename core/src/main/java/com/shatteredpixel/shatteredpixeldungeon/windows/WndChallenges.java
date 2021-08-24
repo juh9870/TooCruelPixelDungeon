@@ -32,12 +32,14 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.ChallengesBar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.PointF;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,7 +88,7 @@ public class WndChallenges extends Window {
         this.editable = editable;
 
 
-        RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, needIncrease ? "title_more" : "title"), 12);
+        RenderedTextBlock title = PixelScene.renderTextBlock(Messages.get(this, (needIncrease ? "title_more" : "title")), 12);
         title.hardlight(TITLE_COLOR);
         title.setPos(
                 (WIDTH - title.width()) / 2,
@@ -110,7 +112,7 @@ public class WndChallenges extends Window {
 //		add(difficultyText);
         bottom = textScroll.bottom() + GAP * 2;
 
-        difficultyBar.setRect(0, bottom, WIDTH, BTN_HEIGHT / 2 - 2);
+        difficultyBar.setRect(0, bottom, WIDTH, BTN_HEIGHT / 2f - 2);
         add(difficultyBar);
         bottom = difficultyBar.bottom();
 
@@ -145,8 +147,11 @@ public class WndChallenges extends Window {
             }
         };
         add(pane);
-        pane.setRect(0, bottom, WIDTH, HEIGHT - bottom);
+
+        pane.setRect(0, bottom, WIDTH, HEIGHT - bottom - BTN_HEIGHT / 2f - GAP * 2);
         Component content = pane.content();
+
+        ArrayList<Float> scrollTos = new ArrayList<>();
 
         float pos = 0;
         for (int i = 0; i < sorted.length; i++) {
@@ -163,12 +168,12 @@ public class WndChallenges extends Window {
             if (i == 0) {
                 if (editable) {
                     if (checked) {
-                        pos = delimiter(content, pos, Messages.get(this, "enabled"), 9, TITLE_COLOR);
+                        pos = delimiter(content, pos, Messages.get(this, "enabled"), 9, TITLE_COLOR, scrollTos);
                     } else {
-                        pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
+                        pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR, scrollTos);
                     }
                 } else {
-                    pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
+                    pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR, scrollTos);
                 }
             } else {
                 pos += GAP;
@@ -178,27 +183,27 @@ public class WndChallenges extends Window {
                 if (editable) {
                     if (!filtered) {
                         if (prevFiltered) {
-                            pos = delimiter(content, pos, Messages.get(this, checked ? "unavailable_enabled" : "unavailable_disabled"), 8, 0xaaaaaa);
+                            pos = delimiter(content, pos, Messages.get(this, checked ? "unavailable_enabled" : "unavailable_disabled"), 8, 0xaaaaaa, scrollTos);
                         } else {
                             if (!checked && prevChecked) {
-                                pos = delimiter(content, pos, Messages.get(this, "unavailable_disabled"), 8, 0xaaaaaa);
+                                pos = delimiter(content, pos, Messages.get(this, "unavailable_disabled"), 8, 0xaaaaaa, scrollTos);
                             }
                         }
                     } else {
                         if (!checked) {
                             if (prevChecked || tier != prevTier) {
-                                pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
+                                pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR, scrollTos);
                             }
                         }
                     }
                 } else {
                     if (!checked) {
                         if (prevChecked) {
-                            pos = delimiter(content, pos, Messages.get(this, "disabled"), 8, 0xaaaaaa);
+                            pos = delimiter(content, pos, Messages.get(this, "disabled"), 8, 0xaaaaaa, scrollTos);
                         }
                     } else {
                         if (tier != prevTier) {
-                            pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR);
+                            pos = delimiter(content, pos, tierMessage(tier), 10, TITLE_COLOR, scrollTos);
                         }
                     }
                 }
@@ -223,6 +228,53 @@ public class WndChallenges extends Window {
         }
         content.setSize(WIDTH, pos);
 
+        bottom = pane.bottom();
+        bottom += GAP * 2;
+        RedButton btnUp = new RedButton(Messages.get(this, "scroll_up"), 7) {
+            @Override
+            protected void onClick() {
+                PointF curScroll = pane.content().camera.scroll;
+                for (int i = scrollTos.size() - 1; i >= 0; i--) {
+                    float pos = scrollTos.get(i);
+                    if (pos + GAP < curScroll.y) {
+                        pane.scrollTo(curScroll.x, pos);
+                        pane.fixScroll();
+                        return;
+                    }
+                }
+            }
+        };
+        btnUp.setRect(0, bottom, (WIDTH) / 3f, BTN_HEIGHT / 2f);
+        add(btnUp);
+        RedButton btnDown = new RedButton(Messages.get(this, "scroll_down"), 7) {
+            @Override
+            protected void onClick() {
+                PointF curScroll = pane.content().camera.scroll;
+                for (Float pos : scrollTos) {
+                    if (pos - GAP > curScroll.y) {
+                        pane.scrollTo(curScroll.x, pos);
+                        pane.fixScroll();
+                        return;
+                    }
+                }
+            }
+        };
+        btnDown.setRect(btnUp.right(), bottom, (WIDTH) / 3f, BTN_HEIGHT / 2f);
+        add(btnDown);
+        RedButton btnClear = new RedButton(Messages.get(this, "clear"), 7) {
+            @Override
+            protected void onClick() {
+                for (int i = 0; i < boxes.size(); i++) {
+                    setCheckedNoUpdate(i, false);
+                }
+                updateCheckState();
+            }
+        };
+        btnClear.setRect(btnDown.right(), bottom, (WIDTH) / 3f, BTN_HEIGHT / 2f);
+        add(btnClear);
+        if (needIncrease || !editable) {
+            btnClear.enable(false);
+        }
 //		resize( WIDTH, (int)pos );
     }
 
@@ -246,7 +298,8 @@ public class WndChallenges extends Window {
         return Messages.get(this, "modifiers");
     }
 
-    private float delimiter(Component parent, float pos, String text, int size, int color) {
+    private float delimiter(Component parent, float pos, String text, int size, int color, ArrayList<Float> scrollList) {
+        scrollList.add(pos);
         pos += GAP * 3;
         RenderedTextBlock tb = PixelScene.renderTextBlock(text, size);
         if (color >= 0) tb.hardlight(color);
@@ -259,7 +312,11 @@ public class WndChallenges extends Window {
 
     private void updateDifficulty(Modifiers modifiers) {
         String diff = Messages.get(Difficulty.class, Difficulty.align(modifiers).name);
-        difficultyText.text(Messages.get(this, "difficulty", diff, Difficulty.calculateDifficulty(modifiers)));
+        String text = Messages.get(this, "difficulty", diff, Difficulty.calculateDifficulty(modifiers));
+        if (modifiers.isModified()) {
+            text = Messages.get(this, "difficulty_mod", text);
+        }
+        difficultyText.text(text);
         difficultyText.setPos(
                 (WIDTH - difficultyText.width()) / 2,
 //				TTL_HEIGHT+GAP
