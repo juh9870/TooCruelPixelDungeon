@@ -135,6 +135,8 @@ public abstract class Mob extends Char {
     private boolean adjusted = false;
     protected MMO mmo;
 
+    public boolean instantWaterMovement = false;
+
     protected static final float TIME_TO_WAKE_UP = 1f;
 
     private static final String STATE	= "state";
@@ -1028,6 +1030,11 @@ public abstract class Mob extends Char {
         return speed;
     }
 
+    public float movementTime(){
+        if (instantWaterMovement && Dungeon.level.water[pos]) return 0;
+        return 1 / speed();
+    }
+
     public void notice() {
         sprite.showAlert();
     }
@@ -1157,7 +1164,7 @@ public abstract class Mob extends Char {
 
             int oldPos = pos;
             if (target != -1 && getCloser( target )) {
-                spend( 1 / speed() );
+                spend( movementTime() );
                 return moveSprite( oldPos, pos );
             } else {
                 target = Dungeon.level.randomDestination( Mob.this );
@@ -1201,7 +1208,7 @@ public abstract class Mob extends Char {
                 int oldPos = pos;
                 if (target != -1 && getCloser( target )) {
 
-                    spend( 1 / speed() );
+                    spend( movementTime() );
                     return moveSprite( oldPos,  pos );
 
                 } else {
@@ -1252,7 +1259,7 @@ public abstract class Mob extends Char {
             int oldPos = pos;
             if (target != -1 && getFurther( target )) {
 
-                spend( 1 / speed() );
+                spend( movementTime() );
                 return moveSprite( oldPos, pos );
 
             } else {

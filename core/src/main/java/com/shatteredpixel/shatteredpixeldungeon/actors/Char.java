@@ -109,6 +109,7 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 public abstract class Char extends Actor {
@@ -508,6 +509,9 @@ public abstract class Char extends Actor {
 	// atm attack is always post-armor and defence is already pre-armor
 	
 	public int attackProc( Char enemy, int damage ) {
+		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
+			buff.onAttackProc( enemy );
+		}
 		return damage;
 	}
 	
@@ -517,6 +521,10 @@ public abstract class Char extends Actor {
 	
 	public float speed() {
 		float speed = baseSpeed;
+
+		for (TimescaleBuff buff : buffs(TimescaleBuff.class)) {
+			speed *= buff.speedFactor();
+		}
 		if ( buff( Cripple.class ) != null ) speed /= 2f;
 		if ( buff( Stamina.class ) != null) speed *= 1.5f;
 		if ( buff( Adrenaline.class ) != null) speed *= 2f;
@@ -714,10 +722,7 @@ public abstract class Char extends Actor {
 	protected void spend( float time ) {
 		
 		float timeScale = 1f;
-		
-		for (TimescaleBuff buff : buffs(TimescaleBuff.class)) {
-			timeScale *= buff.speedFactor();
-		}
+
 		if(timeScale<0.2f){
 			GLog.w("Timescale is less than 0.2! There might be an issue. Current timescale: "+timeScale);
 			timeScale=0.2f;
@@ -949,7 +954,9 @@ public abstract class Char extends Actor {
 		LARGE,
 		IMMOVABLE,
 		SUMMONED,
-		ALWAYS_VISIBLE;
+		ALWAYS_VISIBLE,
+		INVULNERABLE(new HashSet<>(), new HashSet<Class>(Collections.singletonList(Object.class))),
+		;
 		
 		private HashSet<Class> resistances;
 		private HashSet<Class> immunities;

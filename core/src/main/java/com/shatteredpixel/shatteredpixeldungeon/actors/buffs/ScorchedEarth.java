@@ -35,9 +35,9 @@ public class ScorchedEarth extends Buff {
                     if (Dungeon.level.water[c]) {
                         Dungeon.level.removeWater(c);
                     }
-                    Buff.affect(target, DesertBurning.class).reignite(target);
                     GameScene.add(Blob.seed(c, 4, Fire.class));
                 }
+                Buff.affect(target, DesertBurning.class).reignite(target);
             }
             turnsLeft -= TICK;
         }

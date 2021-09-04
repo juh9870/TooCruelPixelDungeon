@@ -247,7 +247,7 @@ public class RipperDemon extends Mob {
 				int oldPos = pos;
 				if (target != -1 && getCloser( target )) {
 
-					spend( 1 / speed() );
+					spend( movementTime() );
 					return moveSprite( oldPos,  pos );
 
 				} else {

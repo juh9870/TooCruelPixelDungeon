@@ -27,12 +27,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ParalyticGas;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ISwarm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
@@ -40,33 +41,19 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Deck;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 
 public abstract class ChampionEnemy extends Buff implements DamageAmplificationBuff, AttackAmplificationBuff {
 
-    public static HashSet<Class<? extends ChampionEnemy>> normalChampions = new HashSet<>(Arrays.asList(
-            Blazing.class,
-            Projecting.class,
-            AntiMagic.class,
-            Giant.class,
-            Blessed.class,
-            Growing.class
-    ));
-    public static HashSet<Class<? extends ChampionEnemy>> eliteChampions = new HashSet<>(Arrays.asList(
-            Sacrificial.class,
-            Summoning.class,
-            Timebending.class,
-            Restoring.class,
-            Infectious.class,
-            Toxic.class
-    ));
     protected int color;
 
     {
@@ -75,6 +62,30 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
     {
         immunities.add(Corruption.class);
+    }
+
+    public static String description(Class<? extends ChampionEnemy> cl) {
+        String desc = Messages.get(cl, "cdesc");
+        if (desc.equals(Messages.NOT_FOUND)) desc = Messages.get(cl, "desc");
+        return String.format("_%s (%s):_ %s",
+                Messages.get(cl, "name"),
+                Messages.get(cl, "color"),
+                desc
+        );
+    }
+
+    public static String description(Class<? extends ChampionEnemy>[] classes) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Class<? extends ChampionEnemy> cl : classes) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append("\n");
+            }
+            sb.append(description(cl));
+        }
+        return sb.toString();
     }
 
     public static void rollForChampion(Mob m, HashSet<Mob> existing) {
@@ -146,11 +157,11 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
     }
 
     public static Class<? extends ChampionEnemy> randomChampion() {
-        return Random.element(normalChampions);
+        return Dungeon.level.extraData.normalChampionsDeck.get();
     }
 
     public static Class<? extends ChampionEnemy> randomElite() {
-        return Random.element(eliteChampions);
+        return Dungeon.level.extraData.eliteChampionsDeck.get();
     }
 
     @Override
@@ -214,6 +225,40 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         return 1f;
     }
 
+    public static class NormalChampionsDeck extends Deck<Class<? extends ChampionEnemy>> {
+        {
+            filler().defaultWeight(3f)
+                    .add(Blazing.class)
+                    .add(Projecting.class)
+                    .add(AntiMagic.class)
+                    .add(Giant.class)
+                    .add(Blessed.class)
+                    .add(Growing.class)
+                    .add(Flowing.class)
+                    .add(Stone.class)
+                    .apply(new Class[0]);
+        }
+    }
+
+    public static class EliteChampionsDeck extends Deck<Class<? extends ChampionEnemy>> {
+        {
+            filler().defaultWeight(2f)
+                    .add(Sacrificial.class)
+                    .add(Timebending.class)
+                    .add(Restoring.class)
+                    .add(Infectious.class)
+                    .add(Toxic.class)
+                    .add(Seeking.class)
+                    .add(Swarming.class)
+
+                    // Summoning and Citadel are less common
+                    .put(Summoning.class, 1f)
+                    .put(Citadel.class, 1f)
+                    .apply(new Class[0]);
+        }
+    }
+
+    //region Regular
     public static class Blazing extends ChampionEnemy {
 
         {
@@ -279,7 +324,6 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
     }
 
-    //Also makes target large, see Char.properties()
     public static class Giant extends ChampionEnemy {
 
         {
@@ -374,23 +418,73 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
     }
 
+    public static class Flowing extends ChampionEnemy {
+        {
+            color = 0xb7f5ff;
+        }
+
+        @Override
+        public boolean attachTo(Char target) {
+            if (super.attachTo(target)) {
+                ((Mob) target).instantWaterMovement = true;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void detach() {
+            ((Mob) target).instantWaterMovement = false;
+            super.detach();
+        }
+    }
+
+    public static class Stone extends ChampionEnemy {
+        {
+            color = 0x727272;
+        }
+
+        @Override
+        public float damageTakenFactor() {
+            return Math.max(0.01f, (target.HP * 1f / target.HT));
+        }
+    }
+    //endregion
+
+    //region Elite
     public static class EliteChampion extends ChampionEnemy {
+
         public static final String GUARDIANS_COOLDOWN = "guardians_cooldown";
-        public static int GUARDS_SUMMON_COOLDOWN = 30;
+        private static final int GUARDS_SUMMON_COOLDOWN = 30;
         public int guardiansCooldown = 0;
+
+        @Override
+        public boolean attachTo(Char target) {
+            if (super.attachTo(target)) {
+                target.viewDistance = 8;
+                return true;
+            }
+            return false;
+        }
 
         protected HashSet<Mob> mobsInFov() {
             HashSet<Mob> mobs = new HashSet<>();
-            if (target.fieldOfView != null) {
-                for (Mob m : Dungeon.level.mobs) {
-                    if (m instanceof NPC) continue;
-                    if (m.alignment == Char.Alignment.ALLY) continue;
-                    if (target.fieldOfView[m.pos]) {
-                        mobs.add(m);
-                    }
+            if (target.fieldOfView == null) {
+                target.fieldOfView = new boolean[Dungeon.level.length()];
+                Dungeon.level.updateFieldOfView(target, target.fieldOfView);
+            }
+            for (Mob m : Dungeon.level.mobs) {
+                if (m instanceof NPC) continue;
+                if (m.alignment == Char.Alignment.ALLY) continue;
+                if (target.fieldOfView[m.pos]) {
+                    mobs.add(m);
                 }
             }
             return mobs;
+        }
+
+        protected int guardsSummonCooldown() {
+            return GUARDS_SUMMON_COOLDOWN;
         }
 
         protected int guardsNumber() {
@@ -406,7 +500,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                     if (guardiansCooldown <= 0) {
                         SummoningTrap.summonMobs(target.pos, guardsNumber(), 3);
                     }
-                    guardiansCooldown = Math.max(GUARDS_SUMMON_COOLDOWN, guardiansCooldown);
+                    guardiansCooldown = Math.max(guardsSummonCooldown(), guardiansCooldown);
                 } else {
                     if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
                         if (mob.state == mob.WANDERING) {
@@ -581,6 +675,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         @Override
         public void modifyProperties(HashSet<Char.Property> properties) {
             properties.add(Char.Property.ALWAYS_VISIBLE);
+            properties.add(Char.Property.IMMOVABLE);
         }
 
         @Override
@@ -716,8 +811,12 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             for (Mob mob : mobsInFov()) {
                 Buff.affect(mob, Infectious.class);
             }
-            spend(TICK);
-            return true;
+            return super.act();
+        }
+
+        @Override
+        protected int guardsNumber() {
+            return 0;
         }
 
         @Override
@@ -738,7 +837,6 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         private void seed(int pos, int amount) {
-            GameScene.add(Blob.seed(pos, amount / 2, ParalyticGas.class));
             GameScene.add(Blob.seed(pos, amount, ToxicGas.class));
             GameScene.add(Blob.seed(pos, amount, BlobImmunityGas.class));
         }
@@ -785,4 +883,142 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             }
         }
     }
+
+    public static class Seeking extends EliteChampion {
+        {
+            color = 0x2900FF;
+        }
+
+        @Override
+        public boolean act() {
+            Mob targ = ((Mob) target);
+            if (!target.fieldOfView[Dungeon.hero.pos]) {
+                if (targ.state != targ.HUNTING)
+                    targ.state = targ.HUNTING;
+                targ.beckon(Dungeon.hero.pos);
+                for (Mob mob : Dungeon.level.mobs) {
+                    if (Dungeon.level.distance(target.pos, mob.pos) <= 1) {
+                        mob.beckon(Dungeon.hero.pos);
+                        if (mob.state != mob.HUNTING) {
+                            mob.state = mob.HUNTING;
+                        }
+                    }
+                }
+                return super.act();
+            } else {
+                super.act();
+                Class<? extends Buff> buff = randomChampion();
+                for (Mob mob : mobsInFov()) {
+                    Buff.append(mob, buff);
+                    Buff.affect(mob, Stamina.class, 8);
+                    detach();
+                }
+                return true;
+            }
+        }
+    }
+
+    public static class Swarming extends EliteChampion implements ISwarm {
+        private static final String GENERATION = "generation";
+        int generation = 0;
+
+        {
+            color = 0xbfba72;
+        }
+
+        @Override
+        public void onDamageProc(int damage) {
+            if (target.HP >= damage + 2) {
+                ArrayList<Integer> candidates = new ArrayList<>();
+
+                int[] neighbours = PathFinder.NEIGHBOURS4;
+                for (int n : neighbours) {
+                    if (!Dungeon.level.solid[n] && Actor.findChar(n) == null
+                            && (!target.properties().contains(Char.Property.LARGE) || Dungeon.level.openSpace[n])) {
+                        candidates.add(n);
+                    }
+                }
+
+                if (candidates.size() > 0) {
+                    Mob clone = ISwarm.split((Mob) target,
+                            (Mob) Reflection.newInstance(target.getClass()),
+                            this,
+                            Swarming.class
+                    );
+                    clone.HP = (target.HP - damage) / 2;
+                    clone.pos = Random.element(candidates);
+                    clone.state = clone.HUNTING;
+
+                    Dungeon.level.occupyCell(clone);
+
+                    GameScene.add(clone, SPLIT_DELAY);
+                    Actor.addDelayed(new Pushing(clone, target.pos, clone.pos), -1);
+
+                    target.HP -= clone.HP;
+                }
+            }
+        }
+
+        @Override
+        public int generation() {
+            return generation;
+        }
+
+        @Override
+        public void setGeneration(int generation) {
+            this.generation = generation;
+        }
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(GENERATION, generation);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            generation = bundle.getInt(GENERATION);
+            if (generation > 0) ((Mob) target).EXP = 0;
+        }
+    }
+
+    public static class Citadel extends EliteChampion {
+        {
+            color = 0XFFF2AA;
+        }
+
+        @Override
+        protected int guardsNumber() {
+            return super.guardsNumber() + 7;
+        }
+
+        @Override
+        protected int guardsSummonCooldown() {
+            return super.guardsSummonCooldown() * 5;
+        }
+
+        @Override
+        public void modifyProperties(HashSet<Char.Property> properties) {
+            properties.add(Char.Property.IMMOVABLE);
+        }
+
+        @Override
+        public float damageTakenFactor() {
+            return 0.25f;
+        }
+
+        @Override
+        public boolean act() {
+            super.act();
+            Buff.affect(target, Roots.class, Roots.DURATION);
+            for (Mob mob : mobsInFov()) {
+                if (mob.buff(Citadel.class) == null) {
+                    Buff.prolong(mob, Invulnerability.class, 1.1f);
+                }
+            }
+            return true;
+        }
+    }
+    //endregion
 }

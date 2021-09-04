@@ -37,10 +37,11 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 
-public class Swarm extends Mob {
+public class Swarm extends Mob implements ISwarm {
 	
 	{
 		spriteClass = SwarmSprite.class;
@@ -56,8 +57,6 @@ public class Swarm extends Mob {
 		loot = new PotionOfHealing();
 		lootChance = 0.1667f; //by default, see rollToDropLoot()
 	}
-	
-	private static final float SPLIT_DELAY = 1f;
 	
 	int generation = 0;
 	
@@ -96,8 +95,7 @@ public class Swarm extends Mob {
 			}
 			
 			if (candidates.size() > 0) {
-				
-				Swarm clone = split();
+				Swarm clone = ISwarm.split(this, new Swarm());
 				clone.HP = (HP - damage) / 2;
 				clone.pos = Random.element(candidates);
 				clone.state = clone.HUNTING;
@@ -119,26 +117,6 @@ public class Swarm extends Mob {
 		return 10;
 	}
 	
-	private Swarm split() {
-		Swarm clone = new Swarm();
-		clone.generation = generation + 1;
-		clone.EXP = 0;
-		if (buff(Burning.class) != null) {
-			Buff.affect(clone, Burning.class).reignite(clone);
-		}
-		if (buff(Poison.class) != null) {
-			Buff.affect(clone, Poison.class).set(2);
-		}
-		if (buff(Corruption.class) != null) {
-			Buff.affect(clone, Corruption.class);
-		}
-		if(buff(MMO.class)!= null ){
-			Buff.affect(clone, MMO.class);
-		}
-		Buff.affect(clone, Ascension.BannedAscension.class);
-		return clone;
-	}
-	
 	
 	@Override
 	public void rollToDropLoot() {
@@ -152,4 +130,15 @@ public class Swarm extends Mob {
 		Dungeon.LimitedDrops.SWARM_HP.setCount(Dungeon.LimitedDrops.SWARM_HP.getCount() + 1);
 		return super.createLoot();
 	}
+
+	@Override
+	public int generation() {
+		return generation;
+	}
+
+	@Override
+	public void setGeneration(int generation) {
+		this.generation = generation;
+	}
 }
+

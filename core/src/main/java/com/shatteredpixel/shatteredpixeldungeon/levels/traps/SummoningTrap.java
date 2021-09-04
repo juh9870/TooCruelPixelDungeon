@@ -48,6 +48,7 @@ public class SummoningTrap extends MobSummonTrap {
     }
 
     public static void summonMobs(int pos, int amount, int maxDistance) {
+        if (amount == 0) return;
         summonMobs(pos, amount, maxDistance, null);
     }
 

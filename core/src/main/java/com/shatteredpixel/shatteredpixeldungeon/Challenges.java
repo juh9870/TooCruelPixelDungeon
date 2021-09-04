@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -63,7 +64,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public enum Challenges implements Hero.Doom {
-    // T1
+    //region T1
     ON_DIET(0, 1, 1),
     FAITH_ARMOR(1, 1, 2),
     PHARMACOPHOBIA(2, 1, 2),
@@ -163,7 +164,12 @@ public enum Challenges implements Hero.Doom {
             return 1.5f;
         }
     },
-    CHAMPION_ENEMIES(19, 1, 2f),
+    CHAMPION_ENEMIES(19, 1, 2f){
+        @Override
+        public String description() {
+            return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.NormalChampionsDeck().values);
+        }
+    },
     NO_PERKS(20, 1, 3f),
     BLOODBAG(41, 1, 2f),
     MIRROR_OF_RAGE(45, 1, 2f),
@@ -171,9 +177,10 @@ public enum Challenges implements Hero.Doom {
     BARRIER_BREAKER(68, 1, 1f),
     TUMBLER(71, 1, 1f),
     REVENGE(76, 1, 1.5f),
+    //endregion
 
 
-    //T2
+    //region T2
     FAMINE(21, 2, 1.5f, ON_DIET) {
         @Override
         protected boolean _isItemBlocked(Item item) {
@@ -196,7 +203,12 @@ public enum Challenges implements Hero.Doom {
     EVOLUTION(29, 2, 5f, MUTAGEN),
     REBIRTH(30, 2, 4f),
     CHAOTIC_CONSTRUCTION(64, 30.5f, 2, 2f, INDIFFERENT_DESIGN),
-    ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES),
+    ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES){
+        @Override
+        public String description() {
+            return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.EliteChampionsDeck().values);
+        }
+    },
     STACKING_SPAWN(57, 33.1f, 2, 2f, STACKING),
     STACKING_CHAMPIONS(60, 33.2f, 2, 2f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
@@ -267,9 +279,10 @@ public enum Challenges implements Hero.Doom {
     DANCE_FLOOR(70, 2, 4f),
     SAVING_GRACE(72, 2, 2f, TUMBLER),
     REVENGE_FURY(77, 2, 2f, REVENGE),
+    //endregion
 
 
-    //T3
+    //region T3
     HEART_OF_HIVE(24, 3, 7f, INSOMNIA),
     ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
     DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
@@ -307,8 +320,10 @@ public enum Challenges implements Hero.Doom {
         }
     },
     HUMPPA(74, 3, 6f, DANCE_FLOOR),
+    //endregion
 
-    // T4
+
+    //region T4
     INFINITY_MOBS(55, 4, 16f) {
         @Override
         protected float _nMobsMult() {
@@ -317,9 +332,10 @@ public enum Challenges implements Hero.Doom {
     },
 
     THE_LAST_WALTZ(73, 4, 11f, DANCE_FLOOR, MARATHON),
+    //endregion
 
 
-    // Modifiers
+    //region Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
     CHAOS_WIZARD(80, 5, -4f) {
@@ -400,6 +416,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING_3(83, 5, 0, GRINDING_2),
+    //endregion
 
     //Last id 83
     ;
@@ -790,6 +807,10 @@ public enum Challenges implements Hero.Doom {
             }
         }
         return targetDmg;
+    }
+
+    public String description() {
+        return Messages.get(Challenges.class, name + "_desc");
     }
 
     protected float _nMobsMult() {

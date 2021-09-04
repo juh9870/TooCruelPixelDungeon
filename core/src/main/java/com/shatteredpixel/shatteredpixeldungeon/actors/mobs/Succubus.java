@@ -105,7 +105,7 @@ public class Succubus extends Mob {
 		if (fieldOfView[target] && Dungeon.level.distance( pos, target ) > 2 && blinkCooldown <= 0) {
 			
 			blink( target );
-			spend( -1 / speed() );
+			spend( -movementTime() );
 			return true;
 			
 		} else {

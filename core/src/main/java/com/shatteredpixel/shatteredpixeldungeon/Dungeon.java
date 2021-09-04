@@ -68,6 +68,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.ChallengesLevelData;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
@@ -208,7 +209,7 @@ public class Dungeon {
 		Generator.Category.hardReset();
 
 //        if(DeviceCompat.isDebug()){
-//        	seed = 3293666607154l;
+//        	seed = 4950725242298l;
 //		}
 
         modifiers = SPDSettings.modifiers();
@@ -219,7 +220,7 @@ public class Dungeon {
         }
 
 //        if(DeviceCompat.isDebug()){
-//        	modifiers.fromBigIntString("17jjtep4ea9lr747");
+//        	modifiers.fromBigIntString("axq5jfy6w5wlmmf4");
 //		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 
@@ -353,7 +354,8 @@ public class Dungeon {
 			level = new DeadEndLevel();
 			Statistics.deepestFloor--;
 		}
-		
+		level.extraData = new ChallengesLevelData();
+		level.extraData.init(level, depth);
 		level.create();
 		
 		Statistics.qualifiedForNoKilling = !bossLevel();

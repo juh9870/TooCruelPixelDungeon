@@ -42,6 +42,8 @@ import java.util.Locale;
  */
 public class Messages {
 
+	public static String NOT_FOUND = "!!!NO TEXT FOUND!!!";
+
 	private static ArrayList<I18NBundle> bundles;
 	private static Languages lang;
 
@@ -117,7 +119,7 @@ public class Messages {
 			if (c != null && c.getSuperclass() != null){
 				return get(c.getSuperclass(), k, args);
 			} else {
-				return "!!!NO TEXT FOUND!!!";
+				return NOT_FOUND;
 			}
 		}
 	}

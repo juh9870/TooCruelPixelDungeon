@@ -148,7 +148,7 @@ public class DM200 extends Mob {
 					}
 
 				} else if (getCloser( target )) {
-					spend( 1 / speed() );
+					spend( movementTime() );
 					return moveSprite( oldPos,  pos );
 
 				} else if (ventCooldown <= 0) {
