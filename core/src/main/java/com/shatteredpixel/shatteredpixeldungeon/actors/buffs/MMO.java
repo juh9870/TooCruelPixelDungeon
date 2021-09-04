@@ -24,7 +24,9 @@ public class MMO extends Buff implements AttackAmplificationBuff {
     }
 
     public static float skillMod() {
-        return Dungeon.depth;
+        if (Challenges.GRINDING_3.enabled())
+            return Dungeon.depth;
+        return 1;
     }
 
     @Override

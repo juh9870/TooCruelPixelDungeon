@@ -132,6 +132,7 @@ public abstract class Mob extends Char {
     protected boolean enemySeen;
     protected boolean alerted = false;
 
+    private boolean adjusted = false;
     protected MMO mmo;
 
     protected static final float TIME_TO_WAKE_UP = 1f;
@@ -197,11 +198,9 @@ public abstract class Mob extends Char {
     @Override
     protected boolean act() {
 
-        super.act();
+        applyChallenges();
 
-        if(Challenges.GRINDING_2.enabled() && !(this instanceof NPC) && mmo == null){
-            mmo = Buff.affect(this, MMO.class);
-        }
+        super.act();
 
         boolean justAlerted = alerted;
         alerted = false;
@@ -681,14 +680,15 @@ public abstract class Mob extends Char {
     @Override
     public void damage( int dmg, Object src ) {
 
+        applyChallenges();
+
         if (state == SLEEPING) {
             state = WANDERING;
         }
         if (state != HUNTING && !(src instanceof Corruption)) {
             alerted = true;
         }
-        if(Challenges.GRINDING_3.enabled()) {
-            if (mmo == null) mmo = Buff.affect(this, MMO.class);
+        if(mmo != null) {
             if (dmg >= HP && dmg < HP * 2 && HP > HT / 2) {
                 dmg /= (Dungeon.depth + 1) * Math.log(Dungeon.depth + 1);
             }
@@ -992,17 +992,32 @@ public abstract class Mob extends Char {
     }
 
     public String info(){
+
+        applyChallenges();
         StringBuilder desc = new StringBuilder(description());
 
         desc.append("\n\n")
-                .append(Messages.get(Mob.class, "stats", HP, HT, attackSkill(Dungeon.hero), defenseSkill));
+                .append(Messages.get(Mob.class, "stats", HP, HT, (int) (attackSkill(Dungeon.hero) * MMO.skillMod()), (int) (defenseSkill * MMO.skillMod())));
+
+        if (mmo != null) {
+            desc.append("\n")
+                    .append(Messages.get(Mob.class, "stats_mmo", MMO.modifier()));
+        }
 
         for (Buff b : buffs(ChampionEnemy.class)){
             desc.append("\n\n_").append(Messages.titleCase(b.toString())).append("_\n").append(b.desc());
         }
 
         return desc.toString();
-     }
+    }
+
+    protected void applyChallenges(){
+        if(adjusted) return;
+        adjusted = true;
+        if(Challenges.GRINDING_2.enabled() && !(this instanceof NPC) && mmo == null){
+            mmo = Buff.affect(this, MMO.class);
+        }
+    }
 
     @Override
     public float speed() {
