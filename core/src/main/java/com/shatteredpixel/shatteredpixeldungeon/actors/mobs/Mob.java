@@ -132,7 +132,7 @@ public abstract class Mob extends Char {
     protected boolean enemySeen;
     protected boolean alerted = false;
 
-    private MMO mmo;
+    protected MMO mmo;
 
     protected static final float TIME_TO_WAKE_UP = 1f;
 
