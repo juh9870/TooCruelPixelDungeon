@@ -55,6 +55,7 @@ public class SPDSettings extends GameSettings {
     public static final String KEY_ZOOM = "zoom";
     public static final String KEY_BRIGHTNESS = "brightness";
     public static final String KEY_GRID = "visual_grid";
+    public static final String KEY_FAST_ANIMATIONS = "fast_animation";
 
     public static void fullscreen(boolean value) {
         put(KEY_FULLSCREEN, value);
@@ -122,6 +123,18 @@ public class SPDSettings extends GameSettings {
 
     public static int visualGrid() {
         return getInt(KEY_GRID, 0, -1, 2);
+    }
+
+    public static void fastAnimations(boolean value) {
+        put(KEY_FAST_ANIMATIONS, value);
+        _fastAnimations = value;
+    }
+
+    private static Boolean _fastAnimations;
+
+    public static boolean fastAnimations() {
+        if (_fastAnimations == null) _fastAnimations = getBoolean(KEY_FAST_ANIMATIONS, false);
+        return _fastAnimations;
     }
 
     //Interface

@@ -197,6 +197,7 @@ public class WndSettings extends WndTabbed {
 		ColorBlock sep2;
 		OptionSlider optBrightness;
 		OptionSlider optVisGrid;
+		CheckBox chkAnimations;
 
 		@Override
 		protected void createChildren() {
@@ -304,6 +305,15 @@ public class WndSettings extends WndTabbed {
 			optVisGrid.setSelectedValue(SPDSettings.visualGrid());
 			add(optVisGrid);
 
+			chkAnimations = new CheckBox(Messages.get(this, "fast_animations")) {
+				@Override
+				protected void onClick() {
+					super.onClick();
+					SPDSettings.fastAnimations(checked());
+				}
+			};
+			chkAnimations.checked( SPDSettings.fastAnimations() );
+			add( chkAnimations );
 		}
 
 		@Override
@@ -352,8 +362,9 @@ public class WndSettings extends WndTabbed {
 				optBrightness.setRect(0, bottom + GAP, width, SLIDER_HEIGHT);
 				optVisGrid.setRect(0, optBrightness.bottom() + GAP, width, SLIDER_HEIGHT);
 			}
+			chkAnimations.setRect(0, optVisGrid.bottom() + GAP, width, BTN_HEIGHT);
 
-			height = optVisGrid.bottom();
+			height = chkAnimations.bottom();
 		}
 
 	}

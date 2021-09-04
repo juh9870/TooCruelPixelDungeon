@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.DarkBlock;
 import com.shatteredpixel.shatteredpixeldungeon.effects.EmoIcon;
@@ -61,7 +62,9 @@ import java.nio.Buffer;
 import java.util.HashMap;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
-	
+
+	public float FAST_ANIM_SPEED = 0.001f;
+
 	// Color constants for floating text
 	public static final int DEFAULT		= 0xFFFFFF;
 	public static final int POSITIVE	= 0x00FF00;
@@ -135,11 +138,19 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		auras = new HashMap<>();
 		emitters = new HashMap<>();
 	}
-	
+
+	private boolean fast(){
+		return !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
+	}
+
 	@Override
 	public void play(Animation anim) {
 		//Shouldn't interrupt the dieing animation
 		if (curAnim == null || curAnim != die) {
+			if (anim != idle && anim != die && fast()) {
+				onComplete(anim);
+				return;
+			}
 			super.play(anim);
 		}
 	}
@@ -209,7 +220,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
 		play( run );
 		
-		motion = new PosTweener( this, worldToCamera( to ), moveInterval );
+		motion = new PosTweener( this, worldToCamera( to ), fast() ? FAST_ANIM_SPEED : moveInterval );
 		motion.listener = this;
 		parent.add( motion );
 
