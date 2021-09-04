@@ -211,6 +211,7 @@ public abstract class RegularLevel extends Level {
 			specials++;
 		}
 		if (Challenges.GRINDING.enabled()) specials *= Challenges.nRoomsMult();
+		specials = Math.max(SpecialRoom.minSpecialRooms(), specials);
 		SpecialRoom.initForFloor();
 		for (int i = 0; i < specials; i++) {
 			SpecialRoom s = SpecialRoom.createRoom();

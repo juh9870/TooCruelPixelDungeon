@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -122,7 +121,12 @@ public abstract class SpecialRoom extends Room {
 	public static void resetPitRoom(int depth){
 		if (pitNeededDepth == depth) pitNeededDepth = -1;
 	}
-	
+
+	public static int minSpecialRooms() {
+		if (Dungeon.depth == pitNeededDepth) return 1;
+		return 0;
+	}
+
 	public static SpecialRoom createRoom(){
 
 		if(floorSpecials.size() == 0){
