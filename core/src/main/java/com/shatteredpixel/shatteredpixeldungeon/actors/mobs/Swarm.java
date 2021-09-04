@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -130,6 +131,9 @@ public class Swarm extends Mob {
 		}
 		if (buff(Corruption.class) != null) {
 			Buff.affect(clone, Corruption.class);
+		}
+		if(buff(MMO.class)!= null ){
+			Buff.affect(clone, MMO.class);
 		}
 		Buff.affect(clone, Ascension.BannedAscension.class);
 		return clone;

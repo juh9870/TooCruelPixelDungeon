@@ -132,6 +132,8 @@ public abstract class Mob extends Char {
     protected boolean enemySeen;
     protected boolean alerted = false;
 
+    private MMO mmo;
+
     protected static final float TIME_TO_WAKE_UP = 1f;
 
     private static final String STATE	= "state";
@@ -197,8 +199,8 @@ public abstract class Mob extends Char {
 
         super.act();
 
-        if(Challenges.GRINDING_2.enabled() && !(this instanceof NPC)){
-            Buff.affect(this, MMO.class);
+        if(Challenges.GRINDING_2.enabled() && !(this instanceof NPC) && mmo == null){
+            mmo = Buff.affect(this, MMO.class);
         }
 
         boolean justAlerted = alerted;
@@ -685,9 +687,11 @@ public abstract class Mob extends Char {
         if (state != HUNTING && !(src instanceof Corruption)) {
             alerted = true;
         }
-
-        if (Challenges.GRINDING_3.enabled() && dmg >= HP && dmg < HP * 2 && HP > HT/2) {
-            dmg /= (Dungeon.depth + 1) * Math.log(Dungeon.depth + 1);
+        if(Challenges.GRINDING_3.enabled()) {
+            if (mmo == null) mmo = Buff.affect(this, MMO.class);
+            if (dmg >= HP && dmg < HP * 2 && HP > HT / 2) {
+                dmg /= (Dungeon.depth + 1) * Math.log(Dungeon.depth + 1);
+            }
         }
 
         if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE) {
