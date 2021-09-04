@@ -211,7 +211,7 @@ public class WndTradeItem extends WndInfoItem {
 		Item item = heap.pickUp();
 		if (item == null) return;
 		
-		int price = Shopkeeper.sellPrice( item );
+		int price = heap.currency.sellPrice( item );
 		currency.remove(price);
 		
 		if (!item.doPickUp( Dungeon.hero )) {

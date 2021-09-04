@@ -411,6 +411,7 @@ public class Heap implements Bundlable {
 	private static final String ITEMS	= "items";
 	private static final String HAUNTED	= "haunted";
 	private static final String PAID	= "paid";
+	private static final String CURRENCY= "currency";
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -436,7 +437,7 @@ public class Heap implements Bundlable {
 		
 		haunted = bundle.getBoolean( HAUNTED );
 		paid 	= bundle.getBoolean( PAID );
-
+		currency= bundle.getEnum( CURRENCY, Currency.class);
 	}
 
 	@Override
@@ -447,6 +448,7 @@ public class Heap implements Bundlable {
 		bundle.put( ITEMS, items );
 		bundle.put( HAUNTED, haunted );
 		bundle.put( PAID, paid );
+		bundle.put( CURRENCY, currency );
 	}
 	
 }
