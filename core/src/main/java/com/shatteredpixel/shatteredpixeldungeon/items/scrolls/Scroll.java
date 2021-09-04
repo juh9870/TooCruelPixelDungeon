@@ -38,7 +38,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellboo
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfAntiMagic;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
-import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFear;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlast;
@@ -47,19 +46,18 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfClairvoyance
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDeepSleep;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfDisarming;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFear;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFlock;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfShock;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Callback;
+import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
@@ -69,7 +67,7 @@ import java.util.HashSet;
 public abstract class Scroll extends Item {
 	
 	public static final String AC_READ	= "READ";
-	
+
 	protected static final float TIME_TO_READ	= 1f;
 
 	private static final HashMap<String, Integer> runes = new HashMap<String, Integer>() {
@@ -160,6 +158,9 @@ public abstract class Scroll extends Item {
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_READ );
+		if(Challenges.GRINDING_2.enabled()){
+			actions.add ( AC_UPGRADIFY );
+		}
 		return actions;
 	}
 	
@@ -184,6 +185,15 @@ public abstract class Scroll extends Item {
 				doRead();
 			}
 			
+		} else if(action.equals( AC_UPGRADIFY )){
+			int amount = Random.IntRange(quantity / 2, quantity);
+			if (this instanceof ExoticScroll) {
+				amount = quantity;
+			}
+			new ScrollOfUpgrade().quantity(amount).identify().collect();
+			detachAll(Dungeon.hero.belongings.backpack);
+			ScrollOfUpgrade.upgrade(hero);
+			hero.spendAndNext(TIME_TO_UPGRADIFY);
 		}
 	}
 	

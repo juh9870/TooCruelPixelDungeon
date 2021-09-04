@@ -72,16 +72,12 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
-        changes = new ChangeInfo("v0.4.4b", false, "");
+        changes = new ChangeInfo("v0.4.4b & v0.4.4c", false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
-                "Fixed:\n" +
-                        "_-_ Crash related to new trap"
-        ));
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
-                "_-_ Completely reworked Korean MMO modifier and split it into two"
+                "_-_ More reworks to MMO modifier"
         ));
 
         changes = new ChangeInfo("v0.4.4a", false, "");

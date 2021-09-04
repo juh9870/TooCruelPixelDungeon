@@ -449,7 +449,7 @@ public abstract class Char extends Actor {
 		float acuStat = attacker.attackSkill( defender );
 		float defStat = defender.defenseSkill( attacker );
 
-		if(Challenges.GRINDING_2.enabled()){
+		if(Challenges.GRINDING_3.enabled()){
 			if(attacker instanceof Mob){
 				acuStat *= MMO.skillMod();
 			}

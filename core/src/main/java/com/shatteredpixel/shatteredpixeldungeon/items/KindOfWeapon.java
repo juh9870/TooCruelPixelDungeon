@@ -39,6 +39,8 @@ abstract public class KindOfWeapon extends EquipableItem {
 	
 	protected static final float TIME_TO_EQUIP = 1f;
 
+	protected static final String AC_TIER = "TIER";
+
 	protected String hitSound = Assets.Sounds.HIT;
 	protected float hitSoundPitch = 1f;
 	
@@ -88,6 +90,10 @@ abstract public class KindOfWeapon extends EquipableItem {
 			return false;
 
 		}
+	}
+
+	protected int lvlToNextTier(int tier){
+		return Math.max(50 * tier, tier * tier);
 	}
 
 	public int min(){

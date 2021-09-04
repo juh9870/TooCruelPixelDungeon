@@ -30,15 +30,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -48,7 +46,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
@@ -68,10 +65,12 @@ public class Item implements Bundlable {
 	protected static final float TIME_TO_THROW		= 1.0f;
 	public static final float TIME_TO_PICK_UP	= 1.0f;
 	protected static final float TIME_TO_DROP		= 1.0f;
-	
+	protected static final float TIME_TO_UPGRADIFY		= 1.0f;
+
 	public static final String AC_DROP		= "DROP";
 	public static final String AC_THROW		= "THROW";
-	
+	public static final String AC_UPGRADIFY		= "UPGRADIFY";
+
 	public String defaultAction;
 	public boolean usesTargeting;
 
@@ -110,6 +109,9 @@ public class Item implements Bundlable {
 		ArrayList<String> actions = new ArrayList<>();
 		actions.add( AC_DROP );
 		actions.add( AC_THROW );
+		if (isUpgradable() && !stackable && Challenges.GRINDING_2.enabled()) {
+			actions.add(AC_UPGRADIFY);
+		}
 		return actions;
 	}
 
@@ -118,8 +120,22 @@ public class Item implements Bundlable {
 	}
 	
 	public boolean doPickUp( Hero hero ) {
+		if(Challenges.GRINDING_2.enabled() && isUpgradable()){
+			Item copy = Dungeon.hero.belongings.getItem(getClass());
+
+			if (copy != null && this.level <= 3) {
+				if (!(this instanceof MissileWeapon) || !isSimilar(copy)) {
+					copy.upgrade(this.level + 1);
+					if (stackable) copy.quantity += quantity;
+					return true;
+				}
+			}
+
+			levelKnown = true;
+			cursedKnown = true;
+		}
+
 		if (collect( hero.belongings.backpack )) {
-			
 			GameScene.pickUp( this, hero.pos );
 			Sample.INSTANCE.play( Assets.Sounds.ITEM );
 			hero.spendAndNext( TIME_TO_PICK_UP );
@@ -163,7 +179,14 @@ public class Item implements Bundlable {
 			if (hero.belongings.backpack.contains(this) || isEquipped(hero)) {
 				doThrow(hero);
 			}
-			
+		} else if(action.equals( AC_UPGRADIFY ) && isUpgradable()){
+			new ScrollOfUpgrade().quantity(level + 1).identify().collect();
+			if(this instanceof EquipableItem && isEquipped(hero)){
+				((EquipableItem) this).doUnequip(hero,true,false);
+			}
+			detachAll(Dungeon.hero.belongings.backpack);
+			ScrollOfUpgrade.upgrade(hero);
+			hero.spendAndNext(TIME_TO_UPGRADIFY);
 		}
 	}
 	

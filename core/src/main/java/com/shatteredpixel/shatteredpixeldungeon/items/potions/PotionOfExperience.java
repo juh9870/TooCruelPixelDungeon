@@ -21,7 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.potions;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class PotionOfExperience extends Potion {
@@ -35,7 +39,14 @@ public class PotionOfExperience extends Potion {
 	@Override
 	public void apply( Hero hero ) {
 		identify();
-		hero.earnExp( hero.maxExp(), getClass() );
+		if (Challenges.GRINDING_2.enabled() && Dungeon.hero.lvl >= 30) {
+			for (Item item : Dungeon.hero.belongings) {
+				if (item.isUpgradable() && item.isEquipped(hero)) item.upgrade();
+				ScrollOfUpgrade.upgrade(hero);
+			}
+		} else {
+			hero.earnExp(hero.maxExp(), getClass());
+		}
 	}
 	
 	@Override

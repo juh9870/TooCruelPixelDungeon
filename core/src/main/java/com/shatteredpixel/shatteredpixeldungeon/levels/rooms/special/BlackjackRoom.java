@@ -108,7 +108,7 @@ public class BlackjackRoom extends SpecialRoom {
         while (items.size()>0) {
             if (cells.size() == 0){
                 cells=findFreeCells();
-                if (cells.size()==0)return;
+                if (cells.size()==0) return;
             }
             int c = Random.element(cells);
             cells.remove(c);

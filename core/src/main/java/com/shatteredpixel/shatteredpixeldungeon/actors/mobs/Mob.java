@@ -197,7 +197,7 @@ public abstract class Mob extends Char {
 
         super.act();
 
-        if(Challenges.GRINDING_2.enabled()){
+        if(Challenges.GRINDING_2.enabled() && !(this instanceof NPC)){
             Buff.affect(this, MMO.class);
         }
 

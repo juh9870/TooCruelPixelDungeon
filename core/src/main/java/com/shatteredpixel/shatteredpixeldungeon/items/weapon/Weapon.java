@@ -241,6 +241,9 @@ abstract public class Weapon extends KindOfWeapon {
 	public abstract int STRReq(int lvl);
 
 	protected static int STRReq(int tier, int lvl){
+		if(Challenges.GRINDING_3.enabled()){
+			return 10 + 10 * (tier - 1) - (int) (Math.sqrt(8 * lvl + 1) - 1);
+		}
 		lvl = Math.max(0, lvl);
 
 		//strength req decreases at +1,+3,+6,+10,etc.

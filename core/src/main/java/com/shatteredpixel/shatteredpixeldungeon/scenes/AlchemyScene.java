@@ -409,7 +409,8 @@ public class AlchemyScene extends PixelScene {
 		Item result = null;
 		
 		if (recipe != null){
-			provider.spendEnergy(recipe.cost(ingredients));
+			if(!Challenges.GRINDING_2.enabled())
+				provider.spendEnergy(recipe.cost(ingredients));
 			energyLeft.text(Messages.get(AlchemyScene.class, "energy", availableEnergy()));
 			energyLeft.setPos(
 					(Camera.main.width - energyLeft.width())/2,
@@ -581,6 +582,7 @@ public class AlchemyScene extends PixelScene {
 	}
 	
 	public static int availableEnergy(){
+		if(Challenges.GRINDING_2.enabled())return 1_000_000;
 		return provider == null ? 0 : provider.getEnergy();
 	}
 	

@@ -26,12 +26,13 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class MeleeWeapon extends Weapon {
 	
@@ -66,7 +67,25 @@ public class MeleeWeapon extends Weapon {
 		
 		return damage;
 	}
-	
+
+	@Override
+	public ArrayList<String> actions(Hero hero) {
+		ArrayList<String> actions = super.actions(hero);
+		if(Challenges.GRINDING_2.enabled() && level() >= lvlToNextTier(tier))
+			actions.add(AC_TIER);
+		return actions;
+	}
+
+	@Override
+	public void execute(Hero hero, String action) {
+		super.execute(hero, action);
+		if (action.equals(AC_TIER)) {
+			level(level() - lvlToNextTier(tier));
+			tier++;
+			ScrollOfUpgrade.upgrade(hero);
+		}
+	}
+
 	@Override
 	public String info() {
 

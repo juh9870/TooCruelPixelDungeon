@@ -73,7 +73,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -235,7 +234,7 @@ public class Dungeon {
 
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
-			Challenges.init();
+			Challenges.initGenerator();
 
 		Random.resetGenerators();
 		
@@ -626,6 +625,8 @@ public class Dungeon {
 
             Dungeon.modifiers = new Modifiers(Challenges.fromLegacy(challenges, hellChallenges[0], hellChallenges[1]));
         }
+
+        Challenges.initGenerator();
 
 		Dungeon.mobsToChampion = bundle.getInt( MOBS_TO_CHAMPION );
 		

@@ -109,7 +109,7 @@ public class WndBag extends WndTabbed {
 
 		nCols = PixelScene.landscape() ? COLS_L : COLS_P;
 		if (Challenges.GRINDING_2.enabled()) {
-			slotWidth = 20;
+			slotWidth = PixelScene.landscape() ? 20 : 16;
 			slotHeight = 20;
 			nCols = 7;
 		}

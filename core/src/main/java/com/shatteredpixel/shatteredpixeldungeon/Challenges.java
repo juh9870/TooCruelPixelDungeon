@@ -336,10 +336,13 @@ public enum Challenges implements Hero.Doom {
         }
 
         @Override
-        protected void _init(boolean active) {
+        protected void _initGenerator(boolean active) {
             if (!active) return;
-            applyToCategory(Generator.Category.POTION, 3);
-            boost(PotionOfStrength.class, Generator.Category.POTION, 8);
+            applyToCategory(Generator.Category.POTION, 4);
+            if (Challenges.GRINDING_3.enabled())
+                boost(PotionOfStrength.class, Generator.Category.POTION, 16);
+            else
+                boost(PotionOfStrength.class, Generator.Category.POTION, 8);
 
             applyToCategory(Generator.Category.SEED, 5);
             boost(Rotberry.Seed.class, Generator.Category.SEED, 0);
@@ -581,9 +584,9 @@ public enum Challenges implements Hero.Doom {
         return false;
     }
 
-    public static void init() {
+    public static void initGenerator() {
         for (Challenges ch : values()) {
-            ch._init(ch.enabled());
+            ch._initGenerator(ch.enabled());
         }
     }
 
@@ -813,7 +816,7 @@ public enum Challenges implements Hero.Doom {
         return 1;
     }
 
-    protected void _init(boolean active) {
+    protected void _initGenerator(boolean active) {
     }
 
     public boolean isModifier() {

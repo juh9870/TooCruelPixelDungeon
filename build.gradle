@@ -12,11 +12,11 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'Too Cruel Pixel Dungeon'
-        appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
+        appName = 'DEV Too Cruel Pixel Dungeon'
+        appPackageName = 'ua.dreamfools.toocruelpixeldungeon.dev'
 
-        appVersionCode = 568
-        appVersionName = '0.4.4b'
+        appVersionCode = 571
+        appVersionName = '0.4.4c-dev'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 

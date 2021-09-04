@@ -4,10 +4,12 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.watabou.utils.Bundle;
 
 public class MMO extends Buff implements AttackAmplificationBuff {
     private static final float SCALING_FACTOR = 1.5f;
-    private static final float HERO_SCALING = 1.02f;
+
+    private boolean restored = false;
 
     public static int exp(Mob mob) {
         if (Challenges.GRINDING_3.enabled())
@@ -25,16 +27,10 @@ public class MMO extends Buff implements AttackAmplificationBuff {
         return Dungeon.depth;
     }
 
-    public static float getHeroScaling() {
-        if (Challenges.GRINDING_3.enabled())
-            return HERO_SCALING;
-        return 1f;
-    }
-
     @Override
     public boolean attachTo(Char target) {
         if (super.attachTo(target)) {
-            if (Challenges.GRINDING_3.enabled()) {
+            if (Challenges.GRINDING_3.enabled() && !restored) {
                 target.HT *= Math.pow(SCALING_FACTOR, Dungeon.depth - 1);
                 target.HP = target.HT;
             }
@@ -50,4 +46,9 @@ public class MMO extends Buff implements AttackAmplificationBuff {
         return dmg;
     }
 
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+        restored = true;
+    }
 }

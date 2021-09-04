@@ -93,7 +93,7 @@ public class Legion extends Buff {
 
     @Override
     public String desc() {
-        return Messages.get(this, "desc", Math.round(turnsToNextWave));
+        return Messages.get(this, "desc", Math.round(Math.min(delay() - turnsSinceLastWave, turnsToNextWave)));
     }
 
     @Override

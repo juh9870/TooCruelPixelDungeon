@@ -82,7 +82,9 @@ import java.util.HashSet;
 public class Potion extends Item {
 
 	public static final String AC_DRINK = "DRINK";
-	
+	public static final String AC_DRINK_HALF = "DRINK_HALF";
+	public static final String AC_DRINK_ALL = "DRINK_ALL";
+
 	//used internally for potions that can be drunk or thrown
 	public static final String AC_CHOOSE = "CHOOSE";
 
@@ -226,6 +228,10 @@ public class Potion extends Item {
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_DRINK );
+		if (isKnown() && Challenges.GRINDING_2.enabled() && !mustThrowPots.contains(this.getClass()) && quantity >= 10) {
+			actions.add( AC_DRINK_HALF );
+			actions.add( AC_DRINK_ALL );
+		}
 		return actions;
 	}
 	
@@ -260,6 +266,15 @@ public class Potion extends Item {
 					drink( hero );
 				}
 			
+		} else if (action.equals(AC_DRINK_HALF)) {
+			int q = quantity / 2;
+			while (quantity > q) {
+				drink(hero);
+			}
+		} else if (action.equals(AC_DRINK_ALL)) {
+			while (quantity > 0) {
+				drink(hero);
+			}
 		}
 	}
 	
