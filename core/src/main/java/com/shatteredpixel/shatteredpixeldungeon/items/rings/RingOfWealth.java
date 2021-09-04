@@ -221,6 +221,7 @@ public class RingOfWealth extends Ring {
 			case 4:
 				return new Bomb();
 			case 5:
+				if(Challenges.GRINDING_3.enabled()) return genMidValueConsumable();
 				return new Honeypot();
 		}
 	}
