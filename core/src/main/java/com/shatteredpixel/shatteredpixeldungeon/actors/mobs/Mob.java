@@ -990,6 +990,9 @@ public abstract class Mob extends Char {
     public String info(){
         StringBuilder desc = new StringBuilder(description());
 
+        desc.append("\n\n")
+                .append(Messages.get(Mob.class, "stats", HP, HT, attackSkill(Dungeon.hero), defenseSkill));
+
         for (Buff b : buffs(ChampionEnemy.class)){
             desc.append("\n\n_").append(Messages.titleCase(b.toString())).append("_\n").append(b.desc());
         }
