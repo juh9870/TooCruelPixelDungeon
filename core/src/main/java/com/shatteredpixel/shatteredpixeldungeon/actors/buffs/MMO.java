@@ -31,12 +31,18 @@ public class MMO extends Buff implements AttackAmplificationBuff {
     public boolean attachTo(Char target) {
         if (super.attachTo(target)) {
             if (Challenges.GRINDING_3.enabled() && !restored) {
-                target.HT *= Math.pow(SCALING_FACTOR, Dungeon.depth - 1);
-                target.HP = target.HT;
+                float mult = (float) Math.pow(SCALING_FACTOR, Dungeon.depth - 1);
+                target.HT *= mult;
+                target.HP *= mult;
             }
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void detach() {
+        //This buff can't be detached
     }
 
     @Override
