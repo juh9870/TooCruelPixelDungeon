@@ -108,14 +108,17 @@ public abstract class RegularLevel extends Level {
 		essentialRooms.clear();
 		boolean painted = false;
 		float toRemove = 0;
+		paintLoop:
 		do {
 			Random.shuffle(initRooms);
+			int tries = 10;
 			do {
 				for (Room r : initRooms) {
 					r.neigbours.clear();
 					r.connected.clear();
 				}
 				rooms = builder.build((ArrayList<Room>) initRooms.clone());
+				if (--tries <= 0) break paintLoop;
 			} while (rooms == null);
 
 			painted = painter().paint(this, rooms);
