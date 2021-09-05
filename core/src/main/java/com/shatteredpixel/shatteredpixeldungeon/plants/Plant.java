@@ -173,10 +173,10 @@ public abstract class Plant implements Bundlable {
 			if (action.equals( AC_PLANT )) {
 
 				hero.busy();
-				((Seed)detach( hero.belongings.backpack )).onThrow( hero.pos );
+				((Seed)detach( hero.belongings.backpack )).onThrow(hero.pos());
 				hero.spend( TIME_TO_PLANT );
 
-				hero.sprite.operate( hero.pos );
+				hero.sprite.operate(hero.pos());
 				
 			}
 		}

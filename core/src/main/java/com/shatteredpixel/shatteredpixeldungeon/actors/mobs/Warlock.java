@@ -74,19 +74,19 @@ public class Warlock extends Mob implements Callback {
 	
 	@Override
 	protected boolean canAttack( Char enemy ) {
-		return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
+		return new Ballistica(pos(), enemy.pos(), Ballistica.MAGIC_BOLT).collisionPos == enemy.pos();
 	}
 	
 	protected boolean doAttack( Char enemy ) {
 
-		if (Dungeon.level.adjacent( pos, enemy.pos )) {
+		if (Dungeon.level.adjacent(pos(), enemy.pos())) {
 			
 			return super.doAttack( enemy );
 			
 		} else {
 			
 			if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-				sprite.zap( enemy.pos );
+				sprite.zap(enemy.pos());
 				return false;
 			} else {
 				zap();

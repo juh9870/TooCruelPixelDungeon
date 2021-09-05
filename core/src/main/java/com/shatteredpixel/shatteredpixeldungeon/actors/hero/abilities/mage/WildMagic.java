@@ -59,7 +59,7 @@ public class WildMagic extends ArmorAbility {
 			return;
 		}
 
-		if (target == hero.pos){
+		if (target == hero.pos()){
 			GLog.w(Messages.get(this, "self_target"));
 			return;
 		}
@@ -127,7 +127,7 @@ public class WildMagic extends ArmorAbility {
 	private void zapWand( ArrayList<Wand> wands, Hero hero, int target){
 		Wand cur = wands.remove(0);
 
-		Ballistica aim = new Ballistica(hero.pos, target, cur.collisionProperties(target));
+		Ballistica aim = new Ballistica(hero.pos(), target, cur.collisionProperties(target));
 
 		hero.sprite.zap(target);
 
@@ -142,7 +142,7 @@ public class WildMagic extends ArmorAbility {
 		} else {
 			CursedWand.cursedZap(cur,
 					hero,
-					new Ballistica(hero.pos, target, Ballistica.MAGIC_BOLT),
+					new Ballistica(hero.pos(), target, Ballistica.MAGIC_BOLT),
 					new Callback() {
 						@Override
 						public void call() {

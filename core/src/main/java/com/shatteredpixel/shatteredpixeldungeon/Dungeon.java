@@ -415,14 +415,14 @@ public class Dungeon {
 
 		level.addRespawner();
 
-		hero.pos = pos;
+		hero.pos(pos);
 		
 		for(Mob m : level.mobs){
-			if (m.pos == hero.pos){
+			if (m.pos() == hero.pos()){
 				//displace mob
 				for(int i : PathFinder.NEIGHBOURS8){
-					if (Actor.findChar(m.pos+i) == null && level.passable[m.pos + i]){
-						m.pos += i;
+					if (Actor.findChar(m.pos() +i) == null && level.passable[m.pos() + i]){
+						m.pos(m.pos() + i);
 						break;
 					}
 				}
@@ -794,8 +794,8 @@ public class Dungeon {
 			}
 		}
 
-		int x = hero.pos % level.width();
-		int y = hero.pos / level.width();
+		int x = hero.pos() % level.width();
+		int y = hero.pos() / level.width();
 	
 		//left, right, top, bottom
 		int l = Math.max( 0, x - dist );
@@ -826,11 +826,11 @@ public class Dungeon {
         boolean mw = hero.buff(MindVision.class) != null;
         for (Mob m : level.mobs.toArray(new Mob[0])){
 			if (mw || m.properties().contains(Char.Property.ALWAYS_VISIBLE) || m.buff(Revealing.class) != null) {
-				BArray.or( level.visited, level.heroFOV, m.pos - 1 - level.width(), 3, level.visited );
-				BArray.or( level.visited, level.heroFOV, m.pos, 3, level.visited );
-				BArray.or( level.visited, level.heroFOV, m.pos - 1 + level.width(), 3, level.visited );
+				BArray.or( level.visited, level.heroFOV, m.pos() - 1 - level.width(), 3, level.visited );
+				BArray.or( level.visited, level.heroFOV, m.pos(), 3, level.visited );
+				BArray.or( level.visited, level.heroFOV, m.pos() - 1 + level.width(), 3, level.visited );
 				//updates adjacent cells too
-				GameScene.updateFog(m.pos, 2);
+				GameScene.updateFog(m.pos(), 2);
 			}
 		}
 		
@@ -846,10 +846,10 @@ public class Dungeon {
 		for (TalismanOfForesight.CharAwareness c : hero.buffs(TalismanOfForesight.CharAwareness.class)){
 			Char ch = (Char) Actor.findById(c.charID);
 			if (ch == null) continue;
-			BArray.or( level.visited, level.heroFOV, ch.pos - 1 - level.width(), 3, level.visited );
-			BArray.or( level.visited, level.heroFOV, ch.pos - 1, 3, level.visited );
-			BArray.or( level.visited, level.heroFOV, ch.pos - 1 + level.width(), 3, level.visited );
-			GameScene.updateFog(ch.pos, 2);
+			BArray.or( level.visited, level.heroFOV, ch.pos() - 1 - level.width(), 3, level.visited );
+			BArray.or( level.visited, level.heroFOV, ch.pos() - 1, 3, level.visited );
+			BArray.or( level.visited, level.heroFOV, ch.pos() - 1 + level.width(), 3, level.visited );
+			GameScene.updateFog(ch.pos(), 2);
 		}
 
 		for (TalismanOfForesight.HeapAwareness h : hero.buffs(TalismanOfForesight.HeapAwareness.class)){
@@ -872,8 +872,8 @@ public class Dungeon {
 			if (ch instanceof WandOfWarding.Ward
 					|| ch instanceof WandOfRegrowth.Lotus
 					|| ch instanceof SpiritHawk.HawkAlly){
-				x = ch.pos % level.width();
-				y = ch.pos / level.width();
+				x = ch.pos() % level.width();
+				y = ch.pos() / level.width();
 
 				//left, right, top, bottom
 				dist = ch.viewDistance+1;
@@ -891,7 +891,7 @@ public class Dungeon {
 					BArray.or( level.visited, level.heroFOV, pos, width, level.visited );
 					pos+=level.width();
 				}
-				GameScene.updateFog(ch.pos, dist);
+				GameScene.updateFog(ch.pos(), dist);
 			}
 		}
 
@@ -923,19 +923,19 @@ public class Dungeon {
 
 		if (chars) {
 			for (Char c : Actor.chars()) {
-				if (vis[c.pos]) {
-					passable[c.pos] = false;
+				if (vis[c.pos()]) {
+					passable[c.pos()] = false;
 				}
 			}
 		}
 
-		return PathFinder.find( ch.pos, to, passable );
+		return PathFinder.find(ch.pos(), to, passable );
 
 	}
 	
 	public static int findStep(Char ch, int to, boolean[] pass, boolean[] visible, boolean chars ) {
 
-		if (Dungeon.level.adjacent( ch.pos, to )) {
+		if (Dungeon.level.adjacent(ch.pos(), to )) {
 			return Actor.findChar( to ) == null && (pass[to] || Dungeon.level.avoid[to]) ? to : -1;
 		}
 
@@ -952,13 +952,13 @@ public class Dungeon {
 
 		if (chars){
 			for (Char c : Actor.chars()) {
-				if (visible[c.pos]) {
-					passable[c.pos] = false;
+				if (visible[c.pos()]) {
+					passable[c.pos()] = false;
 				}
 			}
 		}
 		
-		return PathFinder.getStep( ch.pos, to, passable );
+		return PathFinder.getStep(ch.pos(), to, passable );
 
 	}
 	
@@ -975,13 +975,13 @@ public class Dungeon {
 			BArray.and( passable, Dungeon.level.openSpace, passable );
 		}
 
-		passable[ch.pos] = true;
+		passable[ch.pos()] = true;
 
 		//only consider chars impassable if our retreat path runs into them
-		int step = PathFinder.getStepBack( ch.pos, from, passable );
+		int step = PathFinder.getStepBack(ch.pos(), from, passable );
 		while (step != -1 && Actor.findChar(step) != null){
 			passable[step] = false;
-			step = PathFinder.getStepBack( ch.pos, from, passable );
+			step = PathFinder.getStepBack(ch.pos(), from, passable );
 		}
 		return step;
 		

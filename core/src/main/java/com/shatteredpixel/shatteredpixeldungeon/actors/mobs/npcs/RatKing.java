@@ -84,14 +84,14 @@ public class RatKing extends NPC {
 	@Override
 	protected boolean act() {
 		if (Dungeon.depth < 5){
-			if (pos == Dungeon.level.exit){
+			if (pos() == Dungeon.level.exit){
 				destroy();
 				sprite.killAndErase();
 			} else {
 				target = Dungeon.level.exit;
 			}
 		} else if (Dungeon.depth > 5){
-			if (pos == Dungeon.level.entrance){
+			if (pos() == Dungeon.level.entrance){
 				destroy();
 				sprite.killAndErase();
 			} else {
@@ -105,7 +105,7 @@ public class RatKing extends NPC {
 
 	@Override
 	public boolean interact(Char c) {
-		sprite.turnTo( pos, c.pos );
+		sprite.turnTo(pos(), c.pos());
 
 		if (c != Dungeon.hero){
 			return super.interact(c);

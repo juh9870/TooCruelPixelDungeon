@@ -138,7 +138,7 @@ public class DriedRose extends Artifact {
 			else {
 				ArrayList<Integer> spawnPoints = new ArrayList<>();
 				for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-					int p = hero.pos + PathFinder.NEIGHBOURS8[i];
+					int p = hero.pos() + PathFinder.NEIGHBOURS8[i];
 					if (Actor.findChar(p) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
 						spawnPoints.add(p);
 					}
@@ -147,17 +147,17 @@ public class DriedRose extends Artifact {
 				if (spawnPoints.size() > 0) {
 					ghost = new GhostHero( this );
 					ghostID = ghost.id();
-					ghost.pos = Random.element(spawnPoints);
+					ghost.pos(Random.element(spawnPoints));
 
 					GameScene.add(ghost, 1f);
 					Dungeon.level.occupyCell(ghost);
 					
-					CellEmitter.get(ghost.pos).start( ShaftParticle.FACTORY, 0.3f, 4 );
-					CellEmitter.get(ghost.pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
+					CellEmitter.get(ghost.pos()).start( ShaftParticle.FACTORY, 0.3f, 4 );
+					CellEmitter.get(ghost.pos()).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
 
 					hero.spend(1f);
 					hero.busy();
-					hero.sprite.operate(hero.pos);
+					hero.sprite.operate(hero.pos());
 
 					if (!firstSummon) {
 						ghost.yell( Messages.get(GhostHero.class, "hello", Dungeon.hero.name()) );
@@ -409,7 +409,7 @@ public class DriedRose extends Artifact {
 				ArrayList<Integer> spawnPoints = new ArrayList<>();
 
 				for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-					int p = target.pos + PathFinder.NEIGHBOURS8[i];
+					int p = target.pos() + PathFinder.NEIGHBOURS8[i];
 					if (Actor.findChar(p) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
 						spawnPoints.add(p);
 					}
@@ -584,7 +584,7 @@ public class DriedRose extends Artifact {
 		
 		@Override
 		protected boolean canAttack(Char enemy) {
-			return super.canAttack(enemy) || (rose != null && rose.weapon != null && rose.weapon.canReach(this, enemy.pos));
+			return super.canAttack(enemy) || (rose != null && rose.weapon != null && rose.weapon.canReach(this, enemy.pos()));
 		}
 		
 		@Override
@@ -844,7 +844,7 @@ public class DriedRose extends Artifact {
 					if (rose.weapon != null){
 						item(new WndBag.Placeholder(ItemSpriteSheet.WEAPON_HOLDER));
 						if (!rose.weapon.doPickUp(Dungeon.hero)){
-							Dungeon.level.drop( rose.weapon, Dungeon.hero.pos);
+							Dungeon.level.drop( rose.weapon, Dungeon.hero.pos());
 						}
 						rose.weapon = null;
 					} else {
@@ -910,7 +910,7 @@ public class DriedRose extends Artifact {
 					if (rose.armor != null){
 						item(new WndBag.Placeholder(ItemSpriteSheet.ARMOR_HOLDER));
 						if (!rose.armor.doPickUp(Dungeon.hero)){
-							Dungeon.level.drop( rose.armor, Dungeon.hero.pos);
+							Dungeon.level.drop( rose.armor, Dungeon.hero.pos());
 						}
 						rose.armor = null;
 					} else {

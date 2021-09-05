@@ -56,7 +56,7 @@ public class WaterOfHealth extends WellWater {
 		hero.HP = hero.HT;
 		hero.sprite.emitter().start( Speck.factory( Speck.HEALING ), 0.4f, 4 );
 		
-		CellEmitter.get( hero.pos ).start( ShaftParticle.FACTORY, 0.2f, 3 );
+		CellEmitter.get(hero.pos()).start( ShaftParticle.FACTORY, 0.2f, 3 );
 
 		Dungeon.hero.interrupt();
 	

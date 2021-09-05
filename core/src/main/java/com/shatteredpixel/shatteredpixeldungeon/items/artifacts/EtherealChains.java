@@ -40,7 +40,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -119,12 +118,12 @@ public class EtherealChains extends Artifact {
 				}
 				//chains cannot be used to go where it is impossible to walk to
 				PathFinder.buildDistanceMap(target, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-				if (PathFinder.distance[curUser.pos] == Integer.MAX_VALUE){
+				if (PathFinder.distance[curUser.pos()] == Integer.MAX_VALUE){
 					GLog.w( Messages.get(EtherealChains.class, "cant_reach") );
 					return;
 				}
 				
-				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
+				final Ballistica chain = new Ballistica(curUser.pos(), target, Ballistica.STOP_TARGET);
 				
 				if (Actor.findChar( chain.collisionPos ) != null){
 					chainEnemy( chain, curUser, Actor.findChar( chain.collisionPos ));
@@ -167,7 +166,7 @@ public class EtherealChains extends Artifact {
 		
 		final int pulledPos = bestPos;
 		
-		int chargeUse = Dungeon.level.distance(enemy.pos, pulledPos);
+		int chargeUse = Dungeon.level.distance(enemy.pos(), pulledPos);
 		if (chargeUse > charge) {
 			GLog.w( Messages.get(this, "no_charge") );
 			return;
@@ -182,9 +181,9 @@ public class EtherealChains extends Artifact {
 		Sample.INSTANCE.play( Assets.Sounds.CHAINS );
 		hero.sprite.parent.add(new Chains(hero.sprite.center(), enemy.sprite.center(), new Callback() {
 			public void call() {
-				Actor.add(new Pushing(enemy, enemy.pos, pulledPos, new Callback() {
+				Actor.add(new Pushing(enemy, enemy.pos(), pulledPos, new Callback() {
 					public void call() {
-						enemy.pos = pulledPos;
+						enemy.pos(pulledPos);
 						Dungeon.level.occupyCell(enemy);
 						Dungeon.observe();
 						GameScene.updateFog();
@@ -226,7 +225,7 @@ public class EtherealChains extends Artifact {
 		
 		final int newHeroPos = chain.collisionPos;
 		
-		int chargeUse = Dungeon.level.distance(hero.pos, newHeroPos);
+		int chargeUse = Dungeon.level.distance(hero.pos(), newHeroPos);
 		if (chargeUse > charge){
 			GLog.w( Messages.get(EtherealChains.class, "no_charge") );
 			return;
@@ -241,9 +240,9 @@ public class EtherealChains extends Artifact {
 		Sample.INSTANCE.play( Assets.Sounds.CHAINS );
 		hero.sprite.parent.add(new Chains(hero.sprite.center(), DungeonTilemap.raisedTileCenterToWorld(newHeroPos), new Callback() {
 			public void call() {
-				Actor.add(new Pushing(hero, hero.pos, newHeroPos, new Callback() {
+				Actor.add(new Pushing(hero, hero.pos(), newHeroPos, new Callback() {
 					public void call() {
-						hero.pos = newHeroPos;
+						hero.pos(newHeroPos);
 						Dungeon.level.occupyCell(hero);
 						hero.spendAndNext(1f);
 						Dungeon.observe();

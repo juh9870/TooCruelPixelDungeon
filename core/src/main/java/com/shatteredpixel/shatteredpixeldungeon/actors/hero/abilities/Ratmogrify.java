@@ -13,7 +13,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -60,7 +59,7 @@ public class Ratmogrify extends ArmorAbility {
 				ArrayList<Integer> spawnPoints = new ArrayList<>();
 
 				for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-					int p = hero.pos + PathFinder.NEIGHBOURS8[i];
+					int p = hero.pos() + PathFinder.NEIGHBOURS8[i];
 					if (Actor.findChar( p ) == null && Dungeon.level.passable[p]) {
 						spawnPoints.add( p );
 					}
@@ -103,7 +102,7 @@ public class Ratmogrify extends ArmorAbility {
 		} else {
 			TransmogRat rat = new TransmogRat();
 			rat.setup((Mob)ch);
-			rat.pos = ch.pos;
+			rat.pos(ch.pos());
 
 			Actor.remove( ch );
 			ch.sprite.killAndErase();
@@ -112,7 +111,7 @@ public class Ratmogrify extends ArmorAbility {
 			GameScene.add(rat);
 
 			TargetHealthIndicator.instance.target(null);
-			CellEmitter.get(rat.pos).burst(Speck.factory(Speck.WOOL), 4);
+			CellEmitter.get(rat.pos()).burst(Speck.factory(Speck.WOOL), 4);
 			Sample.INSTANCE.play(Assets.Sounds.PUFF);
 
 			Dungeon.level.occupyCell(rat);
@@ -171,13 +170,13 @@ public class Ratmogrify extends ArmorAbility {
 		protected boolean act() {
 			if (timeLeft <= 0){
 				original.HP = HP;
-				original.pos = pos;
+				original.pos(pos());
 				original.clearTime();
 				GameScene.add(original);
 
 				destroy();
 				sprite.killAndErase();
-				CellEmitter.get(original.pos).burst(Speck.factory(Speck.WOOL), 4);
+				CellEmitter.get(original.pos()).burst(Speck.factory(Speck.WOOL), 4);
 				Sample.INSTANCE.play(Assets.Sounds.PUFF);
 				return true;
 			} else {

@@ -51,7 +51,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
     @Override
     protected void evolve() {
         int width = Dungeon.level.width();
-        int heroSquare = getSquare(Dungeon.hero.pos, width);
+        int heroSquare = getSquare(Dungeon.hero.pos(), width);
 
         for (int cell = 0; cell < cur.length; cell++) {
             int value = cur[cell];

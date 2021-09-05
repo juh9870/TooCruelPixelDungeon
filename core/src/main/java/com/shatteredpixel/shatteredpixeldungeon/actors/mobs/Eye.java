@@ -87,9 +87,9 @@ public class Eye extends Mob {
 	protected boolean canAttack( Char enemy ) {
 
 		if (beamCooldown == 0) {
-			Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID);
+			Ballistica aim = new Ballistica(pos(), enemy.pos(), Ballistica.STOP_SOLID);
 
-			if (enemy.invisible == 0 && !isCharmedBy(enemy) && fieldOfView[enemy.pos] && aim.subPath(1, aim.dist).contains(enemy.pos)){
+			if (enemy.invisible == 0 && !isCharmedBy(enemy) && fieldOfView[enemy.pos()] && aim.subPath(1, aim.dist).contains(enemy.pos())){
 				beam = aim;
 				beamTarget = aim.collisionPos;
 				return true;
@@ -107,8 +107,8 @@ public class Eye extends Mob {
 			sprite.idle();
 		}
 		if (beam == null && beamTarget != -1) {
-			beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
-			sprite.turnTo(pos, beamTarget);
+			beam = new Ballistica(pos(), beamTarget, Ballistica.STOP_SOLID);
+			sprite.turnTo(pos(), beamTarget);
 		}
 		if (beamCooldown > 0)
 			beamCooldown--;
@@ -121,7 +121,7 @@ public class Eye extends Mob {
 		if (beamCooldown > 0) {
 			return super.doAttack(enemy);
 		} else if (!beamCharged){
-			((EyeSprite)sprite).charge( enemy.pos );
+			((EyeSprite)sprite).charge(enemy.pos());
 			spend( attackDelay()*2f );
 			beamCharged = true;
 			return true;
@@ -129,8 +129,8 @@ public class Eye extends Mob {
 
 			spend( attackDelay() );
 			
-			beam = new Ballistica(pos, beamTarget, Ballistica.STOP_SOLID);
-			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[beam.collisionPos] ) {
+			beam = new Ballistica(pos(), beamTarget, Ballistica.STOP_SOLID);
+			if (Dungeon.level.heroFOV[pos()] || Dungeon.level.heroFOV[beam.collisionPos] ) {
 				sprite.zap( beam.collisionPos );
 				return false;
 			} else {
@@ -210,11 +210,11 @@ public class Eye extends Mob {
 				int ofs;
 				do {
 					ofs = PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
-				} while (Dungeon.level.solid[pos + ofs] && !Dungeon.level.passable[pos + ofs]);
-				if (Dungeon.level.heaps.get(pos+ofs) == null) {
-					Dungeon.level.drop(new Dewdrop(), pos + ofs).sprite.drop(pos);
+				} while (Dungeon.level.solid[pos() + ofs] && !Dungeon.level.passable[pos() + ofs]);
+				if (Dungeon.level.heaps.get(pos() +ofs) == null) {
+					Dungeon.level.drop(new Dewdrop(), pos() + ofs).sprite.drop(pos());
 				} else {
-					Dungeon.level.drop(new Dewdrop(), pos + ofs).sprite.drop(pos + ofs);
+					Dungeon.level.drop(new Dewdrop(), pos() + ofs).sprite.drop(pos() + ofs);
 				}
 				break;
 			case 2:

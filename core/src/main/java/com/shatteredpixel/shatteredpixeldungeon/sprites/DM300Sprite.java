@@ -84,7 +84,7 @@ public class DM300Sprite extends MobSprite {
 
 	public void zap( int cell ) {
 
-		turnTo( ch.pos , cell );
+		turnTo(ch.pos(), cell );
 		play( zap );
 
 		MagicMissile.boltFromChar( parent,
@@ -105,7 +105,7 @@ public class DM300Sprite extends MobSprite {
 	}
 
 	public void slam( int cell ){
-		turnTo( ch.pos , cell );
+		turnTo(ch.pos(), cell );
 		play( slam );
 		Sample.INSTANCE.play( Assets.Sounds.ROCKS );
 		Camera.main.shake( 3, 0.7f );

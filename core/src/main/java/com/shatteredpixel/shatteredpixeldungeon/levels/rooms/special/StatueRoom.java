@@ -96,7 +96,7 @@ public class StatueRoom extends SpecialRoom {
 
 				if ((Terrain.flags[level.map[cell]] & Terrain.PASSABLE) == 0) continue;
 				Statue statue = Statue.random();
-				statue.pos = cell;
+				statue.pos(cell);
 				level.mobs.add(statue);
 				if (dropStatues <= 0) {
 					Buff.affect(statue, NoReward.class);
@@ -106,7 +106,7 @@ public class StatueRoom extends SpecialRoom {
 			}
 		} else {
 			Statue statue = Statue.random();
-			statue.pos = cx + cy * level.width();
+			statue.pos(cx + cy * level.width());
 			level.mobs.add(statue);
 		}
 	}

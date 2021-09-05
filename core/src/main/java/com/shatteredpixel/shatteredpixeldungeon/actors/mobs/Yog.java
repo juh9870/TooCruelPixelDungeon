@@ -87,9 +87,9 @@ public class Yog extends Mob {
 		BurningFist fist2 = new BurningFist();
 		
 		do {
-			fist1.pos = pos + PathFinder.NEIGHBOURS8[Random.Int( 8 )];
-			fist2.pos = pos + PathFinder.NEIGHBOURS8[Random.Int( 8 )];
-		} while (!Dungeon.level.passable[fist1.pos] || !Dungeon.level.passable[fist2.pos] || fist1.pos == fist2.pos);
+			fist1.pos(pos() + PathFinder.NEIGHBOURS8[Random.Int( 8 )]);
+			fist2.pos(pos() + PathFinder.NEIGHBOURS8[Random.Int( 8 )]);
+		} while (!Dungeon.level.passable[fist1.pos()] || !Dungeon.level.passable[fist2.pos()] || fist1.pos() == fist2.pos());
 		
 		GameScene.add( fist1 );
 		GameScene.add( fist2 );
@@ -129,7 +129,7 @@ public class Yog extends Mob {
 		ArrayList<Integer> spawnPoints = new ArrayList<>();
 		
 		for (int i=0; i < PathFinder.NEIGHBOURS8.length; i++) {
-			int p = pos + PathFinder.NEIGHBOURS8[i];
+			int p = pos() + PathFinder.NEIGHBOURS8[i];
 			if (Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
 				spawnPoints.add( p );
 			}
@@ -137,10 +137,10 @@ public class Yog extends Mob {
 		
 		if (spawnPoints.size() > 0) {
 			Larva larva = new Larva();
-			larva.pos = Random.element( spawnPoints );
+			larva.pos(Random.element( spawnPoints ));
 			
 			GameScene.add( larva );
-			Actor.addDelayed( new Pushing( larva, pos, larva.pos ), -1 );
+			Actor.addDelayed( new Pushing( larva, pos(), larva.pos()), -1 );
 		}
 
 		for (Mob mob : Dungeon.level.mobs) {
@@ -167,7 +167,7 @@ public class Yog extends Mob {
 		}
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos()).sprite.drop();
 		super.die( cause );
 		
 		yell( Messages.get(this, "defeated") );
@@ -256,7 +256,7 @@ public class Yog extends Mob {
 		@Override
 		public boolean act() {
 			
-			if (Dungeon.level.water[pos] && HP < HT) {
+			if (Dungeon.level.water[pos()] && HP < HT) {
 				sprite.emitter().burst( ShadowParticle.UP, 2 );
 				HP += REGENERATION;
 			}
@@ -315,7 +315,7 @@ public class Yog extends Mob {
 		
 		@Override
 		protected boolean canAttack( Char enemy ) {
-			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
+			return new Ballistica(pos(), enemy.pos(), Ballistica.MAGIC_BOLT).collisionPos == enemy.pos();
 		}
 		
 		//used so resistances can differentiate between melee and magical attacks
@@ -323,14 +323,14 @@ public class Yog extends Mob {
 
 		protected boolean doAttack( Char enemy ) {
 
-			if (Dungeon.level.adjacent( pos, enemy.pos )) {
+			if (Dungeon.level.adjacent(pos(), enemy.pos())) {
 
 				return super.doAttack( enemy );
 
 			} else {
 
 				if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-					sprite.zap( enemy.pos );
+					sprite.zap(enemy.pos());
 					return false;
 				} else {
 					zap();
@@ -367,7 +367,7 @@ public class Yog extends Mob {
 		public boolean act() {
 			
 			for (int i=0; i < 9; i++) {
-				GameScene.add( Blob.seed( pos + PathFinder.NEIGHBOURS9[i], 2, Fire.class ) );
+				GameScene.add( Blob.seed( pos() + PathFinder.NEIGHBOURS9[i], 2, Fire.class ) );
 			}
 			
 			return super.act();

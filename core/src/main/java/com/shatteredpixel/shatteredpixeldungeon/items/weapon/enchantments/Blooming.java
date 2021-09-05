@@ -50,7 +50,7 @@ public class Blooming extends Weapon.Enchantment {
 		if (Random.Float() < procChance) {
 			
 			boolean secondPlant = level > Random.Int(10);
-			if (plantGrass(defender.pos)){
+			if (plantGrass(defender.pos())){
 				if (secondPlant) secondPlant = false;
 				else return damage;
 			}
@@ -61,7 +61,7 @@ public class Blooming extends Weapon.Enchantment {
 			}
 			Random.shuffle( positions );
 			for (int i : positions){
-				if (plantGrass(defender.pos + i)){
+				if (plantGrass(defender.pos() + i)){
 					if (secondPlant) secondPlant = false;
 					else return damage;
 				}

@@ -275,7 +275,7 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 				
 				AttackLevel lvl = AttackLevel.getLvl(turnsInvis);
 
-				PathFinder.buildDistanceMap(Dungeon.hero.pos, BArray.not(Dungeon.level.solid, null), lvl.blinkDistance());
+				PathFinder.buildDistanceMap(Dungeon.hero.pos(), BArray.not(Dungeon.level.solid, null), lvl.blinkDistance());
 				int dest = -1;
 				for (int i : PathFinder.NEIGHBOURS8){
 					//cannot blink into a cell that's occupied or impassable, only over them
@@ -286,7 +286,7 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 						dest = cell+i;
 					//if two cells have the same pathfinder distance, prioritize the one with the closest true distance to the hero
 					} else if (PathFinder.distance[dest] == PathFinder.distance[cell+i]){
-						if (Dungeon.level.trueDistance(Dungeon.hero.pos, dest) > Dungeon.level.trueDistance(Dungeon.hero.pos, cell+i)){
+						if (Dungeon.level.trueDistance(Dungeon.hero.pos(), dest) > Dungeon.level.trueDistance(Dungeon.hero.pos(), cell+i)){
 							dest = cell+i;
 						}
 					}
@@ -298,16 +298,16 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 					return;
 				}
 				
-				Dungeon.hero.pos = dest;
+				Dungeon.hero.pos(dest);
 				Dungeon.level.occupyCell(Dungeon.hero);
 				//prevents the hero from being interrupted by seeing new enemies
 				Dungeon.observe();
 				GameScene.updateFog();
 				Dungeon.hero.checkVisibleMobs();
 				
-				Dungeon.hero.sprite.place( Dungeon.hero.pos );
-				Dungeon.hero.sprite.turnTo( Dungeon.hero.pos, cell);
-				CellEmitter.get( Dungeon.hero.pos ).burst( Speck.factory( Speck.WOOL ), 6 );
+				Dungeon.hero.sprite.place(Dungeon.hero.pos());
+				Dungeon.hero.sprite.turnTo(Dungeon.hero.pos(), cell);
+				CellEmitter.get(Dungeon.hero.pos()).burst( Speck.factory( Speck.WOOL ), 6 );
 				Sample.INSTANCE.play( Assets.Sounds.PUFF );
 
 				Dungeon.hero.curAction = new HeroAction.Attack( enemy );

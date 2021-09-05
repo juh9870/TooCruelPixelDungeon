@@ -52,7 +52,7 @@ public class FlockTrap extends Trap {
 						&& !(Dungeon.level.pit[i])) {
 					Sheep sheep = new Sheep();
 					sheep.lifespan = Random.NormalIntRange( 4, 8 );
-					sheep.pos = i;
+					sheep.pos(i);
 					GameScene.add(sheep);
 					CellEmitter.get(i).burst(Speck.factory(Speck.WOOL), 4);
 					//before the tile is pressed, directly trigger traps to avoid sfx spam

@@ -24,12 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
@@ -37,7 +31,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SwarmSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
-import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 
@@ -86,7 +79,7 @@ public class Swarm extends Mob implements ISwarm {
 		if (HP >= damage + 2) {
 			ArrayList<Integer> candidates = new ArrayList<>();
 			
-			int[] neighbours = {pos + 1, pos - 1, pos + Dungeon.level.width(), pos - Dungeon.level.width()};
+			int[] neighbours = {pos() + 1, pos() - 1, pos() + Dungeon.level.width(), pos() - Dungeon.level.width()};
 			for (int n : neighbours) {
 				if (!Dungeon.level.solid[n] && Actor.findChar( n ) == null
 						&& (!properties().contains(Property.LARGE) || Dungeon.level.openSpace[n])) {
@@ -97,13 +90,13 @@ public class Swarm extends Mob implements ISwarm {
 			if (candidates.size() > 0) {
 				Swarm clone = ISwarm.split(this, new Swarm());
 				clone.HP = (HP - damage) / 2;
-				clone.pos = Random.element(candidates);
+				clone.pos(Random.element(candidates));
 				clone.state = clone.HUNTING;
 				
 				Dungeon.level.occupyCell(clone);
 				
 				GameScene.add(clone, SPLIT_DELAY);
-				Actor.addDelayed(new Pushing(clone, pos, clone.pos), -1);
+				Actor.addDelayed(new Pushing(clone, pos(), clone.pos()), -1);
 				
 				HP -= clone.HP;
 			}

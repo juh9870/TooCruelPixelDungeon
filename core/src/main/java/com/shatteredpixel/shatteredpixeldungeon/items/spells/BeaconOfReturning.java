@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
@@ -94,14 +93,14 @@ public class BeaconOfReturning extends Spell {
 	
 	private void setBeacon(Hero hero ){
 		returnDepth = Dungeon.depth;
-		returnPos = hero.pos;
+		returnPos = hero.pos();
 		
 		hero.spend( 1f );
 		hero.busy();
 		
 		GLog.i( Messages.get(this, "set") );
 		
-		hero.sprite.operate( hero.pos );
+		hero.sprite.operate(hero.pos());
 		Sample.INSTANCE.play( Assets.Sounds.BEACON );
 		updateQuickslot();
 	}
@@ -113,7 +112,7 @@ public class BeaconOfReturning extends Spell {
 		}
 		
 		for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-			Char ch = Actor.findChar(hero.pos + PathFinder.NEIGHBOURS8[i]);
+			Char ch = Actor.findChar(hero.pos() + PathFinder.NEIGHBOURS8[i]);
 			if (ch != null && ch.alignment == Char.Alignment.ENEMY) {
 				GLog.w( Messages.get(this, "creatures") );
 				return;
@@ -126,12 +125,12 @@ public class BeaconOfReturning extends Spell {
 			}
 			ScrollOfTeleportation.appear( hero, returnPos );
 			for(Mob m : Dungeon.level.mobs){
-				if (m.pos == hero.pos){
+				if (m.pos() == hero.pos()){
 					//displace mob
 					for(int i : PathFinder.NEIGHBOURS8){
-						if (Actor.findChar(m.pos+i) == null && Dungeon.level.passable[m.pos + i]){
-							m.pos += i;
-							m.sprite.point(m.sprite.worldToCamera(m.pos));
+						if (Actor.findChar(m.pos() +i) == null && Dungeon.level.passable[m.pos() + i]){
+							m.pos(m.pos() + i);
+							m.sprite.point(m.sprite.worldToCamera(m.pos()));
 							break;
 						}
 					}

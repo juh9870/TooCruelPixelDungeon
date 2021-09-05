@@ -98,7 +98,7 @@ public class TengusMask extends Item {
 		curUser.subClass = way;
 		Talent.initSubclassTalents(curUser);
 		
-		curUser.sprite.operate( curUser.pos );
+		curUser.sprite.operate(curUser.pos());
 		Sample.INSTANCE.play( Assets.Sounds.MASTERY );
 		
 		Emitter e = curUser.sprite.centerEmitter();

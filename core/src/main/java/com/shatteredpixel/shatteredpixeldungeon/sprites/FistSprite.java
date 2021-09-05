@@ -115,12 +115,12 @@ public abstract class FistSprite extends MobSprite {
 	public void attack( int cell ) {
 		super.attack( cell );
 
-		jump(ch.pos, ch.pos, null, 9, SLAM_TIME );
+		jump(ch.pos(), ch.pos(), null, 9, SLAM_TIME );
 	}
 
 	public void zap( int cell ) {
 
-		turnTo( ch.pos , cell );
+		turnTo(ch.pos(), cell );
 		play( zap );
 
 		MagicMissile.boltFromChar( parent,
@@ -266,7 +266,7 @@ public abstract class FistSprite extends MobSprite {
 
 		@Override
 		public void zap( int cell ) {
-			turnTo( ch.pos , cell );
+			turnTo(ch.pos(), cell );
 			play( zap );
 
 			((YogFist)ch).onZapComplete();

@@ -25,13 +25,13 @@ public class ScorchedEarth extends Buff {
     }
     @Override
     public boolean act() {
-        if (Dungeon.level.water[target.pos]) {
+        if (Dungeon.level.water[target.pos()]) {
             turnsLeft = maxTime();
         } else {
             if (turnsLeft <= 0) {
                 turnsLeft += maxTime();
                 for (int i : PathFinder.NEIGHBOURS4) {
-                    int c = target.pos + i;
+                    int c = target.pos() + i;
                     if (Dungeon.level.water[c]) {
                         Dungeon.level.removeWater(c);
                     }
@@ -43,7 +43,7 @@ public class ScorchedEarth extends Buff {
         }
 
         if (Challenges.DESERT.enabled()) {
-            GameScene.add(Blob.seed(target.pos, 1, Desert.class));
+            GameScene.add(Blob.seed(target.pos(), 1, Desert.class));
         }
         spend(TICK);
         return true;

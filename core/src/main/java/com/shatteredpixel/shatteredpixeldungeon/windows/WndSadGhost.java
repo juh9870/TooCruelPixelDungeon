@@ -114,7 +114,7 @@ public class WndSadGhost extends Window {
         if (reward.doPickUp( Dungeon.hero )) {
             GLog.i( Messages.get(Dungeon.hero, "you_now_have", reward.name()) );
         } else {
-            Dungeon.level.drop( reward, ghost.pos ).sprite.drop();
+            Dungeon.level.drop( reward, ghost.pos()).sprite.drop();
         }
 
         if (Challenges.CURSED.enabled()) reward.cursed = reward.cursedKnown = true;

@@ -188,9 +188,9 @@ public class Armor extends EquipableItem {
 				}
 			}
 			GLog.i( Messages.get(Armor.class, "detach_seal") );
-			hero.sprite.operate(hero.pos);
+			hero.sprite.operate(hero.pos());
 			if (!detaching.collect()){
-				Dungeon.level.drop(detaching, hero.pos);
+				Dungeon.level.drop(detaching, hero.pos());
 			}
 		}
 	}
@@ -341,21 +341,21 @@ public class Armor extends EquipableItem {
 		
 		if (hasGlyph(Swiftness.class, owner)) {
 			boolean enemyNear = false;
-			PathFinder.buildDistanceMap(owner.pos, Dungeon.level.passable, 2);
+			PathFinder.buildDistanceMap(owner.pos(), Dungeon.level.passable, 2);
 			for (Char ch : Actor.chars()){
-				if ( PathFinder.distance[ch.pos] != Integer.MAX_VALUE && owner.alignment != ch.alignment){
+				if ( PathFinder.distance[ch.pos()] != Integer.MAX_VALUE && owner.alignment != ch.alignment){
 					enemyNear = true;
 					break;
 				}
 			}
 			if (!enemyNear) speed *= (1.2f + 0.04f * buffedLvl());
-		} else if (hasGlyph(Flow.class, owner) && Dungeon.level.water[owner.pos]){
+		} else if (hasGlyph(Flow.class, owner) && Dungeon.level.water[owner.pos()]){
 			speed *= (2f + 0.25f*buffedLvl());
 		}
 		
 		if (hasGlyph(Bulk.class, owner) &&
-				(Dungeon.level.map[owner.pos] == Terrain.DOOR
-						|| Dungeon.level.map[owner.pos] == Terrain.OPEN_DOOR )) {
+				(Dungeon.level.map[owner.pos()] == Terrain.DOOR
+						|| Dungeon.level.map[owner.pos()] == Terrain.OPEN_DOOR )) {
 			speed /= 3f;
 		}
 		

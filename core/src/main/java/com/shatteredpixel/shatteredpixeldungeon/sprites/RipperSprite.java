@@ -66,7 +66,7 @@ public class RipperSprite extends MobSprite {
 	}
 
 	public void leapPrep( int cell ){
-		turnTo( ch.pos, cell );
+		turnTo(ch.pos(), cell );
 		play( prep );
 	}
 

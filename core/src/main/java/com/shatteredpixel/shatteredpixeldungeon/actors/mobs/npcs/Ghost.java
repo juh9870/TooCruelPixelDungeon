@@ -67,9 +67,9 @@ public class Ghost extends NPC {
 	@Override
 	protected boolean act() {
 		if (Quest.processed()) {
-			target = Dungeon.hero.pos;
+			target = Dungeon.hero.pos();
 		}
-		if (Dungeon.level.heroFOV[pos] && !Quest.completed()){
+		if (Dungeon.level.heroFOV[pos()] && !Quest.completed()){
 			Notes.add( Notes.Landmark.GHOST );
 		}
 		return super.act();
@@ -105,7 +105,7 @@ public class Ghost extends NPC {
 	
 	@Override
 	public boolean interact(Char c) {
-		sprite.turnTo( pos, c.pos );
+		sprite.turnTo(pos(), c.pos());
 		
 		Sample.INSTANCE.play( Assets.Sounds.GHOST );
 
@@ -150,10 +150,10 @@ public class Ghost extends NPC {
 					}
 					if (newPos != -1) {
 
-						CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
-						pos = newPos;
-						sprite.place(pos);
-						sprite.visible = Dungeon.level.heroFOV[pos];
+						CellEmitter.get(pos()).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+						pos(newPos);
+						sprite.place(pos());
+						sprite.visible = Dungeon.level.heroFOV[pos()];
 					}
 				}
 			}
@@ -173,9 +173,9 @@ public class Ghost extends NPC {
 					txt_quest = Messages.get(this, "crab_1", Dungeon.hero.name()); break;
 			}
 
-			questBoss.pos = Dungeon.level.randomRespawnCell( this );
+			questBoss.pos(Dungeon.level.randomRespawnCell( this ));
 
-			if (questBoss.pos != -1) {
+			if (questBoss.pos() != -1) {
 				GameScene.add(questBoss);
 				Quest.given = true;
 				Notes.add( Notes.Landmark.GHOST );
@@ -284,8 +284,8 @@ public class Ghost extends NPC {
 				
 				Ghost ghost = new Ghost();
 				do {
-					ghost.pos = level.randomRespawnCell( ghost );
-				} while (ghost.pos == -1);
+					ghost.pos(level.randomRespawnCell( ghost ));
+				} while (ghost.pos() == -1);
 				level.mobs.add( ghost );
 				
 				spawned = true;

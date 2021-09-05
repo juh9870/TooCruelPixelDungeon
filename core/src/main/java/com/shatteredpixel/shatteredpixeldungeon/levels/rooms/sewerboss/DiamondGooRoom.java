@@ -62,7 +62,7 @@ public class DiamondGooRoom extends GooBossRoom {
 		setupGooNest(level);
 		
 		Goo boss = new Goo();
-		boss.pos = level.pointToCell(center());
+		boss.pos(level.pointToCell(center()));
 		level.mobs.add( boss );
 	}
 	

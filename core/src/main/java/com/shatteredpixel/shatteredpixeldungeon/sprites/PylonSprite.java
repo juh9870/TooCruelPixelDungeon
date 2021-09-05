@@ -81,7 +81,7 @@ public class PylonSprite extends MobSprite {
 	@Override
 	public void play(Animation anim) {
 		if (anim == die){
-			turnTo(ch.pos, ch.pos+1); //always face right to merge with custom tiles
+			turnTo(ch.pos(), ch.pos() +1); //always face right to merge with custom tiles
 			emitter().burst(BlastParticle.FACTORY, 20);
 			Sample.INSTANCE.play(Assets.Sounds.BLAST);
 		}

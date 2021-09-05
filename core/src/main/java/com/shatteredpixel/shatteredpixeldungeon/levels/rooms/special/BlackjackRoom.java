@@ -60,7 +60,7 @@ public class BlackjackRoom extends SpecialRoom {
         System.out.println(level.pointToCell(center()));
 
         Mob shopkeeper = new Blackjackkeeper();
-        shopkeeper.pos = pos;
+        shopkeeper.pos(pos);
         level.mobs.add( shopkeeper );
 
     }

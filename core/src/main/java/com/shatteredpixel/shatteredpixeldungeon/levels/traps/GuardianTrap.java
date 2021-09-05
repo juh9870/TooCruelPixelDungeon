@@ -121,9 +121,9 @@ public class GuardianTrap extends MobSummonTrap {
 			int pos = Dungeon.level.randomRespawnCell(guardian );
 			if (pos == -1) return false;
 			guardian.state = guardian.WANDERING;
-			guardian.pos = pos;
+			guardian.pos(pos);
 			GameScene.add(guardian);
-			guardian.beckon(Dungeon.hero.pos);
+			guardian.beckon(Dungeon.hero.pos());
 			mobsToPlace.add(guardian);
 			return true;
 		}

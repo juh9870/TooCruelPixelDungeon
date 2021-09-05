@@ -291,10 +291,10 @@ public abstract class RegularLevel extends Level {
 	private boolean tryCreateMobInRoom(Mob mob, Room roomToSpawn){
 		int tries = 30;
 		do {
-			mob.pos = pointToCell(roomToSpawn.random());
+			mob.pos(pointToCell(roomToSpawn.random()));
 			tries--;
-		} while (tries >= 0 && (!passable[mob.pos] || solid[mob.pos] || mob.pos == exit
-				|| (!openSpace[mob.pos] && mob.properties().contains(Char.Property.LARGE)) || findMob(mob.pos) != null));
+		} while (tries >= 0 && (!passable[mob.pos()] || solid[mob.pos()] || mob.pos() == exit
+				|| (!openSpace[mob.pos()] && mob.properties().contains(Char.Property.LARGE)) || findMob(mob.pos()) != null));
 
 		if (tries < 0) {
 			return false;
@@ -401,7 +401,7 @@ public abstract class RegularLevel extends Level {
 				mobsToSpawn--;
 				if (set.size() > 0) {
 					int cell = Random.element(set);
-					mob.pos = cell;
+					mob.pos(cell);
 					cells.remove(cell);
 					largeCells.remove(cell);
 					if (Challenges.EXTERMINATION.enabled()) {
@@ -413,9 +413,9 @@ public abstract class RegularLevel extends Level {
 		}
 
 		for (Mob m : mobs){
-			if (map[m.pos] == Terrain.HIGH_GRASS || map[m.pos] == Terrain.FURROWED_GRASS) {
-				map[m.pos] = Terrain.GRASS;
-				losBlocking[m.pos] = false;
+			if (map[m.pos()] == Terrain.HIGH_GRASS || map[m.pos()] == Terrain.FURROWED_GRASS) {
+				map[m.pos()] = Terrain.GRASS;
+				losBlocking[m.pos()] = false;
 			}
 
 		}
@@ -428,7 +428,7 @@ public abstract class RegularLevel extends Level {
 		int cell = -1;
 		boolean allowHeroFov = Challenges.EXHIBITIONISM.enabled();
 		boolean mindVision = Dungeon.hero.buff(MindVision.class) != null;
-		boolean allowStacking = ignoreMobs || Challenges.STACKING.enabled();
+		boolean allowStacking = ignoreMobs;
 
 		while (true) {
 
@@ -671,7 +671,7 @@ public abstract class RegularLevel extends Level {
 	
     protected Room randomBiasedRoom(Class<? extends Room> type) {
         ArrayList<Room> rooms = new ArrayList<>(this.rooms);
-        Room playerRoom = room(Dungeon.hero.pos);
+        Room playerRoom = room(Dungeon.hero.pos());
         for (int i = 0; i < 2; i++) {
             rooms.add(playerRoom);
         }
@@ -757,7 +757,7 @@ public abstract class RegularLevel extends Level {
 				}
 			}
 			for (Mob mob : mobs) {
-				cells.remove(mob.pos);
+				cells.remove(mob.pos());
 			}
 			return Random.element(cells);
 		}

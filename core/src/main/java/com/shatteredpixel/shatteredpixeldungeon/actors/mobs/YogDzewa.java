@@ -162,14 +162,14 @@ public class YogDzewa extends Mob {
 		//mob logic
 		enemy = chooseEnemy();
 
-		enemySeen = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
+		enemySeen = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos()] && enemy.invisible <= 0;
 		//end of char/mob logic
 
 		if (phase == 0){
-			if (Dungeon.hero.viewDistance >= Dungeon.level.distance(pos, Dungeon.hero.pos)) {
+			if (Dungeon.hero.viewDistance >= Dungeon.level.distance(pos(), Dungeon.hero.pos())) {
 				Dungeon.observe();
 			}
-			if (Dungeon.level.heroFOV[pos]) {
+			if (Dungeon.level.heroFOV[pos()]) {
 				notice();
 			}
 		}
@@ -190,7 +190,7 @@ public class YogDzewa extends Mob {
 			//delay fire on a rooted hero
 			if (!Dungeon.hero.rooted) {
 				for (int i : targetedCells) {
-					Ballistica b = new Ballistica(pos, i, Ballistica.WONT_STOP);
+					Ballistica b = new Ballistica(pos(), i, Ballistica.WONT_STOP);
 					//shoot beams
 					sprite.parent.add(new Beam.DeathRay(sprite.center(), DungeonTilemap.raisedTileCenterToWorld(b.collisionPos)));
 					for (int p : b.path) {
@@ -215,9 +215,9 @@ public class YogDzewa extends Mob {
 						ch.damage(Random.NormalIntRange(20, 30), new Eye.DeathGaze());
 					}
 
-					if (Dungeon.level.heroFOV[pos]) {
+					if (Dungeon.level.heroFOV[pos()]) {
 						ch.sprite.flash();
-						CellEmitter.center(pos).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
+						CellEmitter.center(pos()).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
 					}
 					if (!ch.isAlive() && ch == Dungeon.hero) {
 						Dungeon.fail(getClass());
@@ -233,22 +233,22 @@ public class YogDzewa extends Mob {
 				HashSet<Integer> affectedCells = new HashSet<>();
 				for (int i = 0; i < beams; i++){
 
-					int targetPos = Dungeon.hero.pos;
+					int targetPos = Dungeon.hero.pos();
 					if (i != 0){
 						do {
-							targetPos = Dungeon.hero.pos + PathFinder.NEIGHBOURS8[Random.Int(8)];
-						} while (Dungeon.level.trueDistance(pos, Dungeon.hero.pos)
-								> Dungeon.level.trueDistance(pos, targetPos));
+							targetPos = Dungeon.hero.pos() + PathFinder.NEIGHBOURS8[Random.Int(8)];
+						} while (Dungeon.level.trueDistance(pos(), Dungeon.hero.pos())
+								> Dungeon.level.trueDistance(pos(), targetPos));
 					}
 					targetedCells.add(targetPos);
-					Ballistica b = new Ballistica(pos, targetPos, Ballistica.WONT_STOP);
+					Ballistica b = new Ballistica(pos(), targetPos, Ballistica.WONT_STOP);
 					affectedCells.addAll(b.path);
 				}
 
 				//remove one beam if multiple shots would cause every cell next to the hero to be targeted
 				boolean allAdjTargeted = true;
 				for (int i : PathFinder.NEIGHBOURS9){
-					if (!affectedCells.contains(Dungeon.hero.pos + i) && Dungeon.level.passable[Dungeon.hero.pos + i]){
+					if (!affectedCells.contains(Dungeon.hero.pos() + i) && Dungeon.level.passable[Dungeon.hero.pos() + i]){
 						allAdjTargeted = false;
 						break;
 					}
@@ -257,7 +257,7 @@ public class YogDzewa extends Mob {
 					targetedCells.remove(targetedCells.size()-1);
 				}
 				for (int i : targetedCells){
-					Ballistica b = new Ballistica(pos, i, Ballistica.WONT_STOP);
+					Ballistica b = new Ballistica(pos(), i, Ballistica.WONT_STOP);
 					for (int p : b.path){
 						sprite.parent.add(new TargetedCell(p, 0xFF0000));
 						affectedCells.add(p);
@@ -283,18 +283,18 @@ public class YogDzewa extends Mob {
 
 				int spawnPos = -1;
 				for (int i : PathFinder.NEIGHBOURS8){
-					if (Actor.findChar(pos+i) == null){
-						if (spawnPos == -1 || Dungeon.level.trueDistance(Dungeon.hero.pos, spawnPos) > Dungeon.level.trueDistance(Dungeon.hero.pos, pos+i)){
-							spawnPos = pos + i;
+					if (Actor.findChar(pos() +i) == null){
+						if (spawnPos == -1 || Dungeon.level.trueDistance(Dungeon.hero.pos(), spawnPos) > Dungeon.level.trueDistance(Dungeon.hero.pos(), pos() +i)){
+							spawnPos = pos() + i;
 						}
 					}
 				}
 
 				if (spawnPos != -1) {
-					summon.pos = spawnPos;
+					summon.pos(spawnPos);
 					GameScene.add( summon );
-					Actor.addDelayed( new Pushing( summon, pos, summon.pos ), -1 );
-					summon.beckon(Dungeon.hero.pos);
+					Actor.addDelayed( new Pushing( summon, pos(), summon.pos()), -1 );
+					summon.beckon(Dungeon.hero.pos());
 
 					summonCooldown += Random.NormalFloat(MIN_SUMMON_CD, MAX_SUMMON_CD);
 					summonCooldown -= (phase - 1);
@@ -381,7 +381,7 @@ public class YogDzewa extends Mob {
 	}
 
 	public void addFist(YogFist fist){
-		fist.pos = Dungeon.level.exit;
+		fist.pos(Dungeon.level.exit);
 
 		CellEmitter.get(Dungeon.level.exit-1).burst(ShadowParticle.UP, 25);
 		CellEmitter.get(Dungeon.level.exit).burst(ShadowParticle.UP, 100);
@@ -394,17 +394,17 @@ public class YogDzewa extends Mob {
 
 		if (!Challenges.STRONGER_BOSSES.enabled()
 				&& Actor.findChar(targetPos) == null){
-			fist.pos = targetPos;
+			fist.pos(targetPos);
 		} else if (Actor.findChar(targetPos-1) == null){
-			fist.pos = targetPos-1;
+			fist.pos(targetPos-1);
 		} else if (Actor.findChar(targetPos+1) == null){
-			fist.pos = targetPos+1;
+			fist.pos(targetPos+1);
 		} else if (Actor.findChar(targetPos) == null){
-			fist.pos = targetPos;
+			fist.pos(targetPos);
 		}
 
 		GameScene.add(fist, 4);
-		Actor.addDelayed( new Pushing( fist, Dungeon.level.exit, fist.pos ), -1 );
+		Actor.addDelayed( new Pushing( fist, Dungeon.level.exit, fist.pos()), -1 );
 	}
 
 	public void updateVisibility( Level level ){
@@ -438,7 +438,7 @@ public class YogDzewa extends Mob {
 	@Override
 	public void aggro(Char ch) {
 		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
-			if (Dungeon.level.distance(pos, mob.pos) <= 4 &&
+			if (Dungeon.level.distance(pos(), mob.pos()) <= 4 &&
 					(mob instanceof Larva || mob instanceof RipperDemon)) {
 				mob.aggro(ch);
 			}

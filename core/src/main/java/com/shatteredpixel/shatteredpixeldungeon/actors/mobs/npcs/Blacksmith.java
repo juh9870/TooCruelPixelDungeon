@@ -61,7 +61,7 @@ public class Blacksmith extends NPC {
 	
 	@Override
 	protected boolean act() {
-		if (Dungeon.level.heroFOV[pos] && !Quest.reforged){
+		if (Dungeon.level.heroFOV[pos()] && !Quest.reforged){
 			Notes.add( Notes.Landmark.TROLL );
 		}
 		return super.act();
@@ -70,7 +70,7 @@ public class Blacksmith extends NPC {
 	@Override
 	public boolean interact(Char c) {
 		
-		sprite.turnTo( pos, c.pos );
+		sprite.turnTo(pos(), c.pos());
 
 		if (c != Dungeon.hero){
 			return true;
@@ -96,7 +96,7 @@ public class Blacksmith extends NPC {
 							if (pick.doPickUp( Dungeon.hero )) {
 								GLog.i( Messages.get(Dungeon.hero, "you_now_have", pick.name() ));
 							} else {
-								Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
+								Dungeon.level.drop( pick, Dungeon.hero.pos()).sprite.drop();
 							}
 						}
 					} );
@@ -222,7 +222,7 @@ public class Blacksmith extends NPC {
 		if (second instanceof Armor){
 			BrokenSeal seal = ((Armor) second).checkSeal();
 			if (seal != null){
-				Dungeon.level.drop( seal, Dungeon.hero.pos );
+				Dungeon.level.drop( seal, Dungeon.hero.pos());
 			}
 		}
 

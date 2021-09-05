@@ -88,9 +88,9 @@ public class CellSelector extends ScrollArea {
 
 			//hero first
 			if (Dungeon.hero.sprite != null && Dungeon.hero.sprite.overlapsPoint( p.x, p.y )){
-				PointF c = DungeonTilemap.tileCenterToWorld(Dungeon.hero.pos);
+				PointF c = DungeonTilemap.tileCenterToWorld(Dungeon.hero.pos());
 				if (Math.abs(p.x - c.x) <= 12 && Math.abs(p.y - c.y) <= 12) {
-					select(Dungeon.hero.pos);
+					select(Dungeon.hero.pos());
 					return;
 				}
 			}
@@ -98,9 +98,9 @@ public class CellSelector extends ScrollArea {
 			//then mobs
 			for (Char mob : Dungeon.level.mobs.toArray(new Mob[0])){
 				if (mob.sprite != null && mob.sprite.overlapsPoint( p.x, p.y )){
-					PointF c = DungeonTilemap.tileCenterToWorld(mob.pos);
+					PointF c = DungeonTilemap.tileCenterToWorld(mob.pos());
 					if (Math.abs(p.x - c.x) <= 12 && Math.abs(p.y - c.y) <= 12) {
-						select(mob.pos);
+						select(mob.pos());
 						return;
 					}
 				}
@@ -135,7 +135,7 @@ public class CellSelector extends ScrollArea {
 		//This can lead to none-whole coordinate, which need to be aligned with the zoom
 		for (Char c : Actor.chars()){
 			if (c.sprite != null && !c.sprite.isMoving){
-				c.sprite.point(c.sprite.worldToCamera(c.pos));
+				c.sprite.point(c.sprite.worldToCamera(c.pos()));
 			}
 		}
 
@@ -268,7 +268,7 @@ public class CellSelector extends ScrollArea {
 			return false;
 		}
 
-		int cell = Dungeon.hero.pos;
+		int cell = Dungeon.hero.pos();
 
 		if (action == SPDAction.N)  cell += -Dungeon.level.width();
 		if (action == SPDAction.NE) cell += +1-Dungeon.level.width();
@@ -279,7 +279,7 @@ public class CellSelector extends ScrollArea {
 		if (action == SPDAction.W)  cell += -1;
 		if (action == SPDAction.NW) cell += -1-Dungeon.level.width();
 		
-		if (cell != Dungeon.hero.pos){
+		if (cell != Dungeon.hero.pos()){
 			//each step when keyboard moving takes 0.15s, 0.125s, 0.1s, 0.1s, ...
 			// this is to make it easier to move 1 or 2 steps without overshooting
 			CharSprite.setMoveInterval( CharSprite.DEFAULT_MOVE_INTERVAL +

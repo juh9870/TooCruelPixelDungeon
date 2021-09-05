@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.watabou.utils.Bundle;
@@ -59,7 +58,7 @@ public class SavingSlumber extends Buff {
         if (partialHeal > 1) {
             int heal = (int) Math.floor(partialHeal);
             target.HP = Math.min(target.HP + heal, target.HT);
-            if (Dungeon.level.heroFOV[target.pos])
+            if (Dungeon.level.heroFOV[target.pos()])
                 target.sprite.showStatus(CharSprite.POSITIVE, Integer.toString(heal));
             partialHeal -= heal;
         }

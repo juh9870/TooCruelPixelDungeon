@@ -37,8 +37,8 @@ public class HoldFast extends Buff {
 
 	@Override
 	public boolean act() {
-		if (pos == -1) pos = target.pos;
-		if (pos != target.pos) {
+		if (pos == -1) pos = target.pos();
+		if (pos != target.pos()) {
 			detach();
 		} else {
 			spend(TICK);

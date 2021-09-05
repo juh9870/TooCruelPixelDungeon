@@ -53,7 +53,7 @@ public class Multiplicity extends Armor.Glyph {
 			ArrayList<Integer> spawnPoints = new ArrayList<>();
 
 			for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-				int p = defender.pos + PathFinder.NEIGHBOURS8[i];
+				int p = defender.pos() + PathFinder.NEIGHBOURS8[i];
 				if (Actor.findChar( p ) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
 					spawnPoints.add( p );
 				}
@@ -82,7 +82,7 @@ public class Multiplicity extends Armor.Glyph {
 							Bundle store = new Bundle();
 							attacker.storeInBundle(store);
 							m.restoreFromBundle(store);
-							m.pos = 0;
+							m.pos(0);
 							m.HP = m.HT;
 							if (m.buff(PinCushion.class) != null) {
 								m.remove(m.buff(PinCushion.class));

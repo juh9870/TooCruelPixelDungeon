@@ -118,10 +118,10 @@ public class Burning extends Buff implements Hero.Doom {
 						if (toBurn instanceof MysteryMeat || toBurn instanceof FrozenCarpaccio){
 							ChargrilledMeat steak = new ChargrilledMeat();
 							if (!steak.collect( hero.belongings.backpack )) {
-								Dungeon.level.drop( steak, hero.pos ).sprite.drop();
+								Dungeon.level.drop( steak, hero.pos()).sprite.drop();
 							}
 						}
-						Heap.burnFX( hero.pos );
+						Heap.burnFX(hero.pos());
 					}
 				}
 				
@@ -148,15 +148,15 @@ public class Burning extends Buff implements Hero.Doom {
 			detach();
 		}
 		
-		if (Dungeon.level.flamable[target.pos] && Blob.volumeAt(target.pos, Fire.class) == 0) {
-			GameScene.add( Blob.seed( target.pos, 4, Fire.class ) );
+		if (Dungeon.level.flamable[target.pos()] && Blob.volumeAt(target.pos(), Fire.class) == 0) {
+			GameScene.add( Blob.seed(target.pos(), 4, Fire.class ) );
 		}
 		
 		spend( TICK );
 		left -= TICK;
 		
 		if (left <= 0 ||
-			(Dungeon.level.water[target.pos] && !target.flying)) {
+			(Dungeon.level.water[target.pos()] && !target.flying)) {
 			
 			detach();
 		}

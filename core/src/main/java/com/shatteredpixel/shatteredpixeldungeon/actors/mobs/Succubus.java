@@ -83,7 +83,7 @@ public class Succubus extends Mob {
 			} else {
 				HP += 5 + damage;
 			}
-			if (Dungeon.level.heroFOV[pos]) {
+			if (Dungeon.level.heroFOV[pos()]) {
 				sprite.emitter().burst( Speck.factory( Speck.HEALING ), 2 );
 				Sample.INSTANCE.play( Assets.Sounds.CHARMS );
 			}
@@ -91,7 +91,7 @@ public class Succubus extends Mob {
 			Charm c = Buff.affect( enemy, Charm.class, Charm.DURATION/2f );
 			c.object = id();
 			c.ignoreNextHit = true; //so that the -5 duration from succubus hit is ignored
-			if (Dungeon.level.heroFOV[enemy.pos]) {
+			if (Dungeon.level.heroFOV[enemy.pos()]) {
 				enemy.sprite.centerEmitter().start(Speck.factory(Speck.HEART), 0.2f, 5);
 				Sample.INSTANCE.play(Assets.Sounds.CHARMS);
 			}
@@ -102,7 +102,7 @@ public class Succubus extends Mob {
 	
 	@Override
 	protected boolean getCloser( int target ) {
-		if (fieldOfView[target] && Dungeon.level.distance( pos, target ) > 2 && blinkCooldown <= 0) {
+		if (fieldOfView[target] && Dungeon.level.distance(pos(), target ) > 2 && blinkCooldown <= 0) {
 			
 			blink( target );
 			spend( -movementTime() );
@@ -118,11 +118,11 @@ public class Succubus extends Mob {
 	
 	private void blink( int target ) {
 		
-		Ballistica route = new Ballistica( pos, target, Ballistica.PROJECTILE);
+		Ballistica route = new Ballistica(pos(), target, Ballistica.PROJECTILE);
 		int cell = route.collisionPos;
 
 		//can't occupy the same cell as another char, so move back one.
-		if (Actor.findChar( cell ) != null && cell != this.pos)
+		if (Actor.findChar( cell ) != null && cell != this.pos())
 			cell = route.path.get(route.dist-1);
 
 		if (Dungeon.level.avoid[ cell ] && (!properties().contains(Property.LARGE) || Dungeon.level.openSpace[cell])){

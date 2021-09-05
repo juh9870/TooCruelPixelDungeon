@@ -241,11 +241,11 @@ public class Dart extends MissileWeapon {
 						}
 						
 						TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, maxToTip);
-						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
+						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos()).sprite.drop();
 						
 						curUser.spend( 1f );
 						curUser.busy();
-						curUser.sprite.operate(curUser.pos);
+						curUser.sprite.operate(curUser.pos());
 						
 					} else if ((index == 1 && options.length == 3) || (index == 0 && options.length == 2)){
 						item.detach( curUser.belongings.backpack );
@@ -257,11 +257,11 @@ public class Dart extends MissileWeapon {
 						}
 						
 						TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, singleSeedDarts);
-						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
+						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos()).sprite.drop();
 						
 						curUser.spend( 1f );
 						curUser.busy();
-						curUser.sprite.operate(curUser.pos);
+						curUser.sprite.operate(curUser.pos());
 					}
 				}
 			});

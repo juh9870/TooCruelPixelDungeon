@@ -74,7 +74,7 @@ public class PotionOfDragonsBreath extends ExoticPotion {
 				identify();
 				curUser.busy();
 				Sample.INSTANCE.play( Assets.Sounds.DRINK );
-				curUser.sprite.operate(curUser.pos, new Callback() {
+				curUser.sprite.operate(curUser.pos(), new Callback() {
 					@Override
 					public void call() {
 
@@ -87,7 +87,7 @@ public class PotionOfDragonsBreath extends ExoticPotion {
 						curUser.sprite.zap(cell);
 						Sample.INSTANCE.play( Assets.Sounds.BURNING );
 
-						final Ballistica bolt = new Ballistica(curUser.pos, cell, Ballistica.WONT_STOP);
+						final Ballistica bolt = new Ballistica(curUser.pos(), cell, Ballistica.WONT_STOP);
 
 						int maxDist = 6;
 						int dist = Math.min(bolt.dist, maxDist);

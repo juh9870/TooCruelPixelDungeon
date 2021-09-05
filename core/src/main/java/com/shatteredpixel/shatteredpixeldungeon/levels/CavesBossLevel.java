@@ -165,7 +165,7 @@ public class CavesBossLevel extends Level {
 			for (int i : pylonPositions) {
 				if (findMob(i) == null) {
 					Pylon pylon = new Pylon();
-					pylon.pos = i;
+					pylon.pos(i);
 					mobs.add(pylon);
 				}
 			}
@@ -177,7 +177,7 @@ public class CavesBossLevel extends Level {
 	protected void createMobs() {
 		for (int i : pylonPositions) {
 			Pylon pylon = new Pylon();
-			pylon.pos = i;
+			pylon.pos(i);
 			mobs.add(pylon);
 		}
 	}
@@ -233,7 +233,7 @@ public class CavesBossLevel extends Level {
 		int gatePos = pointToCell(new Point(gate.left, gate.top));
 		if (ch == Dungeon.hero && !locked && solid[gatePos]){
 			for (int pos : pylonPositions){
-				if (Dungeon.level.distance(ch.pos, pos) <= 3){
+				if (Dungeon.level.distance(ch.pos(), pos) <= 3){
 					seal();
 					break;
 				}
@@ -262,7 +262,7 @@ public class CavesBossLevel extends Level {
 			do {
 				n = entrance + PathFinder.NEIGHBOURS8[Random.Int( 8 )];
 			} while (!Dungeon.level.passable[n]);
-			ch.pos = n;
+			ch.pos(n);
 			ch.sprite.place(n);
 		}
 
@@ -276,8 +276,8 @@ public class CavesBossLevel extends Level {
 		DM300 boss = new DM300();
 		boss.state = boss.WANDERING;
 		do {
-			boss.pos = pointToCell(Random.element(mainArena.getPoints()));
-		} while (!openSpace[boss.pos] || map[boss.pos] == Terrain.EMPTY_SP || Actor.findChar(boss.pos) != null);
+			boss.pos(pointToCell(Random.element(mainArena.getPoints())));
+		} while (!openSpace[boss.pos()] || map[boss.pos()] == Terrain.EMPTY_SP || Actor.findChar(boss.pos()) != null);
 		GameScene.add( boss );
 
 	}
@@ -317,7 +317,7 @@ public class CavesBossLevel extends Level {
 		} else if (!pylons.isEmpty()) {
 			Pylon closest = null;
 			for (Pylon p : pylons){
-				if (closest == null || trueDistance(p.pos, Dungeon.hero.pos) < trueDistance(closest.pos, Dungeon.hero.pos)){
+				if (closest == null || trueDistance(p.pos(), Dungeon.hero.pos()) < trueDistance(closest.pos(), Dungeon.hero.pos())){
 					closest = p;
 				}
 			}

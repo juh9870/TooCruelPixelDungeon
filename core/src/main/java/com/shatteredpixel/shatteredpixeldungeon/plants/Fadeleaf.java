@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -88,11 +87,11 @@ public class Fadeleaf extends Plant {
 
 				if (newPos != -1) {
 
-					ch.pos = newPos;
+					ch.pos(newPos);
 					if (((Mob) ch).state == ((Mob) ch).HUNTING)
 						((Mob) ch).state = ((Mob) ch).WANDERING;
-					ch.sprite.place(ch.pos);
-					ch.sprite.visible = Dungeon.level.heroFOV[ch.pos];
+					ch.sprite.place(ch.pos());
+					ch.sprite.visible = Dungeon.level.heroFOV[ch.pos()];
 
 				}
 			}

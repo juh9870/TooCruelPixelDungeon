@@ -65,15 +65,15 @@ public class Honeypot extends Item {
 
 		if (action.equals( AC_SHATTER )) {
 			
-			hero.sprite.zap( hero.pos );
+			hero.sprite.zap(hero.pos());
 			
 			detach( hero.belongings.backpack );
 
-			Item item = shatter( hero, hero.pos );
+			Item item = shatter( hero, hero.pos());
 			if (!item.collect()){
-				Dungeon.level.drop(item, hero.pos);
+				Dungeon.level.drop(item, hero.pos());
 				if (item instanceof ShatteredPot){
-					((ShatteredPot) item).dropPot(hero, hero.pos);
+					((ShatteredPot) item).dropPot(hero, hero.pos());
 				}
 			}
 
@@ -117,7 +117,7 @@ public class Honeypot extends Item {
 			bee.spawn( Dungeon.depth );
 			bee.setPotInfo( pos, owner );
 			bee.HP = bee.HT;
-			bee.pos = newPos;
+			bee.pos(newPos);
 			
 			GameScene.add( bee );
 			Actor.addDelayed( new Pushing( bee, pos, newPos ), -1f );
@@ -168,7 +168,7 @@ public class Honeypot extends Item {
 		@Override
 		public void doDrop(Hero hero) {
 			super.doDrop(hero);
-			dropPot(hero, hero.pos);
+			dropPot(hero, hero.pos());
 		}
 
 		@Override
@@ -178,7 +178,7 @@ public class Honeypot extends Item {
 		}
 
 		public void pickupPot(Char holder){
-			for (Bee bee : findBees(holder.pos)){
+			for (Bee bee : findBees(holder.pos())){
 				updateBee(bee, -1, holder);
 			}
 		}

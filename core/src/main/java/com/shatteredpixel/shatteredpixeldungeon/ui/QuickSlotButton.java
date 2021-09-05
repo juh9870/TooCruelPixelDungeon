@@ -89,7 +89,7 @@ public class QuickSlotButton extends Button {
 						GameScene.handleCell(cell);
 					} else {
 						//couldn't auto-aim, just target the position and hope for the best.
-						GameScene.handleCell( lastTarget.pos );
+						GameScene.handleCell(lastTarget.pos());
 					}
 				} else {
 					Item item = select(slotNum);
@@ -231,7 +231,7 @@ public class QuickSlotButton extends Button {
 				Actor.chars().contains( lastTarget ) &&
 				lastTarget.isAlive() &&
 				lastTarget.alignment != Char.Alignment.ALLY &&
-				Dungeon.level.heroFOV[lastTarget.pos]) {
+				Dungeon.level.heroFOV[lastTarget.pos()]) {
 
 			targeting = true;
 			CharSprite sprite = lastTarget.sprite;
@@ -260,15 +260,15 @@ public class QuickSlotButton extends Button {
 	public static int autoAim(Char target, Item item){
 
 		//first try to directly target
-		if (item.targetingPos(Dungeon.hero, target.pos) == target.pos) {
-			return target.pos;
+		if (item.targetingPos(Dungeon.hero, target.pos()) == target.pos()) {
+			return target.pos();
 		}
 
 		//Otherwise pick nearby tiles to try and 'angle' the shot, auto-aim basically.
-		PathFinder.buildDistanceMap( target.pos, BArray.not( new boolean[Dungeon.level.length()], null ), 2 );
+		PathFinder.buildDistanceMap(target.pos(), BArray.not( new boolean[Dungeon.level.length()], null ), 2 );
 		for (int i = 0; i < PathFinder.distance.length; i++) {
 			if (PathFinder.distance[i] < Integer.MAX_VALUE
-					&& item.targetingPos(Dungeon.hero, i) == target.pos)
+					&& item.targetingPos(Dungeon.hero, i) == target.pos())
 				return i;
 		}
 

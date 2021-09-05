@@ -48,12 +48,12 @@ public class ScrollOfPolymorph extends ExoticScroll {
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos]) {
+			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos()]) {
 				if (!mob.properties().contains(Char.Property.BOSS)
 						&& !mob.properties().contains(Char.Property.MINIBOSS)){
 					Sheep sheep = new Sheep();
 					sheep.lifespan = 10;
-					sheep.pos = mob.pos;
+					sheep.pos(mob.pos());
 					
 					//awards half exp for each sheep-ified mob
 					//50% chance to round up, 50% to round down
@@ -65,7 +65,7 @@ public class ScrollOfPolymorph extends ExoticScroll {
 					Dungeon.level.mobs.remove(mob);
 					TargetHealthIndicator.instance.target(null);
 					GameScene.add(sheep);
-					CellEmitter.get(sheep.pos).burst(Speck.factory(Speck.WOOL), 4);
+					CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);
 					Sample.INSTANCE.play(Assets.Sounds.PUFF);
 					Sample.INSTANCE.play(Assets.Sounds.SHEEP);
 				}

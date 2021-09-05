@@ -1,11 +1,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.LevelObject;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -18,12 +16,12 @@ public abstract class MobSummonTrap extends Trap {
         Trap t;
         for (Mob mob : mobs) {
             //manually trigger traps first to avoid sfx spam
-            if ((t = Dungeon.level.traps.get(mob.pos)) != null && t.active) {
+            if ((t = Dungeon.level.traps.get(mob.pos())) != null && t.active) {
                 t.disarm();
                 t.reveal();
                 t.activate();
             }
-            ScrollOfTeleportation.appear(mob, mob.pos);
+            ScrollOfTeleportation.appear(mob, mob.pos());
             Dungeon.level.occupyCell(mob);
         }
     }

@@ -66,7 +66,7 @@ public class AquariumRoom extends StandardRoom {
 			if (level.map[cell] != Terrain.WATER || level.findMob(cell) != null) continue;
 
 			Piranha piranha = new Piranha();
-			piranha.pos = cell;
+			piranha.pos(cell);
 			level.mobs.add(piranha);
 			numFish--;
 		}

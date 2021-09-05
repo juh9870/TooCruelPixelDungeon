@@ -46,7 +46,7 @@ public class Door {
 		int chars = 0;
 		
 		for (Char ch : Actor.chars()){
-			if (ch.pos == pos) chars++;
+			if (ch.pos() == pos) chars++;
 		}
 		
 		//door does not shut if anything else is also on it

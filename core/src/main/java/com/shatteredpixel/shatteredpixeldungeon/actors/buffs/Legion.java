@@ -54,10 +54,8 @@ public class Legion extends Buff {
                     int nMobs = Math.min(50, wantSpawn);
                     wantSpawn -= nMobs;
                     int pos = Dungeon.level.randomRespawnCell(null, true);
-                    SummoningTrap.summonMobs(pos, nMobs, 5, (Mob mob) -> {
-                        if (Dungeon.hero.isAlive())
-                            mob.beckon(Dungeon.hero.pos);
-                    });
+                    SummoningTrap.summonMobs(pos, nMobs, 5,
+                            new SummoningTrap.MobSpawnedAction.HeroBeckoner());
                 }
                 turnsSinceLastWave = 0;
             }

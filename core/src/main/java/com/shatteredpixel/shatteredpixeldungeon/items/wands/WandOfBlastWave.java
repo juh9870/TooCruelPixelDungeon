@@ -82,8 +82,8 @@ public class WandOfBlastWave extends DamageWand {
 				wandProc(ch, chargesPerCast());
 				if (ch.alignment != Char.Alignment.ALLY) ch.damage(damageRoll(), this);
 
-				if (ch.pos == bolt.collisionPos + i) {
-					Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
+				if (ch.pos() == bolt.collisionPos + i) {
+					Ballistica trajectory = new Ballistica(ch.pos(), ch.pos() + i, Ballistica.MAGIC_BOLT);
 					int strength = 1 + Math.round(buffedLvl() / 2f);
 					throwChar(ch, trajectory, strength, false);
 				}
@@ -97,8 +97,8 @@ public class WandOfBlastWave extends DamageWand {
 			wandProc(ch, chargesPerCast());
 			ch.damage(damageRoll(), this);
 
-			if (bolt.path.size() > bolt.dist+1 && ch.pos == bolt.collisionPos) {
-				Ballistica trajectory = new Ballistica(ch.pos, bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
+			if (bolt.path.size() > bolt.dist+1 && ch.pos() == bolt.collisionPos) {
+				Ballistica trajectory = new Ballistica(ch.pos(), bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
 				int strength = buffedLvl() + 3;
 				throwChar(ch, trajectory, strength, false);
 			}
@@ -149,21 +149,21 @@ public class WandOfBlastWave extends DamageWand {
 
 		final int newPos = trajectory.path.get(dist);
 
-		if (newPos == ch.pos) return;
+		if (newPos == ch.pos()) return;
 
 		final int finalDist = dist;
 		final boolean finalCollided = collided && collideDmg;
-		final int initialpos = ch.pos;
+		final int initialpos = ch.pos();
 
-		Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
+		Actor.addDelayed(new Pushing(ch, ch.pos(), newPos, new Callback() {
 			public void call() {
-				if (initialpos != ch.pos) {
+				if (initialpos != ch.pos()) {
 					//something caused movement before pushing resolved, cancel to be safe.
-					ch.sprite.place(ch.pos);
+					ch.sprite.place(ch.pos());
 					return;
 				}
-				int oldPos = ch.pos;
-				ch.pos = newPos;
+				int oldPos = ch.pos();
+				ch.pos(newPos);
 				if (finalCollided && ch.isAlive()) {
 					ch.damage(Random.NormalIntRange(finalDist, 2*finalDist), this);
 					Paralysis.prolong(ch, Paralysis.class, 1 + finalDist/2f);

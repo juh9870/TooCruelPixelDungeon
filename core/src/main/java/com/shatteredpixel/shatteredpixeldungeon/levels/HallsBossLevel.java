@@ -187,7 +187,7 @@ public class HallsBossLevel extends Level {
 		super.occupyCell( ch );
 
 		if (map[entrance] == Terrain.ENTRANCE && map[exit] != Terrain.EXIT
-				&& ch == Dungeon.hero && Dungeon.level.distance(ch.pos, entrance) >= 2) {
+				&& ch == Dungeon.hero && Dungeon.level.distance(ch.pos(), entrance) >= 2) {
 			seal();
 		}
 	}
@@ -202,7 +202,7 @@ public class HallsBossLevel extends Level {
 		Dungeon.observe();
 
 		YogDzewa boss = new YogDzewa();
-		boss.pos = exit + width*3;
+		boss.pos(exit + width*3);
 		GameScene.add( boss );
 	}
 

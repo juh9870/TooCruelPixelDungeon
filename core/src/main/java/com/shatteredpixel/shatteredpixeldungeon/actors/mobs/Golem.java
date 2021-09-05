@@ -142,20 +142,20 @@ public class Golem extends Mob {
 	public void teleportEnemy(){
 		spend(TICK);
 
-		int bestPos = enemy.pos;
+		int bestPos = enemy.pos();
 		for (int i : PathFinder.NEIGHBOURS8){
-			if (Dungeon.level.passable[pos + i]
-				&& Actor.findChar(pos+i) == null
-				&& Dungeon.level.trueDistance(pos+i, enemy.pos) > Dungeon.level.trueDistance(bestPos, enemy.pos)){
-				bestPos = pos+i;
+			if (Dungeon.level.passable[pos() + i]
+				&& Actor.findChar(pos() +i) == null
+				&& Dungeon.level.trueDistance(pos() +i, enemy.pos()) > Dungeon.level.trueDistance(bestPos, enemy.pos())){
+				bestPos = pos() +i;
 			}
 		}
 
 		if (enemy.buff(MagicImmune.class) != null){
-			bestPos = enemy.pos;
+			bestPos = enemy.pos();
 		}
 
-		if (bestPos != enemy.pos){
+		if (bestPos != enemy.pos()){
 			ScrollOfTeleportation.appear(enemy, bestPos);
 			if (enemy instanceof Hero){
 				((Hero) enemy).interrupt();
@@ -172,11 +172,11 @@ public class Golem extends Mob {
 		protected boolean continueWandering() {
 			enemySeen = false;
 
-			int oldPos = pos;
+			int oldPos = pos();
 			if (target != -1 && getCloser( target )) {
 				spend( movementTime() );
-				return moveSprite( oldPos, pos );
-			} else if (!Dungeon.bossLevel() && target != -1 && target != pos && selfTeleCooldown <= 0) {
+				return moveSprite( oldPos, pos());
+			} else if (!Dungeon.bossLevel() && target != -1 && target != pos() && selfTeleCooldown <= 0) {
 				((GolemSprite)sprite).teleParticles(true);
 				teleporting = true;
 				spend( 2*TICK );
@@ -197,14 +197,14 @@ public class Golem extends Mob {
 				return super.act(enemyInFOV, justAlerted);
 			} else {
 				enemySeen = true;
-				target = enemy.pos;
+				target = enemy.pos();
 
-				int oldPos = pos;
+				int oldPos = pos();
 
 				if (enemyTeleCooldown <= 0 && distance(enemy) >= 1 && Random.Int(100/distance(enemy)) == 0
 						&& !Char.hasProp(enemy, Property.IMMOVABLE)){
 					if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-						sprite.zap( enemy.pos );
+						sprite.zap(enemy.pos());
 						return false;
 					} else {
 						teleportEnemy();
@@ -213,11 +213,11 @@ public class Golem extends Mob {
 
 				} else if (getCloser( target )) {
 					spend( movementTime() );
-					return moveSprite( oldPos,  pos );
+					return moveSprite( oldPos, pos());
 
 				} else if (enemyTeleCooldown <= 0 && !Char.hasProp(enemy, Property.IMMOVABLE)) {
 					if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-						sprite.zap( enemy.pos );
+						sprite.zap(enemy.pos());
 						return false;
 					} else {
 						teleportEnemy();

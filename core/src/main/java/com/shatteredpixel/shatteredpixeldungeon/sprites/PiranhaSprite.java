@@ -64,7 +64,7 @@ public class PiranhaSprite extends MobSprite {
 		super.onComplete( anim );
 		
 		if (anim == attack) {
-			GameScene.ripple( ch.pos );
+			GameScene.ripple(ch.pos());
 		}
 	}
 }

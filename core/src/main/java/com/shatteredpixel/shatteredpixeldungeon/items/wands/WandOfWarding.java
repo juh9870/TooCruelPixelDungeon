@@ -111,7 +111,7 @@ public class WandOfWarding extends Wand {
 			
 		} else {
 			Ward ward = new Ward();
-			ward.pos = target;
+			ward.pos(target);
 			ward.wandLevel = buffedLvl();
 			GameScene.add(ward, 1f);
 			Dungeon.level.occupyCell(ward);
@@ -225,9 +225,9 @@ public class WandOfWarding extends Wand {
 				viewDistance++;
 				if (sprite != null){
 					((WardSprite)sprite).updateTier(tier);
-					sprite.place(pos);
+					sprite.place(pos());
 				}
-				GameScene.updateFog(pos, viewDistance+1);
+				GameScene.updateFog(pos(), viewDistance+1);
 			}
 
 		}
@@ -280,14 +280,14 @@ public class WandOfWarding extends Wand {
 
 		@Override
 		protected boolean canAttack( Char enemy ) {
-			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
+			return new Ballistica(pos(), enemy.pos(), Ballistica.MAGIC_BOLT).collisionPos == enemy.pos();
 		}
 
 		@Override
 		protected boolean doAttack(Char enemy) {
-			boolean visible = fieldOfView[pos] || fieldOfView[enemy.pos];
+			boolean visible = fieldOfView[pos()] || fieldOfView[enemy.pos()];
 			if (visible) {
-				sprite.zap( enemy.pos );
+				sprite.zap(enemy.pos());
 			} else {
 				zap();
 			}
@@ -354,14 +354,14 @@ public class WandOfWarding extends Wand {
 		public void updateSpriteState() {
 			super.updateSpriteState();
 			((WardSprite)sprite).updateTier(tier);
-			sprite.place(pos);
+			sprite.place(pos());
 		}
 		
 		@Override
 		public void destroy() {
 			super.destroy();
 			Dungeon.observe();
-			GameScene.updateFog(pos, viewDistance+1);
+			GameScene.updateFog(pos(), viewDistance+1);
 		}
 		
 		@Override

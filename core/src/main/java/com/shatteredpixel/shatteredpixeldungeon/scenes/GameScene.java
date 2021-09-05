@@ -32,9 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -277,14 +275,14 @@ public class GameScene extends PixelScene {
 		add( mobs );
 
 		hero = new HeroSprite();
-		hero.place( Dungeon.hero.pos );
+		hero.place(Dungeon.hero.pos());
 		hero.updateArmor();
 		mobs.add( hero );
 		
 		for (Mob mob : Dungeon.level.mobs) {
 			addMobSprite( mob );
 			if (Statistics.amuletObtained) {
-				mob.beckon( Dungeon.hero.pos );
+				mob.beckon(Dungeon.hero.pos());
 			}
 		}
 		
@@ -393,11 +391,11 @@ public class GameScene extends PixelScene {
 		switch (InterlevelScene.mode) {
 		case RESURRECT:
 			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
-			ScrollOfTeleportation.appear( Dungeon.hero, Dungeon.hero.pos );
+			ScrollOfTeleportation.appear( Dungeon.hero, Dungeon.hero.pos());
 			SpellSprite.show(Dungeon.hero, SpellSprite.ANKH);
 			new Flare( 5, 16 ).color( 0xFFFF00, true ).show( hero, 4f ) ;
 		case RETURN:
-			ScrollOfTeleportation.appear(  Dungeon.hero, Dungeon.hero.pos );
+			ScrollOfTeleportation.appear(  Dungeon.hero, Dungeon.hero.pos());
 			break;
 		case DESCEND:
 			case FALL:
@@ -841,7 +839,7 @@ public class GameScene extends PixelScene {
 	
 	private void addMobSprite( Mob mob ) {
 		CharSprite sprite = mob.sprite();
-		sprite.visible = Dungeon.level.heroFOV[mob.pos];
+		sprite.visible = Dungeon.level.heroFOV[mob.pos()];
 		mobs.add( sprite );
 		sprite.link( mob );
 	}
@@ -1091,7 +1089,7 @@ public class GameScene extends PixelScene {
 		if (scene != null) {
 			for (Mob mob : Dungeon.level.mobs) {
 				if (mob.sprite != null)
-					mob.sprite.visible = Dungeon.level.heroFOV[mob.pos];
+					mob.sprite.visible = Dungeon.level.heroFOV[mob.pos()];
 			}
 		}
 	}
@@ -1212,7 +1210,7 @@ public class GameScene extends PixelScene {
 		ArrayList<String> names = new ArrayList<>();
 		final ArrayList<Object> objects = new ArrayList<>();
 
-		if (cell == Dungeon.hero.pos) {
+		if (cell == Dungeon.hero.pos()) {
 			objects.add(Dungeon.hero);
 			names.add(Dungeon.hero.className().toUpperCase(Locale.ENGLISH));
 		} else {

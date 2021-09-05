@@ -49,7 +49,7 @@ public class DemonSpawnerRoom extends SpecialRoom {
 		door.set(Door.Type.UNLOCKED);
 
 		DemonSpawner spawner = new DemonSpawner();
-		spawner.pos = cx + cy * level.width();
+		spawner.pos(cx + cy * level.width());
 		level.mobs.add( spawner );
 
 		CustomFloor vis = new CustomFloor();

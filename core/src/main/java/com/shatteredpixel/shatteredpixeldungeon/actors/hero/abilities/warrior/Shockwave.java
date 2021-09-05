@@ -62,7 +62,7 @@ public class Shockwave extends ArmorAbility {
 		if (target == null){
 			return;
 		}
-		if (target == hero.pos){
+		if (target == hero.pos()){
 			GLog.w(Messages.get(this, "self_target"));
 			return;
 		}
@@ -71,7 +71,7 @@ public class Shockwave extends ArmorAbility {
 		armor.charge -= chargeUse(hero);
 		Item.updateQuickslot();
 
-		Ballistica aim = new Ballistica(hero.pos, target, Ballistica.WONT_STOP);
+		Ballistica aim = new Ballistica(hero.pos(), target, Ballistica.WONT_STOP);
 
 		int maxDist = 5 + hero.pointsInTalent(Talent.EXPANDING_WAVE);
 		int dist = Math.min(aim.dist, maxDist);

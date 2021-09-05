@@ -103,7 +103,7 @@ public class HornOfPlenty extends Artifact {
 				charge -= chargesToUse;
 				Talent.onArtifactUsed(hero);
 
-				hero.sprite.operate(hero.pos);
+				hero.sprite.operate(hero.pos());
 				hero.busy();
 				SpellSprite.show(hero, SpellSprite.FOOD);
 				Sample.INSTANCE.play(Assets.Sounds.EAT);
@@ -296,7 +296,7 @@ public class HornOfPlenty extends Artifact {
 					GLog.w( Messages.get(HornOfPlenty.class, "reject") );
 				} else {
 					Hero hero = Dungeon.hero;
-					hero.sprite.operate( hero.pos );
+					hero.sprite.operate(hero.pos());
 					hero.busy();
 					hero.spend( Food.TIME_TO_EAT );
 

@@ -82,7 +82,7 @@ public class WandOfFrost extends DamageWand {
 			Sample.INSTANCE.play( Assets.Sounds.HIT_MAGIC, 1, 1.1f * Random.Float(0.87f, 1.15f) );
 
 			if (ch.isAlive()){
-				if (Dungeon.level.water[ch.pos])
+				if (Dungeon.level.water[ch.pos()])
 					Buff.affect(ch, Chill.class, 4+buffedLvl());
 				else
 					Buff.affect(ch, Chill.class, 2+buffedLvl());

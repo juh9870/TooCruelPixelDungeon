@@ -139,7 +139,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		emitters = new HashMap<>();
 	}
 
-	private boolean fast(){
+	public boolean fast(){
 		return !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
 	}
 
@@ -162,8 +162,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		this.ch = ch;
 		ch.sprite = this;
 		
-		place( ch.pos );
-		turnTo( ch.pos, Random.Int( Dungeon.level.length() ) );
+		place(ch.pos());
+		turnTo(ch.pos(), Random.Int( Dungeon.level.length() ) );
 		renderShadow = true;
 		
 		if (ch != Dungeon.hero) {
@@ -204,7 +204,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			float x = destinationCenter().x;
 			float y = destinationCenter().y - height()/2f;
 			if (ch != null) {
-				FloatingText.show( x, y, ch.pos, text, color );
+				FloatingText.show( x, y, ch.pos(), text, color );
 			} else {
 				FloatingText.show( x, y, text, color );
 			}
@@ -253,29 +253,29 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void attack( int cell ) {
-		turnTo( ch.pos, cell );
+		turnTo(ch.pos(), cell );
 		play( attack );
 	}
 	
 	public void attack( int cell, Callback callback ) {
 		animCallback = callback;
-		turnTo( ch.pos, cell );
+		turnTo(ch.pos(), cell );
 		play( attack );
 	}
 	
 	public void operate( int cell ) {
-		turnTo( ch.pos, cell );
+		turnTo(ch.pos(), cell );
 		play( operate );
 	}
 	
 	public void operate( int cell, Callback callback ) {
 		animCallback = callback;
-		turnTo( ch.pos, cell );
+		turnTo(ch.pos(), cell );
 		play( operate );
 	}
 	
 	public void zap( int cell ) {
-		turnTo( ch.pos, cell );
+		turnTo(ch.pos(), cell );
 		play( zap );
 	}
 	
@@ -548,6 +548,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			listener.onComplete(curAnim);
 			finished = true;
 		}
+
+		if(fast() && !visible) return;
 		
 		super.update();
 		
@@ -747,8 +749,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public void onComplete( Tweener tweener ) {
 		if (tweener == jumpTweener) {
 
-			if (visible && Dungeon.level.water[ch.pos] && !ch.flying) {
-				GameScene.ripple( ch.pos );
+			if (visible && Dungeon.level.water[ch.pos()] && !ch.flying) {
+				GameScene.ripple(ch.pos());
 			}
 			if (jumpCallback != null) {
 				jumpCallback.call();

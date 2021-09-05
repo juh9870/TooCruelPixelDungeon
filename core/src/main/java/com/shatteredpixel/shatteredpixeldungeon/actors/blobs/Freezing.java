@@ -98,7 +98,7 @@ public class Freezing extends Blob {
 		
 		Char ch = Actor.findChar( cell );
 		if (ch != null) {
-			if (Dungeon.level.water[ch.pos]){
+			if (Dungeon.level.water[ch.pos()]){
 				Buff.prolong(ch, Frost.class, Frost.DURATION * 3);
 			} else {
 				Buff.prolong(ch, Frost.class, Frost.DURATION);

@@ -63,7 +63,7 @@ public class Torch extends Item {
 			hero.spend( TIME_TO_LIGHT );
 			hero.busy();
 			
-			hero.sprite.operate( hero.pos );
+			hero.sprite.operate(hero.pos());
 			
 			detach( hero.belongings.backpack );
 			

@@ -114,7 +114,7 @@ public class SpiritBow extends Weapon {
 
 					if (Random.Int(12) < ((Hero)attacker).pointsInTalent(Talent.NATURES_WRATH)){
 						Plant plant = (Plant) Reflection.newInstance(Random.element(harmfulPlants));
-						plant.pos = defender.pos;
+						plant.pos = defender.pos();
 						plant.activate( defender.isAlive() ? defender : null );
 					}
 
@@ -228,7 +228,7 @@ public class SpiritBow extends Weapon {
 				case DAMAGE:
 					//as distance increases so does damage, capping at 3x:
 					//1.20x|1.35x|1.52x|1.71x|1.92x|2.16x|2.43x|2.74x|3.00x
-					int distance = Dungeon.level.distance(owner.pos, targetPos) - 1;
+					int distance = Dungeon.level.distance(owner.pos(), targetPos) - 1;
 					float multiplier = Math.min(3f, 1.2f * (float)Math.pow(1.125f, distance));
 					damage = Math.round(damage * multiplier);
 					break;

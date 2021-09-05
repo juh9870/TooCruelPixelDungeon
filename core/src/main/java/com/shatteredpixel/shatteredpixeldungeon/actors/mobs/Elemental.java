@@ -90,7 +90,7 @@ public abstract class Elemental extends Mob {
 	@Override
 	protected boolean canAttack( Char enemy ) {
 		if (rangedCooldown <= 0) {
-			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT ).collisionPos == enemy.pos;
+			return new Ballistica(pos(), enemy.pos(), Ballistica.MAGIC_BOLT ).collisionPos == enemy.pos();
 		} else {
 			return super.canAttack( enemy );
 		}
@@ -98,14 +98,14 @@ public abstract class Elemental extends Mob {
 	
 	protected boolean doAttack( Char enemy ) {
 		
-		if (Dungeon.level.adjacent( pos, enemy.pos ) || rangedCooldown > 0) {
+		if (Dungeon.level.adjacent(pos(), enemy.pos()) || rangedCooldown > 0) {
 			
 			return super.doAttack( enemy );
 			
 		} else {
 			
 			if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-				sprite.zap( enemy.pos );
+				sprite.zap(enemy.pos());
 				return false;
 			} else {
 				zap();
@@ -187,7 +187,7 @@ public abstract class Elemental extends Mob {
 		
 		@Override
 		protected void meleeProc( Char enemy, int damage ) {
-			if (Random.Int( 2 ) == 0 && !Dungeon.level.water[enemy.pos]) {
+			if (Random.Int( 2 ) == 0 && !Dungeon.level.water[enemy.pos()]) {
 				Buff.affect( enemy, Burning.class ).reignite( enemy );
 				if (enemy.sprite.visible) Splash.at( enemy.sprite.center(), sprite.blood(), 5);
 			}
@@ -195,7 +195,7 @@ public abstract class Elemental extends Mob {
 		
 		@Override
 		protected void rangedProc( Char enemy ) {
-			if (!Dungeon.level.water[enemy.pos]) {
+			if (!Dungeon.level.water[enemy.pos()]) {
 				Buff.affect( enemy, Burning.class ).reignite( enemy, 4f );
 			}
 			if (enemy.sprite.visible) Splash.at( enemy.sprite.center(), sprite.blood(), 5);
@@ -221,7 +221,7 @@ public abstract class Elemental extends Mob {
 		@Override
 		public void die(Object cause) {
 			super.die(cause);
-			Dungeon.level.drop( new Embers(), pos ).sprite.drop();
+			Dungeon.level.drop( new Embers(), pos()).sprite.drop();
 		}
 
 		@Override
@@ -246,15 +246,15 @@ public abstract class Elemental extends Mob {
 		
 		@Override
 		protected void meleeProc( Char enemy, int damage ) {
-			if (Random.Int( 3 ) == 0 || Dungeon.level.water[enemy.pos]) {
-				Freezing.freeze( enemy.pos );
+			if (Random.Int( 3 ) == 0 || Dungeon.level.water[enemy.pos()]) {
+				Freezing.freeze(enemy.pos());
 				if (enemy.sprite.visible) Splash.at( enemy.sprite.center(), sprite.blood(), 5);
 			}
 		}
 		
 		@Override
 		protected void rangedProc( Char enemy ) {
-			Freezing.freeze( enemy.pos );
+			Freezing.freeze(enemy.pos());
 			if (enemy.sprite.visible) Splash.at( enemy.sprite.center(), sprite.blood(), 5);
 		}
 	}
@@ -276,7 +276,7 @@ public abstract class Elemental extends Mob {
 			ArrayList<Lightning.Arc> arcs = new ArrayList<>();
 			Shocking.arc( this, enemy, 2, affected, arcs );
 			
-			if (!Dungeon.level.water[enemy.pos]) {
+			if (!Dungeon.level.water[enemy.pos()]) {
 				affected.remove( enemy );
 			}
 			

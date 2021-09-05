@@ -314,7 +314,7 @@ public class PrisonBossLevel extends Level {
 		}
 		
 		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
-			if (mob != tengu && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
+			if (mob != tengu && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos())))){
 				mob.destroy();
 				if (mob.sprite != null)
 					mob.sprite.killAndErase();
@@ -387,10 +387,10 @@ public class PrisonBossLevel extends Level {
 				//moves intelligent allies with the hero, preferring closer pos to cell door
 				int doorPos = pointToCell(tenguCellDoor);
 				Mob.holdAllies(this, doorPos);
-				Mob.restoreAllies(this, Dungeon.hero.pos, doorPos);
+				Mob.restoreAllies(this, Dungeon.hero.pos(), doorPos);
 				
 				tengu.state = tengu.HUNTING;
-				tengu.pos = tenguPos;
+				tengu.pos(tenguPos);
 				GameScene.add( tengu );
 				tengu.notice();
 				
@@ -428,7 +428,7 @@ public class PrisonBossLevel extends Level {
 				cleanMapState();
 				
 				tengu.state = tengu.HUNTING;
-				tengu.pos = (arena.left + arena.width()/2) + width()*(arena.top+2);
+				tengu.pos((arena.left + arena.width()/2) + width()*(arena.top+2));
 				GameScene.add(tengu);
 				tengu.notice();
 				
@@ -443,13 +443,13 @@ public class PrisonBossLevel extends Level {
 				unseal();
 				
 				Dungeon.hero.interrupt();
-				Dungeon.hero.pos = tenguCell.left+4 + (tenguCell.top+2)*width();
+				Dungeon.hero.pos(tenguCell.left+4 + (tenguCell.top+2)*width());
 				Dungeon.hero.sprite.interruptMotion();
-				Dungeon.hero.sprite.place(Dungeon.hero.pos);
+				Dungeon.hero.sprite.place(Dungeon.hero.pos());
 				Camera.main.snapTo(Dungeon.hero.sprite.center());
 				
-				tengu.pos = pointToCell(tenguCellCenter);
-				tengu.sprite.place(tengu.pos);
+				tengu.pos(pointToCell(tenguCellCenter));
+				tengu.sprite.place(tengu.pos());
 				
 				//remove all mobs, but preserve allies
 				ArrayList<Mob> allies = new ArrayList<>();
@@ -464,9 +464,9 @@ public class PrisonBossLevel extends Level {
 				
 				for (Mob m : allies){
 					do{
-						m.pos = randomTenguCellPos();
-					} while (findMob(m.pos) != null || m.pos == Dungeon.hero.pos);
-					if (m.sprite != null) m.sprite.place(m.pos);
+						m.pos(randomTenguCellPos());
+					} while (findMob(m.pos()) != null || m.pos() == Dungeon.hero.pos());
+					if (m.sprite != null) m.sprite.place(m.pos());
 					mobs.add(m);
 				}
 				
@@ -499,14 +499,14 @@ public class PrisonBossLevel extends Level {
 		if (ch == Dungeon.hero){
 			switch (state){
 				case START:
-					if (cellToPoint(ch.pos).y > tenguCell.top){
+					if (cellToPoint(ch.pos()).y > tenguCell.top){
 						progress();
 					}
 					break;
 				case TRAP_MAZES: //pre-0.8.1
 				case FIGHT_PAUSE:
 					
-					if (cellToPoint(ch.pos).y <= startHallway.top+1){
+					if (cellToPoint(ch.pos()).y <= startHallway.top+1){
 						progress();
 					}
 					break;
@@ -560,8 +560,8 @@ public class PrisonBossLevel extends Level {
 	
 	public void placeTrapsInTenguCell(float fill){
 		
-		Point tenguPoint = cellToPoint(tengu.pos);
-		Point heroPoint = cellToPoint(Dungeon.hero.pos);
+		Point tenguPoint = cellToPoint(tengu.pos());
+		Point heroPoint = cellToPoint(Dungeon.hero.pos());
 		
 		PathFinder.setMapSize(7, 7);
 		

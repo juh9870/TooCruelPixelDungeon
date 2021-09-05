@@ -92,7 +92,7 @@ public class Brute extends Mob {
 	
 	protected void triggerEnrage(){
 		Buff.affect(this, BruteRage.class).setShield(HT/2 + 4);
-		if (Dungeon.level.heroFOV[pos]) {
+		if (Dungeon.level.heroFOV[pos()]) {
 			sprite.showStatus( CharSprite.NEGATIVE, Messages.get(this, "enraged") );
 		}
 		spend( TICK );

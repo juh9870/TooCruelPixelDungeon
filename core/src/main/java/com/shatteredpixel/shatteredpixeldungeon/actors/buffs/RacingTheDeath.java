@@ -63,25 +63,25 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 
         trailCells.remove(TRAIL_LENGTH - 1);
 
-        if (trailCells.contains(target.pos) && trailCells.indexOf(target.pos) != 0) {
+        if (trailCells.contains(target.pos()) && trailCells.indexOf(target.pos()) != 0) {
 
-            if (trailCells.get(3) == target.pos) {
+            if (trailCells.get(3) == target.pos()) {
                 damage = damage * 4;
-                burst(target.pos, 30);
+                burst(target.pos(), 30);
             } else {
                 damage = damage * 2;
-                burst(target.pos, 15);
+                burst(target.pos(), 15);
             }
         } else {
-            int frequency = Collections.frequency(trailCells, target.pos);
+            int frequency = Collections.frequency(trailCells, target.pos());
             damage = (frequency - 3) * damage * 3 / 2;
             if (damage > 0) {
-                burst(target.pos, 7 * (frequency - 3));
+                burst(target.pos(), 7 * (frequency - 3));
             }
         }
 
-        trailCells.add(0, target.pos);
-        addTrailSegment(target.pos);
+        trailCells.add(0, target.pos());
+        addTrailSegment(target.pos());
 
         updateTrail();
 
@@ -145,7 +145,7 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 
             if (Actor.findChar(pos) != null) segment.alpha(segment.alpha() / 2);
 
-            segment.visible = pos != Dungeon.hero.pos && Dungeon.level.visited[pos];
+            segment.visible = pos != Dungeon.hero.pos() && Dungeon.level.visited[pos];
 
         }
     }

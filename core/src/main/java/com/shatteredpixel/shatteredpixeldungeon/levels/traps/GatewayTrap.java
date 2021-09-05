@@ -37,7 +37,7 @@ public class GatewayTrap extends Trap {
 						if (ch instanceof Mob && ((Mob) ch).state == ((Mob) ch).HUNTING) {
 							((Mob) ch).state = ((Mob) ch).WANDERING;
 						}
-						telePos = ch.pos;
+						telePos = ch.pos();
 						break;
 					}
 				}

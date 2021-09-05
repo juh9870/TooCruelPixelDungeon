@@ -91,7 +91,7 @@ public class RotGardenRoom extends SpecialRoom {
 	}
 
 	private static void placePlant(Level level, int pos, Mob plant){
-		plant.pos = pos;
+		plant.pos(pos);
 		level.mobs.add( plant );
 
 		for(int i : PathFinder.NEIGHBOURS8) {

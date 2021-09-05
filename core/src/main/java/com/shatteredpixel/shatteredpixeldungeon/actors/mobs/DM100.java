@@ -71,7 +71,7 @@ public class DM100 extends Mob implements Callback {
 	
 	@Override
 	protected boolean canAttack( Char enemy ) {
-		return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
+		return new Ballistica(pos(), enemy.pos(), Ballistica.MAGIC_BOLT).collisionPos == enemy.pos();
 	}
 	
 	//used so resistances can differentiate between melee and magical attacks
@@ -80,7 +80,7 @@ public class DM100 extends Mob implements Callback {
 	@Override
 	protected boolean doAttack( Char enemy ) {
 
-		if (Dungeon.level.distance( pos, enemy.pos ) <= 1) {
+		if (Dungeon.level.distance(pos(), enemy.pos()) <= 1) {
 			
 			return super.doAttack( enemy );
 			
@@ -111,7 +111,7 @@ public class DM100 extends Mob implements Callback {
 			}
 			
 			if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-				sprite.zap( enemy.pos );
+				sprite.zap(enemy.pos());
 				return false;
 			} else {
 				return true;

@@ -628,12 +628,9 @@ public abstract class Level implements Bundlable {
 	}
 
 	public Mob findMob( int pos ){
-		for (Mob mob : mobs){
-			if (mob.pos == pos){
-				return mob;
-			}
-		}
-		return null;
+    	Char ch = Actor.findChar(pos);
+    	if(ch instanceof Mob) return (Mob) ch;
+    	return null;
 	}
 
 	private Respawner respawner;
@@ -671,15 +668,15 @@ public abstract class Level implements Bundlable {
 			if (leftover > 0) {
 
 				boolean allowNearHero = Challenges.EXHIBITIONISM.enabled() || Challenges.SMALL_LEVELS.enabled();
-				PathFinder.buildDistanceMap(Dungeon.hero.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
+				PathFinder.buildDistanceMap(Dungeon.hero.pos(), BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
 
 				Mob mob = Dungeon.level.createMob();
 				mob.state = mob.WANDERING;
-				mob.pos = Dungeon.level.randomRespawnCell(mob);
-				if (Dungeon.hero.isAlive() && mob.pos != -1 && (PathFinder.distance[mob.pos] >= 12 || allowNearHero)) {
+				mob.pos(Dungeon.level.randomRespawnCell(mob));
+				if (Dungeon.hero.isAlive() && mob.pos() != -1 && (PathFinder.distance[mob.pos()] >= 12 || allowNearHero)) {
 					GameScene.add(mob);
 					if (Statistics.amuletObtained) {
-						mob.beckon(Dungeon.hero.pos);
+						mob.beckon(Dungeon.hero.pos());
 					}
 					if (!mob.buffs(ChampionEnemy.class).isEmpty()) {
 //                        GLog.w(Messages.get(ChampionEnemy.class, "warn"));
@@ -1094,32 +1091,32 @@ public abstract class Level implements Bundlable {
 	}
 	
 	public void occupyCell( Char ch ){
-		if (!ch.isImmune(Web.class) && Blob.volumeAt(ch.pos, Web.class) > 0){
-			blobs.get(Web.class).clear(ch.pos);
+		if (!ch.isImmune(Web.class) && Blob.volumeAt(ch.pos(), Web.class) > 0){
+			blobs.get(Web.class).clear(ch.pos());
 			Web.affectChar( ch );
 		}
 
 		if (!ch.flying){
 
-			if ( (map[ch.pos] == Terrain.GRASS || map[ch.pos] == Terrain.EMBERS)
+			if ( (map[ch.pos()] == Terrain.GRASS || map[ch.pos()] == Terrain.EMBERS)
 					&& ch == Dungeon.hero && Dungeon.hero.hasTalent(Talent.REJUVENATING_STEPS)
 					&& ch.buff(Talent.RejuvenatingStepsCooldown.class) == null){
 
 				if (Dungeon.hero.buff(LockedFloor.class) != null && !Dungeon.hero.buff(LockedFloor.class).regenOn()){
-					set(ch.pos, Terrain.FURROWED_GRASS);
+					set(ch.pos(), Terrain.FURROWED_GRASS);
 				} else if (ch.buff(Talent.RejuvenatingStepsFurrow.class) != null && ch.buff(Talent.RejuvenatingStepsFurrow.class).count() >= 200) {
-					set(ch.pos, Terrain.FURROWED_GRASS);
+					set(ch.pos(), Terrain.FURROWED_GRASS);
 				} else {
-					set(ch.pos, Terrain.HIGH_GRASS);
+					set(ch.pos(), Terrain.HIGH_GRASS);
 					Buff.count(ch, Talent.RejuvenatingStepsFurrow.class, 3 - Dungeon.hero.pointsInTalent(Talent.REJUVENATING_STEPS));
 				}
-				GameScene.updateMap(ch.pos);
+				GameScene.updateMap(ch.pos());
 				Buff.affect(ch, Talent.RejuvenatingStepsCooldown.class, 15f - 5f*Dungeon.hero.pointsInTalent(Talent.REJUVENATING_STEPS));
 			}
 			
-			if (pit[ch.pos]){
+			if (pit[ch.pos()]){
 				if (ch == Dungeon.hero) {
-					Chasm.heroFall(ch.pos);
+					Chasm.heroFall(ch.pos());
 				} else if (ch instanceof Mob) {
 					Chasm.mobFall( (Mob)ch );
 				}
@@ -1127,10 +1124,10 @@ public abstract class Level implements Bundlable {
 			}
 			
 			//characters which are not the hero or a sheep 'soft' press cells
-			pressCell( ch.pos, ch instanceof Hero || ch instanceof Sheep);
+			pressCell(ch.pos(), ch instanceof Hero || ch instanceof Sheep);
 		} else {
-			if (map[ch.pos] == Terrain.DOOR){
-				Door.enter( ch.pos );
+			if (map[ch.pos()] == Terrain.DOOR){
+				Door.enter(ch.pos());
 			}
 		}
 	}
@@ -1199,7 +1196,7 @@ public abstract class Level implements Bundlable {
 				
 			} else {
 
-				if (Dungeon.hero.pos == cell) {
+				if (Dungeon.hero.pos() == cell) {
 					Dungeon.hero.interrupt();
 				}
 
@@ -1222,8 +1219,8 @@ public abstract class Level implements Bundlable {
 
 	public void updateFieldOfView( Char c, boolean[] fieldOfView ) {
 
-		int cx = c.pos % width();
-		int cy = c.pos / width();
+		int cx = c.pos() % width();
+		int cy = c.pos() / width();
 		
 		boolean sighted = c.buff( Blindness.class ) == null && c.buff( Shadows.class ) == null
 						&& c.buff( TimekeepersHourglass.timeStasis.class ) == null && c.isAlive();
@@ -1291,10 +1288,10 @@ public abstract class Level implements Bundlable {
 		if (c instanceof SpiritHawk.HawkAlly && Dungeon.hero.pointsInTalent(Talent.EAGLE_EYE) >= 3){
 			int range = 1+(Dungeon.hero.pointsInTalent(Talent.EAGLE_EYE)-2);
 			for (Mob mob : mobs) {
-				int p = mob.pos;
-				if (!fieldOfView[p] && distance(c.pos, p) <= range) {
+				int p = mob.pos();
+				if (!fieldOfView[p] && distance(c.pos(), p) <= range) {
 					for (int i : PathFinder.NEIGHBOURS9) {
-						fieldOfView[mob.pos + i] = true;
+						fieldOfView[mob.pos() + i] = true;
 					}
 				}
 			}
@@ -1313,21 +1310,21 @@ public abstract class Level implements Bundlable {
 			if (c.buff( MindVision.class ) != null) {
 				for (Mob mob : mobs) {
 					for (int i : PathFinder.NEIGHBOURS9) {
-						heroMindFov[mob.pos + i] = true;
+						heroMindFov[mob.pos() + i] = true;
 					}
 				}
 			} else {
 				Hero h = (Hero) c;
 				int range = 1+h.pointsInTalent(Talent.HEIGHTENED_SENSES);
 				for (Mob mob : mobs) {
-					int p = mob.pos;
+					int p = mob.pos();
                     if ((mob.properties().contains(Char.Property.ALWAYS_VISIBLE) || mob.buff(Revealing.class) != null) && !fieldOfView[p]) {
                         for (int i : PathFinder.NEIGHBOURS9) heroMindFov[p + i] = true;
                     }
                     if (((Hero) c).hasTalent(Talent.HEIGHTENED_SENSES))
-                        if (!fieldOfView[p] && distance(c.pos, p) <= 1 + range) {
+                        if (!fieldOfView[p] && distance(c.pos(), p) <= 1 + range) {
 						for (int i : PathFinder.NEIGHBOURS9) {
-							heroMindFov[mob.pos + i] = true;
+							heroMindFov[mob.pos() + i] = true;
 						}
 					}
 				}
@@ -1345,7 +1342,7 @@ public abstract class Level implements Bundlable {
 				if (ch == null) {
 					continue;
 				}
-				int p = ch.pos;
+				int p = ch.pos();
 				for (int i : PathFinder.NEIGHBOURS9) heroMindFov[p+i] = true;
 			}
 
@@ -1373,7 +1370,7 @@ public abstract class Level implements Bundlable {
 
 			//set mind vision chars
 			for (Mob mob : mobs) {
-				if (heroMindFov[mob.pos] && !fieldOfView[mob.pos]){
+				if (heroMindFov[mob.pos()] && !fieldOfView[mob.pos()]){
 					Dungeon.hero.mindVisionEnemies.add(mob);
 				}
 			}

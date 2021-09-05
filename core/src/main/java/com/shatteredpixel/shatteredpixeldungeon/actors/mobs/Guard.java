@@ -70,9 +70,9 @@ public class Guard extends Mob {
 		if (chainsUsed || enemy.properties().contains(Property.IMMOVABLE))
 			return false;
 
-		Ballistica chain = new Ballistica(pos, target, Ballistica.PROJECTILE);
+		Ballistica chain = new Ballistica(pos(), target, Ballistica.PROJECTILE);
 
-		if (chain.collisionPos != enemy.pos
+		if (chain.collisionPos != enemy.pos()
 				|| chain.path.size() < 2
 				|| Dungeon.level.pit[chain.path.get(1)])
 			return false;
@@ -97,7 +97,7 @@ public class Guard extends Mob {
 					Sample.INSTANCE.play(Assets.Sounds.CHAINS);
 					sprite.parent.add(new Chains(sprite.center(), enemy.sprite.center(), new Callback() {
 						public void call() {
-							Actor.addDelayed(new Pushing(enemy, enemy.pos, newPosFinal, new Callback() {
+							Actor.addDelayed(new Pushing(enemy, enemy.pos(), newPosFinal, new Callback() {
 								public void call() {
 									pullEnemy(enemy, newPosFinal);
 								}
@@ -115,7 +115,7 @@ public class Guard extends Mob {
 	}
 
 	private void pullEnemy( Char enemy, int pullPos ){
-		enemy.pos = pullPos;
+		enemy.pos(pullPos);
 		Dungeon.level.occupyCell(enemy);
 		Cripple.prolong(enemy, Cripple.class, 4f);
 		if (enemy == Dungeon.hero) {
@@ -172,10 +172,10 @@ public class Guard extends Mob {
 					&& enemyInFOV
 					&& !isCharmedBy( enemy )
 					&& !canAttack( enemy )
-					&& Dungeon.level.distance( pos, enemy.pos ) < 5
+					&& Dungeon.level.distance(pos(), enemy.pos()) < 5
 					&& Random.Int(3) == 0
 					
-					&& chain(enemy.pos)){
+					&& chain(enemy.pos())){
 				return !(sprite.visible || enemy.sprite.visible);
 			} else {
 				return super.act( enemyInFOV, justAlerted );

@@ -136,7 +136,7 @@ public class Item implements Bundlable {
 		}
 
 		if (collect( hero.belongings.backpack )) {
-			GameScene.pickUp( this, hero.pos );
+			GameScene.pickUp( this, hero.pos());
 			Sample.INSTANCE.play( Assets.Sounds.ITEM );
 			hero.spendAndNext( TIME_TO_PICK_UP );
 			return true;
@@ -148,7 +148,7 @@ public class Item implements Bundlable {
 	
 	public void doDrop( Hero hero ) {
 		hero.spendAndNext(TIME_TO_DROP);
-		int pos = hero.pos;
+		int pos = hero.pos();
 		Dungeon.level.drop(detachAll(hero.belongings.backpack), pos).sprite.drop(pos);
 	}
 
@@ -587,7 +587,7 @@ public class Item implements Bundlable {
 	}
 
 	public int throwPos( Hero user, int dst){
-		return new Ballistica( user.pos, dst, Ballistica.PROJECTILE ).collisionPos;
+		return new Ballistica(user.pos(), dst, Ballistica.PROJECTILE ).collisionPos;
 	}
 
 	public void throwSound(){

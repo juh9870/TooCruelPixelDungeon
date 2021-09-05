@@ -93,7 +93,7 @@ public class CloakOfShadows extends Artifact {
 					activeBuff = activeBuff();
 					activeBuff.attachTo(hero);
 					Talent.onArtifactUsed(Dungeon.hero);
-					hero.sprite.operate(hero.pos);
+					hero.sprite.operate(hero.pos());
 				}
 			} else {
 				activeBuff.detach();
@@ -101,7 +101,7 @@ public class CloakOfShadows extends Artifact {
 				if (hero.invisible <= 0 && hero.buff(Preparation.class) != null){
 					hero.buff(Preparation.class).detach();
 				}
-				hero.sprite.operate( hero.pos );
+				hero.sprite.operate(hero.pos());
 			}
 
 		}

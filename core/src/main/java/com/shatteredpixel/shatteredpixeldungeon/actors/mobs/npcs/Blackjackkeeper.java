@@ -26,18 +26,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlackjackkeeperSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ShopkeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 
 public class Blackjackkeeper extends NPC {
 
@@ -50,9 +44,9 @@ public class Blackjackkeeper extends NPC {
 	@Override
 	protected boolean act() {
 		if(Dungeon.level instanceof RegularLevel) {
-			Room r = ((RegularLevel) Dungeon.level).room(pos);
+			Room r = ((RegularLevel) Dungeon.level).room(pos());
 			if (r instanceof BlackjackRoom && ((BlackjackRoom) r).sealed) {
-				if(!r.inside(Dungeon.level.cellToPoint(Dungeon.hero.pos))){
+				if(!r.inside(Dungeon.level.cellToPoint(Dungeon.hero.pos()))){
 					GLog.w(Messages.get(this,"goodbye"));
 					((BlackjackRoom) r).unseal();
 					flee();
@@ -60,7 +54,7 @@ public class Blackjackkeeper extends NPC {
 			}
 		}
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo(pos(), Dungeon.hero.pos());
 		spend( TICK );
 		return true;
 	}
@@ -77,7 +71,7 @@ public class Blackjackkeeper extends NPC {
 		destroy();
 		
 		sprite.killAndErase();
-		CellEmitter.get( pos ).burst( ElmoParticle.FACTORY, 6 );
+		CellEmitter.get(pos()).burst( ElmoParticle.FACTORY, 6 );
 	}
 	
 	@Override
@@ -91,7 +85,7 @@ public class Blackjackkeeper extends NPC {
 			return true;
 		}
 		if(Dungeon.level instanceof RegularLevel){
-			Room r = ((RegularLevel) Dungeon.level).room(pos);
+			Room r = ((RegularLevel) Dungeon.level).room(pos());
 			if (r instanceof BlackjackRoom){
 				if (!((BlackjackRoom) r).sealed){
 					GLog.w(Messages.get(this,"welcome"));

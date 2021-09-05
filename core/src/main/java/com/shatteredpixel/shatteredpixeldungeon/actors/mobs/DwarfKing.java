@@ -55,7 +55,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.KingSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
@@ -341,7 +340,7 @@ public class DwarfKing extends Mob {
 				if (l.object == id()) alreadyLinked = true;
 			}
 			if (!alreadyLinked) {
-				if (furthest == null || Dungeon.level.distance(pos, furthest.pos) < Dungeon.level.distance(pos, m.pos)){
+				if (furthest == null || Dungeon.level.distance(pos(), furthest.pos()) < Dungeon.level.distance(pos(), m.pos())){
 					furthest = m;
 				}
 			}
@@ -364,7 +363,7 @@ public class DwarfKing extends Mob {
 		Mob furthest = null;
 
 		for (Mob m : getSubjects()){
-			if (furthest == null || Dungeon.level.distance(pos, furthest.pos) < Dungeon.level.distance(pos, m.pos)){
+			if (furthest == null || Dungeon.level.distance(pos(), furthest.pos()) < Dungeon.level.distance(pos(), m.pos())){
 				furthest = m;
 			}
 		}
@@ -372,9 +371,9 @@ public class DwarfKing extends Mob {
 		if (furthest != null){
 
 			float bestDist;
-			int bestPos = pos;
+			int bestPos = pos();
 
-			Ballistica trajectory = new Ballistica(enemy.pos, pos, Ballistica.STOP_TARGET);
+			Ballistica trajectory = new Ballistica(enemy.pos(), pos(), Ballistica.STOP_TARGET);
 			int targetCell = trajectory.path.get(trajectory.dist+1);
 			//if the position opposite the direction of the hero is open, go there
 			if (Actor.findChar(targetCell) == null && !Dungeon.level.solid[targetCell]){
@@ -382,34 +381,34 @@ public class DwarfKing extends Mob {
 
 			//Otherwise go to the neighbour cell that's open and is furthest
 			} else {
-				bestDist = Dungeon.level.trueDistance(pos, enemy.pos);
+				bestDist = Dungeon.level.trueDistance(pos(), enemy.pos());
 
 				for (int i : PathFinder.NEIGHBOURS8){
-					if (Actor.findChar(pos+i) == null
-							&& !Dungeon.level.solid[pos+i]
-							&& Dungeon.level.trueDistance(pos+i, enemy.pos) > bestDist){
-						bestPos = pos+i;
-						bestDist = Dungeon.level.trueDistance(pos+i, enemy.pos);
+					if (Actor.findChar(pos() +i) == null
+							&& !Dungeon.level.solid[pos() +i]
+							&& Dungeon.level.trueDistance(pos() +i, enemy.pos()) > bestDist){
+						bestPos = pos() +i;
+						bestDist = Dungeon.level.trueDistance(pos() +i, enemy.pos());
 					}
 				}
 			}
 
-			Actor.add(new Pushing(this, pos, bestPos));
-			pos = bestPos;
+			Actor.add(new Pushing(this, pos(), bestPos));
+			pos(bestPos);
 
 			//find closest cell that's adjacent to enemy, place subject there
-			bestDist = Dungeon.level.trueDistance(enemy.pos, pos);
-			bestPos = enemy.pos;
+			bestDist = Dungeon.level.trueDistance(enemy.pos(), pos());
+			bestPos = enemy.pos();
 			for (int i : PathFinder.NEIGHBOURS8){
-				if (Actor.findChar(enemy.pos+i) == null
-						&& !Dungeon.level.solid[enemy.pos+i]
-						&& Dungeon.level.trueDistance(enemy.pos+i, pos) < bestDist){
-					bestPos = enemy.pos+i;
-					bestDist = Dungeon.level.trueDistance(enemy.pos+i, pos);
+				if (Actor.findChar(enemy.pos() +i) == null
+						&& !Dungeon.level.solid[enemy.pos() +i]
+						&& Dungeon.level.trueDistance(enemy.pos() +i, pos()) < bestDist){
+					bestPos = enemy.pos() +i;
+					bestDist = Dungeon.level.trueDistance(enemy.pos() +i, pos());
 				}
 			}
 
-			if (bestPos != enemy.pos) ScrollOfTeleportation.appear(furthest, bestPos);
+			if (bestPos != enemy.pos()) ScrollOfTeleportation.appear(furthest, bestPos);
 			yell(Messages.get(this, "teleport_" + Random.IntRange(1, 2)));
 			return true;
 		}
@@ -501,17 +500,17 @@ public class DwarfKing extends Mob {
 
 		super.die( cause );
 
-		if (Dungeon.level.solid[pos]){
-			Heap h = Dungeon.level.heaps.get(pos);
+		if (Dungeon.level.solid[pos()]){
+			Heap h = Dungeon.level.heaps.get(pos());
 			if (h != null) {
 				for (Item i : h.items) {
-					Dungeon.level.drop(i, pos + Dungeon.level.width());
+					Dungeon.level.drop(i, pos() + Dungeon.level.width());
 				}
 				h.destroy();
 			}
-			Dungeon.level.drop(new KingsCrown(), pos + Dungeon.level.width()).sprite.drop(pos);
+			Dungeon.level.drop(new KingsCrown(), pos() + Dungeon.level.width()).sprite.drop(pos());
 		} else {
-			Dungeon.level.drop(new KingsCrown(), pos).sprite.drop();
+			Dungeon.level.drop(new KingsCrown(), pos()).sprite.drop();
 		}
 
 		Badges.validateBossSlain();
@@ -619,7 +618,7 @@ public class DwarfKing extends Mob {
 
 				if (Actor.findChar(pos) == null) {
 					Mob m = Reflection.newInstance(summon);
-					m.pos = pos;
+					m.pos(pos);
 					m.maxLvl = -2;
 					GameScene.add(m);
 					Dungeon.level.occupyCell(m);

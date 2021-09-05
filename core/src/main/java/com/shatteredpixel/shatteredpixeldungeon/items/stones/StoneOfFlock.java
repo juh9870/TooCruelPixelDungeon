@@ -54,7 +54,7 @@ public class StoneOfFlock extends Runestone {
 						&& !(Dungeon.level.pit[i])) {
 					Sheep sheep = new Sheep();
 					sheep.lifespan = Random.NormalIntRange( 6, 8 );
-					sheep.pos = i;
+					sheep.pos(i);
 					Dungeon.level.occupyCell(sheep);
 					GameScene.add(sheep);
 					CellEmitter.get(i).burst(Speck.factory(Speck.WOOL), 4);

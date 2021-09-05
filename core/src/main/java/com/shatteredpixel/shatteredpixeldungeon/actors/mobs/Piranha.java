@@ -65,7 +65,7 @@ public class Piranha extends Mob {
 	@Override
 	protected boolean act() {
 		
-		if (!Dungeon.level.water[pos]) {
+		if (!Dungeon.level.water[pos()]) {
 			die( null );
 			return true;
 		} else {
@@ -95,7 +95,7 @@ public class Piranha extends Mob {
 				fieldOfView = new boolean[Dungeon.level.length()];
 				Dungeon.level.updateFieldOfView( this, fieldOfView );
 			}
-			return state == SLEEPING || !fieldOfView[enemy.pos] || enemy.invisible > 0;
+			return state == SLEEPING || !fieldOfView[enemy.pos()] || enemy.invisible > 0;
 		}
 		return super.surprisedBy(enemy);
 	}
@@ -159,8 +159,8 @@ public class Piranha extends Mob {
 		@Override
 		public boolean act(boolean enemyInFOV, boolean justAlerted) {
 			if (enemyInFOV) {
-				PathFinder.buildDistanceMap(enemy.pos, Dungeon.level.water, viewDistance);
-				enemyInFOV = PathFinder.distance[pos] != Integer.MAX_VALUE;
+				PathFinder.buildDistanceMap(enemy.pos(), Dungeon.level.water, viewDistance);
+				enemyInFOV = PathFinder.distance[pos()] != Integer.MAX_VALUE;
 			}
 			
 			return super.act(enemyInFOV, justAlerted);
@@ -171,8 +171,8 @@ public class Piranha extends Mob {
 		@Override
 		public boolean act(boolean enemyInFOV, boolean justAlerted) {
 			if (enemyInFOV) {
-				PathFinder.buildDistanceMap(enemy.pos, Dungeon.level.water, viewDistance);
-				enemyInFOV = PathFinder.distance[pos] != Integer.MAX_VALUE;
+				PathFinder.buildDistanceMap(enemy.pos(), Dungeon.level.water, viewDistance);
+				enemyInFOV = PathFinder.distance[pos()] != Integer.MAX_VALUE;
 			}
 			
 			return super.act(enemyInFOV, justAlerted);
@@ -184,8 +184,8 @@ public class Piranha extends Mob {
 		@Override
 		public boolean act(boolean enemyInFOV, boolean justAlerted) {
 			if (enemyInFOV) {
-				PathFinder.buildDistanceMap(enemy.pos, Dungeon.level.water, viewDistance);
-				enemyInFOV = PathFinder.distance[pos] != Integer.MAX_VALUE;
+				PathFinder.buildDistanceMap(enemy.pos(), Dungeon.level.water, viewDistance);
+				enemyInFOV = PathFinder.distance[pos()] != Integer.MAX_VALUE;
 			}
 			
 			return super.act(enemyInFOV, justAlerted);

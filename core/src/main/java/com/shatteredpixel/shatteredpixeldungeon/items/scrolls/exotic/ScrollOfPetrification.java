@@ -43,7 +43,7 @@ public class ScrollOfPetrification extends ExoticScroll {
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos]) {
+			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos()]) {
 				Buff.affect( mob, Paralysis.class, Paralysis.DURATION );
 			}
 		}

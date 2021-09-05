@@ -75,7 +75,7 @@ public class WandOfLightning extends DamageWand {
 			ch.sprite.centerEmitter().burst( SparkParticle.FACTORY, 3 );
 			ch.sprite.flash();
 
-			if (ch != curUser && ch.alignment == curUser.alignment && ch.pos != bolt.collisionPos){
+			if (ch != curUser && ch.alignment == curUser.alignment && ch.pos() != bolt.collisionPos){
 				continue;
 			}
 			wandProc(ch, chargesPerCast());
@@ -100,10 +100,10 @@ public class WandOfLightning extends DamageWand {
 
 	private void arc( Char ch ) {
 
-		int dist = (Dungeon.level.water[ch.pos] && !ch.flying) ? 2 : 1;
+		int dist = (Dungeon.level.water[ch.pos()] && !ch.flying) ? 2 : 1;
 
 		ArrayList<Char> hitThisArc = new ArrayList<>();
-		PathFinder.buildDistanceMap( ch.pos, BArray.not( Dungeon.level.solid, null ), dist );
+		PathFinder.buildDistanceMap(ch.pos(), BArray.not( Dungeon.level.solid, null ), dist );
 		for (int i = 0; i < PathFinder.distance.length; i++) {
 			if (PathFinder.distance[i] < Integer.MAX_VALUE){
 				Char n = Actor.findChar( i );

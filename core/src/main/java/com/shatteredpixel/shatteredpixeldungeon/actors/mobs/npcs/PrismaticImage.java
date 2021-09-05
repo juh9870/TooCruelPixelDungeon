@@ -259,7 +259,7 @@ public class PrismaticImage extends NPC {
 			if (!enemyInFOV){
 				Buff.affect(hero, PrismaticGuard.class).set( HP );
 				destroy();
-				CellEmitter.get(pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
+				CellEmitter.get(pos()).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
 				sprite.die();
 				Sample.INSTANCE.play( Assets.Sounds.TELEPORT );
 				return true;

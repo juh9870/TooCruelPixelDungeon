@@ -10,7 +10,7 @@ public class Revealing extends FlavourBuff {
 	public boolean attachTo(Char target) {
 		if(super.attachTo(target)) {
 			Dungeon.observe();
-			GameScene.updateFog(target.pos,2);
+			GameScene.updateFog(target.pos(),2);
 			return true;
 		}
 		return false;
@@ -19,6 +19,6 @@ public class Revealing extends FlavourBuff {
 	public void detach() {
 		super.detach();
 		Dungeon.observe();
-		GameScene.updateFog(target.pos,2);
+		GameScene.updateFog(target.pos(),2);
 	}
 }

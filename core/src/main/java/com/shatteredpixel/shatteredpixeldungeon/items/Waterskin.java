@@ -110,7 +110,7 @@ public class Waterskin extends Item {
 					hero.busy();
 
 					Sample.INSTANCE.play(Assets.Sounds.DRINK);
-					hero.sprite.operate(hero.pos);
+					hero.sprite.operate(hero.pos());
 
 					updateQuickslot();
 				}

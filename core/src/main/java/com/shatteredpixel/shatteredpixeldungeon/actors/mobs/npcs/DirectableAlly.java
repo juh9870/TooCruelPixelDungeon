@@ -45,7 +45,7 @@ public class DirectableAlly extends NPC {
 
 	public void targetChar( Char ch ){
 		aggro(ch);
-		target = ch.pos;
+		target = ch.pos();
 		defendingPos = -1;
 		movingToDefendPos = false;
 	}
@@ -101,23 +101,23 @@ public class DirectableAlly extends NPC {
 				notice();
 				alerted = true;
 				state = HUNTING;
-				target = enemy.pos;
+				target = enemy.pos();
 
 			} else {
 
 				enemySeen = false;
 
-				int oldPos = pos;
-				target = defendingPos != -1 ? defendingPos : Dungeon.hero.pos;
+				int oldPos = pos();
+				target = defendingPos != -1 ? defendingPos : Dungeon.hero.pos();
 				//always move towards the hero when wandering
 				if (getCloser( target )) {
 					spend( movementTime() );
-					if (pos == defendingPos) movingToDefendPos = false;
-					return moveSprite( oldPos, pos );
+					if (pos() == defendingPos) movingToDefendPos = false;
+					return moveSprite( oldPos, pos());
 				} else {
 					//if it can't move closer to defending pos, then give up and defend current position
 					if (movingToDefendPos){
-						defendingPos = pos;
+						defendingPos = pos();
 						movingToDefendPos = false;
 					}
 					spend( TICK );

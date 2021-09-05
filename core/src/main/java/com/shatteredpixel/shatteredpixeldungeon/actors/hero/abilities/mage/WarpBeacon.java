@@ -144,9 +144,9 @@ public class WarpBeacon extends ArmorAbility {
 									Random.shuffle(candidates);
 
 									if (!candidates.isEmpty()){
-										Actor.addDelayed( new Pushing( toPush, toPush.pos, candidates.get(0) ), -1 );
+										Actor.addDelayed( new Pushing( toPush, toPush.pos(), candidates.get(0) ), -1 );
 
-										toPush.pos = candidates.get(0);
+										toPush.pos(candidates.get(0));
 										Dungeon.level.occupyCell(toPush);
 										hero.next();
 									}
@@ -186,7 +186,7 @@ public class WarpBeacon extends ArmorAbility {
 				return;
 			}
 
-			if (Dungeon.level.distance(hero.pos, target) > 3*hero.pointsInTalent(Talent.REMOTE_BEACON)){
+			if (Dungeon.level.distance(hero.pos(), target) > 3*hero.pointsInTalent(Talent.REMOTE_BEACON)){
 				GLog.w( Messages.get(WarpBeacon.class, "too_far") );
 				return;
 			}
@@ -194,7 +194,7 @@ public class WarpBeacon extends ArmorAbility {
 			PathFinder.buildDistanceMap(target, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
 			if (Dungeon.level.pit[target] ||
 					(Dungeon.level.solid[target] && !Dungeon.level.passable[target]) ||
-					PathFinder.distance[hero.pos] == Integer.MAX_VALUE){
+					PathFinder.distance[hero.pos()] == Integer.MAX_VALUE){
 				GLog.w( Messages.get(WarpBeacon.class, "invalid_beacon") );
 				return;
 			}

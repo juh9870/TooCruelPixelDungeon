@@ -179,22 +179,22 @@ public class Necromancer extends Mob {
 
 	public void summonMinion(){
 		if (Actor.findChar(summoningPos) != null) {
-			int pushPos = pos;
+			int pushPos = pos();
 			for (int c : PathFinder.NEIGHBOURS8) {
 				if (Actor.findChar(summoningPos + c) == null
 						&& Dungeon.level.passable[summoningPos + c]
 						&& (Dungeon.level.openSpace[summoningPos + c] || !hasProp(Actor.findChar(summoningPos), Property.LARGE))
-						&& Dungeon.level.trueDistance(pos, summoningPos + c) > Dungeon.level.trueDistance(pos, pushPos)) {
+						&& Dungeon.level.trueDistance(pos(), summoningPos + c) > Dungeon.level.trueDistance(pos(), pushPos)) {
 					pushPos = summoningPos + c;
 				}
 			}
 
 			//push enemy, or wait a turn if there is no valid pushing position
-			if (pushPos != pos) {
+			if (pushPos != pos()) {
 				Char ch = Actor.findChar(summoningPos);
-				Actor.addDelayed( new Pushing( ch, ch.pos, pushPos ), -1 );
+				Actor.addDelayed( new Pushing( ch, ch.pos(), pushPos ), -1 );
 
-				ch.pos = pushPos;
+				ch.pos(pushPos);
 				Dungeon.level.occupyCell(ch );
 
 			} else {
@@ -212,7 +212,7 @@ public class Necromancer extends Mob {
 		summoning = firstSummon = false;
 
 		mySkeleton = new NecroSkeleton();
-		mySkeleton.pos = summoningPos;
+		mySkeleton.pos(summoningPos);
 		GameScene.add( mySkeleton );
 		Dungeon.level.occupyCell( mySkeleton );
 		((NecromancerSprite)sprite).finishSummoning();
@@ -252,15 +252,15 @@ public class Necromancer extends Mob {
 			}
 			
 			//if enemy is seen, and enemy is within range, and we haven no skeleton, summon a skeleton!
-			if (enemySeen && Dungeon.level.distance(pos, enemy.pos) <= 4 && mySkeleton == null){
+			if (enemySeen && Dungeon.level.distance(pos(), enemy.pos()) <= 4 && mySkeleton == null){
 				
 				summoningPos = -1;
 				for (int c : PathFinder.NEIGHBOURS8){
-					if (Actor.findChar(enemy.pos+c) == null
-							&& Dungeon.level.passable[enemy.pos+c]
-							&& fieldOfView[enemy.pos+c]
-							&& Dungeon.level.trueDistance(pos, enemy.pos+c) < Dungeon.level.trueDistance(pos, summoningPos)){
-						summoningPos = enemy.pos+c;
+					if (Actor.findChar(enemy.pos() +c) == null
+							&& Dungeon.level.passable[enemy.pos() +c]
+							&& fieldOfView[enemy.pos() +c]
+							&& Dungeon.level.trueDistance(pos(), enemy.pos() +c) < Dungeon.level.trueDistance(pos(), summoningPos)){
+						summoningPos = enemy.pos() +c;
 					}
 				}
 				
@@ -279,21 +279,21 @@ public class Necromancer extends Mob {
 			//otherwise, if enemy is seen, and we have a skeleton...
 			} else if (enemySeen && mySkeleton != null){
 				
-				target = enemy.pos;
+				target = enemy.pos();
 				spend(TICK);
 				
-				if (!fieldOfView[mySkeleton.pos]){
+				if (!fieldOfView[mySkeleton.pos()]){
 					
 					//if the skeleton is not next to the enemy
 					//teleport them to the closest spot next to the enemy that can be seen
-					if (!Dungeon.level.adjacent(mySkeleton.pos, enemy.pos)){
+					if (!Dungeon.level.adjacent(mySkeleton.pos(), enemy.pos())){
 						int telePos = -1;
 						for (int c : PathFinder.NEIGHBOURS8){
-							if (Actor.findChar(enemy.pos+c) == null
-									&& Dungeon.level.passable[enemy.pos+c]
-									&& fieldOfView[enemy.pos+c]
-									&& Dungeon.level.trueDistance(pos, enemy.pos+c) < Dungeon.level.trueDistance(pos, telePos)){
-								telePos = enemy.pos+c;
+							if (Actor.findChar(enemy.pos() +c) == null
+									&& Dungeon.level.passable[enemy.pos() +c]
+									&& fieldOfView[enemy.pos() +c]
+									&& Dungeon.level.trueDistance(pos(), enemy.pos() +c) < Dungeon.level.trueDistance(pos(), telePos)){
+								telePos = enemy.pos() +c;
 							}
 						}
 						
@@ -318,7 +318,7 @@ public class Necromancer extends Mob {
 					//zap skeleton
 					if (mySkeleton.HP < mySkeleton.HT || mySkeleton.buff(Adrenaline.class) == null) {
 						if (sprite != null && sprite.visible){
-							sprite.zap(mySkeleton.pos);
+							sprite.zap(mySkeleton.pos());
 							return false;
 						} else {
 							onZapComplete();

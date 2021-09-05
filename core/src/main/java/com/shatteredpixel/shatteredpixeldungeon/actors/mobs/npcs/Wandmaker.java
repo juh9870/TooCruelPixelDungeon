@@ -61,7 +61,7 @@ public class Wandmaker extends NPC {
 	
 	@Override
 	protected boolean act() {
-		if (Dungeon.level.heroFOV[pos] && Quest.wand1 != null){
+		if (Dungeon.level.heroFOV[pos()] && Quest.wand1 != null){
 			Notes.add( Notes.Landmark.WANDMAKER );
 		}
 		return super.act();
@@ -87,7 +87,7 @@ public class Wandmaker extends NPC {
 	
 	@Override
 	public boolean interact(Char c) {
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo(pos(), Dungeon.hero.pos());
 
 		if (c != Dungeon.hero){
 			return true;
@@ -284,16 +284,16 @@ public class Wandmaker extends NPC {
 				//Do not spawn wandmaker on the entrance, a trap, or in front of a door.
 				do {
 					validPos = true;
-					npc.pos = level.pointToCell(room.random());
-					if (npc.pos == level.entrance){
+					npc.pos(level.pointToCell(room.random()));
+					if (npc.pos() == level.entrance){
 						validPos = false;
 					}
 					for (Point door : room.connected.values()){
-						if (level.trueDistance( npc.pos, level.pointToCell( door ) ) <= 1){
+						if (level.trueDistance(npc.pos(), level.pointToCell( door ) ) <= 1){
 							validPos = false;
 						}
 					}
-					if (level.traps.get(npc.pos) != null){
+					if (level.traps.get(npc.pos()) != null){
 						validPos = false;
 					}
 				} while (!validPos);

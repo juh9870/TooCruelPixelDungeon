@@ -113,7 +113,7 @@ abstract public class MissileWeapon extends Weapon {
 				
 				//try to put the upgraded into inventory, if it didn't already merge
 				if (upgraded.quantity() == 1 && !upgraded.collect()) {
-					Dungeon.level.drop(upgraded, Dungeon.hero.pos);
+					Dungeon.level.drop(upgraded, Dungeon.hero.pos());
 				}
 				updateQuickslot();
 				return upgraded;
@@ -177,7 +177,7 @@ abstract public class MissileWeapon extends Weapon {
 			}
 		}
 
-		if (projecting && !Dungeon.level.solid[dst] && Dungeon.level.distance(user.pos, dst) <= 4){
+		if (projecting && !Dungeon.level.solid[dst] && Dungeon.level.distance(user.pos(), dst) <= 4){
 			return dst;
 		} else {
 			return super.throwPos(user, dst);

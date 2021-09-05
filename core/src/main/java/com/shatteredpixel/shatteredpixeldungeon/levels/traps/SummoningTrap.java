@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -71,10 +72,9 @@ public class SummoningTrap extends MobSummonTrap {
         ArrayList<Integer> candidates = new ArrayList<>();
 
         PathFinder.buildDistanceMap(center, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null), maxDistance);
-        boolean allowStacking = Challenges.STACKING.enabled();
 
         for (int p = 0; p < PathFinder.distance.length; p++) {
-            if (PathFinder.distance[p] <= maxDistance && (allowStacking || Actor.findChar(p) == null) && (Dungeon.level.passable[p] || Dungeon.level.avoid[p]) && !Dungeon.level.pit[p]) {
+            if (PathFinder.distance[p] <= maxDistance && Actor.findChar(p) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p]) && !Dungeon.level.pit[p]) {
                 candidates.add(p);
             }
         }
@@ -89,7 +89,7 @@ public class SummoningTrap extends MobSummonTrap {
         } while (Char.hasProp(mob, Char.Property.LARGE) && !Dungeon.level.openSpace[point]);
         if (mob != null) {
             mob.state = mob.WANDERING;
-            mob.pos = point;
+            mob.pos(point);
             GameScene.add(mob, delay);
         }
         return mob;
@@ -127,13 +127,31 @@ public class SummoningTrap extends MobSummonTrap {
         return new SpawnerActor(maxTries, amount, delay, pos, maxDistance, action);
     }
 
-    public interface MobSpawnedAction {
-        void Invoke(Mob mob);
+    public abstract static class MobSpawnedAction implements Bundlable {
+        protected abstract void Invoke(Mob mob);
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+        }
+
+        public static class HeroBeckoner extends MobSpawnedAction {
+            @Override
+            protected void Invoke(Mob mob) {
+                if(Dungeon.hero.isAlive()){
+                    mob.beckon(Dungeon.hero.pos());
+                }
+            }
+        }
     }
 
     public static class SpawnerActor extends MobSummonTrap.SpawnerActor {
         private static final String DELAY = "delay";
         private static final String DISTANCE = "distance";
+        private static final String ACTION = "action";
         private ArrayList<Integer> summonCells;
         private float delay;
         private int maxDistance;
@@ -155,11 +173,7 @@ public class SummoningTrap extends MobSummonTrap {
         protected boolean spawnMob() {
             if (summonCells.size() == 0) return false;
             int i = Random.index(summonCells);
-            int cell;
-            if (Challenges.STACKING.enabled())
-                cell = summonCells.get(i);
-            else
-                cell = summonCells.remove(i);
+            int cell = summonCells.remove(i);
             Mob mob = summonMob(cell, delay);
             if (mob == null) return false;
             mobsToPlace.add(mob);
@@ -179,6 +193,7 @@ public class SummoningTrap extends MobSummonTrap {
             super.storeInBundle(bundle);
             bundle.put(DELAY, delay);
             bundle.put(DISTANCE, maxDistance);
+            bundle.put(ACTION, mobSpawned);
         }
 
         @Override
@@ -186,6 +201,7 @@ public class SummoningTrap extends MobSummonTrap {
             super.restoreFromBundle(bundle);
             maxDistance = bundle.getInt(DISTANCE);
             delay = bundle.getInt(DELAY);
+            mobSpawned = (MobSpawnedAction) bundle.get(ACTION);
         }
     }
 }

@@ -106,7 +106,7 @@ public class Ghoul extends Mob {
 			
 			ArrayList<Integer> candidates = new ArrayList<>();
 			
-			int[] neighbours = {pos + 1, pos - 1, pos + Dungeon.level.width(), pos - Dungeon.level.width()};
+			int[] neighbours = {pos() + 1, pos() - 1, pos() + Dungeon.level.width(), pos() - Dungeon.level.width()};
 			for (int n : neighbours) {
 				if (Dungeon.level.passable[n] && Actor.findChar( n ) == null) {
 					candidates.add( n );
@@ -121,13 +121,13 @@ public class Ghoul extends Mob {
 					child.state = child.WANDERING;
 				}
 				
-				child.pos = Random.element( candidates );
+				child.pos(Random.element( candidates ));
 				
 				Dungeon.level.occupyCell(child);
 				
 				GameScene.add( child );
 				if (sprite.visible) {
-					Actor.addDelayed( new Pushing( child, pos, child.pos ), -1 );
+					Actor.addDelayed( new Pushing( child, pos(), child.pos()), -1 );
 				}
 
 				for (Buff b : buffs(ChampionEnemy.class)){
@@ -144,7 +144,7 @@ public class Ghoul extends Mob {
 
 	@Override
 	public void die(Object cause) {
-		if (cause != Chasm.class && cause != GhoulLifeLink.class && !Dungeon.level.pit[pos]){
+		if (cause != Chasm.class && cause != GhoulLifeLink.class && !Dungeon.level.pit[pos()]){
 			Ghoul nearby = GhoulLifeLink.searchForHost(this);
 			if (nearby != null){
 				beingLifeLinked = true;
@@ -188,7 +188,7 @@ public class Ghoul extends Mob {
 			Ghoul partner = (Ghoul) Actor.findById( partnerID );
 			if (partner != null && partner.state != partner.SLEEPING){
 				state = WANDERING;
-				target = partner.pos;
+				target = partner.pos();
 				return true;
 			} else {
 				return super.act( enemyInFOV, justAlerted );
@@ -203,12 +203,12 @@ public class Ghoul extends Mob {
 			enemySeen = false;
 			
 			Ghoul partner = (Ghoul) Actor.findById( partnerID );
-			if (partner != null && (partner.state != partner.WANDERING || Dungeon.level.distance( pos,  partner.target) > 1)){
-				target = partner.pos;
-				int oldPos = pos;
+			if (partner != null && (partner.state != partner.WANDERING || Dungeon.level.distance(pos(),  partner.target) > 1)){
+				target = partner.pos();
+				int oldPos = pos();
 				if (getCloser( target )){
 					spend( movementTime() );
-					return moveSprite( oldPos, pos );
+					return moveSprite( oldPos, pos());
 				} else {
 					spend( TICK );
 					return true;
@@ -226,7 +226,7 @@ public class Ghoul extends Mob {
 
 		@Override
 		public boolean act() {
-			ghoul.sprite.visible = Dungeon.level.heroFOV[ghoul.pos];
+			ghoul.sprite.visible = Dungeon.level.heroFOV[ghoul.pos()];
 
 			if (target.alignment != ghoul.alignment){
 				detach();
@@ -238,12 +238,12 @@ public class Ghoul extends Mob {
 				Dungeon.level.updateFieldOfView( target, target.fieldOfView );
 			}
 
-			if (!target.fieldOfView[ghoul.pos] && Dungeon.level.distance(ghoul.pos, target.pos) >= 4){
+			if (!target.fieldOfView[ghoul.pos()] && Dungeon.level.distance(ghoul.pos(), target.pos()) >= 4){
 				detach();
 				return true;
 			}
 
-			if (Dungeon.level.pit[ghoul.pos]){
+			if (Dungeon.level.pit[ghoul.pos()]){
 				super.detach();
 				ghoul.die(this);
 				return true;
@@ -251,18 +251,18 @@ public class Ghoul extends Mob {
 
 			turnsToRevive--;
 			if (turnsToRevive <= 0){
-				if (Actor.findChar( ghoul.pos ) != null) {
+				if (Actor.findChar(ghoul.pos()) != null) {
 					ArrayList<Integer> candidates = new ArrayList<>();
 					for (int n : PathFinder.NEIGHBOURS8) {
-						int cell = ghoul.pos + n;
+						int cell = ghoul.pos() + n;
 						if (Dungeon.level.passable[cell] && Actor.findChar( cell ) == null) {
 							candidates.add( cell );
 						}
 					}
 					if (candidates.size() > 0) {
 						int newPos = Random.element( candidates );
-						Actor.addDelayed( new Pushing( ghoul, ghoul.pos, newPos ), -1 );
-						ghoul.pos = newPos;
+						Actor.addDelayed( new Pushing( ghoul, ghoul.pos(), newPos ), -1 );
+						ghoul.pos(newPos);
 
 					} else {
 						spend(TICK);
@@ -333,7 +333,7 @@ public class Ghoul extends Mob {
 						ch.fieldOfView = new boolean[Dungeon.level.length()];
 						Dungeon.level.updateFieldOfView( ch, ch.fieldOfView );
 					}
-					if (ch.fieldOfView[dieing.pos] || Dungeon.level.distance(ch.pos, dieing.pos) < 4){
+					if (ch.fieldOfView[dieing.pos()] || Dungeon.level.distance(ch.pos(), dieing.pos()) < 4){
 						return (Ghoul) ch;
 					}
 				}

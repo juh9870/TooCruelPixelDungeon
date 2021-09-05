@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.watabou.utils.PathFinder;
@@ -47,11 +46,11 @@ public class DisplacingDart extends TippedDart {
 		
 		if (!defender.properties().contains(Char.Property.IMMOVABLE)){
 			
-			int startDist = Dungeon.level.distance(attacker.pos, defender.pos);
+			int startDist = Dungeon.level.distance(attacker.pos(), defender.pos());
 			
 			HashMap<Integer, ArrayList<Integer>> positions = new HashMap<>();
 
-			PathFinder.buildDistanceMap(defender.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
+			PathFinder.buildDistanceMap(defender.pos(), BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
 
 			for (int pos = 0; pos < Dungeon.level.length(); pos++){
 				if (Dungeon.level.heroFOV[pos]
@@ -60,7 +59,7 @@ public class DisplacingDart extends TippedDart {
 						&& (!Char.hasProp(defender, Char.Property.LARGE) || Dungeon.level.openSpace[pos])
 						&& Actor.findChar(pos) == null){
 					
-					int dist = Dungeon.level.distance(attacker.pos, pos);
+					int dist = Dungeon.level.distance(attacker.pos(), pos);
 					if (dist > startDist){
 						if (positions.get(dist) == null){
 							positions.put(dist, new ArrayList<Integer>());

@@ -89,7 +89,7 @@ public class ScrollOfTransmutation extends InventoryScroll {
 			} else {
 				item.detach(Dungeon.hero.belongings.backpack);
 				if (!result.collect()){
-					Dungeon.level.drop(result, curUser.pos).sprite.drop();
+					Dungeon.level.drop(result, curUser.pos()).sprite.drop();
 				}
 			}
 			if (result.isIdentified()){

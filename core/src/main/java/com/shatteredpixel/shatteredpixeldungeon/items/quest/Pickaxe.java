@@ -102,7 +102,7 @@ public class Pickaxe extends Weapon {
 			
 			for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
 				
-				final int pos = hero.pos + PathFinder.NEIGHBOURS8[i];
+				final int pos = hero.pos() + PathFinder.NEIGHBOURS8[i];
 				if (Dungeon.level.map[pos] == Terrain.WALL_DECO) {
 				
 					hero.spend( TIME_TO_MINE );
@@ -123,7 +123,7 @@ public class Pickaxe extends Weapon {
 							if (gold.doPickUp( Dungeon.hero )) {
 								GLog.i( Messages.get(Dungeon.hero, "you_now_have", gold.name()) );
 							} else {
-								Dungeon.level.drop( gold, hero.pos ).sprite.drop();
+								Dungeon.level.drop( gold, hero.pos()).sprite.drop();
 							}
 							
 							hero.onOperateComplete();

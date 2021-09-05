@@ -94,13 +94,13 @@ public class Goo extends Mob {
 	@Override
 	public boolean act() {
 
-		if (Dungeon.level.water[pos] && HP < HT) {
+		if (Dungeon.level.water[pos()] && HP < HT) {
 			HP += healInc;
 
 			LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
 			if (lock != null) lock.removeTime(healInc*2);
 
-			if (Dungeon.level.heroFOV[pos] ){
+			if (Dungeon.level.heroFOV[pos()] ){
 				sprite.emitter().burst( Speck.factory( Speck.HEALING ), healInc );
 			}
 			if (Challenges.STRONGER_BOSSES.enabled() && healInc < 3) {
@@ -127,9 +127,9 @@ public class Goo extends Mob {
 		if (pumpedUp > 0){
 			//we check both from and to in this case as projectile logic isn't always symmetrical.
 			//this helps trim out BS edge-cases
-			return Dungeon.level.distance(enemy.pos, pos) <= 2
-						&& new Ballistica( pos, enemy.pos, Ballistica.PROJECTILE).collisionPos == enemy.pos
-						&& new Ballistica( enemy.pos, pos, Ballistica.PROJECTILE).collisionPos == pos;
+			return Dungeon.level.distance(enemy.pos(), pos()) <= 2
+						&& new Ballistica(pos(), enemy.pos(), Ballistica.PROJECTILE).collisionPos == enemy.pos()
+						&& new Ballistica(enemy.pos(), pos(), Ballistica.PROJECTILE).collisionPos == pos();
 		} else {
 			return super.canAttack(enemy);
 		}
@@ -170,13 +170,13 @@ public class Goo extends Mob {
 			return true;
 		} else if (pumpedUp >= 2 || Random.Int( (HP*2 <= HT) ? 2 : 5 ) > 0) {
 
-			boolean visible = Dungeon.level.heroFOV[pos];
+			boolean visible = Dungeon.level.heroFOV[pos()];
 
 			if (visible) {
 				if (pumpedUp >= 2) {
 					((GooSprite) sprite).pumpAttack();
 				} else {
-					sprite.attack(enemy.pos);
+					sprite.attack(enemy.pos());
 				}
 			} else {
 				if (pumpedUp >= 2){
@@ -198,7 +198,7 @@ public class Goo extends Mob {
 
 			((GooSprite)sprite).pumpUp( pumpedUp );
 
-			if (Dungeon.level.heroFOV[pos]) {
+			if (Dungeon.level.heroFOV[pos()]) {
 				sprite.showStatus( CharSprite.NEGATIVE, Messages.get(this, "!!!") );
 				GLog.n( Messages.get(this, "pumpup") );
 			}
@@ -250,7 +250,7 @@ public class Goo extends Mob {
 		Dungeon.level.unseal();
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos()).sprite.drop();
 		
 		//60% chance of 2 blobs, 30% chance of 3, 10% chance for 4. Average of 2.5
 		int blobs = Random.chances(new float[]{0, 0, 6, 3, 1});
@@ -258,8 +258,8 @@ public class Goo extends Mob {
 			int ofs;
 			do {
 				ofs = PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
-			} while (!Dungeon.level.passable[pos + ofs]);
-			Dungeon.level.drop( new GooBlob(), pos + ofs ).sprite.drop( pos );
+			} while (!Dungeon.level.passable[pos() + ofs]);
+			Dungeon.level.drop( new GooBlob(), pos() + ofs ).sprite.drop(pos());
 		}
 		
 		Badges.validateBossSlain();

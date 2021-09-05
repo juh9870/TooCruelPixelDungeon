@@ -117,7 +117,7 @@ public class DM200 extends Mob {
 		spend( TICK );
 		ventCooldown = 30;
 
-		Ballistica trajectory = new Ballistica(pos, enemy.pos, Ballistica.STOP_TARGET);
+		Ballistica trajectory = new Ballistica(pos(), enemy.pos(), Ballistica.STOP_TARGET);
 
 		for (int i : trajectory.subPath(0, trajectory.dist)){
 			GameScene.add(Blob.seed(i, 20, ToxicGas.class));
@@ -134,13 +134,13 @@ public class DM200 extends Mob {
 				return super.act(enemyInFOV, justAlerted);
 			} else {
 				enemySeen = true;
-				target = enemy.pos;
+				target = enemy.pos();
 
-				int oldPos = pos;
+				int oldPos = pos();
 
 				if (ventCooldown <= 0 && distance(enemy) >= 1 && Random.Int(100/distance(enemy)) == 0){
 					if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-						sprite.zap( enemy.pos );
+						sprite.zap(enemy.pos());
 						return false;
 					} else {
 						zap();
@@ -149,11 +149,11 @@ public class DM200 extends Mob {
 
 				} else if (getCloser( target )) {
 					spend( movementTime() );
-					return moveSprite( oldPos,  pos );
+					return moveSprite( oldPos, pos());
 
 				} else if (ventCooldown <= 0) {
 					if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-						sprite.zap( enemy.pos );
+						sprite.zap(enemy.pos());
 						return false;
 					} else {
 						zap();

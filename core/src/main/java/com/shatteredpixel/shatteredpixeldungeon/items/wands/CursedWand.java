@@ -38,7 +38,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WarpBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Sheep;
@@ -105,7 +104,7 @@ public class CursedWand {
 	}
 
 	public static boolean cursedEffect(final Item origin, final Char user, final Char target){
-		return cursedEffect(origin, user, target.pos);
+		return cursedEffect(origin, user, target.pos());
 	}
 
 	public static boolean cursedEffect(final Item origin, final Char user, final int targetPos){
@@ -246,7 +245,7 @@ public class CursedWand {
 
 			//shock and recharge
 			case 3:
-				new ShockingTrap().set( user.pos ).activate();
+				new ShockingTrap().set(user.pos()).activate();
 				Buff.prolong(user, Recharging.class, Recharging.DURATION);
 				ScrollOfRecharging.charge(user);
 				SpellSprite.show(user, SpellSprite.CHARGE);
@@ -267,13 +266,13 @@ public class CursedWand {
 						&& !ch.properties().contains(Char.Property.MINIBOSS)){
 					Sheep sheep = new Sheep();
 					sheep.lifespan = 10;
-					sheep.pos = ch.pos;
+					sheep.pos(ch.pos());
 					ch.destroy();
 					ch.sprite.killAndErase();
 					Dungeon.level.mobs.remove(ch);
 					TargetHealthIndicator.instance.target(null);
 					GameScene.add(sheep);
-					CellEmitter.get(sheep.pos).burst(Speck.factory(Speck.WOOL), 4);
+					CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);
 					Sample.INSTANCE.play(Assets.Sounds.PUFF);
 					Sample.INSTANCE.play(Assets.Sounds.SHEEP);
 				} else {
@@ -369,7 +368,7 @@ public class CursedWand {
 				} while (reward.level() < 1);
 				//play vfx/sfx manually as mimic isn't in the scene yet
 				Sample.INSTANCE.play(Assets.Sounds.MIMIC, 1, 0.85f);
-				CellEmitter.get(mimic.pos).burst(Speck.factory(Speck.STAR), 10);
+				CellEmitter.get(mimic.pos()).burst(Speck.factory(Speck.STAR), 10);
 				mimic.items.clear();
 				mimic.items.add(reward);
 				GameScene.add(mimic);
@@ -430,7 +429,7 @@ public class CursedWand {
 				} else {
 					GLog.w( Messages.get(CursedWand.class, "transmogrify_other") );
 				}
-				Dungeon.level.drop(result, user.pos).sprite.drop();
+				Dungeon.level.drop(result, user.pos()).sprite.drop();
 				return true;
 		}
 	}

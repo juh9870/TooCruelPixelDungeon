@@ -108,12 +108,12 @@ public class CeremonialCandle extends Item {
 						}
 					}
 					if (candidates.size() > 0) {
-						elemental.pos = Random.element( candidates );
+						elemental.pos(Random.element( candidates ));
 					} else {
-						elemental.pos = ritualPos;
+						elemental.pos(ritualPos);
 					}
 				} else {
-					elemental.pos = ritualPos;
+					elemental.pos(ritualPos);
 				}
 				elemental.state = elemental.HUNTING;
 				GameScene.add(elemental, 1);

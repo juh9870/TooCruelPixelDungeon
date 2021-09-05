@@ -30,13 +30,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DirectableAlly;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.MirrorImage;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -48,7 +44,6 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.noosa.tweeners.Tweener;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -98,7 +93,7 @@ public class ShadowClone extends ArmorAbility {
 		} else {
 			ArrayList<Integer> spawnPoints = new ArrayList<>();
 			for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-				int p = hero.pos + PathFinder.NEIGHBOURS8[i];
+				int p = hero.pos() + PathFinder.NEIGHBOURS8[i];
 				if (Actor.findChar(p) == null && Dungeon.level.passable[p]) {
 					spawnPoints.add(p);
 				}
@@ -109,10 +104,10 @@ public class ShadowClone extends ArmorAbility {
 				armor.updateQuickslot();
 
 				ally = new ShadowAlly(hero.lvl);
-				ally.pos = Random.element(spawnPoints);
+				ally.pos(Random.element(spawnPoints));
 				GameScene.add(ally);
 
-				ShadowAlly.appear(ally, ally.pos);
+				ShadowAlly.appear(ally, ally.pos());
 
 				Invisibility.dispel();
 				hero.spendAndNext(Actor.TICK);
@@ -170,10 +165,10 @@ public class ShadowClone extends ArmorAbility {
 
 		@Override
 		protected boolean act() {
-			int oldPos = pos;
+			int oldPos = pos();
 			boolean result = super.act();
 			//partially simulates how the hero switches to idle animation
-			if ((pos == target || oldPos == pos) && sprite.looping()){
+			if ((pos() == target || oldPos == pos()) && sprite.looping()){
 				sprite.idle();
 			}
 			return result;
@@ -257,7 +252,7 @@ public class ShadowClone extends ArmorAbility {
 		public boolean canInteract(Char c) {
 			if (super.canInteract(c)){
 				return true;
-			} else if (Dungeon.level.distance(pos, c.pos) <= Dungeon.hero.pointsInTalent(Talent.PERFECT_COPY)) {
+			} else if (Dungeon.level.distance(pos(), c.pos()) <= Dungeon.hero.pointsInTalent(Talent.PERFECT_COPY)) {
 				return true;
 			} else {
 				return false;
@@ -271,23 +266,23 @@ public class ShadowClone extends ArmorAbility {
 			}
 
 			//some checks from super.interact
-			if (!Dungeon.level.passable[pos] && !c.flying){
+			if (!Dungeon.level.passable[pos()] && !c.flying){
 				return true;
 			}
 
-			if (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos]
-					|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos]){
+			if (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos()]
+					|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos()]){
 				return true;
 			}
 
-			int curPos = pos;
+			int curPos = pos();
 
 			//warp instantly with the clone
-			PathFinder.buildDistanceMap(c.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-			if (PathFinder.distance[pos] == Integer.MAX_VALUE){
+			PathFinder.buildDistanceMap(c.pos(), BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
+			if (PathFinder.distance[pos()] == Integer.MAX_VALUE){
 				return true;
 			}
-			appear(this, Dungeon.hero.pos);
+			appear(this, Dungeon.hero.pos());
 			appear(Dungeon.hero, curPos);
 			Dungeon.observe();
 			GameScene.updateFog();
@@ -298,12 +293,12 @@ public class ShadowClone extends ArmorAbility {
 
 			ch.sprite.interruptMotion();
 
-			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[ch.pos]){
+			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[ch.pos()]){
 				Sample.INSTANCE.play(Assets.Sounds.PUFF);
 			}
 
 			ch.move( pos );
-			if (ch.pos == pos) ch.sprite.place( pos );
+			if (ch.pos() == pos) ch.sprite.place( pos );
 
 			if (Dungeon.level.heroFOV[pos] || ch == Dungeon.hero ) {
 				ch.sprite.emitter().burst(SmokeParticle.FACTORY, 10);

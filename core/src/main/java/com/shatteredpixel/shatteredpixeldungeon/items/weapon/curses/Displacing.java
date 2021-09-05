@@ -50,16 +50,16 @@ public class Displacing extends Weapon.Enchantment {
 
 			if (newPos != -1 && !Dungeon.bossLevel()) {
 
-				if (Dungeon.level.heroFOV[defender.pos]) {
-					CellEmitter.get( defender.pos ).start( Speck.factory( Speck.LIGHT ), 0.2f, 3 );
+				if (Dungeon.level.heroFOV[defender.pos()]) {
+					CellEmitter.get(defender.pos()).start( Speck.factory( Speck.LIGHT ), 0.2f, 3 );
 				}
 
-				defender.pos = newPos;
+				defender.pos(newPos);
 				if (defender instanceof Mob && ((Mob) defender).state == ((Mob) defender).HUNTING){
 					((Mob) defender).state = ((Mob) defender).WANDERING;
 				}
-				defender.sprite.place( defender.pos );
-				defender.sprite.visible = Dungeon.level.heroFOV[defender.pos];
+				defender.sprite.place(defender.pos());
+				defender.sprite.visible = Dungeon.level.heroFOV[defender.pos()];
 
 				return 0;
 

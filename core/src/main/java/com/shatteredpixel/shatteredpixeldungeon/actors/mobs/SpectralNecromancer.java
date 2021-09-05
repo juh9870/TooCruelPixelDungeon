@@ -9,8 +9,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.NecromancerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpectralNecromancerSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -48,8 +46,8 @@ public class SpectralNecromancer extends Necromancer {
 		int ofs;
 		do {
 			ofs = PathFinder.NEIGHBOURS8[Random.Int(8)];
-		} while (Dungeon.level.solid[pos + ofs] && !Dungeon.level.passable[pos + ofs]);
-		Dungeon.level.drop( new ScrollOfRemoveCurse(), pos + ofs ).sprite.drop( pos );
+		} while (Dungeon.level.solid[pos() + ofs] && !Dungeon.level.passable[pos() + ofs]);
+		Dungeon.level.drop( new ScrollOfRemoveCurse(), pos() + ofs ).sprite.drop(pos());
 	}
 
 	@Override
@@ -83,22 +81,22 @@ public class SpectralNecromancer extends Necromancer {
 	@Override
 	public void summonMinion() {
 		if (Actor.findChar(summoningPos) != null) {
-			int pushPos = pos;
+			int pushPos = pos();
 			for (int c : PathFinder.NEIGHBOURS8) {
 				if (Actor.findChar(summoningPos + c) == null
 						&& Dungeon.level.passable[summoningPos + c]
 						&& (Dungeon.level.openSpace[summoningPos + c] || !hasProp(Actor.findChar(summoningPos), Property.LARGE))
-						&& Dungeon.level.trueDistance(pos, summoningPos + c) > Dungeon.level.trueDistance(pos, pushPos)) {
+						&& Dungeon.level.trueDistance(pos(), summoningPos + c) > Dungeon.level.trueDistance(pos(), pushPos)) {
 					pushPos = summoningPos + c;
 				}
 			}
 
 			//push enemy, or wait a turn if there is no valid pushing position
-			if (pushPos != pos) {
+			if (pushPos != pos()) {
 				Char ch = Actor.findChar(summoningPos);
-				Actor.addDelayed( new Pushing( ch, ch.pos, pushPos ), -1 );
+				Actor.addDelayed( new Pushing( ch, ch.pos(), pushPos ), -1 );
 
-				ch.pos = pushPos;
+				ch.pos(pushPos);
 				Dungeon.level.occupyCell(ch );
 
 			} else {

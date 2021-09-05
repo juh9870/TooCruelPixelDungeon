@@ -118,7 +118,7 @@ public abstract class Wand extends Item {
 
 	@Override
 	public int targetingPos(Hero user, int dst) {
-		return new Ballistica( user.pos, dst, collisionProperties ).collisionPos;
+		return new Ballistica(user.pos(), dst, collisionProperties ).collisionPos;
 	}
 
 	public abstract void onZap(Ballistica attack);
@@ -554,16 +554,16 @@ public abstract class Wand extends Item {
 					return;
 				}
 
-				final Ballistica shot = new Ballistica( curUser.pos, target, curWand.collisionProperties(target));
+				final Ballistica shot = new Ballistica(curUser.pos(), target, curWand.collisionProperties(target));
 				int cell = shot.collisionPos;
 				
-				if (target == curUser.pos || cell == curUser.pos) {
-					if (target == curUser.pos && curUser.hasTalent(Talent.SHIELD_BATTERY)){
+				if (target == curUser.pos() || cell == curUser.pos()) {
+					if (target == curUser.pos() && curUser.hasTalent(Talent.SHIELD_BATTERY)){
 						float shield = curUser.HT * (0.05f*curWand.curCharges);
 						if (curUser.pointsInTalent(Talent.SHIELD_BATTERY) == 2) shield *= 1.5f;
 						Buff.affect(curUser, Barrier.class).setShield(Math.round(shield));
 						curWand.curCharges = 0;
-						curUser.sprite.operate(curUser.pos);
+						curUser.sprite.operate(curUser.pos());
 						Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
 						ScrollOfRecharging.charge(curUser);
 						updateQuickslot();
@@ -592,7 +592,7 @@ public abstract class Wand extends Item {
 						}
 						CursedWand.cursedZap(curWand,
 								curUser,
-								new Ballistica(curUser.pos, target, Ballistica.MAGIC_BOLT),
+								new Ballistica(curUser.pos(), target, Ballistica.MAGIC_BOLT),
 								new Callback() {
 									@Override
 									public void call() {

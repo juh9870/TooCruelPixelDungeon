@@ -56,7 +56,7 @@ public class Imp extends NPC {
 	@Override
 	protected boolean act() {
 		
-		if (!Quest.given && Dungeon.level.heroFOV[pos]) {
+		if (!Quest.given && Dungeon.level.heroFOV[pos()]) {
 			if (!seenBefore) {
 				yell( Messages.get(this, "hey", Dungeon.hero.name() ) );
 			}
@@ -90,7 +90,7 @@ public class Imp extends NPC {
 	@Override
 	public boolean interact(Char c) {
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo(pos(), Dungeon.hero.pos());
 
 		if (c != Dungeon.hero){
 			return true;
@@ -198,15 +198,15 @@ public class Imp extends NPC {
 				
 				Imp npc = new Imp();
 				do {
-					npc.pos = level.randomRespawnCell( npc );
+					npc.pos(level.randomRespawnCell( npc ));
 				} while (
-						npc.pos == -1 ||
-						level.heaps.get( npc.pos ) != null ||
-						level.traps.get( npc.pos) != null ||
-						level.findMob( npc.pos ) != null ||
+						npc.pos() == -1 ||
+						level.heaps.get(npc.pos()) != null ||
+						level.traps.get(npc.pos()) != null ||
+						level.findMob(npc.pos()) != null ||
 						//The imp doesn't move, so he cannot obstruct a passageway
-						!(level.passable[npc.pos + PathFinder.CIRCLE4[0]] && level.passable[npc.pos + PathFinder.CIRCLE4[2]]) ||
-						!(level.passable[npc.pos + PathFinder.CIRCLE4[1]] && level.passable[npc.pos + PathFinder.CIRCLE4[3]]));
+						!(level.passable[npc.pos() + PathFinder.CIRCLE4[0]] && level.passable[npc.pos() + PathFinder.CIRCLE4[2]]) ||
+						!(level.passable[npc.pos() + PathFinder.CIRCLE4[1]] && level.passable[npc.pos() + PathFinder.CIRCLE4[3]]));
 				level.mobs.add( npc );
 				
 				spawned = true;
@@ -238,7 +238,7 @@ public class Imp extends NPC {
 				if ((alternative && mob instanceof Monk) ||
 					(!alternative && mob instanceof Golem)) {
 					
-					Dungeon.level.drop( new DwarfToken(), mob.pos ).sprite.drop();
+					Dungeon.level.drop( new DwarfToken(), mob.pos()).sprite.drop();
 				}
 			}
 		}

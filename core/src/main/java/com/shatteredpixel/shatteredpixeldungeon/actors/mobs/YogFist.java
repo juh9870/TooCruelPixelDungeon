@@ -83,7 +83,7 @@ public abstract class YogFist extends Mob {
 		if (paralysed <= 0 && rangedCooldown > 0) rangedCooldown--;
 
 		if (Dungeon.hero.invisible <= 0 && state == WANDERING){
-			beckon(Dungeon.hero.pos);
+			beckon(Dungeon.hero.pos());
 			state = HUNTING;
 			enemy = Dungeon.hero;
 		}
@@ -94,7 +94,7 @@ public abstract class YogFist extends Mob {
 	@Override
 	protected boolean canAttack(Char enemy) {
 		if (rangedCooldown <= 0){
-			return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
+			return new Ballistica(pos(), enemy.pos(), Ballistica.MAGIC_BOLT).collisionPos == enemy.pos();
 		} else {
 			return super.canAttack(enemy);
 		}
@@ -104,7 +104,7 @@ public abstract class YogFist extends Mob {
 
 	protected boolean isNearYog(){
 		int yogPos = Dungeon.level.exit + 3*Dungeon.level.width();
-		return Dungeon.level.distance(pos, yogPos) <= 4;
+		return Dungeon.level.distance(pos(), yogPos) <= 4;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public abstract class YogFist extends Mob {
 	@Override
 	protected boolean doAttack( Char enemy ) {
 
-		if (Dungeon.level.adjacent( pos, enemy.pos ) && (!canRangedInMelee || rangedCooldown > 0)) {
+		if (Dungeon.level.adjacent(pos(), enemy.pos()) && (!canRangedInMelee || rangedCooldown > 0)) {
 
 			return super.doAttack( enemy );
 
@@ -127,7 +127,7 @@ public abstract class YogFist extends Mob {
 
 			incrementRangedCooldown();
 			if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-				sprite.zap( enemy.pos );
+				sprite.zap(enemy.pos());
 				return false;
 			} else {
 				zap();
@@ -194,17 +194,17 @@ public abstract class YogFist extends Mob {
 
 			boolean result = super.act();
 
-			if (Dungeon.level.map[pos] == Terrain.WATER){
-				Level.set( pos, Terrain.EMPTY);
-				GameScene.updateMap( pos );
-				CellEmitter.get( pos ).burst( Speck.factory( Speck.STEAM ), 10 );
+			if (Dungeon.level.map[pos()] == Terrain.WATER){
+				Level.set(pos(), Terrain.EMPTY);
+				GameScene.updateMap(pos());
+				CellEmitter.get(pos()).burst( Speck.factory( Speck.STEAM ), 10 );
 			}
 
 			//1.67 evaporated tiles on average
 			int evaporatedTiles = Random.chances(new float[]{0, 1, 2});
 
 			for (int i = 0; i < evaporatedTiles; i++) {
-				int cell = pos + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
+				int cell = pos() + PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
 				if (Dungeon.level.map[cell] == Terrain.WATER){
 					Level.set( cell, Terrain.EMPTY);
 					GameScene.updateMap( cell );
@@ -213,9 +213,9 @@ public abstract class YogFist extends Mob {
 			}
 
 			for (int i : PathFinder.NEIGHBOURS9) {
-				int vol = Fire.volumeAt(pos+i, Fire.class);
-				if (vol < 4 && !Dungeon.level.water[pos + i] && !Dungeon.level.solid[pos + i]){
-					GameScene.add( Blob.seed( pos + i, 4 - vol, Fire.class ) );
+				int vol = Fire.volumeAt(pos() +i, Fire.class);
+				if (vol < 4 && !Dungeon.level.water[pos() + i] && !Dungeon.level.solid[pos() + i]){
+					GameScene.add( Blob.seed( pos() + i, 4 - vol, Fire.class ) );
 				}
 			}
 
@@ -226,19 +226,19 @@ public abstract class YogFist extends Mob {
 		protected void zap() {
 			spend( 1f );
 
-			if (Dungeon.level.map[enemy.pos] == Terrain.WATER){
-				Level.set( enemy.pos, Terrain.EMPTY);
-				GameScene.updateMap( enemy.pos );
-				CellEmitter.get( enemy.pos ).burst( Speck.factory( Speck.STEAM ), 10 );
+			if (Dungeon.level.map[enemy.pos()] == Terrain.WATER){
+				Level.set(enemy.pos(), Terrain.EMPTY);
+				GameScene.updateMap(enemy.pos());
+				CellEmitter.get(enemy.pos()).burst( Speck.factory( Speck.STEAM ), 10 );
 			} else {
 				Buff.affect( enemy, Burning.class ).reignite( enemy );
 			}
 
 			for (int i : PathFinder.NEIGHBOURS9){
-				if (!Dungeon.level.water[enemy.pos+i] && !Dungeon.level.solid[enemy.pos+i]){
-					int vol = Fire.volumeAt(enemy.pos+i, Fire.class);
+				if (!Dungeon.level.water[enemy.pos() +i] && !Dungeon.level.solid[enemy.pos() +i]){
+					int vol = Fire.volumeAt(enemy.pos() +i, Fire.class);
 					if (vol < 4){
-						GameScene.add( Blob.seed( enemy.pos + i, 4 - vol, Fire.class ) );
+						GameScene.add( Blob.seed( enemy.pos() + i, 4 - vol, Fire.class ) );
 					}
 				}
 			}
@@ -262,7 +262,7 @@ public abstract class YogFist extends Mob {
 			int furrowedTiles = Random.chances(new float[]{0, 2, 1});
 
 			for (int i = 0; i < furrowedTiles; i++) {
-				int cell = pos + PathFinder.NEIGHBOURS9[Random.Int(9)];
+				int cell = pos() + PathFinder.NEIGHBOURS9[Random.Int(9)];
 				if (Dungeon.level.map[cell] == Terrain.GRASS) {
 					Level.set(cell, Terrain.FURROWED_GRASS);
 					GameScene.updateMap(cell);
@@ -273,10 +273,10 @@ public abstract class YogFist extends Mob {
 			Dungeon.observe();
 
 			for (int i : PathFinder.NEIGHBOURS9) {
-				int cell = pos + i;
+				int cell = pos() + i;
 				if (canSpreadGrass(cell)){
-					Level.set(pos+i, Terrain.GRASS);
-					GameScene.updateMap( pos + i );
+					Level.set(pos() +i, Terrain.GRASS);
+					GameScene.updateMap( pos() + i );
 				}
 			}
 
@@ -287,8 +287,8 @@ public abstract class YogFist extends Mob {
 		public void damage(int dmg, Object src) {
 			int grassCells = 0;
 			for (int i : PathFinder.NEIGHBOURS9) {
-				if (Dungeon.level.map[pos+i] == Terrain.FURROWED_GRASS
-				|| Dungeon.level.map[pos+i] == Terrain.HIGH_GRASS){
+				if (Dungeon.level.map[pos() +i] == Terrain.FURROWED_GRASS
+				|| Dungeon.level.map[pos() +i] == Terrain.HIGH_GRASS){
 					grassCells++;
 				}
 			}
@@ -311,7 +311,7 @@ public abstract class YogFist extends Mob {
 			}
 
 			for (int i : PathFinder.NEIGHBOURS9){
-				int cell = enemy.pos + i;
+				int cell = enemy.pos() + i;
 				if (canSpreadGrass(cell)){
 					if (Random.Int(5) == 0){
 						Level.set(cell, Terrain.FURROWED_GRASS);
@@ -351,9 +351,9 @@ public abstract class YogFist extends Mob {
 		@Override
 		protected boolean act() {
 			//ensures toxic gas acts at the appropriate time when added
-			GameScene.add(Blob.seed(pos, 0, ToxicGas.class));
+			GameScene.add(Blob.seed(pos(), 0, ToxicGas.class));
 
-			if (Dungeon.level.water[pos] && HP < HT) {
+			if (Dungeon.level.water[pos()] && HP < HT) {
 				sprite.emitter().burst( Speck.factory(Speck.HEALING), 3 );
 				HP += HT/50;
 			}
@@ -383,7 +383,7 @@ public abstract class YogFist extends Mob {
 		@Override
 		protected void zap() {
 			spend( 1f );
-			GameScene.add(Blob.seed(enemy.pos, 100, ToxicGas.class));
+			GameScene.add(Blob.seed(enemy.pos(), 100, ToxicGas.class));
 		}
 
 		@Override

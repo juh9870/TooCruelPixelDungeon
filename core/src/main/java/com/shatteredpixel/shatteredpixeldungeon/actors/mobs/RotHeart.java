@@ -65,7 +65,7 @@ public class RotHeart extends Mob {
 
 	@Override
 	public int defenseProc(Char enemy, int damage) {
-		GameScene.add(Blob.seed(pos, 20, ToxicGas.class));
+		GameScene.add(Blob.seed(pos(), 20, ToxicGas.class));
 
 		return super.defenseProc(enemy, damage);
 	}
@@ -93,7 +93,7 @@ public class RotHeart extends Mob {
 	@Override
 	public void die(Object cause) {
 		super.die(cause);
-		Dungeon.level.drop( new Rotberry.Seed(), pos ).sprite.drop();
+		Dungeon.level.drop( new Rotberry.Seed(), pos()).sprite.drop();
 	}
 
 	@Override

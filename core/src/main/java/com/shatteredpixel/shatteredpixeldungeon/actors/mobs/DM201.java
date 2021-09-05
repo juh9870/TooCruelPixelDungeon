@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.CorrosiveGas;
@@ -61,10 +62,11 @@ public class DM201 extends DM200 {
 		}
 
 		if (paralysed <= 0 && state == HUNTING && enemy != null && enemySeen
-				&& threatened && !Dungeon.level.adjacent(pos, enemy.pos) && fieldOfView[enemy.pos]){
-			enemySeen = enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
-			if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
-				sprite.zap( enemy.pos );
+				&& threatened && !Dungeon.level.adjacent(pos(), enemy.pos()) && fieldOfView[enemy.pos()]){
+			enemySeen = enemy.isAlive() && fieldOfView[enemy.pos()] && enemy.invisible <= 0;
+			boolean skipAnimation = SPDSettings.fastAnimations() && enemy != Dungeon.hero;
+			if (sprite != null && (sprite.visible || enemy.sprite.visible) && !skipAnimation) {
+				sprite.zap(enemy.pos());
 				return false;
 			} else {
 				zap();
@@ -76,8 +78,8 @@ public class DM201 extends DM200 {
 
 	@Override
 	public void damage(int dmg, Object src) {
-		if ((src instanceof Char && !Dungeon.level.adjacent(pos, ((Char)src).pos))
-				|| enemy == null || !Dungeon.level.adjacent(pos, enemy.pos)){
+		if ((src instanceof Char && !Dungeon.level.adjacent(pos(), ((Char) src).pos()))
+				|| enemy == null || !Dungeon.level.adjacent(pos(), enemy.pos())){
 			threatened = true;
 		}
 		super.damage(dmg, src);
@@ -92,10 +94,10 @@ public class DM201 extends DM200 {
 		threatened = false;
 		spend(TICK);
 
-		GameScene.add(Blob.seed(enemy.pos, 15, CorrosiveGas.class).setStrength(8));
+		GameScene.add(Blob.seed(enemy.pos(), 15, CorrosiveGas.class).setStrength(8));
 		for (int i : PathFinder.NEIGHBOURS8){
-			if (!Dungeon.level.solid[enemy.pos+i]) {
-				GameScene.add(Blob.seed(enemy.pos + i, 5, CorrosiveGas.class).setStrength(8));
+			if (!Dungeon.level.solid[enemy.pos() +i]) {
+				GameScene.add(Blob.seed(enemy.pos() + i, 5, CorrosiveGas.class).setStrength(8));
 			}
 		}
 
@@ -121,8 +123,8 @@ public class DM201 extends DM200 {
 		int ofs;
 		do {
 			ofs = PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
-		} while (Dungeon.level.solid[pos + ofs] && !Dungeon.level.passable[pos + ofs]);
-		Dungeon.level.drop( new MetalShard(), pos + ofs ).sprite.drop( pos );
+		} while (Dungeon.level.solid[pos() + ofs] && !Dungeon.level.passable[pos() + ofs]);
+		Dungeon.level.drop( new MetalShard(), pos() + ofs ).sprite.drop(pos());
 	}
 
 }

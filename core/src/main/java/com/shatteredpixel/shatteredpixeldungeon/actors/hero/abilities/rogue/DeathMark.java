@@ -112,11 +112,11 @@ public class DeathMark extends ArmorAbility {
 
 			if (Dungeon.hero.pointsInTalent(Talent.FEAR_THE_REAPER) >= 3) {
 				boolean[] passable = BArray.not(Dungeon.level.solid, null);
-				PathFinder.buildDistanceMap(ch.pos, passable, 3);
+				PathFinder.buildDistanceMap(ch.pos(), passable, 3);
 
 				for (Char near : Actor.chars()) {
 					if (near != ch && near.alignment == Char.Alignment.ENEMY
-							&& PathFinder.distance[near.pos] != Integer.MAX_VALUE) {
+							&& PathFinder.distance[near.pos()] != Integer.MAX_VALUE) {
 						if (Dungeon.hero.pointsInTalent(Talent.FEAR_THE_REAPER) == 4) {
 							Buff.prolong(near, Terror.class, 5f).object = Dungeon.hero.id();
 						}

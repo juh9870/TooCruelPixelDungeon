@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -153,7 +152,7 @@ public class Bee extends Mob {
 			
 			//try to find a new enemy in these circumstances
 			if (enemy == null || !enemy.isAlive() || !Actor.chars().contains(enemy) || state == WANDERING
-					|| Dungeon.level.distance(enemy.pos, potPos) > 3
+					|| Dungeon.level.distance(enemy.pos(), potPos) > 3
 					|| (alignment == Alignment.ALLY && enemy.alignment == Alignment.ALLY)
 					|| (buff( Amok.class ) == null && enemy.isInvulnerable(getClass()))){
 				
@@ -161,7 +160,7 @@ public class Bee extends Mob {
 				HashSet<Char> enemies = new HashSet<>();
 				for (Mob mob : Dungeon.level.mobs) {
 					if (!(mob == this)
-							&& Dungeon.level.distance(mob.pos, potPos) <= 3
+							&& Dungeon.level.distance(mob.pos(), potPos) <= 3
 							&& mob.alignment != Alignment.NEUTRAL
 							&& !mob.isInvulnerable(getClass())
 							&& !(alignment == Alignment.ALLY && mob.alignment == Alignment.ALLY)) {
@@ -172,7 +171,7 @@ public class Bee extends Mob {
 				if (!enemies.isEmpty()){
 					return Random.element(enemies);
 				} else {
-					if (alignment != Alignment.ALLY && Dungeon.level.distance(Dungeon.hero.pos, potPos) <= 3){
+					if (alignment != Alignment.ALLY && Dungeon.level.distance(Dungeon.hero.pos(), potPos) <= 3){
 						return Dungeon.hero;
 					} else {
 						return null;
@@ -190,9 +189,9 @@ public class Bee extends Mob {
 	@Override
 	protected boolean getCloser(int target) {
 		if (alignment == Alignment.ALLY && enemy == null && buff(Corruption.class) == null){
-			target = Dungeon.hero.pos;
+			target = Dungeon.hero.pos();
 		} else if (enemy != null && Actor.findById(potHolder) == enemy) {
-			target = enemy.pos;
+			target = enemy.pos();
 		} else if (potPos != -1 && (state == WANDERING || Dungeon.level.distance(target, potPos) > 3))
 			this.target = target = potPos;
 		return super.getCloser( target );

@@ -56,7 +56,7 @@ public class Paralysis extends FlavourBuff {
 		}
 		resist.damage += damage;
 		if (Random.NormalIntRange(0, resist.damage) >= Random.NormalIntRange(0, target.HP)){
-			if (Dungeon.level.heroFOV[target.pos]) {
+			if (Dungeon.level.heroFOV[target.pos()]) {
 				target.sprite.showStatus(CharSprite.NEUTRAL, Messages.get(this, "out"));
 			}
 			detach();

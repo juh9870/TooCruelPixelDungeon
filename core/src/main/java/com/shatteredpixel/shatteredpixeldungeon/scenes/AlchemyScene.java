@@ -149,7 +149,7 @@ public class AlchemyScene extends PixelScene {
 						if (item != null) {
 							if (!(item instanceof AlchemistsToolkit)) {
 								if (!item.collect()) {
-									Dungeon.level.drop(item, Dungeon.hero.pos);
+									Dungeon.level.drop(item, Dungeon.hero.pos());
 								}
 							}
 							item = null;
@@ -428,7 +428,7 @@ public class AlchemyScene extends PixelScene {
 			output.item(result);
 			if (!(result instanceof AlchemistsToolkit)) {
 				if (Challenges.THOUGHTLESS.enabled() || !result.collect()){
-					Dungeon.level.drop(result, Dungeon.hero.pos);
+					Dungeon.level.drop(result, Dungeon.hero.pos());
 				}
 			}
 			
@@ -506,7 +506,7 @@ public class AlchemyScene extends PixelScene {
 				if (inputs[i] != null && inputs[i].item != null) {
 					if (!(inputs[i].item instanceof AlchemistsToolkit)) {
 						if (!inputs[i].item.collect()) {
-							Dungeon.level.drop(inputs[i].item, Dungeon.hero.pos);
+							Dungeon.level.drop(inputs[i].item, Dungeon.hero.pos());
 						}
 					}
 					inputs[i].item(null);

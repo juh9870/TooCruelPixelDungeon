@@ -5,6 +5,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Deck<T> implements Bundlable {
@@ -47,7 +48,7 @@ public abstract class Deck<T> implements Bundlable {
     }
 
     public class Filler {
-        private Map<T, Float> valuesMap;
+        private Map<T, Float> valuesMap = new HashMap<>();
         private float defaultWeight = 1f;
 
         public Filler defaultWeight(float value) {

@@ -108,7 +108,7 @@ public class PoolRoom extends SpecialRoom {
 				if (level.map[cell] != Terrain.WATER || level.findMob(cell) != null || path.contains(cell)) continue;
 
 				Piranha piranha = new Piranha();
-				piranha.pos = cell;
+				piranha.pos(cell);
 				level.mobs.add(piranha);
 				nFish--;
 			}
@@ -116,8 +116,8 @@ public class PoolRoom extends SpecialRoom {
 			for (int i = 0; i < nFish; i++) {
 				Piranha piranha = new Piranha();
 				do {
-					piranha.pos = level.pointToCell(random());
-				} while (level.map[piranha.pos] != Terrain.WATER || level.findMob(piranha.pos) != null);
+					piranha.pos(level.pointToCell(random()));
+				} while (level.map[piranha.pos()] != Terrain.WATER || level.findMob(piranha.pos()) != null);
 				level.mobs.add(piranha);
 			}
 		}

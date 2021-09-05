@@ -49,7 +49,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
@@ -129,10 +128,10 @@ public class ElementalBlast extends ArmorAbility {
 		Ballistica aim;
 		//Basically the direction of the aim only matters if it goes outside the map
 		//So we just ensure it won't do that.
-		if (hero.pos % Dungeon.level.width() > 10){
-			aim = new Ballistica(hero.pos, hero.pos - 1, Ballistica.WONT_STOP);
+		if (hero.pos() % Dungeon.level.width() > 10){
+			aim = new Ballistica(hero.pos(), hero.pos() - 1, Ballistica.WONT_STOP);
 		} else {
-			aim = new Ballistica(hero.pos, hero.pos + 1, Ballistica.WONT_STOP);
+			aim = new Ballistica(hero.pos(), hero.pos() + 1, Ballistica.WONT_STOP);
 		}
 
 		Class<? extends Wand> wandCls = null;
@@ -286,11 +285,11 @@ public class ElementalBlast extends ArmorAbility {
 								//*** Wand of Blast Wave ***
 								} else if (finalWandCls == WandOfBlastWave.class){
 									if (mob.alignment != Char.Alignment.ALLY) {
-										Ballistica aim = new Ballistica(hero.pos, mob.pos, Ballistica.WONT_STOP);
-										int knockback = aoeSize + 1 - (int)Dungeon.level.trueDistance(hero.pos, mob.pos);
+										Ballistica aim = new Ballistica(hero.pos(), mob.pos(), Ballistica.WONT_STOP);
+										int knockback = aoeSize + 1 - (int)Dungeon.level.trueDistance(hero.pos(), mob.pos());
 										knockback *= effectMulti;
 										WandOfBlastWave.throwChar(mob,
-												new Ballistica(mob.pos, aim.collisionPos, Ballistica.MAGIC_BOLT),
+												new Ballistica(mob.pos(), aim.collisionPos, Ballistica.MAGIC_BOLT),
 												knockback,
 												true);
 									}
@@ -399,7 +398,7 @@ public class ElementalBlast extends ArmorAbility {
 				}
 		);
 
-		hero.sprite.operate( hero.pos );
+		hero.sprite.operate(hero.pos());
 		Invisibility.dispel();
 		hero.busy();
 

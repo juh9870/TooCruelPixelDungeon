@@ -100,9 +100,9 @@ public class Spinner extends Mob {
 				result = shotWebVisually = false;
 			} else {
 				if (enemy != null && enemySeen) {
-					lastEnemyPos = enemy.pos;
+					lastEnemyPos = enemy.pos();
 				} else {
-					lastEnemyPos = Dungeon.hero.pos;
+					lastEnemyPos = Dungeon.hero.pos();
 				}
 			}
 		}
@@ -150,15 +150,15 @@ public class Spinner extends Mob {
 		
 		Ballistica b;
 		//aims web in direction enemy is moving, or between self and enemy if they aren't moving
-		if (lastEnemyPos == enemy.pos){
-			b = new Ballistica( enemy.pos, pos, Ballistica.WONT_STOP );
+		if (lastEnemyPos == enemy.pos()){
+			b = new Ballistica(enemy.pos(), pos(), Ballistica.WONT_STOP );
 		} else {
-			b = new Ballistica( lastEnemyPos, enemy.pos, Ballistica.WONT_STOP );
+			b = new Ballistica( lastEnemyPos, enemy.pos(), Ballistica.WONT_STOP );
 		}
 		
 		int collisionIndex = 0;
 		for (int i = 0; i < b.path.size(); i++){
-			if (b.path.get(i) == enemy.pos){
+			if (b.path.get(i) == enemy.pos()){
 				collisionIndex = i;
 				break;
 			}
@@ -172,9 +172,9 @@ public class Spinner extends Mob {
 		int webPos = b.path.get( collisionIndex+1 );
 
 		//ensure we aren't shooting the web through walls
-		int projectilePos = new Ballistica( pos, webPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID).collisionPos;
+		int projectilePos = new Ballistica(pos(), webPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID).collisionPos;
 		
-		if (webPos != enemy.pos && projectilePos == webPos && Dungeon.level.passable[webPos]){
+		if (webPos != enemy.pos() && projectilePos == webPos && Dungeon.level.passable[webPos]){
 			return webPos;
 		} else {
 			return -1;
@@ -187,14 +187,14 @@ public class Spinner extends Mob {
 		if (webPos != -1){
 			int i;
 			for ( i = 0; i < PathFinder.CIRCLE8.length; i++){
-				if ((enemy.pos + PathFinder.CIRCLE8[i]) == webPos){
+				if ((enemy.pos() + PathFinder.CIRCLE8[i]) == webPos){
 					break;
 				}
 			}
 			
 			//spread to the tile hero was moving towards and the two adjacent ones
-			int leftPos = enemy.pos + PathFinder.CIRCLE8[left(i)];
-			int rightPos = enemy.pos + PathFinder.CIRCLE8[right(i)];
+			int leftPos = enemy.pos() + PathFinder.CIRCLE8[left(i)];
+			int rightPos = enemy.pos() + PathFinder.CIRCLE8[right(i)];
 			
 			if (Dungeon.level.passable[leftPos]) GameScene.add(Blob.seed(leftPos, 20, Web.class));
 			if (Dungeon.level.passable[webPos])  GameScene.add(Blob.seed(webPos, 20, Web.class));
@@ -202,7 +202,7 @@ public class Spinner extends Mob {
 			
 			webCoolDown = 10;
 
-			if (Dungeon.level.heroFOV[enemy.pos]){
+			if (Dungeon.level.heroFOV[enemy.pos()]){
 				Dungeon.hero.interrupt();
 			}
 		}

@@ -89,7 +89,7 @@ public class SandalsOfNature extends Artifact {
 			else {
 				Buff.prolong(hero, Roots.class, Roots.DURATION);
 				Buff.affect(hero, Earthroot.Armor.class).level(charge);
-				CellEmitter.bottom(hero.pos).start(EarthParticle.FACTORY, 0.05f, 8);
+				CellEmitter.bottom(hero.pos()).start(EarthParticle.FACTORY, 0.05f, 8);
 				Camera.main.shake(1, 0.4f);
 				charge = 0;
 				Talent.onArtifactUsed(Dungeon.hero);
@@ -212,7 +212,7 @@ public class SandalsOfNature extends Artifact {
 					seeds.add(item.getClass());
 
 					Hero hero = Dungeon.hero;
-					hero.sprite.operate( hero.pos );
+					hero.sprite.operate(hero.pos());
 					Sample.INSTANCE.play( Assets.Sounds.PLANT );
 					hero.busy();
 					hero.spend( 2f );

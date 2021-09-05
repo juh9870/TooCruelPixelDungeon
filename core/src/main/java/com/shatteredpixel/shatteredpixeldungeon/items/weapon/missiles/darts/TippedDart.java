@@ -89,14 +89,14 @@ public abstract class TippedDart extends Dart {
 						
 						hero.spend( 1f );
 						hero.busy();
-						hero.sprite.operate(hero.pos);
+						hero.sprite.operate(hero.pos());
 					} else if (index == 1){
 						detach(hero.belongings.backpack);
-						if (!new Dart().collect()) Dungeon.level.drop(new Dart(), hero.pos).sprite.drop();
+						if (!new Dart().collect()) Dungeon.level.drop(new Dart(), hero.pos()).sprite.drop();
 						
 						hero.spend( 1f );
 						hero.busy();
-						hero.sprite.operate(hero.pos);
+						hero.sprite.operate(hero.pos());
 					}
 				}
 			});
@@ -122,7 +122,7 @@ public abstract class TippedDart extends Dart {
 					return;
 				}
 			}
-			Dungeon.level.drop( d, enemy.pos ).sprite.drop();
+			Dungeon.level.drop( d, enemy.pos()).sprite.drop();
 		}
 	}
 
@@ -147,7 +147,7 @@ public abstract class TippedDart extends Dart {
 			}
 			targetPos = -1;
 		}
-		int p = curUser == null ? Dungeon.hero.pos : curUser.pos;
+		int p = curUser == null ? Dungeon.hero.pos() : curUser.pos();
 		for (Char ch : Actor.chars()){
 			if (ch instanceof WandOfRegrowth.Lotus){
 				WandOfRegrowth.Lotus l = (WandOfRegrowth.Lotus) ch;

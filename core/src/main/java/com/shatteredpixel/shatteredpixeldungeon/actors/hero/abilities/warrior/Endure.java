@@ -34,7 +34,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -57,7 +56,7 @@ public class Endure extends ArmorAbility {
 		if (combo != null){
 			combo.addTime(3f);
 		}
-		hero.sprite.operate(hero.pos);
+		hero.sprite.operate(hero.pos());
 
 		armor.charge -= chargeUse(hero);
 		armor.updateQuickslot();
@@ -128,7 +127,7 @@ public class Endure extends ArmorAbility {
 
 			int nearby = 0;
 			for (Char ch : Actor.chars()){
-				if (ch.alignment == Char.Alignment.ENEMY && Dungeon.level.distance(target.pos, ch.pos) <= 2){
+				if (ch.alignment == Char.Alignment.ENEMY && Dungeon.level.distance(target.pos(), ch.pos()) <= 2){
 					nearby ++;
 				}
 			}

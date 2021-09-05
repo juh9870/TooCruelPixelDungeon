@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Acidic;
@@ -41,10 +40,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -110,11 +107,7 @@ public class DistortionTrap extends MobSummonTrap{
 		protected boolean spawnMob() {
 			if (summonCells.size() == 0) return false;
 			int index = Random.index(summonCells);
-			int point;
-			if (Challenges.STACKING.enabled())
-				point = summonCells.get(index);
-			else
-				point = summonCells.remove(index);
+			int point = summonCells.remove(index);
 			summoned++;
 			Mob mob;
 			switch (summoned){
@@ -156,7 +149,7 @@ public class DistortionTrap extends MobSummonTrap{
 
 			mob.maxLvl = Hero.MAX_LEVEL;
 			mob.state = mob.WANDERING;
-			mob.pos = point;
+			mob.pos(point);
 			GameScene.add(mob, DELAY);
 			mobsToPlace.add(mob);
 			return true;

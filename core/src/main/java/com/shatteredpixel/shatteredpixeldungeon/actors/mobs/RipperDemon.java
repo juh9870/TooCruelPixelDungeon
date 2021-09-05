@@ -117,9 +117,9 @@ public class RipperDemon extends Mob {
 		//if state changed from wandering to hunting, we haven't acted yet, don't update.
 		if (!(lastState == WANDERING && state == HUNTING)) {
 			if (enemy != null) {
-				lastEnemyPos = enemy.pos;
+				lastEnemyPos = enemy.pos();
 			} else {
-				lastEnemyPos = Dungeon.hero.pos;
+				lastEnemyPos = Dungeon.hero.pos();
 			}
 		}
 
@@ -137,7 +137,7 @@ public class RipperDemon extends Mob {
 			if (leapPos != -1){
 
 				leapCooldown = Random.NormalIntRange(2, 4);
-				Ballistica b = new Ballistica(pos, leapPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
+				Ballistica b = new Ballistica(pos(), leapPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
 
 				//check if leap pos is not obstructed by terrain
 				if (rooted || b.collisionPos != leapPos){
@@ -152,7 +152,7 @@ public class RipperDemon extends Mob {
 				if (leapVictim != null){
 					int bouncepos = -1;
 					for (int i : PathFinder.NEIGHBOURS8){
-						if ((bouncepos == -1 || Dungeon.level.trueDistance(pos, leapPos+i) < Dungeon.level.trueDistance(pos, bouncepos))
+						if ((bouncepos == -1 || Dungeon.level.trueDistance(pos(), leapPos+i) < Dungeon.level.trueDistance(pos(), bouncepos))
 								&& Actor.findChar(leapPos+i) == null && Dungeon.level.passable[leapPos+i]){
 							bouncepos = leapPos+i;
 						}
@@ -168,8 +168,8 @@ public class RipperDemon extends Mob {
 				}
 
 				//do leap
-				sprite.visible = Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[leapPos] || Dungeon.level.heroFOV[endPos];
-				sprite.jump(pos, leapPos, new Callback() {
+				sprite.visible = Dungeon.level.heroFOV[pos()] || Dungeon.level.heroFOV[leapPos] || Dungeon.level.heroFOV[endPos];
+				sprite.jump(pos(), leapPos, new Callback() {
 					@Override
 					public void call() {
 
@@ -183,7 +183,7 @@ public class RipperDemon extends Mob {
 							Actor.addDelayed(new Pushing(RipperDemon.this, leapPos, endPos), -1);
 						}
 
-						pos = endPos;
+						pos(endPos);
 						leapPos = -1;
 						sprite.idle();
 						Dungeon.level.occupyCell(RipperDemon.this);
@@ -201,7 +201,7 @@ public class RipperDemon extends Mob {
 			} else {
 
 				if (enemyInFOV) {
-					target = enemy.pos;
+					target = enemy.pos();
 				} else if (enemy == null) {
 					state = WANDERING;
 					target = Dungeon.level.randomDestination( RipperDemon.this );
@@ -209,32 +209,32 @@ public class RipperDemon extends Mob {
 				}
 
 				if (leapCooldown <= 0 && enemyInFOV && !rooted
-						&& Dungeon.level.distance(pos, enemy.pos) >= 3) {
+						&& Dungeon.level.distance(pos(), enemy.pos()) >= 3) {
 
-					int targetPos = enemy.pos;
-					if (lastEnemyPos != enemy.pos){
+					int targetPos = enemy.pos();
+					if (lastEnemyPos != enemy.pos()){
 						int closestIdx = 0;
 						for (int i = 1; i < PathFinder.CIRCLE8.length; i++){
-							if (Dungeon.level.trueDistance(lastEnemyPos, enemy.pos+PathFinder.CIRCLE8[i])
-									< Dungeon.level.trueDistance(lastEnemyPos, enemy.pos+PathFinder.CIRCLE8[closestIdx])){
+							if (Dungeon.level.trueDistance(lastEnemyPos, enemy.pos() +PathFinder.CIRCLE8[i])
+									< Dungeon.level.trueDistance(lastEnemyPos, enemy.pos() +PathFinder.CIRCLE8[closestIdx])){
 								closestIdx = i;
 							}
 						}
-						targetPos = enemy.pos + PathFinder.CIRCLE8[(closestIdx+4)%8];
+						targetPos = enemy.pos() + PathFinder.CIRCLE8[(closestIdx+4)%8];
 					}
 
-					Ballistica b = new Ballistica(pos, targetPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
+					Ballistica b = new Ballistica(pos(), targetPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
 					//try aiming directly at hero if aiming near them doesn't work
-					if (b.collisionPos != targetPos && targetPos != enemy.pos){
-						targetPos = enemy.pos;
-						b = new Ballistica(pos, targetPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
+					if (b.collisionPos != targetPos && targetPos != enemy.pos()){
+						targetPos = enemy.pos();
+						b = new Ballistica(pos(), targetPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
 					}
 					if (b.collisionPos == targetPos){
 						//get ready to leap
 						leapPos = targetPos;
 						//don't want to overly punish players with slow move or attack speed
 						spend(GameMath.gate(TICK, enemy.cooldown(), 3*TICK));
-						if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[leapPos]){
+						if (Dungeon.level.heroFOV[pos()] || Dungeon.level.heroFOV[leapPos]){
 							GLog.w(Messages.get(RipperDemon.this, "leap"));
 							sprite.parent.addToBack(new TargetedCell(leapPos, 0xFF0000));
 							((RipperSprite)sprite).leapPrep( leapPos );
@@ -244,11 +244,11 @@ public class RipperDemon extends Mob {
 					}
 				}
 
-				int oldPos = pos;
+				int oldPos = pos();
 				if (target != -1 && getCloser( target )) {
 
 					spend( movementTime() );
-					return moveSprite( oldPos,  pos );
+					return moveSprite( oldPos, pos());
 
 				} else {
 					spend( TICK );

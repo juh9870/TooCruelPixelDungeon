@@ -2,11 +2,10 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.watabou.noosa.Image;
@@ -15,14 +14,16 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class Stacking extends Buff {
     private static final String COUNT = "count";
     public int count;
 
     public void proc() {
-        int cell = target.pos;
+        int cell = target.pos();
         if (Dungeon.level.pit[cell] || !Dungeon.level.openSpace[cell]) {
             ArrayList<Integer> suitable = new ArrayList<>();
             int dist = Integer.MAX_VALUE;
@@ -58,28 +59,18 @@ public class Stacking extends Buff {
 
         int enemy = target instanceof Mob ? ((Mob) target).enemyPos() : -1;
 
-        HashSet<? extends ChampionEnemy> championBuffs = target.buffs(ChampionEnemy.class);
 
-        for (int i = 0; i < count; i++) {
-            Mob mob;
-            do {
-                mob = Dungeon.level.createMob();
-            } while (!Dungeon.level.openSpace[cell] && mob.properties().contains(Char.Property.LARGE));
-            mob.pos = cell;
-            if (target.buff(Extermination.class) != null) {
-                Buff.affect(mob, Extermination.class);
-            }
-            GameScene.add(mob);
-            mob.state = mob.HUNTING;
-            if (enemy > 0) {
-                mob.beckon(enemy);
-            }
-            if (Challenges.STACKING_CHAMPIONS.enabled()) {
-                for (ChampionEnemy championBuff : championBuffs) {
-                    Buff.affect(mob, championBuff.getClass());
-                }
+        ArrayList<Class<? extends Buff>> buffs = new ArrayList<>();
+        if (Challenges.STACKING_CHAMPIONS.enabled()) {
+            HashSet<? extends ChampionEnemy> championBuffs = target.buffs(ChampionEnemy.class);
+            for (ChampionEnemy championBuff : championBuffs) {
+                buffs.add(championBuff.getClass());
             }
         }
+        if (target.buff(Extermination.class) != null) {
+            buffs.add(Extermination.class);
+        }
+        SummoningTrap.summonMobs(cell, count, 2, new StackingSpawnAction(buffs, enemy));
         detach();
     }
 
@@ -127,5 +118,51 @@ public class Stacking extends Buff {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         count = bundle.getInt(COUNT);
+    }
+
+    public static class StackingSpawnAction extends SummoningTrap.MobSpawnedAction {
+
+        private List<Class<? extends Buff>> toAdd;
+        private int beckonPos;
+        public static final String TO_ADD = "toAdd";
+        public static final String BECKON = "beckon";
+
+        public StackingSpawnAction() {
+            toAdd = new ArrayList<>();
+        }
+
+        public StackingSpawnAction(Collection<Class<? extends Buff>> buffs, int beckonPos) {
+            this();
+            toAdd.addAll(buffs);
+            this.beckonPos = beckonPos;
+        }
+
+        @Override
+        protected void Invoke(Mob mob) {
+            for (Class<? extends Buff> cl : toAdd) {
+                Buff.affect(mob, cl);
+            }
+            if (beckonPos >= 0) {
+                mob.beckon(beckonPos);
+            }
+        }
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(TO_ADD, toAdd.toArray(new Class[0]));
+            bundle.put(BECKON, beckonPos);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            toAdd = new ArrayList<>();
+            for (Class cl : bundle.getClassArray(TO_ADD)) {
+                toAdd.add(cl);
+            }
+
+            beckonPos = bundle.getInt(BECKON);
+        }
     }
 }

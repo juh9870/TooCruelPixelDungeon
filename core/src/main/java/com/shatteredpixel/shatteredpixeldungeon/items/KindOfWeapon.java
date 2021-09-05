@@ -124,17 +124,17 @@ abstract public class KindOfWeapon extends EquipableItem {
 	}
 	
 	public boolean canReach( Char owner, int target){
-		if (Dungeon.level.distance( owner.pos, target ) > reachFactor(owner)){
+		if (Dungeon.level.distance(owner.pos(), target ) > reachFactor(owner)){
 			return false;
 		} else {
 			boolean[] passable = BArray.not(Dungeon.level.solid, null);
 			for (Char ch : Actor.chars()) {
-				if (ch != owner) passable[ch.pos] = false;
+				if (ch != owner) passable[ch.pos()] = false;
 			}
 			
 			PathFinder.buildDistanceMap(target, passable, reachFactor(owner));
 			
-			return PathFinder.distance[owner.pos] <= reachFactor(owner);
+			return PathFinder.distance[owner.pos()] <= reachFactor(owner);
 		}
 	}
 

@@ -104,7 +104,7 @@ public class WardSprite extends MobSprite {
 		}
 
 		resetColor();
-		if (ch != null) place(ch.pos);
+		if (ch != null) place(ch.pos());
 		idle();
 
 		if (tier <= 3){

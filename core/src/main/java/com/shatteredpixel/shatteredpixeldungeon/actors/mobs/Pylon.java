@@ -75,13 +75,13 @@ public class Pylon extends Mob {
 	protected boolean act() {
 		spend(TICK);
 
-		Heap heap = Dungeon.level.heaps.get( pos );
+		Heap heap = Dungeon.level.heaps.get(pos());
 		if (heap != null) {
 			int n;
 			do {
-				n = pos + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
+				n = pos() + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
 			} while (!Dungeon.level.passable[n] && !Dungeon.level.avoid[n]);
-			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop( pos );
+			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop(pos());
 		}
 
 		if (alignment == Alignment.NEUTRAL){
@@ -90,18 +90,18 @@ public class Pylon extends Mob {
 
 		ArrayList<Integer> shockCells = new ArrayList<>();
 
-		shockCells.add(pos + PathFinder.CIRCLE8[targetNeighbor]);
+		shockCells.add(pos() + PathFinder.CIRCLE8[targetNeighbor]);
 
 		if (Challenges.STRONGER_BOSSES.enabled()){
-			shockCells.add(pos + PathFinder.CIRCLE8[(targetNeighbor+3)%8]);
-			shockCells.add(pos + PathFinder.CIRCLE8[(targetNeighbor+5)%8]);
+			shockCells.add(pos() + PathFinder.CIRCLE8[(targetNeighbor+3)%8]);
+			shockCells.add(pos() + PathFinder.CIRCLE8[(targetNeighbor+5)%8]);
 		} else {
-			shockCells.add(pos + PathFinder.CIRCLE8[(targetNeighbor+4)%8]);
+			shockCells.add(pos() + PathFinder.CIRCLE8[(targetNeighbor+4)%8]);
 		}
 
 		sprite.flash();
 
-		boolean visible = Dungeon.level.heroFOV[pos];
+		boolean visible = Dungeon.level.heroFOV[pos()];
 		for (int cell : shockCells){
 			if (Dungeon.level.heroFOV[cell]){
 				visible = true;

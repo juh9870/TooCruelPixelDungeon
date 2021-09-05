@@ -78,7 +78,7 @@ public class DM100Sprite extends MobSprite {
 		}
 		Sample.INSTANCE.play( Assets.Sounds.LIGHTNING );
 		
-		turnTo( ch.pos, pos );
+		turnTo(ch.pos(), pos );
 		flash();
 		play( zap );
 	}

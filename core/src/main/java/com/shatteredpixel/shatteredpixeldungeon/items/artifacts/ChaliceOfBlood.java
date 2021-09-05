@@ -102,7 +102,7 @@ public class ChaliceOfBlood extends Artifact {
 
 		damage -= hero.drRoll();
 
-		hero.sprite.operate( hero.pos );
+		hero.sprite.operate(hero.pos());
 		hero.busy();
 		hero.spend(3f);
 		GLog.w( Messages.get(this, "onprick") );

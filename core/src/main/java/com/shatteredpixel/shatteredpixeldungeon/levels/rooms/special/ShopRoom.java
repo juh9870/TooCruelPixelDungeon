@@ -102,7 +102,7 @@ public class ShopRoom extends SpecialRoom {
 		int pos = level.pointToCell(center());
 
 		Mob shopkeeper = new Shopkeeper();
-		shopkeeper.pos = pos;
+		shopkeeper.pos(pos);
 		level.mobs.add( shopkeeper );
 
 	}

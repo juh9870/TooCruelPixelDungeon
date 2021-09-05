@@ -52,7 +52,7 @@ public class WoollyBomb extends Bomb {
 						&& !(Dungeon.level.pit[i])) {
 					Sheep sheep = new Sheep();
 					sheep.lifespan = Random.NormalIntRange( 12, 16 );
-					sheep.pos = i;
+					sheep.pos(i);
 					Dungeon.level.occupyCell(sheep);
 					GameScene.add(sheep);
 					CellEmitter.get(i).burst(Speck.factory(Speck.WOOL), 4);

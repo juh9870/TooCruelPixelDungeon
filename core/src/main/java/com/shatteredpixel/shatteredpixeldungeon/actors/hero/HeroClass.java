@@ -149,7 +149,7 @@ public enum HeroClass {
 			new ScrollOfIdentify().identify();
 
 			new ScrollOfMagicMapping().quantity(64).identify().collect();
-			new ScrollOfPsionicBlast().quantity(64).identify().collect();
+			new ScrollOfRage().quantity(64).identify().collect();
 			new ScrollOfUpgrade().quantity(100).identify().collect();
 //			new ScrollOfEnchantment().quantity(1).identify().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
@@ -162,7 +162,7 @@ public enum HeroClass {
 			new ScrollOfRecharging().quantity(100).identify().collect();
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(64).identify().collect();
-			new PotionOfStormClouds().quantity(64).identify().collect();
+			new PotionOfInvisibility().quantity(64).identify().collect();
 			new ReclaimTrap().setStoredTrap(GuardianTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 //			Generator.randomWeapon(0).identify().collect();

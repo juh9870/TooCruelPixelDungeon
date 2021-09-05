@@ -30,6 +30,7 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.SparseArray;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 public abstract class Actor implements Bundlable {
@@ -133,6 +134,7 @@ public abstract class Actor implements Bundlable {
 	
 	private static HashSet<Actor> all = new HashSet<>();
 	private static HashSet<Char> chars = new HashSet<>();
+	private static HashMap<Integer,Char> charsPositioned = new HashMap<>();
 	private static volatile Actor current;
 
 	private static SparseArray<Actor> ids = new SparseArray<>();
@@ -150,6 +152,7 @@ public abstract class Actor implements Bundlable {
 
 		all.clear();
 		chars.clear();
+		charsPositioned.clear();
 
 		ids.clear();
 	}
@@ -330,18 +333,27 @@ public abstract class Actor implements Bundlable {
 		
 		if (actor instanceof Char) {
 			Char ch = (Char)actor;
+			charsPositioned.put( ch.pos(), ch );
 			chars.add( ch );
 			for (Buff buff : ch.buffs()) {
 				add(buff);
 			}
 		}
 	}
+
+	public static synchronized void move( Char ch, int oldPos, int newPos ){
+		charsPositioned.remove(oldPos);
+		if (charsPositioned.containsKey(newPos)) throw new Error("Position is already occupied");
+		charsPositioned.put(newPos, ch);
+	}
 	
 	public static synchronized void remove( Actor actor ) {
-		
 		if (actor != null) {
 			all.remove( actor );
-			chars.remove( actor );
+			if (actor instanceof Char) {
+				charsPositioned.remove(((Char) actor).pos());
+				chars.remove(actor);
+			}
 			actor.onRemove();
 
 			if (actor.id > 0) {
@@ -351,11 +363,7 @@ public abstract class Actor implements Bundlable {
 	}
 	
 	public static synchronized Char findChar( int pos ) {
-		for (Char ch : chars){
-			if (ch.pos == pos)
-				return ch;
-		}
-		return null;
+		return charsPositioned.get(pos);
 	}
 
 	public static synchronized Actor findById( int id ) {
@@ -366,5 +374,7 @@ public abstract class Actor implements Bundlable {
 		return new HashSet<>(all);
 	}
 
-	public static synchronized HashSet<Char> chars() { return new HashSet<>(chars); }
+	public static synchronized HashSet<Char> chars() { return chars; }
+
+	public static synchronized HashMap<Integer, Char> charsPositioned() { return charsPositioned; }
 }

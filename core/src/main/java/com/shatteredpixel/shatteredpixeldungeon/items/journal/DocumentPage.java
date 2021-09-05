@@ -51,7 +51,7 @@ public abstract class DocumentPage extends Item {
 	
 	@Override
 	public final boolean doPickUp(Hero hero) {
-		GameScene.pickUpJournal(this, hero.pos);
+		GameScene.pickUpJournal(this, hero.pos());
 		GameScene.flashForDocument(page());
 		if (document() == Document.ALCHEMY_GUIDE){
 			WndJournal.last_index = 1;

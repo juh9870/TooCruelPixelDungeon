@@ -216,7 +216,7 @@ public class MagesStaff extends MeleeWeapon {
 				counter.countUp(1);
 				this.wand.level(0);
 				if (!this.wand.collect()) {
-					Dungeon.level.drop(this.wand, owner.pos);
+					Dungeon.level.drop(this.wand, owner.pos());
 				}
 				GLog.newLine();
 				GLog.p(Messages.get(this, "preserved"));

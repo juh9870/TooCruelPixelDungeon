@@ -85,7 +85,7 @@ public class Heap implements Bundlable {
 	public void open( Hero hero ) {
 		switch (type) {
 		case TOMB:
-			Wraith.spawnAround( hero.pos );
+			Wraith.spawnAround(hero.pos());
 			break;
 		case REMAINS:
 		case SKELETON:

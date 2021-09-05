@@ -71,7 +71,7 @@ public class SmokeBomb extends ArmorAbility {
 	protected void activate(ClassArmor armor, Hero hero, Integer target) {
 		if (target != null) {
 
-			PathFinder.buildDistanceMap(hero.pos, BArray.not(Dungeon.level.solid,null), 6);
+			PathFinder.buildDistanceMap(hero.pos(), BArray.not(Dungeon.level.solid,null), 6);
 
 			if ( PathFinder.distance[target] == Integer.MAX_VALUE ||
 					!Dungeon.level.heroFOV[target] ||
@@ -88,7 +88,7 @@ public class SmokeBomb extends ArmorAbility {
 
 			if (!shadowStepping) {
 				for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
-					if (Dungeon.level.adjacent(mob.pos, hero.pos) && mob.alignment != Char.Alignment.ALLY) {
+					if (Dungeon.level.adjacent(mob.pos(), hero.pos()) && mob.alignment != Char.Alignment.ALLY) {
 						Buff.prolong(mob, Blindness.class, Blindness.DURATION / 2f);
 						if (mob.state == mob.HUNTING) mob.state = mob.WANDERING;
 						mob.sprite.emitter().burst(Speck.factory(Speck.LIGHT), 4);
@@ -103,7 +103,7 @@ public class SmokeBomb extends ArmorAbility {
 					}
 
 					NinjaLog n = new NinjaLog();
-					n.pos = hero.pos;
+					n.pos(hero.pos());
 					GameScene.add(n);
 				}
 
@@ -114,7 +114,7 @@ public class SmokeBomb extends ArmorAbility {
 				}
 			}
 
-			CellEmitter.get( hero.pos ).burst( Speck.factory( Speck.WOOL ), 10 );
+			CellEmitter.get(hero.pos()).burst( Speck.factory( Speck.WOOL ), 10 );
 			ScrollOfTeleportation.appear( hero, target );
 			Sample.INSTANCE.play( Assets.Sounds.PUFF );
 			Dungeon.level.occupyCell( hero );

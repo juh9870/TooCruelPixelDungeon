@@ -83,7 +83,7 @@ public class Sungrass extends Plant {
 		
 		@Override
 		public boolean act() {
-			if (target.pos != pos) {
+			if (target.pos() != pos) {
 				detach();
 			}
 			
@@ -116,7 +116,7 @@ public class Sungrass extends Plant {
 
 		public void boost( int amount ){
 			level += amount;
-			pos = target.pos;
+			pos = target.pos();
 		}
 		
 		@Override

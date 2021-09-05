@@ -125,34 +125,34 @@ public class TalismanOfForesight extends Artifact {
 
 		@Override
 		public void onSelect(Integer target) {
-			if (target != null && target != curUser.pos){
+			if (target != null && target != curUser.pos()){
 
 				//enforces at least 2 tiles of distance
-				if (Dungeon.level.adjacent(target, curUser.pos)){
-					target += (target - curUser.pos);
+				if (Dungeon.level.adjacent(target, curUser.pos())){
+					target += (target - curUser.pos());
 				}
 
-				float dist = Dungeon.level.trueDistance(curUser.pos, target);
+				float dist = Dungeon.level.trueDistance(curUser.pos(), target);
 
 				if (dist >= 3 && dist > maxDist()){
-					Ballistica trajectory = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
+					Ballistica trajectory = new Ballistica(curUser.pos(), target, Ballistica.STOP_TARGET);
 					int i = 0;
 					while (i < trajectory.path.size()
-							&& Dungeon.level.trueDistance(curUser.pos, trajectory.path.get(i)) <= maxDist()){
+							&& Dungeon.level.trueDistance(curUser.pos(), trajectory.path.get(i)) <= maxDist()){
 						target = trajectory.path.get(i);
 						i++;
 					}
-					dist = Dungeon.level.trueDistance(curUser.pos, target);
+					dist = Dungeon.level.trueDistance(curUser.pos(), target);
 				}
 
 				//starts at 200 degrees, loses 8% per tile of distance
 				float angle = Math.round(200*(float)Math.pow(0.92, dist));
-				ConeAOE cone = new ConeAOE(new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET), angle);
+				ConeAOE cone = new ConeAOE(new Ballistica(curUser.pos(), target, Ballistica.STOP_TARGET), angle);
 
 				int earnedExp = 0;
 				boolean noticed = false;
 				for (int cell : cone.cells){
-					GameScene.effectOverFog(new CheckedCell( cell, curUser.pos ));
+					GameScene.effectOverFog(new CheckedCell( cell, curUser.pos()));
 					if (Dungeon.level.discoverable[cell] && !(Dungeon.level.mapped[cell] || Dungeon.level.visited[cell])){
 						Dungeon.level.mapped[cell] = true;
 						earnedExp++;
@@ -176,7 +176,7 @@ public class TalismanOfForesight extends Artifact {
 					if (ch != null && ch.alignment != Char.Alignment.NEUTRAL && ch.alignment != curUser.alignment){
 						Buff.append(curUser, CharAwareness.class, 5 + 2*level()).charID = ch.id();
 
-						if (!curUser.fieldOfView[ch.pos]){
+						if (!curUser.fieldOfView[ch.pos()]){
 							earnedExp += 10;
 						}
 					}
@@ -261,8 +261,8 @@ public class TalismanOfForesight extends Artifact {
 
 			int distance = 3;
 
-			int cx = target.pos % Dungeon.level.width();
-			int cy = target.pos / Dungeon.level.width();
+			int cx = target.pos() % Dungeon.level.width();
+			int cy = target.pos() / Dungeon.level.width();
 			int ax = cx - distance;
 			if (ax < 0) {
 				ax = 0;

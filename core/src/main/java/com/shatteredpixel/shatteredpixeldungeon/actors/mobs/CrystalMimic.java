@@ -113,12 +113,12 @@ public class CrystalMimic extends Mimic {
 		} else {
 			Buff.affect(this, Haste.class, 1f);
 		}
-		if (Actor.chars().contains(this) && Dungeon.level.heroFOV[pos]) {
+		if (Actor.chars().contains(this) && Dungeon.level.heroFOV[pos()]) {
 			enemy = Dungeon.hero;
-			target = Dungeon.hero.pos;
+			target = Dungeon.hero.pos();
 			enemySeen = true;
 			GLog.w(Messages.get(this, "reveal") );
-			CellEmitter.get(pos).burst(Speck.factory(Speck.STAR), 10);
+			CellEmitter.get(pos()).burst(Speck.factory(Speck.STAR), 10);
 			Sample.INSTANCE.play(Assets.Sounds.MIMIC, 1, 1.25f);
 		}
 	}
@@ -131,8 +131,8 @@ public class CrystalMimic extends Mimic {
 		} else {
 			ArrayList<Integer> candidates = new ArrayList<>();
 			for (int i : PathFinder.NEIGHBOURS8){
-				if (Dungeon.level.passable[pos+i] && Actor.findChar(pos+i) == null){
-					candidates.add(pos + i);
+				if (Dungeon.level.passable[pos() +i] && Actor.findChar(pos() +i) == null){
+					candidates.add(pos() + i);
 				}
 			}
 
@@ -162,7 +162,7 @@ public class CrystalMimic extends Mimic {
 			item.updateQuickslot();
 
 			if (item instanceof Honeypot){
-				items.add(((Honeypot)item).shatter(this, this.pos));
+				items.add(((Honeypot)item).shatter(this, this.pos()));
 				item.detach( hero.belongings.backpack );
 			} else {
 				items.add(item.detach( hero.belongings.backpack ));
@@ -191,9 +191,9 @@ public class CrystalMimic extends Mimic {
 				if (enemySeen) {
 					sprite.showStatus(CharSprite.NEGATIVE, Messages.get(Mob.class, "rage"));
 					state = HUNTING;
-				} else if (!Dungeon.level.heroFOV[pos] && Dungeon.level.distance(Dungeon.hero.pos, pos) >= 6) {
+				} else if (!Dungeon.level.heroFOV[pos()] && Dungeon.level.distance(Dungeon.hero.pos(), pos()) >= 6) {
 					GLog.n( Messages.get(CrystalMimic.class, "escaped"));
-					if (Dungeon.level.heroFOV[pos]) CellEmitter.get(pos).burst(Speck.factory(Speck.WOOL), 6);
+					if (Dungeon.level.heroFOV[pos()]) CellEmitter.get(pos()).burst(Speck.factory(Speck.WOOL), 6);
 					destroy();
 					sprite.killAndErase();
 				} else {

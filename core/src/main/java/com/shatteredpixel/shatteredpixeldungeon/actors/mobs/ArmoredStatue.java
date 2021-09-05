@@ -106,7 +106,7 @@ public class ArmoredStatue extends Statue {
 				armor.cursed = true;
 				armor.inscribe(Armor.Glyph.randomCurse());
 			}
-			Dungeon.level.drop(armor, pos).sprite.drop();
+			Dungeon.level.drop(armor, pos()).sprite.drop();
 		}
 		super.die( cause );
 	}

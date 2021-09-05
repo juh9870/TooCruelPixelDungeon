@@ -70,7 +70,7 @@ public class MassGraveRoom extends SpecialRoom {
 			do {
 				pos = level.pointToCell(random());
 			} while (level.map[pos] != Terrain.EMPTY_SP || level.findMob(pos) != null);
-			skele.pos = pos;
+			skele.pos(pos);
 			level.mobs.add( skele );
 		}
 

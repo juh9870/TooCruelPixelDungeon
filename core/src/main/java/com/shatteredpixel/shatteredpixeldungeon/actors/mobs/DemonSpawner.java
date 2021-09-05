@@ -92,22 +92,22 @@ public class DemonSpawner extends Mob {
 		if (spawnCooldown <= 0){
 			ArrayList<Integer> candidates = new ArrayList<>();
 			for (int n : PathFinder.NEIGHBOURS8) {
-				if (Dungeon.level.passable[pos+n] && Actor.findChar( pos+n ) == null) {
-					candidates.add( pos+n );
+				if (Dungeon.level.passable[pos() +n] && Actor.findChar( pos() +n ) == null) {
+					candidates.add( pos() +n );
 				}
 			}
 
 			if (!candidates.isEmpty()) {
 				RipperDemon spawn = new RipperDemon();
 
-				spawn.pos = Random.element( candidates );
+				spawn.pos(Random.element( candidates ));
 				spawn.state = spawn.HUNTING;
 
 				Dungeon.level.occupyCell(spawn);
 
 				GameScene.add( spawn, 1 );
 				if (sprite.visible) {
-					Actor.addDelayed(new Pushing(spawn, pos, spawn.pos), -1);
+					Actor.addDelayed(new Pushing(spawn, pos(), spawn.pos()), -1);
 				}
 
 				spawnCooldown += 60;

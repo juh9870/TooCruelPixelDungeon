@@ -64,7 +64,7 @@ public class SpectralBlades extends ArmorAbility {
 			return;
 		}
 
-		Ballistica b = new Ballistica(hero.pos, target, Ballistica.WONT_STOP);
+		Ballistica b = new Ballistica(hero.pos(), target, Ballistica.WONT_STOP);
 		final HashSet<Char> targets = new HashSet<>();
 
 		Char enemy = findChar(b, hero, 2*hero.pointsInTalent(Talent.PROJECTING_BLADES), targets);
@@ -80,7 +80,7 @@ public class SpectralBlades extends ArmorAbility {
 			ConeAOE cone = new ConeAOE(b, 30*hero.pointsInTalent(Talent.FAN_OF_BLADES));
 			for (Ballistica ray : cone.rays){
 				Char toAdd = findChar(ray, hero, 2*hero.pointsInTalent(Talent.PROJECTING_BLADES), targets);
-				if (toAdd != null && hero.fieldOfView[toAdd.pos]){
+				if (toAdd != null && hero.fieldOfView[toAdd.pos()]){
 					targets.add(toAdd);
 				}
 			}
@@ -89,8 +89,8 @@ public class SpectralBlades extends ArmorAbility {
 				for (Char ch : targets){
 					if (furthest == null){
 						furthest = ch;
-					} else if (Dungeon.level.trueDistance(enemy.pos, ch.pos) >
-							Dungeon.level.trueDistance(enemy.pos, furthest.pos)){
+					} else if (Dungeon.level.trueDistance(enemy.pos(), ch.pos()) >
+							Dungeon.level.trueDistance(enemy.pos(), furthest.pos())){
 						furthest = ch;
 					}
 				}
@@ -124,14 +124,14 @@ public class SpectralBlades extends ArmorAbility {
 			};
 
 			MissileSprite m = ((MissileSprite)hero.sprite.parent.recycle( MissileSprite.class ));
-			m.reset( hero.sprite, ch.pos, proto, callback );
+			m.reset( hero.sprite, ch.pos(), proto, callback );
 			m.hardlight(0.6f, 1f, 1f);
 			m.alpha(0.8f);
 
 			callbacks.add( callback );
 		}
 
-		hero.sprite.zap( enemy.pos );
+		hero.sprite.zap(enemy.pos());
 		hero.busy();
 	}
 

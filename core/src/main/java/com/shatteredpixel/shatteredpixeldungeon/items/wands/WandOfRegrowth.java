@@ -126,14 +126,14 @@ public class WandOfRegrowth extends Wand {
 			l.setLevel(buffedLvl());
 			if (cells.contains(target) && Actor.findChar(target) == null){
 				cells.remove((Integer)target);
-				l.pos = target;
+				l.pos(target);
 				GameScene.add(l);
 			} else {
 				for (int i = bolt.path.size()-1; i >= 0; i--){
 					int c = bolt.path.get(i);
 					if (cells.contains(c) && Actor.findChar(c) == null){
 						cells.remove((Integer)c);
-						l.pos = c;
+						l.pos(c);
 						GameScene.add(l);
 						break;
 					}
@@ -211,11 +211,11 @@ public class WandOfRegrowth extends Wand {
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//like pre-nerf vampiric enchantment, except with herbal healing buff, only in grass
 		boolean grass = false;
-		int terr = Dungeon.level.map[attacker.pos];
+		int terr = Dungeon.level.map[attacker.pos()];
 		if (terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS){
 			grass = true;
 		}
-		terr = Dungeon.level.map[defender.pos];
+		terr = Dungeon.level.map[defender.pos()];
 		if (terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS){
 			grass = true;
 		}
@@ -406,7 +406,7 @@ public class WandOfRegrowth extends Wand {
 		}
 
 		public boolean inRange(int pos){
-			return Dungeon.level.trueDistance(this.pos, pos) <= wandLvl;
+			return Dungeon.level.trueDistance(this.pos(), pos) <= wandLvl;
 		}
 
 		public float seedPreservation(){
@@ -442,7 +442,7 @@ public class WandOfRegrowth extends Wand {
 		public void destroy() {
 			super.destroy();
 			Dungeon.observe();
-			GameScene.updateFog(pos, viewDistance+1);
+			GameScene.updateFog(pos(), viewDistance+1);
 		}
 
 		@Override

@@ -83,7 +83,7 @@ public class MirrorWraith extends Mob {
                 w.HT += overkill;
             }
 
-            w.pos = pos;
+            w.pos(pos);
             w.state = w.HUNTING;
             GameScene.add(w, SPAWN_DELAY);
 

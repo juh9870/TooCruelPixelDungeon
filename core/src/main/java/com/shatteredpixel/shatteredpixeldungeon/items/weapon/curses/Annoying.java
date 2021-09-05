@@ -44,7 +44,7 @@ public class Annoying extends Weapon.Enchantment {
 		float procChance = 1/20f * procChanceMultiplier(attacker);
 		if (Random.Float() < procChance) {
 			for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
-				mob.beckon(attacker.pos);
+				mob.beckon(attacker.pos());
 			}
 			attacker.sprite.centerEmitter().start(Speck.factory(Speck.SCREAM), 0.3f, 3);
 			Sample.INSTANCE.play(Assets.Sounds.MIMIC);

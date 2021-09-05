@@ -70,7 +70,7 @@ public abstract class TargetedSpell extends Spell {
 					return;
 				}
 				
-				final Ballistica shot = new Ballistica( curUser.pos, target, curSpell.collisionProperties);
+				final Ballistica shot = new Ballistica(curUser.pos(), target, curSpell.collisionProperties);
 				int cell = shot.collisionPos;
 				
 				curUser.sprite.zap(cell);

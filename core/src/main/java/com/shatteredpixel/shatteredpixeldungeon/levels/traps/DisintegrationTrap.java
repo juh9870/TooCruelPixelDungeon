@@ -54,10 +54,10 @@ public class DisintegrationTrap extends Trap {
 		if (target == null){
 			float closestDist = Float.MAX_VALUE;
 			for (Char ch : Actor.chars()){
-				float curDist = Dungeon.level.trueDistance(pos, ch.pos);
+				float curDist = Dungeon.level.trueDistance(pos, ch.pos());
 				if (ch.invisible > 0) curDist += 1000;
-				Ballistica bolt = new Ballistica(pos, ch.pos, Ballistica.PROJECTILE);
-				if (bolt.collisionPos == ch.pos && curDist < closestDist){
+				Ballistica bolt = new Ballistica(pos, ch.pos(), Ballistica.PROJECTILE);
+				if (bolt.collisionPos == ch.pos() && curDist < closestDist){
 					target = ch;
 					closestDist = curDist;
 				}
@@ -68,7 +68,7 @@ public class DisintegrationTrap extends Trap {
 		if (heap != null) heap.explode();
 		
 		if (target != null) {
-			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[target.pos]) {
+			if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[target.pos()]) {
 				Sample.INSTANCE.play(Assets.Sounds.RAY);
 				ShatteredPixelDungeon.scene().add(new Beam.DeathRay(DungeonTilemap.tileCenterToWorld(pos), target.sprite.center()));
 			}

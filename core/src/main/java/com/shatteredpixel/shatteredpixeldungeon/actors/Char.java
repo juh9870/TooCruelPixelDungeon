@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
@@ -83,7 +84,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfElements;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
-import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFireblast;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFrost;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLightning;
@@ -114,7 +114,7 @@ import java.util.HashSet;
 
 public abstract class Char extends Actor {
 	
-	public int pos = 0;
+	private int position = 0;
 	
 	public CharSprite sprite;
 	
@@ -129,7 +129,16 @@ public abstract class Char extends Actor {
 	public boolean rooted		= false;
 	public boolean flying		= false;
 	public int invisible		= 0;
-	
+
+	public int pos() {
+		return position;
+	}
+
+	public void pos(int pos) {
+		Actor.move(this, position, pos);
+		this.position = pos;
+	}
+
 	//these are relative to the hero
 	public enum Alignment{
 		ENEMY,
@@ -159,13 +168,13 @@ public abstract class Char extends Actor {
 	}
 
 	protected void throwItems(){
-		Heap heap = Dungeon.level.heaps.get( pos );
+		Heap heap = Dungeon.level.heaps.get(pos());
 		if (heap != null && heap.type == Heap.Type.HEAP) {
 			int n;
 			do {
-				n = pos + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
+				n = pos() + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
 			} while (!Dungeon.level.passable[n] && !Dungeon.level.avoid[n]);
-			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop( pos );
+			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop(pos());
 		}
 	}
 
@@ -174,11 +183,11 @@ public abstract class Char extends Actor {
 	}
 
 	public boolean canInteract(Char c){
-		if (Dungeon.level.adjacent( pos, c.pos )){
+		if (Dungeon.level.adjacent(pos(), c.pos())){
 			return true;
 		} else if (c instanceof Hero
 				&& alignment == Alignment.ALLY
-				&& Dungeon.level.distance(pos, c.pos) <= 2*Dungeon.hero.pointsInTalent(Talent.ALLY_WARP)){
+				&& Dungeon.level.distance(pos(), c.pos()) <= 2*Dungeon.hero.pointsInTalent(Talent.ALLY_WARP)){
 			return true;
 		} else {
 			return false;
@@ -190,25 +199,25 @@ public abstract class Char extends Actor {
 
 		//don't allow char to swap onto hazard unless they're flying
 		//you can swap onto a hazard though, as you're not the one instigating the swap
-		if (!Dungeon.level.passable[pos] && !c.flying){
+		if (!Dungeon.level.passable[pos()] && !c.flying){
 			return true;
 		}
 
 		//can't swap into a space without room
-		if (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos]
-			|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos]){
+		if (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos()]
+			|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos()]){
 			return true;
 		}
 
-		int curPos = pos;
+		int curPos = pos();
 
 		//warp instantly with allies in this case
 		if (c == Dungeon.hero && Dungeon.hero.hasTalent(Talent.ALLY_WARP)){
-			PathFinder.buildDistanceMap(c.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-			if (PathFinder.distance[pos] == Integer.MAX_VALUE){
+			PathFinder.buildDistanceMap(c.pos(), BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
+			if (PathFinder.distance[pos()] == Integer.MAX_VALUE){
 				return true;
 			}
-			ScrollOfTeleportation.appear(this, c.pos);
+			ScrollOfTeleportation.appear(this, c.pos());
 			ScrollOfTeleportation.appear(c, curPos);
 			Dungeon.observe();
 			GameScene.updateFog();
@@ -220,10 +229,10 @@ public abstract class Char extends Actor {
 			return true;
 		}
 
-		moveSprite( pos, c.pos );
-		move( c.pos );
+		moveSprite(pos(), c.pos());
+		move(c.pos());
 		
-		c.sprite.move( c.pos, curPos );
+		c.sprite.move(c.pos(), curPos );
 		c.move( curPos );
 		
 		c.spend( 1 / c.speed() );
@@ -271,7 +280,7 @@ public abstract class Char extends Actor {
 		
 		super.storeInBundle( bundle );
 		
-		bundle.put( POS, pos );
+		bundle.put( POS, pos());
 		bundle.put( TAG_HP, HP );
 		bundle.put( TAG_HT, HT );
 		bundle.put( BUFFS, buffs );
@@ -282,7 +291,7 @@ public abstract class Char extends Actor {
 		
 		super.restoreFromBundle( bundle );
 		
-		pos = bundle.getInt( POS );
+		pos(bundle.getInt( POS ));
 		HP = bundle.getInt( TAG_HP );
 		HT = bundle.getInt( TAG_HT );
 		
@@ -301,7 +310,7 @@ public abstract class Char extends Actor {
 
 		if (enemy == null) return false;
 		
-		boolean visibleFight = Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[enemy.pos];
+		boolean visibleFight = Dungeon.level.heroFOV[pos()] || Dungeon.level.heroFOV[enemy.pos()];
 
 		if (enemy.isInvulnerable(getClass())) {
 
@@ -327,7 +336,7 @@ public abstract class Char extends Actor {
 				Hero h = (Hero)this;
 				if (h.belongings.weapon() instanceof MissileWeapon
 						&& h.subClass == HeroSubClass.SNIPER
-						&& !Dungeon.level.adjacent(h.pos, enemy.pos)){
+						&& !Dungeon.level.adjacent(h.pos(), enemy.pos())){
 					dr = 0;
 				}
 			}
@@ -404,8 +413,10 @@ public abstract class Char extends Actor {
 				enemy.sprite.showStatus(CharSprite.NEGATIVE, Messages.get(Preparation.class, "assassinated"));
 			}
 
-			enemy.sprite.bloodBurstA( sprite.center(), effectiveDamage );
-			enemy.sprite.flash();
+			if(visibleFight) {
+				enemy.sprite.bloodBurstA(sprite.center(), effectiveDamage);
+				enemy.sprite.flash();
+			}
 
 			if (!enemy.isAlive() && visibleFight) {
 				if (enemy == Dungeon.hero) {
@@ -662,7 +673,7 @@ public abstract class Char extends Actor {
 				if (alignment != Char.Alignment.ALLY) {
 					boolean fury = Challenges.REVENGE_FURY.enabled();
 					for (Mob mob : Dungeon.level.mobs) {
-						if (fieldOfView[mob.pos]) {
+						if (fieldOfView[mob.pos()]) {
 							if (mob instanceof NPC) continue;
 							if (mob == this) continue;
 							if (mob.alignment == Char.Alignment.ALLY) continue;
@@ -829,34 +840,34 @@ public abstract class Char extends Actor {
 	
 	public void move( int step ) {
 
-		if (Dungeon.level.adjacent( step, pos ) && buff( Vertigo.class ) != null) {
+		if (Dungeon.level.adjacent( step, pos()) && buff( Vertigo.class ) != null) {
 			sprite.interruptMotion();
-			int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
+			int newPos = pos() + PathFinder.NEIGHBOURS8[Random.Int( PathFinder.NEIGHBOURS8.length )];
 			if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos])
 					|| (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[newPos])
 					|| Actor.findChar( newPos ) != null)
 				return;
 			else {
-				sprite.move(pos, newPos);
+				sprite.move(pos(), newPos);
 				step = newPos;
 			}
 		}
 
-		if (Dungeon.level.map[pos] == Terrain.OPEN_DOOR) {
-			Door.leave( pos );
+		if (Dungeon.level.map[pos()] == Terrain.OPEN_DOOR) {
+			Door.leave(pos());
 		}
 
-		pos = step;
+		pos(step);
 		
 		if (this != Dungeon.hero) {
-			sprite.visible = Dungeon.level.heroFOV[pos];
+			sprite.visible = Dungeon.level.heroFOV[pos()];
 		}
 		
 		Dungeon.level.occupyCell(this );
 	}
 	
 	public int distance( Char other ) {
-		return Dungeon.level.distance( pos, other.pos );
+		return Dungeon.level.distance(pos(), other.pos());
 	}
 	
 	public void onMotionComplete() {

@@ -444,7 +444,7 @@ public class InterlevelScene extends PixelScene {
 			Dungeon.switchLevel( Dungeon.loadLevel( GamesInProgress.curSlot ), -1 );
 		} else {
 			Level level = Dungeon.loadLevel( GamesInProgress.curSlot );
-			Dungeon.switchLevel( level, Dungeon.hero.pos );
+			Dungeon.switchLevel( level, Dungeon.hero.pos());
 		}
 	}
 	
@@ -457,7 +457,7 @@ public class InterlevelScene extends PixelScene {
 			Dungeon.hero.resurrect();
 			Dungeon.depth--;
 			level = Dungeon.newLevel();
-			Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
+			Dungeon.hero.pos(level.randomRespawnCell(Dungeon.hero));
 			level.drop(new LostBackpack(), level.randomRespawnCell(null));
 		} else {
 			Dungeon.hero.resurrect();
@@ -465,16 +465,16 @@ public class InterlevelScene extends PixelScene {
 			BArray.setFalse(level.heroFOV);
 			BArray.setFalse(level.visited);
 			BArray.setFalse(level.mapped);
-			int invPos = Dungeon.hero.pos;
+			int invPos = Dungeon.hero.pos();
 			int tries = 0;
 			do {
-				Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
+				Dungeon.hero.pos(level.randomRespawnCell(Dungeon.hero));
 				tries++;
-			} while (level.trueDistance(invPos, Dungeon.hero.pos) <= 30 - (tries/10));
+			} while (level.trueDistance(invPos, Dungeon.hero.pos()) <= 30 - (tries/10));
 			level.drop(new LostBackpack(), invPos);
 		}
 
-		Dungeon.switchLevel( level, Dungeon.hero.pos );
+		Dungeon.switchLevel( level, Dungeon.hero.pos());
 	}
 
 	private void reset() throws IOException {

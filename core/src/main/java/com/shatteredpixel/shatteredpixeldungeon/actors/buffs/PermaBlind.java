@@ -16,7 +16,7 @@ public class PermaBlind extends Buff {
 	public boolean act() {
 		boolean weak = true;
 		for (int c : PathFinder.NEIGHBOURS8){
-			int cell = target.pos+c;
+			int cell = target.pos() +c;
 			if(Dungeon.level.solid[cell]||Dungeon.level.pit[cell]) {
 				weak = false;
 				turnsToConfuse = Math.min(turnsToConfuse+1,CONFUSE_TIMEOUT);

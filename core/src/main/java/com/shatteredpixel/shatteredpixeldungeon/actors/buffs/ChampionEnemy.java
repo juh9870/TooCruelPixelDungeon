@@ -277,8 +277,8 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         @Override
         public void detach() {
             for (int i : PathFinder.NEIGHBOURS9) {
-                if (!Dungeon.level.solid[target.pos + i]) {
-                    GameScene.add(Blob.seed(target.pos + i, 2, Fire.class));
+                if (!Dungeon.level.solid[target.pos() + i]) {
+                    GameScene.add(Blob.seed(target.pos() + i, 2, Fire.class));
                 }
             }
             super.detach();
@@ -303,7 +303,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
         @Override
         public boolean canAttackWithExtraReach(Char enemy) {
-            return target.fieldOfView[enemy.pos]; //if it can see it, it can attack it.
+            return target.fieldOfView[enemy.pos()]; //if it can see it, it can attack it.
         }
     }
 
@@ -342,17 +342,17 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
         @Override
         public boolean canAttackWithExtraReach(Char enemy) {
-            if (Dungeon.level.distance(target.pos, enemy.pos) > 2) {
+            if (Dungeon.level.distance(target.pos(), enemy.pos()) > 2) {
                 return false;
             } else {
                 boolean[] passable = BArray.not(Dungeon.level.solid, null);
                 for (Char ch : Actor.chars()) {
-                    if (ch != target) passable[ch.pos] = false;
+                    if (ch != target) passable[ch.pos()] = false;
                 }
 
-                PathFinder.buildDistanceMap(enemy.pos, passable, 2);
+                PathFinder.buildDistanceMap(enemy.pos(), passable, 2);
 
-                return PathFinder.distance[target.pos] <= 2;
+                return PathFinder.distance[target.pos()] <= 2;
             }
         }
     }
@@ -476,7 +476,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             for (Mob m : Dungeon.level.mobs) {
                 if (m instanceof NPC) continue;
                 if (m.alignment == Char.Alignment.ALLY) continue;
-                if (target.fieldOfView[m.pos]) {
+                if (target.fieldOfView[m.pos()]) {
                     mobs.add(m);
                 }
             }
@@ -498,7 +498,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 Mob mob = (Mob) target;
                 if (mob.state == mob.HUNTING) {
                     if (guardiansCooldown <= 0) {
-                        SummoningTrap.summonMobs(target.pos, guardsNumber(), 3);
+                        SummoningTrap.summonMobs(target.pos(), guardsNumber(), 3);
                     }
                     guardiansCooldown = Math.max(guardsSummonCooldown(), guardiansCooldown);
                 } else {
@@ -579,7 +579,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
                 mob.HP = mob.HT;
                 new Flare(8, 32).color(0xFFFF66, true).show(mob.sprite, 2f);
-                CellEmitter.get(mob.pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+                CellEmitter.get(mob.pos()).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
 
                 for (Class<? extends ChampionEnemy> buff : buffs) {
                     ChampionEnemy enemy = Buff.affect(mob, buff);
@@ -667,7 +667,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
         private void alert() {
             for (Mob mob : mobsInFov()) {
-                mob.beckon(target.pos);
+                mob.beckon(target.pos());
             }
             alarmed = true;
         }
@@ -702,7 +702,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         public boolean act() {
             if (target.fieldOfView != null) {
                 for (Char character : Actor.chars()) {
-                    if (target.fieldOfView[character.pos]) {
+                    if (target.fieldOfView[character.pos()]) {
                         if (character.alignment == Char.Alignment.ALLY) {
                             Buff.prolong(character, Sluggish.class, 1.1f);
                         } else {
@@ -843,18 +843,18 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
         @Override
         public void onDeathProc(Object src) {
-            seed(target.pos, 20);
+            seed(target.pos(), 20);
         }
 
         @Override
         public void onDamageProc(int damage) {
-            seed(target.pos, 8);
+            seed(target.pos(), 8);
         }
 
         @Override
         public boolean act() {
             for (Mob mob : mobsInFov()) {
-                seed(mob.pos, 4);
+                seed(mob.pos(), 4);
             }
             return super.act();
         }
@@ -892,13 +892,13 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         @Override
         public boolean act() {
             Mob targ = ((Mob) target);
-            if (!target.fieldOfView[Dungeon.hero.pos]) {
+            if (!target.fieldOfView[Dungeon.hero.pos()]) {
                 if (targ.state != targ.HUNTING)
                     targ.state = targ.HUNTING;
-                targ.beckon(Dungeon.hero.pos);
+                targ.beckon(Dungeon.hero.pos());
                 for (Mob mob : Dungeon.level.mobs) {
-                    if (Dungeon.level.distance(target.pos, mob.pos) <= 1) {
-                        mob.beckon(Dungeon.hero.pos);
+                    if (Dungeon.level.distance(target.pos(), mob.pos()) <= 1) {
+                        mob.beckon(Dungeon.hero.pos());
                         if (mob.state != mob.HUNTING) {
                             mob.state = mob.HUNTING;
                         }
@@ -946,13 +946,13 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                             Swarming.class
                     );
                     clone.HP = (target.HP - damage) / 2;
-                    clone.pos = Random.element(candidates);
+                    clone.pos(Random.element(candidates));
                     clone.state = clone.HUNTING;
 
                     Dungeon.level.occupyCell(clone);
 
                     GameScene.add(clone, SPLIT_DELAY);
-                    Actor.addDelayed(new Pushing(clone, target.pos, clone.pos), -1);
+                    Actor.addDelayed(new Pushing(clone, target.pos(), clone.pos()), -1);
 
                     target.HP -= clone.HP;
                 }

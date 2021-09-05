@@ -36,7 +36,7 @@ public class RoomSeal extends Buff implements Hero.Doom {
     @Override
     public boolean act() {
         if (!cells.isEmpty()) {
-            if (!cells.contains(target.pos)) {
+            if (!cells.contains(target.pos())) {
                 target.damage((Statistics.deepestFloor / 5 + 1) * 3, this);
                 if(target instanceof Hero){
                     ((Hero) target).interrupt();
@@ -54,7 +54,7 @@ public class RoomSeal extends Buff implements Hero.Doom {
 
     private void updateEmitter() {
         if (spriteEmitter == null) return;
-        if (!cells.isEmpty() && !cells.contains(target.pos)) {
+        if (!cells.isEmpty() && !cells.contains(target.pos())) {
             if (!spriteEmitter.on) {
                 spriteEmitter.pour(FlameParticle.FACTORY(0x2277EE), 0.06f);
             }
@@ -67,7 +67,7 @@ public class RoomSeal extends Buff implements Hero.Doom {
         if (Dungeon.bossLevel()) return;
         cooldown = LIMIT;
         if (cells.isEmpty()) {
-            PathFinder.buildDistanceMap(target.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null), ARENA_SIZE);
+            PathFinder.buildDistanceMap(target.pos(), BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null), ARENA_SIZE);
             for (int i = 0; i < Dungeon.level.length(); i++) {
                 if (PathFinder.distance[i] <= ARENA_SIZE) {
                     cells.add(i);
@@ -77,10 +77,10 @@ public class RoomSeal extends Buff implements Hero.Doom {
             showBorders();
         }
 
-        if (!cells.isEmpty() && !cells.contains(caller.pos) && Dungeon.level.distance(target.pos, caller.pos) > ARENA_SIZE) {
+        if (!cells.isEmpty() && !cells.contains(caller.pos()) && Dungeon.level.distance(target.pos(), caller.pos()) > ARENA_SIZE) {
             int length = cells.size();
             for (int i : PathFinder.NEIGHBOURS9) {
-                int c = caller.pos + i;
+                int c = caller.pos() + i;
                 cells.add(c);
             }
             if (length != cells.size()) {

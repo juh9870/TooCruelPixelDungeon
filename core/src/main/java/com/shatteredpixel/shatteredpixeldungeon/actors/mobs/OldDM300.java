@@ -84,7 +84,7 @@ public class OldDM300 extends Mob {
 	@Override
 	public boolean act() {
 		
-		GameScene.add( Blob.seed( pos, 30, ToxicGas.class ) );
+		GameScene.add( Blob.seed(pos(), 30, ToxicGas.class ) );
 		
 		return super.act();
 	}
@@ -144,7 +144,7 @@ public class OldDM300 extends Mob {
 		super.die( cause );
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth  ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonKey( Dungeon.depth  ), pos()).sprite.drop();
 		
 		//60% chance of 2 shards, 30% chance of 3, 10% chance for 4. Average of 2.5
 		int shards = Random.chances(new float[]{0, 0, 6, 3, 1});
@@ -152,8 +152,8 @@ public class OldDM300 extends Mob {
 			int ofs;
 			do {
 				ofs = PathFinder.NEIGHBOURS8[Random.Int(PathFinder.NEIGHBOURS8.length)];
-			} while (!Dungeon.level.passable[pos + ofs]);
-			Dungeon.level.drop( new MetalShard(), pos + ofs ).sprite.drop( pos );
+			} while (!Dungeon.level.passable[pos() + ofs]);
+			Dungeon.level.drop( new MetalShard(), pos() + ofs ).sprite.drop(pos());
 		}
 		
 		Badges.validateBossSlain();

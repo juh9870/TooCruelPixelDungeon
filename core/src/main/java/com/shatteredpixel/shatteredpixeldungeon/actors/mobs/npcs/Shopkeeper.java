@@ -49,11 +49,11 @@ public class Shopkeeper extends NPC {
 	@Override
 	protected boolean act() {
 
-		if (Dungeon.level.heroFOV[pos]){
+		if (Dungeon.level.heroFOV[pos()]){
 			Notes.add(Notes.Landmark.SHOP);
 		}
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo(pos(), Dungeon.hero.pos());
 		spend( TICK );
 		return super.act();
 	}
@@ -74,7 +74,7 @@ public class Shopkeeper extends NPC {
 		Notes.remove(Notes.Landmark.SHOP);
 		
 		sprite.killAndErase();
-		CellEmitter.get( pos ).burst( ElmoParticle.FACTORY, 6 );
+		CellEmitter.get(pos()).burst( ElmoParticle.FACTORY, 6 );
 	}
 	
 	@Override

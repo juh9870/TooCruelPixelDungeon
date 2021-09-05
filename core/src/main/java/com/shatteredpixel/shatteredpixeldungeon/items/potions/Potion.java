@@ -319,7 +319,7 @@ public class Potion extends Item {
 		
 		Sample.INSTANCE.play( Assets.Sounds.DRINK );
 		
-		hero.sprite.operate( hero.pos );
+		hero.sprite.operate(hero.pos());
 	}
 	
 	@Override
@@ -337,7 +337,7 @@ public class Potion extends Item {
 	}
 	
 	public void apply( Hero hero ) {
-		shatter( hero.pos );
+		shatter(hero.pos());
 	}
 	
 	public void shatter( int cell ) {

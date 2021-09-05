@@ -118,7 +118,7 @@ public class WandOfLivingEarth extends DamageWand {
 				for (int n : PathFinder.NEIGHBOURS9) {
 					int c = bolt.collisionPos + n;
 					if (passable[c] && Actor.findChar( c ) == null
-						&& (closest == -1 || (Dungeon.level.trueDistance(c, curUser.pos) < (Dungeon.level.trueDistance(closest, curUser.pos))))) {
+						&& (closest == -1 || (Dungeon.level.trueDistance(c, curUser.pos()) < (Dungeon.level.trueDistance(closest, curUser.pos()))))) {
 						closest = c;
 					}
 				}
@@ -127,7 +127,7 @@ public class WandOfLivingEarth extends DamageWand {
 					curUser.sprite.centerEmitter().burst(MagicMissile.EarthParticle.ATTRACT, 8 + buffedLvl()/2);
 					return; //do not spawn guardian or detach buff
 				} else {
-					guardian.pos = closest;
+					guardian.pos(closest);
 					GameScene.add(guardian, 1);
 					Dungeon.level.occupyCell(guardian);
 				}
@@ -137,7 +137,7 @@ public class WandOfLivingEarth extends DamageWand {
 				}
 
 			} else {
-				guardian.pos = bolt.collisionPos;
+				guardian.pos(bolt.collisionPos);
 				GameScene.add(guardian, 1);
 				Dungeon.level.occupyCell(guardian);
 			}

@@ -55,7 +55,7 @@ public class Chasm implements Hero.Doom {
 	private static int heroPos;
 	
 	public static void heroJump( final Hero hero ) {
-		heroPos = hero.pos;
+		heroPos = hero.pos();
 		Game.runOnRenderThread(new Callback() {
 			@Override
 			public void call() {
@@ -68,7 +68,7 @@ public class Chasm implements Hero.Doom {
 							@Override
 							protected void onSelect( int index ) {
 								if (index == 0) {
-									if (Dungeon.hero.pos == heroPos) {
+									if (Dungeon.hero.pos() == heroPos) {
 										jumpConfirmed = true;
 										hero.resume();
 									}

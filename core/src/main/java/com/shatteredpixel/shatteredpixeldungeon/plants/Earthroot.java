@@ -82,13 +82,13 @@ public class Earthroot extends Plant {
 		
 		@Override
 		public boolean attachTo( Char target ) {
-			pos = target.pos;
+			pos = target.pos();
 			return super.attachTo( target );
 		}
 		
 		@Override
 		public boolean act() {
-			if (target.pos != pos) {
+			if (target.pos() != pos) {
 				detach();
 			}
 			spend( STEP );
@@ -114,7 +114,7 @@ public class Earthroot extends Plant {
 			if (level < value) {
 				level = value;
 			}
-			pos = target.pos;
+			pos = target.pos();
 		}
 		
 		@Override

@@ -87,7 +87,7 @@ public class Statue extends Mob {
 	
 	@Override
 	protected boolean act() {
-		if (Dungeon.level.heroFOV[pos]) {
+		if (Dungeon.level.heroFOV[pos()]) {
 			Notes.add( Notes.Landmark.STATUE );
 		}
 		return super.act();
@@ -110,7 +110,7 @@ public class Statue extends Mob {
 
 	@Override
 	protected boolean canAttack(Char enemy) {
-		return super.canAttack(enemy) || weapon.canReach(this, enemy.pos);
+		return super.canAttack(enemy) || weapon.canReach(this, enemy.pos());
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class Statue extends Mob {
 			state = HUNTING;
 
 			for (int i = 0; i < PathFinder.NEIGHBOURS9.length; i++) {
-				Char c = Actor.findChar(i+pos);
+				Char c = Actor.findChar(i+ pos());
 				if(c instanceof Statue){
 					((Statue) c).state = ((Statue) c).HUNTING;
 				}
@@ -167,7 +167,7 @@ public class Statue extends Mob {
 				weapon.cursed = true;
 				weapon.enchant(Enchantment.randomCurse());
 			}
-			Dungeon.level.drop(weapon, pos).sprite.drop();
+			Dungeon.level.drop(weapon, pos()).sprite.drop();
 		}
 		super.die( cause );
 	}

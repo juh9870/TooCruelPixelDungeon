@@ -128,7 +128,7 @@ public class Mimic extends Mob {
 		if (alignment == Alignment.NEUTRAL && state != PASSIVE){
 			alignment = Alignment.ENEMY;
 			GLog.w(Messages.get(this, "reveal") );
-			CellEmitter.get(pos).burst(Speck.factory(Speck.STAR), 10);
+			CellEmitter.get(pos()).burst(Speck.factory(Speck.STAR), 10);
 			Sample.INSTANCE.play(Assets.Sounds.MIMIC);
 		}
 		return super.act();
@@ -149,7 +149,7 @@ public class Mimic extends Mob {
 		stopHiding();
 
 		Dungeon.hero.busy();
-		Dungeon.hero.sprite.operate(pos);
+		Dungeon.hero.sprite.operate(pos());
 		if (Dungeon.hero.invisible <= 0
 				&& Dungeon.hero.buff(Swiftthistle.TimeBubble.class) == null
 				&& Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class) == null){
@@ -183,12 +183,12 @@ public class Mimic extends Mob {
 	public void stopHiding(){
 		state = HUNTING;
 		if (sprite != null) sprite.idle();
-		if (Actor.chars().contains(this) && Dungeon.level.heroFOV[pos]) {
+		if (Actor.chars().contains(this) && Dungeon.level.heroFOV[pos()]) {
 			enemy = Dungeon.hero;
-			target = Dungeon.hero.pos;
+			target = Dungeon.hero.pos();
 			enemySeen = true;
 			GLog.w(Messages.get(this, "reveal") );
-			CellEmitter.get(pos).burst(Speck.factory(Speck.STAR), 10);
+			CellEmitter.get(pos()).burst(Speck.factory(Speck.STAR), 10);
 			Sample.INSTANCE.play(Assets.Sounds.MIMIC);
 		}
 	}
@@ -238,7 +238,7 @@ public class Mimic extends Mob {
 		
 		if (items != null) {
 			for (Item item : items) {
-				Dungeon.level.drop( item, pos ).sprite.drop();
+				Dungeon.level.drop( item, pos()).sprite.drop();
 			}
 			items = null;
 		}
@@ -281,7 +281,7 @@ public class Mimic extends Mob {
 
 		m.items = new ArrayList<>( items );
 		m.setLevel( Dungeon.depth );
-		m.pos = pos;
+		m.pos(pos);
 
 		//generate an extra reward for killing the mimic
 		m.generatePrize();

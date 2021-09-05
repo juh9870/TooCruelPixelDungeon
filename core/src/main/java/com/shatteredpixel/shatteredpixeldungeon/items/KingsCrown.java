@@ -120,7 +120,7 @@ public class KingsCrown extends Item {
 		hero.armorAbility = ability;
 		Talent.initArmorTalents(hero);
 
-		hero.sprite.operate( hero.pos );
+		hero.sprite.operate(hero.pos());
 		Sample.INSTANCE.play( Assets.Sounds.MASTERY );
 	}
 

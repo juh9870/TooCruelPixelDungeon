@@ -67,7 +67,7 @@ public class ScrollOfTeleportation extends Scroll {
 	
 	public static boolean teleportToLocation(Char ch, int pos){
 		PathFinder.buildDistanceMap(pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-		if (PathFinder.distance[ch.pos] == Integer.MAX_VALUE
+		if (PathFinder.distance[ch.pos()] == Integer.MAX_VALUE
 				|| (!Dungeon.level.passable[pos] && !Dungeon.level.avoid[pos])
 				|| Actor.findChar(pos) != null){
 			if (ch == Dungeon.hero){
@@ -212,12 +212,12 @@ public class ScrollOfTeleportation extends Scroll {
 
 		ch.sprite.interruptMotion();
 
-		if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[ch.pos]){
+		if (Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[ch.pos()]){
 			Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
 		}
 
 		ch.move( pos );
-		if (ch.pos == pos) ch.sprite.place( pos );
+		if (ch.pos() == pos) ch.sprite.place( pos );
 
 		if (ch.invisible == 0) {
 			ch.sprite.alpha( 0 );

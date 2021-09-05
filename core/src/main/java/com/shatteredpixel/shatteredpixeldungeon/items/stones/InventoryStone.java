@@ -56,7 +56,7 @@ public abstract class InventoryStone extends Runestone {
 		super.execute(hero, action);
 		if (action.equals(AC_USE)){
 			curItem = detach( hero.belongings.backpack );
-			activate(curUser.pos);
+			activate(curUser.pos());
 		}
 	}
 
@@ -70,7 +70,7 @@ public abstract class InventoryStone extends Runestone {
 						curUser.spendAndNext( 1f );
 						break;
 					case 1:
-						activate(curUser.pos);
+						activate(curUser.pos());
 						break;
 				}
 			}
@@ -85,7 +85,7 @@ public abstract class InventoryStone extends Runestone {
 				Game.runOnRenderThread(() -> {
 					curUser = hero;
 					curItem = detach( hero.belongings.backpack );
-					activate(curUser.pos);
+					activate(curUser.pos());
 				});
 			}
 			return true;
@@ -101,7 +101,7 @@ public abstract class InventoryStone extends Runestone {
 	protected void useAnimation() {
 		curUser.spend( 1f );
 		curUser.busy();
-		curUser.sprite.operate(curUser.pos);
+		curUser.sprite.operate(curUser.pos());
 		
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		Invisibility.dispel();
