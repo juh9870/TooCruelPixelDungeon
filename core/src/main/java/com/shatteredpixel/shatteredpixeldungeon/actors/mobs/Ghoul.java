@@ -120,12 +120,12 @@ public class Ghoul extends Mob {
 				if (state != SLEEPING) {
 					child.state = child.WANDERING;
 				}
-				
+
 				child.pos(Random.element( candidates ));
-				
+
+				GameScene.add( child );
 				Dungeon.level.occupyCell(child);
 				
-				GameScene.add( child );
 				if (sprite.visible) {
 					Actor.addDelayed( new Pushing( child, pos(), child.pos()), -1 );
 				}

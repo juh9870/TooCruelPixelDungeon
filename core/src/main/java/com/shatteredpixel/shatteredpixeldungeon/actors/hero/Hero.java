@@ -238,21 +238,21 @@ public class Hero extends Char {
 	}
 	
 	public int STR() {
-		int STR = this.STR;
-		
-		STR += RingOfMight.strengthBonus(this);
+		int strBonus = 0;
+
+		strBonus += RingOfMight.strengthBonus( this );
 		
 		AdrenalineSurge buff = buff(AdrenalineSurge.class);
-		if (buff != null) {
-			STR += buff.boost();
+		if (buff != null){
+			strBonus += buff.boost();
 		}
 
 
 		if (hasTalent(Talent.STRONGMAN)){
-			STR = (int)Math.floor(STR * (1f + 0.03f + 0.05f*pointsInTalent(Talent.STRONGMAN)));
+			strBonus += (int)Math.floor(STR * (0.03f + 0.05f*pointsInTalent(Talent.STRONGMAN)));
 		}
 
-		return STR;
+		return STR + strBonus;
 	}
 
 	private static final String CLASS       = "class";
@@ -1367,7 +1367,7 @@ public class Hero extends Char {
 					} else if (distance(target) > distance(m)) {
 						target = m;
 					}
-					if (m instanceof Snake
+					if (m instanceof Snake && Dungeon.level.distance(m.pos(), pos()) <= 4
 							&& !Document.ADVENTURERS_GUIDE.isPageRead(Document.GUIDE_EXAMINING)){
 						GLog.p(Messages.get(Guidebook.class, "hint"));
 						GameScene.flashForDocument(Document.GUIDE_EXAMINING);
@@ -1751,11 +1751,9 @@ public class Hero extends Char {
 		Ankh ankh = null;
 		
 		//look for ankhs in player inventory, prioritize ones which are blessed.
-		for (Item item : belongings) {
-			if (item instanceof Ankh) {
-				if (ankh == null || ((Ankh) item).isBlessed()) {
-					ankh = (Ankh) item;
-				}
+		for (Ankh i : belongings.getAllItems(Ankh.class)){
+			if (ankh == null || i.isBlessed()) {
+				ankh = i;
 			}
 		}
 

@@ -92,11 +92,11 @@ public class Swarm extends Mob implements ISwarm {
 				clone.HP = (HP - damage) / 2;
 				clone.pos(Random.element(candidates));
 				clone.state = clone.HUNTING;
-				
+
+				GameScene.add( clone, SPLIT_DELAY );
+				Actor.addDelayed( new Pushing( clone, pos(), clone.pos() ), -1 );
+
 				Dungeon.level.occupyCell(clone);
-				
-				GameScene.add(clone, SPLIT_DELAY);
-				Actor.addDelayed(new Pushing(clone, pos(), clone.pos()), -1);
 				
 				HP -= clone.HP;
 			}

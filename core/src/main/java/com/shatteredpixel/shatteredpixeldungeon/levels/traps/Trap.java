@@ -24,6 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
@@ -145,8 +147,10 @@ public abstract class Trap implements Bundlable {
 			if (Dungeon.level.heroFOV[pos]) {
 				Sample.INSTANCE.play(Assets.Sounds.TRAP);
 			}
-			if ((disarmedByActivation || Challenges.CHAOTIC_CONSTRUCTION.enabled()) && !Challenges.REPEATER.enabled()) disarm();
-			reveal();
+			if ((disarmedByActivation || Challenges.CHAOTIC_CONSTRUCTION.enabled()) && !Challenges.REPEATER.enabled()){
+				disarm();
+				Dungeon.level.discover(pos);
+			}
 			if(!Challenges.CHAOTIC_CONSTRUCTION.enabled()){
 				activate();
 				return;
