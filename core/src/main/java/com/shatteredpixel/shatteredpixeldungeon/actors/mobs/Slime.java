@@ -58,7 +58,7 @@ public class Slime extends Mob {
 	@Override
 	public void damage(int dmg, Object src) {
 		if(Challenges.GRINDING_3.enabled()){
-			if(dmg >= HT/3) {
+			if(dmg >= HT / 3) {
 				dmg = HT / 5 + (int) (Math.sqrt(2f * HT / 5 * (dmg - HT / 5f) + 1) - 1) / 2;
 			}
 		} else if (dmg >= 5){
