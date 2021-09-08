@@ -189,12 +189,7 @@ public enum Challenges implements Hero.Doom {
             } else return item instanceof HornOfPlenty;
         }
     },
-    INSOMNIA(44, 21.5f, 2, 2f, SWARM_INTELLIGENCE) {
-        @Override
-        protected boolean _isItemBlocked(Item item) {
-            return item instanceof ScrollOfLullaby;
-        }
-    },
+    INSOMNIA(44, 21.5f, 2, 2f, SWARM_INTELLIGENCE),
     INTOXICATION(22, 2, 2.5f),
     PLAGUE(23, 2, 3f, INTOXICATION),
     BLINDNESS(25, 2, 3f, DARKNESS),
@@ -266,7 +261,12 @@ public enum Challenges implements Hero.Doom {
     },
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
-    CURSE_ENCHANT(43, 2, 2f, CURSED),
+    CURSE_ENCHANT(43, 2, 2f, CURSED){
+        @Override
+        protected boolean _isItemBlocked(Item item) {
+            return item instanceof RingOfForce;
+        }
+    },
     ECTOPLASM(46, 2, 2f, MIRROR_OF_RAGE),
     THOUGHTLESS(48, 2, 2.5f),
     EXHIBITIONISM(49, 2, 2f, RESURRECTION),

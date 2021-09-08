@@ -3,16 +3,14 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
-
-import java.util.HashSet;
 
 public class ScorchedEarth extends Buff {
     private static final float WATER_TIME = 20;
@@ -32,6 +30,7 @@ public class ScorchedEarth extends Buff {
                 turnsLeft += maxTime();
                 for (int i : PathFinder.NEIGHBOURS4) {
                     int c = target.pos() + i;
+                    if(Dungeon.level.flamable[c] || Dungeon.level.passable[c] || Dungeon.level.avoid[c])
                     if (Dungeon.level.water[c]) {
                         Dungeon.level.removeWater(c);
                     }
@@ -88,10 +87,12 @@ public class ScorchedEarth extends Buff {
         }
 
         @Override
-        public HashSet<Class> immunities() {
-            HashSet<Class> immunities = super.immunities();
-            immunities.add(Burning.class);
-            return immunities;
+        public boolean act() {
+            Burning burn = target.buff(Burning.class);
+            if (burn != null) {
+                burn.detach();
+            }
+            return super.act();
         }
     }
 }
