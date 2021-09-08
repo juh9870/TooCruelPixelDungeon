@@ -88,10 +88,7 @@ public class ScorchedEarth extends Buff {
 
         @Override
         public boolean act() {
-            Burning burn = target.buff(Burning.class);
-            if (burn != null) {
-                burn.detach();
-            }
+            Buff.detach(target, Burning.class);
             return super.act();
         }
     }
