@@ -473,12 +473,10 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 target.fieldOfView = new boolean[Dungeon.level.length()];
                 Dungeon.level.updateFieldOfView(target, target.fieldOfView);
             }
-            for (Mob m : Dungeon.level.mobs) {
-                if (m instanceof NPC) continue;
-                if (m.alignment == Char.Alignment.ALLY) continue;
-                if (target.fieldOfView[m.pos()]) {
-                    mobs.add(m);
-                }
+            for (Mob m : ((Mob)target).fastGetMobsInFov()) {
+                if (m instanceof NPC ||
+                        m.alignment == Char.Alignment.ALLY) continue;
+                mobs.add(m);
             }
             return mobs;
         }

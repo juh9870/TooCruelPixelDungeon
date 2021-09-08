@@ -290,11 +290,14 @@ public abstract class RegularLevel extends Level {
 
 	private boolean tryCreateMobInRoom(Mob mob, Room roomToSpawn){
 		int tries = 30;
+		int pos = 0;
 		do {
-			mob.pos(pointToCell(roomToSpawn.random()));
+			pos = pointToCell(roomToSpawn.random());
 			tries--;
-		} while (tries >= 0 && (!passable[mob.pos()] || solid[mob.pos()] || mob.pos() == exit
-				|| (!openSpace[mob.pos()] && mob.properties().contains(Char.Property.LARGE)) || findMob(mob.pos()) != null));
+		} while (tries >= 0 && (!passable[pos] || solid[pos] || pos == exit
+				|| (!openSpace[pos] && mob.properties().contains(Char.Property.LARGE)) || findMob(pos) != null));
+
+		mob.pos(pos);
 
 		if (tries < 0) {
 			return false;

@@ -6,6 +6,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.watabou.utils.PathFinder;
 
+import java.util.ArrayList;
+
 class PreciseBallistica extends Ballistica {
 
     private int stepA;
@@ -41,6 +43,7 @@ class PreciseBallistica extends Ballistica {
                 cast(from, to, stopTarget, stopChars, stopTerrain, ignoreSoftSolid);
             } else if (sourcePos != from) {
                 path.add(0, from);
+                dist++;
                 sourcePos = from;
             }
         }
@@ -83,7 +86,7 @@ class PreciseBallistica extends Ballistica {
         int cell = calc(from, to, stopTarget, stopChars, stopTerrain, ignoreSoftSolid, dA / 2);
 
         if (!hit) {
-
+            ArrayList<Integer> oldPath = new ArrayList<>(path);
             for (int err = 0; err <= dA; err++) {
                 int calc = calc(from, to, stopTarget, stopChars, stopTerrain, ignoreSoftSolid, err);
                 if (hit) {
@@ -91,7 +94,11 @@ class PreciseBallistica extends Ballistica {
                     break;
                 }
             }
+            if(!hit){
+                path = oldPath;
+            }
         }
+
         collisionPos = cell;
     }
 

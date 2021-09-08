@@ -199,7 +199,7 @@ public abstract class Mob extends Char {
         return enemy != null ? enemy.pos() : -1;
     }
 
-    private HashSet<Mob> fastGetMobsInFov() {
+    public HashSet<Mob> fastGetMobsInFov() {
         HashSet<Mob> mobs = new HashSet<>();
         if (Dungeon.level.mobs.size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1)){
             for (Mob mob : Dungeon.level.mobs) {
@@ -810,6 +810,7 @@ public abstract class Mob extends Char {
 
             ScrollOfTeleportation.teleportChar(this);
             CellEmitter.get(oldPos).burst(SmokeParticle.FACTORY, 5);
+            if (fieldOfView == null) fieldOfView = new boolean[Dungeon.level.length()];
             Dungeon.level.updateFieldOfView(this, fieldOfView);
 
             state = SLEEPING;
