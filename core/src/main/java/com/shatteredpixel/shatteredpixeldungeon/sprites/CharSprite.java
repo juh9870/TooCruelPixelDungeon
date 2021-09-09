@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
+import com.badlogic.gdx.utils.IntMap;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -57,9 +58,9 @@ import com.watabou.noosa.tweeners.Tweener;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+import com.watabou.utils.SparseArray;
 
 import java.nio.Buffer;
-import java.util.HashMap;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
 
@@ -114,8 +115,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected TorchHalo light;
 	protected ShieldHalo shield;
 	protected AlphaTweener invisible;
-	protected HashMap<Class,Emitter> emitters;
-	protected HashMap<Class,Flare> auras;
+	protected SparseArray<Emitter> emitters;
+	protected SparseArray<Flare> auras;
 
 	protected EmoIcon emo;
 	protected CharHealthIndicator health;
@@ -135,8 +136,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public CharSprite() {
 		super();
 		listener = this;
-		auras = new HashMap<>();
-		emitters = new HashMap<>();
+		auras = new SparseArray<>();
+		emitters = new SparseArray<>();
 	}
 
 	public boolean fast(){
@@ -217,6 +218,12 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	
 	public void move( int from, int to ) {
 		turnTo( from , to );
+
+		if(fast() || parent == null){
+			place( to );
+			ch.onMotionComplete();
+			return;
+		}
 
 		play( run );
 		
@@ -498,7 +505,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		aura(cl, color, 1, true);
 	}
 	public void aura( Class cl, int color, float sizeMod, boolean light ){
-		Flare aura = auras.get(cl);
+		Flare aura = auras.get(cl.hashCode());
 		if (aura != null){
 			aura.killAndErase();
 		}
@@ -512,33 +519,33 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (parent != null) {
 			aura.show(this, 0);
 		}
-		auras.put(cl,aura);
+		auras.put(cl.hashCode(),aura);
 	}
 
 	public void clearAura(Class cl){
-		Flare aura = auras.get(cl);
+		Flare aura = auras.get(cl.hashCode());
 		if (aura != null){
 			aura.killAndErase();
-			auras.remove(cl);
+			auras.remove(cl.hashCode());
 		}
 	}
 
 	public Emitter emit(Class cl){
-		Emitter emitter = emitters.get(cl);
+		Emitter emitter = emitters.get(cl.hashCode());
 		if(emitter!=null) {
 			emitter.killAndErase();
 		}
 		emitter = emitter();
-		emitters.put(cl, emitter);
+		emitters.put(cl.hashCode(), emitter);
 		return emitter;
 	}
 
 	public void killEmitter(Class cl){
-		Emitter emitter = emitters.get(cl);
+		Emitter emitter = emitters.get(cl.hashCode());
 		if(emitter!=null) {
 			emitter.on=false;
 			emitter.autoKill=true;
-			emitters.remove(cl);
+			emitters.remove(cl.hashCode());
 		}
 	}
 	
@@ -548,8 +555,6 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			listener.onComplete(curAnim);
 			finished = true;
 		}
-
-		if(fast() && !visible) return;
 		
 		super.update();
 		
@@ -575,18 +580,18 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (exterminating != null) {
 			exterminating.visible = visible;
 		}
-		for (Flare aura : auras.values()) {
-			if (aura != null){
-				if (aura.parent == null){
-					aura.show(this, 0);
+		for (IntMap.Entry<Flare> aura : auras) {
+			if (aura.value != null) {
+				if (aura.value.parent == null) {
+					aura.value.show(this, 0);
 				}
-				aura.visible = visible;
-				aura.point(center());
+				aura.value.visible = visible;
+				aura.value.point(center());
 			}
 		}
-		for (Emitter emitter : emitters.values()) {
-			if (emitter != null){
-				emitter.visible = visible;
+		for (IntMap.Entry<Emitter> emitter : emitters) {
+			if(emitter.value!=null){
+				emitter.value.visible = visible;
 			}
 		}
 		if (sleeping) {
