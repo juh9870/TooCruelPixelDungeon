@@ -341,9 +341,12 @@ public abstract class Actor implements Bundlable {
 		}
 	}
 
-	public static synchronized void move( Char ch, int oldPos, int newPos ){
+	public static synchronized void move(Char ch, int oldPos, int newPos) {
 		charsPositioned.remove(oldPos);
-		if (charsPositioned.containsKey(newPos)) throw new Error("Position is already occupied");
+		Char oldChar = charsPositioned.get(newPos);
+		if (oldChar != null && oldChar.isAlive()) {
+			throw new Error("Position is already occupied");
+		}
 		charsPositioned.put(newPos, ch);
 	}
 	
