@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -46,11 +47,13 @@ public class ScrollOfPolymorph extends ExoticScroll {
 		
 		new Flare( 5, 32 ).color( 0xFFFFFF, true ).show( curUser.sprite, 2f );
 		Sample.INSTANCE.play( Assets.Sounds.READ );
+		boolean injuredOnly = Challenges.GRINDING_3.enabled();
 		
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
 			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos()]) {
 				if (!mob.properties().contains(Char.Property.BOSS)
 						&& !mob.properties().contains(Char.Property.MINIBOSS)){
+					if (injuredOnly && mob.HP > mob.HT / 2) continue;
 					Sheep sheep = new Sheep();
 					sheep.lifespan = 10;
 					sheep.pos(mob.pos());

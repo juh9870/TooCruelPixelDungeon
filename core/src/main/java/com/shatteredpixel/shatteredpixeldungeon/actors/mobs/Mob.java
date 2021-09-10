@@ -431,7 +431,6 @@ public abstract class Mob extends Char {
                     enemies.addAll(mobsInFov);
                     enemies.remove(this);
                 }
-
             }
 
             //do not target anything that's charming us
