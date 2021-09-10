@@ -87,6 +87,7 @@ public class GreatCrab extends Crab {
 	public void die( Object cause ) {
 		super.die( cause );
 
-		Ghost.Quest.process();
+		if (!isAlive())
+			Ghost.Quest.process();
 	}
 }

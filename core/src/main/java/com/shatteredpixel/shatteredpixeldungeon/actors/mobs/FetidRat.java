@@ -78,8 +78,9 @@ public class FetidRat extends Rat {
 	@Override
 	public void die( Object cause ) {
 		super.die( cause );
-
-		Ghost.Quest.process();
+		if (!isAlive()) {
+			Ghost.Quest.process();
+		}
 	}
 	
 	{

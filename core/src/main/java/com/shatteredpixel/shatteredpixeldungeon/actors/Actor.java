@@ -342,9 +342,10 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static synchronized void move(Char ch, int oldPos, int newPos) {
+		if (!ch.isAlive() || !chars.contains(ch)) return;
 		charsPositioned.remove(oldPos);
 		Char oldChar = charsPositioned.get(newPos);
-		if (oldChar != null && oldChar.isAlive()) {
+		if (oldChar != null && oldChar.isAlive() && chars.contains(oldChar)) {
 			throw new Error("Position is already occupied");
 		}
 		charsPositioned.put(newPos, ch);
@@ -354,7 +355,8 @@ public abstract class Actor implements Bundlable {
 		if (actor != null) {
 			all.remove( actor );
 			if (actor instanceof Char) {
-				charsPositioned.remove(((Char) actor).pos());
+				if (charsPositioned.get(((Char) actor).pos()) == actor)
+					charsPositioned.remove(((Char) actor).pos());
 				chars.remove(actor);
 			}
 			actor.onRemove();
@@ -364,8 +366,8 @@ public abstract class Actor implements Bundlable {
 			}
 		}
 	}
-	
-	public static synchronized Char findChar( int pos ) {
+
+	public static synchronized Char findChar(int pos) {
 		return charsPositioned.get(pos);
 	}
 

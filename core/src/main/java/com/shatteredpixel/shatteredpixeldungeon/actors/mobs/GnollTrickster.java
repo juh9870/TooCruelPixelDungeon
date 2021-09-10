@@ -121,8 +121,8 @@ public class GnollTrickster extends Gnoll {
 	@Override
 	public void die( Object cause ) {
 		super.die( cause );
-
-		Ghost.Quest.process();
+		if (!isAlive())
+			Ghost.Quest.process();
 	}
 
 	private static final String COMBO = "combo";

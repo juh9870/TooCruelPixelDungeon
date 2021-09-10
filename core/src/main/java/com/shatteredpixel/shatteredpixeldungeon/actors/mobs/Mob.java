@@ -807,6 +807,7 @@ public abstract class Mob extends Char {
     }
 
     public boolean isTargeting( Char ch){
+        if (ch == null) return enemy == null || !enemy.isAlive() || !Actor.chars().contains(enemy);
         return enemy == ch;
     }
 
@@ -896,8 +897,9 @@ public abstract class Mob extends Char {
 
         if (cause != Chasm.class &&
                 Challenges.TUMBLER.enabled() &&
-                (Dungeon.depth % 5) != 0 &&
-                buff(Tumblered.class)==null
+                !Dungeon.bossLevel() &&
+                buff(Tumblered.class)==null &&
+                !properties.contains(Property.IMMOVABLE)
         ) {
             PotionOfHealing.cure(this);
             Buff.detachMany(this, Paralysis.class, Corruption.class, Doom.class);

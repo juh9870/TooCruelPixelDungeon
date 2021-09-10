@@ -87,7 +87,7 @@ public class Statue extends Mob {
 	
 	@Override
 	protected boolean act() {
-		if (Dungeon.level.heroFOV[pos()]) {
+		if (Dungeon.level.heroFOV[pos()] && !(this instanceof HolderStatue)) {
 			Notes.add( Notes.Landmark.STATUE );
 		}
 		return super.act();
@@ -161,7 +161,8 @@ public class Statue extends Mob {
 	
 	@Override
 	public void die( Object cause ) {
-		if (buff(NoReward.class) == null) {
+		super.die( cause );
+		if (buff(NoReward.class) == null && !isAlive()) {
 			weapon.identify();
 			if (Challenges.CURSED.enabled()) {
 				weapon.cursed = true;
@@ -169,7 +170,6 @@ public class Statue extends Mob {
 			}
 			Dungeon.level.drop(weapon, pos()).sprite.drop();
 		}
-		super.die( cause );
 	}
 	
 	@Override

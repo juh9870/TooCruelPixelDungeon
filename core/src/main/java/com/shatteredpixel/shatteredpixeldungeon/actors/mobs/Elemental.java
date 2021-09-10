@@ -221,7 +221,8 @@ public abstract class Elemental extends Mob {
 		@Override
 		public void die(Object cause) {
 			super.die(cause);
-			Dungeon.level.drop( new Embers(), pos()).sprite.drop();
+			if (!isAlive())
+				Dungeon.level.drop( new Embers(), pos()).sprite.drop();
 		}
 
 		@Override

@@ -133,11 +133,13 @@ public class DemonSpawner extends Mob {
 
 	@Override
 	public void die(Object cause) {
-		if (spawnRecorded){
-			Statistics.spawnersAlive--;
-		}
-		GLog.h(Messages.get(this, "on_death"));
 		super.die(cause);
+		if (!isAlive()) {
+			if (spawnRecorded){
+				Statistics.spawnersAlive--;
+			}
+			GLog.h(Messages.get(this, "on_death"));
+		}
 	}
 
 	public static final String SPAWN_COOLDOWN = "spawn_cooldown";
