@@ -54,6 +54,8 @@ import java.util.HashSet;
 
 public abstract class ChampionEnemy extends Buff implements DamageAmplificationBuff, AttackAmplificationBuff {
 
+    public static final int KILLS_TO_ELITE = 3;
+
     protected int color;
 
     {
@@ -86,6 +88,14 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             sb.append(description(cl));
         }
         return sb.toString();
+    }
+
+    public static boolean bannedFromKoth(Class<? extends Buff> cl) {
+        return cl == Giant.class ||
+                cl == Stone.class ||
+                cl == Summoning.class ||
+                cl == Restoring.class ||
+                cl == Citadel.class;
     }
 
     public static void rollForChampion(Mob m, HashSet<Mob> existing) {
@@ -157,11 +167,11 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
     }
 
     public static Class<? extends ChampionEnemy> randomChampion() {
-        return Dungeon.level.extraData.normalChampionsDeck.get();
+        return Dungeon.extraData.normalChampionsDeck.get();
     }
 
     public static Class<? extends ChampionEnemy> randomElite() {
-        return Dungeon.level.extraData.eliteChampionsDeck.get();
+        return Dungeon.extraData.eliteChampionsDeck.get();
     }
 
     @Override
@@ -446,7 +456,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
         @Override
         public float damageTakenFactor() {
-            return Math.max(0.01f, (target.HP * 1f / target.HT));
+            return Math.max(0.1f, (target.HP * 1f / target.HT));
         }
     }
     //endregion
@@ -455,7 +465,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
     public static class EliteChampion extends ChampionEnemy {
 
         public static final String GUARDIANS_COOLDOWN = "guardians_cooldown";
-        private static final int GUARDS_SUMMON_COOLDOWN = 30;
+        public static final int GUARDS_SUMMON_COOLDOWN = 30;
         public int guardiansCooldown = 0;
 
         @Override
@@ -473,7 +483,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 target.fieldOfView = new boolean[Dungeon.level.length()];
                 Dungeon.level.updateFieldOfView(target, target.fieldOfView);
             }
-            for (Mob m : ((Mob)target).fastGetMobsInFov()) {
+            for (Mob m : ((Mob) target).fastGetMobsInFov()) {
                 if (m instanceof NPC ||
                         m.alignment == Char.Alignment.ALLY) continue;
                 mobs.add(m);
@@ -496,7 +506,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 Mob mob = (Mob) target;
                 if (mob.state == mob.HUNTING) {
                     if (guardiansCooldown <= 0) {
-                        SummoningTrap.summonMobs(target.pos(), guardsNumber(), 3);
+                        SummoningTrap.summonMobs(target.pos(), guardsNumber(), 3, 1, 0, new GuardianAction());
                     }
                     guardiansCooldown = Math.max(guardsSummonCooldown(), guardiansCooldown);
                 } else {
@@ -531,6 +541,20 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             super.restoreFromBundle(bundle);
             guardiansCooldown = bundle.getInt(GUARDIANS_COOLDOWN);
         }
+
+        public static class GuardianAction extends SummoningTrap.MobSpawnedAction {
+            @Override
+            protected void Invoke(Mob mob) {
+                for (EliteChampion buff : mob.buffs(EliteChampion.class)) {
+                    if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
+                        buff.guardiansCooldown = GUARDS_SUMMON_COOLDOWN;
+                    } else {
+                        Dungeon.extraData.eliteChampionsDeck.add(buff.getClass());
+                        buff.detach();
+                    }
+                }
+            }
+        }
     }
 
     public static class Sacrificial extends EliteChampion {
@@ -543,13 +567,19 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             return 4;
         }
 
+        boolean restored = false;
+
         @Override
         public boolean attachTo(Char target) {
             if (super.attachTo(target)) {
-                if (Random.Int(3) == 0) {
-                    Buff.affect(target, ChampionEnemy.randomChampion());
+                if (!restored) {
+                    if (Random.Int(3) == 0) {
+                        Buff.affect(target, ChampionEnemy.randomChampion());
+                    } else {
+                        Buff.affect(target, ChampionEnemy.randomElite());
+                    }
                 } else {
-                    Buff.affect(target, ChampionEnemy.randomElite());
+                    restored = false;
                 }
                 return true;
             }
@@ -587,6 +617,12 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                     }
                 }
             }
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            restored = true;
+            super.restoreFromBundle(bundle);
         }
     }
 
@@ -890,6 +926,9 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         @Override
         public boolean act() {
             Mob targ = ((Mob) target);
+            if (target.fieldOfView == null) {
+                targ.fastGetMobsInFov();
+            }
             if (!target.fieldOfView[Dungeon.hero.pos()]) {
                 if (targ.state != targ.HUNTING)
                     targ.state = targ.HUNTING;
@@ -925,11 +964,20 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         @Override
+        public boolean attachTo(Char target) {
+            if (super.attachTo(target)) {
+                if (generation > 0) ((Mob) target).EXP = 0;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
         public void onDamageProc(int damage) {
             if (target.HP >= damage + 2) {
                 ArrayList<Integer> candidates = new ArrayList<>();
 
-                int[] neighbours = PathFinder.NEIGHBOURS4;
+                int[] neighbours = {target.pos() + 1, target.pos() - 1, target.pos() + Dungeon.level.width(), target.pos() - Dungeon.level.width()};
                 for (int n : neighbours) {
                     if (!Dungeon.level.solid[n] && Actor.findChar(n) == null
                             && (!target.properties().contains(Char.Property.LARGE) || Dungeon.level.openSpace[n])) {
@@ -943,7 +991,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                             this,
                             Swarming.class
                     );
-                    clone.HP = (target.HP - damage) / 2;
+                    clone.HP = clone.HT = (target.HP - damage) / 2;
                     clone.pos(Random.element(candidates));
                     clone.state = clone.HUNTING;
 
@@ -952,7 +1000,10 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                     GameScene.add(clone, SPLIT_DELAY);
                     Actor.addDelayed(new Pushing(clone, target.pos(), clone.pos()), -1);
 
+                    Dungeon.level.occupyCell(clone);
+
                     target.HP -= clone.HP;
+                    target.HT -= clone.HP;
                 }
             }
         }
@@ -977,7 +1028,6 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         public void restoreFromBundle(Bundle bundle) {
             super.restoreFromBundle(bundle);
             generation = bundle.getInt(GENERATION);
-            if (generation > 0) ((Mob) target).EXP = 0;
         }
     }
 

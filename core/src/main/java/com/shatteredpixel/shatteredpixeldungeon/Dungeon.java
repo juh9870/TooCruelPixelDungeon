@@ -68,7 +68,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
-import com.shatteredpixel.shatteredpixeldungeon.utils.ChallengesLevelData;
+import com.shatteredpixel.shatteredpixeldungeon.utils.ChallengesData;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
@@ -175,6 +175,7 @@ public class Dungeon {
 	}
 
     public static Modifiers modifiers = new Modifiers();
+    public static ChallengesData extraData = new ChallengesData();
     public static boolean challengesInform;
 
     //Variable for Rook challenge
@@ -213,6 +214,7 @@ public class Dungeon {
 //		}
 
         modifiers = SPDSettings.modifiers();
+        extraData.init();
         challengesInform = false;
         if (!modifiers.isChallenged()) {
             modifiers.randomize(seed);
@@ -354,8 +356,6 @@ public class Dungeon {
 			level = new DeadEndLevel();
 			Statistics.deepestFloor--;
 		}
-		level.extraData = new ChallengesLevelData();
-		level.extraData.init(level, depth);
 		level.create();
 		
 		Statistics.qualifiedForNoKilling = !bossLevel();
@@ -400,7 +400,7 @@ public class Dungeon {
 	}
 	
 	public static void switchLevel( final Level level, int pos ) {
-		
+
 		if (pos == -2){
 			pos = level.exit;
 		} else if (pos < 0 || pos >= level.length() || (!level.passable[pos] && !level.avoid[pos])){
@@ -496,9 +496,10 @@ public class Dungeon {
 	
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
-    private static final String MODIFIERS = "modifiers";
+    private static final String MODIFIERS   = "modifiers";
+    private static final String EXTRA_DATA  = "extraData";
 	private static final String CHALLENGES	= "challenges";
-    private static final String HELL_CHALS = "hell_challenges";
+    private static final String HELL_CHALS  = "hell_challenges";
 	private static final String MOBS_TO_CHAMPION	= "mobs_to_champion";
 	private static final String HERO		= "hero";
 	private static final String GOLD		= "gold";
@@ -525,6 +526,8 @@ public class Dungeon {
 			bundle.put( GOLD, gold );
 			bundle.put( BJTOKENS, tokens );
 			bundle.put( DEPTH, depth );
+
+			bundle.put(EXTRA_DATA, extraData);
 
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(Messages.format(DROPPED, d), droppedItems.get(d));
@@ -685,6 +688,12 @@ public class Dungeon {
 		gold = bundle.getInt( GOLD );
 		tokens = bundle.getInt( BJTOKENS );
 		depth = bundle.getInt( DEPTH );
+
+		if (bundle.contains(EXTRA_DATA)) {
+			extraData = (ChallengesData) bundle.get(EXTRA_DATA);
+		} else {
+			extraData.init();
+		}
 		
 		Statistics.restoreFromBundle( bundle );
 		Generator.restoreFromBundle( bundle );

@@ -86,7 +86,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
-import com.shatteredpixel.shatteredpixeldungeon.utils.ChallengesLevelData;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
@@ -167,8 +166,6 @@ public abstract class Level implements Bundlable {
 	public HashSet<CustomTilemap> customTiles;
 	public HashSet<CustomTilemap> customWalls;
 
-	public ChallengesLevelData extraData;
-	
 	protected ArrayList<Item> itemsToSpawn = new ArrayList<>();
 
 	protected Group visuals;
@@ -199,7 +196,6 @@ public abstract class Level implements Bundlable {
 	public void create() {
 
 		Random.pushGenerator( Dungeon.seedCurDepth() );
-		
 		do {
 			width = height = length = 0;
 
@@ -463,13 +459,6 @@ public abstract class Level implements Bundlable {
 			respawner = (Respawner) bundle.get("respawner");
 		}
 
-		if (bundle.contains(EXTRA_DATA)) {
-			extraData = (ChallengesLevelData) bundle.get(EXTRA_DATA);
-		} else {
-			extraData = new ChallengesLevelData();
-			extraData.init(this, Dungeon.depth);
-		}
-
 		buildFlagMaps();
 		cleanWalls();
 	}
@@ -494,7 +483,6 @@ public abstract class Level implements Bundlable {
 		bundle.put( OBJECTS, objects );
 		bundle.put( BLOBS, blobs.values() );
 		bundle.put( FEELING, feeling );
-		bundle.put( EXTRA_DATA, extraData );
 		bundle.put( "mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
 		bundle.put( "respawner", respawner );
 	}

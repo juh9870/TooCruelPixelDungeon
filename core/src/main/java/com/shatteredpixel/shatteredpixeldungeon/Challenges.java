@@ -279,6 +279,12 @@ public enum Challenges implements Hero.Doom {
     DANCE_FLOOR(70, 2, 4f),
     SAVING_GRACE(72, 2, 2f, TUMBLER),
     REVENGE_FURY(77, 2, 2f, REVENGE),
+    KING_OF_A_HILL(84,2,4f, CHAMPION_ENEMIES){
+        @Override
+        protected float _nMobsMult() {
+            return 1.5f;
+        }
+    },
     //endregion
 
 
@@ -319,7 +325,8 @@ public enum Challenges implements Hero.Doom {
             return 3;
         }
     },
-    HUMPPA(74, 3, 6f, DANCE_FLOOR),
+    HUMPPA(74, 3, 7f, DANCE_FLOOR),
+    HAIL_TO_THE_KING(85,3,6f, KING_OF_A_HILL, ELITE_CHAMPIONS),
     //endregion
 
 
@@ -418,7 +425,7 @@ public enum Challenges implements Hero.Doom {
     GRINDING_3(83, 5, 0, GRINDING_2),
     //endregion
 
-    //Last id 83
+    //Last id 85
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;

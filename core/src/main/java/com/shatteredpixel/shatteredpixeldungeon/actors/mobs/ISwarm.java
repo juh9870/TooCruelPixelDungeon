@@ -8,6 +8,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.watabou.utils.Random;
 
 public interface ISwarm {
 
@@ -48,10 +49,9 @@ public interface ISwarm {
         }
 
         if (Challenges.ELITE_CHAMPIONS.enabled()) {
-            for (Buff buff : original.buffs()) {
-                if (buff instanceof ChampionEnemy) {
-                    Buff.affect(clone, buff.getClass());
-                }
+            ChampionEnemy buff = Random.element(original.buffs(ChampionEnemy.class));
+            if (buff != null) {
+                Buff.affect(clone, buff.getClass());
             }
         }
 

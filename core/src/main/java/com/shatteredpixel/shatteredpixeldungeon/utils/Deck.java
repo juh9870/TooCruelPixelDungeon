@@ -26,6 +26,14 @@ public abstract class Deck<T> implements Bundlable {
         probs[i]--;
         return values[i];
     }
+    public void add(T value){
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == value) {
+                probs[i]++;
+                return;
+            }
+        }
+    }
 
     public void reset() {
         probs = defaultProbs.clone();

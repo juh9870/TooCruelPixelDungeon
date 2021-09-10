@@ -137,6 +137,7 @@ public abstract class Mob extends Char {
     protected MMO mmo;
 
     public boolean instantWaterMovement = false;
+    public int kills = 0;
 
     protected static final float TIME_TO_WAKE_UP = 1f;
 
@@ -144,6 +145,7 @@ public abstract class Mob extends Char {
     private static final String SEEN	= "seen";
     private static final String TARGET	= "target";
     private static final String MAX_LVL	= "max_lvl";
+    private static final String KILLS	= "kills";
 
     @Override
     public void storeInBundle( Bundle bundle ) {
@@ -164,6 +166,7 @@ public abstract class Mob extends Char {
         bundle.put( SEEN, enemySeen );
         bundle.put( TARGET, target );
         bundle.put( MAX_LVL, maxLvl );
+        bundle.put( KILLS, kills );
     }
 
     @Override
@@ -189,6 +192,7 @@ public abstract class Mob extends Char {
         target = bundle.getInt( TARGET );
 
         if (bundle.contains(MAX_LVL)) maxLvl = bundle.getInt(MAX_LVL);
+        if (bundle.contains(KILLS)) kills = bundle.getInt(KILLS);
     }
 
     public CharSprite sprite() {
@@ -329,21 +333,30 @@ public abstract class Mob extends Char {
             }
         }
 
+        //additionally, if we are an enemy, not amoked, attacking another enemy of the same alignment but see hero
+        if(!newEnemy && Challenges.KING_OF_A_HILL.enabled() &&
+                alignment == Alignment.ENEMY &&
+                enemy.alignment == alignment && buff(Amok.class) != null &&
+                fieldOfView[Dungeon.hero.pos()] && Dungeon.hero.invisible <= 0 ){
+            newEnemy = true;
+        }
+
         if ( newEnemy ) {
 
             HashSet<Char> enemies = new HashSet<>();
+            HashSet<Mob> mobsInFov = fastGetMobsInFov();
 
             //if we are amoked...
             if ( buff(Amok.class) != null) {
                 //try to find an enemy mob to attack first.
-                for (Mob mob : fastGetMobsInFov())
+                for (Mob mob : mobsInFov)
                     if (mob.alignment == Alignment.ENEMY && mob != this) {
                         enemies.add(mob);
                     }
 
                 if (enemies.isEmpty()) {
                     //try to find ally mobs to attack second.
-                    for (Mob mob : fastGetMobsInFov())
+                    for (Mob mob : mobsInFov)
                         if (mob.alignment == Alignment.ALLY && mob != this) {
                             enemies.add(mob);
                         }
@@ -359,7 +372,7 @@ public abstract class Mob extends Char {
                 //if we are an ally...
             } else if ( alignment == Alignment.ALLY ) {
                 //look for hostile mobs to attack
-                for (Mob mob : fastGetMobsInFov())
+                for (Mob mob : mobsInFov)
                     if (mob.alignment == Alignment.ENEMY && !mob.isInvulnerable(getClass()))
                         //intelligent allies do not target mobs which are passive, wandering, or asleep
                         if (!intelligentAlly ||
@@ -370,13 +383,19 @@ public abstract class Mob extends Char {
                 //if we are an enemy...
             } else if (alignment == Alignment.ENEMY) {
                 //look for ally mobs to attack
-                for (Mob mob : fastGetMobsInFov())
+                for (Mob mob : mobsInFov)
                     if (mob.alignment == Alignment.ALLY)
                         enemies.add(mob);
 
                 //and look for the hero
                 if (fieldOfView[Dungeon.hero.pos()] && Dungeon.hero.invisible <= 0) {
                     enemies.add(Dungeon.hero);
+                }
+
+                //if no better enemies are found, start infighting
+                if(enemies.isEmpty() && Challenges.KING_OF_A_HILL.enabled()){
+                    enemies.addAll(mobsInFov);
+                    enemies.remove(this);
                 }
 
             }
@@ -628,6 +647,50 @@ public abstract class Mob extends Char {
     public void onAttackComplete() {
         attack( enemy );
         super.onAttackComplete();
+    }
+
+    @Override
+    public boolean attack(Char enemy, float dmgMulti, float dmgBonus, float accMulti) {
+        if(super.attack(enemy, dmgMulti, dmgBonus, accMulti)){
+            if (!enemy.isAlive() || (enemy.HP == 1 && enemy.HP != enemy.HT)) {
+                if(Challenges.KING_OF_A_HILL.enabled() && enemy instanceof Mob) {
+                    if (alignment == Alignment.ENEMY && buff(Corruption.class) == null) {
+                        Mob loser = (Mob) enemy;
+                        kills++;
+                        for (ChampionEnemy buff : loser.buffs(ChampionEnemy.class)) {
+                            if (!ChampionEnemy.bannedFromKoth(buff.getClass())) {
+                                ChampionEnemy b = Buff.append(this, buff.getClass());
+                                if(b instanceof ChampionEnemy.EliteChampion){
+                                    ((ChampionEnemy.EliteChampion) b).guardiansCooldown = ChampionEnemy.EliteChampion.GUARDS_SUMMON_COOLDOWN;
+                                }
+                            }
+                            buff.detach();
+                        }
+                        Class<? extends ChampionEnemy> toAdd;
+                        do {
+                            if (Challenges.HAIL_TO_THE_KING.enabled() && kills % ChampionEnemy.KILLS_TO_ELITE == 0) {
+                                toAdd = Dungeon.extraData.hailToTheKingChampions.get();
+                            } else {
+                                toAdd = Dungeon.extraData.kingOfAHillChampionsDeck.get();
+                            }
+                        } while (ChampionEnemy.bannedFromKoth(toAdd));
+                        ChampionEnemy b = Buff.append(this, toAdd);
+                        if(b instanceof ChampionEnemy.EliteChampion){
+                            ((ChampionEnemy.EliteChampion) b).guardiansCooldown = ChampionEnemy.EliteChampion.GUARDS_SUMMON_COOLDOWN;
+                        }
+                        PotionOfHealing.cure(this);
+                        HP = HT;
+                        CellEmitter.get(this.pos()).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+
+                        if (enemy.HP == 1) {
+                            enemy.damage(9000, this);
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -1182,7 +1245,7 @@ public abstract class Mob extends Char {
 
             if (alignment == Alignment.ENEMY && Challenges.SWARM_INTELLIGENCE.enabled()) {
                 for (Mob mob : Dungeon.level.mobs) {
-                    if (Challenges.HEART_OF_HIVE.enabled() ||
+                    if ((Challenges.HEART_OF_HIVE.enabled() && enemy == Dungeon.hero) ||
                             (mob.paralysed <= 0
                             && Dungeon.level.distance(pos(), mob.pos()) <= 8
                                     && mob.state != mob.HUNTING)) {
@@ -1236,7 +1299,7 @@ public abstract class Mob extends Char {
                     target = Dungeon.level.randomDestination( Mob.this );
                     spend( TICK );
                     return true;
-                } else if (Challenges.HEART_OF_HIVE.enabled() && enemy instanceof Hero) {
+                } else if (Challenges.HEART_OF_HIVE.enabled() && enemy == Dungeon.hero) {
                     target = Dungeon.hero.pos();
                 }
 
