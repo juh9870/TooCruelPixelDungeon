@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -100,6 +101,10 @@ public class Ratmogrify extends ArmorAbility {
 			GLog.w(Messages.get(this, "too_strong"));
 			return;
 		} else {
+			if(Challenges.GRINDING_3.enabled() && ch.HP > ch.HT/2){
+				GLog.w(Messages.get(this, "too_strong"));
+				return;
+			}
 			TransmogRat rat = new TransmogRat();
 			rat.setup((Mob)ch);
 			rat.pos(ch.pos());
