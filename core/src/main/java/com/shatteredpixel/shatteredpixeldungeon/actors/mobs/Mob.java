@@ -428,8 +428,9 @@ public abstract class Mob extends Char {
 
                 //if no better enemies are found, start infighting
                 if(enemies.isEmpty() && Challenges.KING_OF_A_HILL.enabled()){
-                    enemies.addAll(mobsInFov);
-                    enemies.remove(this);
+                    for (Mob mob : mobsInFov)
+                        if (mob.alignment == Alignment.ENEMY && enemy != this)
+                            enemies.add(mob);
                 }
             }
 
