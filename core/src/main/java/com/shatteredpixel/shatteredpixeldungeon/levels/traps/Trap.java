@@ -178,7 +178,7 @@ public abstract class Trap implements Bundlable {
 				if (t instanceof GatewayTrap) t = new TeleportationTrap();
 
 				if(DeviceCompat.isDebug()){
-					t = new GeyserTrap();
+					t = new SummoningTrap();
 				}
 
 				if(t==null){

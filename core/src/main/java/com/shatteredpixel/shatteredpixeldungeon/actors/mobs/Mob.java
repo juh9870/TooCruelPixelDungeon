@@ -237,6 +237,40 @@ public abstract class Mob extends Char {
         return mobs;
     }
 
+    public HashSet<Char> fastGetCharsInFov() {
+        HashSet<Char> mobs = new HashSet<>();
+        if (Actor.chars().size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1)){
+            for (Char ch : Actor.chars()) {
+                if(fieldOfView[ch.pos()] && ch.invisible <= 0){
+                    mobs.add(ch);
+                }
+            }
+        } else {
+            int w = Dungeon.level.width();
+            int x = pos() % w;
+            int y = pos() / w;
+            int left = Math.max(1, x - viewDistance);
+            int right = Math.min(w - 2, x + viewDistance);
+            int top = Math.max(1, y - viewDistance * w);
+            int bottom = Math.min(w - 2, y + viewDistance * w);
+
+            for (int i = left; i <= right; i++) {
+                for (int j = top; j < bottom; j++) {
+                    int cell = j * w + i;
+                    if(!Dungeon.level.insideMap(cell))
+                        continue;
+                    if (fieldOfView[cell]) {
+                        Char ch = Actor.findChar(cell);
+                        if (ch.invisible <= 0) {
+                            mobs.add(ch);
+                        }
+                    }
+                }
+            }
+        }
+        return mobs;
+    }
+
     @Override
     protected boolean act() {
 
@@ -300,9 +334,8 @@ public abstract class Mob extends Char {
                 state = HUNTING;
                 return enemy;
             }
-            for (Char ch : Actor.chars()) {
-                if (ch != this && fieldOfView[ch.pos()] &&
-                        ch.buff(StoneOfAggression.Aggression.class) != null) {
+            for (Char ch : fastGetCharsInFov()) {
+                if (ch != this && ch.buff(StoneOfAggression.Aggression.class) != null) {
                     state = HUNTING;
                     return ch;
                 }
@@ -334,10 +367,11 @@ public abstract class Mob extends Char {
         }
 
         //additionally, if we are an enemy, not amoked, attacking another enemy of the same alignment but see hero
-        if(!newEnemy && Challenges.KING_OF_A_HILL.enabled() &&
+        if(!newEnemy &&
+                fieldOfView[Dungeon.hero.pos()] && Dungeon.hero.invisible <= 0 &&
+                Challenges.KING_OF_A_HILL.enabled() &&
                 alignment == Alignment.ENEMY &&
-                enemy.alignment == alignment && buff(Amok.class) != null &&
-                fieldOfView[Dungeon.hero.pos()] && Dungeon.hero.invisible <= 0 ){
+                enemy.alignment == alignment && buff(Amok.class) == null){
             newEnemy = true;
         }
 
