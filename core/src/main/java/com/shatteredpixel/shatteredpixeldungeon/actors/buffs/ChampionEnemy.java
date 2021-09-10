@@ -95,7 +95,8 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 cl == Stone.class ||
                 cl == Summoning.class ||
                 cl == Restoring.class ||
-                cl == Citadel.class;
+                cl == Citadel.class ||
+                cl == Seeking.class;
     }
 
     public static void rollForChampion(Mob m, HashSet<Mob> existing) {
@@ -930,14 +931,14 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 targ.fastGetMobsInFov();
             }
             if (!target.fieldOfView[Dungeon.hero.pos()]) {
-                if (targ.state != targ.HUNTING)
-                    targ.state = targ.HUNTING;
-                targ.beckon(Dungeon.hero.pos());
-                for (Mob mob : Dungeon.level.mobs) {
-                    if (Dungeon.level.distance(target.pos(), mob.pos()) <= 1) {
-                        mob.beckon(Dungeon.hero.pos());
-                        if (mob.state != mob.HUNTING) {
-                            mob.state = mob.HUNTING;
+
+                if (targ.enemyPos() == Dungeon.hero.pos() || targ.enemyPos() == -1) {
+                    targ.beckon(Dungeon.hero.pos());
+                    for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
+                        int cell = targ.pos() + PathFinder.NEIGHBOURS8[i];
+                        Mob mob = Dungeon.level.findMob(cell);
+                        if (mob != null) {
+                            mob.beckon(Dungeon.hero.pos());
                         }
                     }
                 }
