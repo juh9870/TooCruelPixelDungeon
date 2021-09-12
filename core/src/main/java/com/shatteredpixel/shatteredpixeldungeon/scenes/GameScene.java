@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.DanceFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
@@ -284,6 +285,7 @@ public class GameScene extends PixelScene {
 			if (Statistics.amuletObtained) {
 				mob.beckon(Dungeon.hero.pos());
 			}
+			mob.applyChallenges();
 		}
 		
 		raisedTerrain = new RaisedTerrainTilemap();
@@ -568,6 +570,13 @@ public class GameScene extends PixelScene {
 			GameScene.flashForDocument(Document.GUIDE_DIEING);
 		}
 		fadeIn();
+
+
+		DanceFloor dance = (DanceFloor) Dungeon.level.blobs.get(DanceFloor.class);
+		if (dance != null) {
+			dance.updateFov();
+		}
+
 //		resetTimer();
 		timer += 5;
 		//re-show WndResurrect if needed
@@ -909,6 +918,7 @@ public class GameScene extends PixelScene {
 		Dungeon.level.addMob( mob );
 		scene.addMobSprite( mob );
 		Actor.add( mob );
+		mob.applyChallenges();
 	}
 
 	public static void addSprite( Mob mob ) {
@@ -919,6 +929,7 @@ public class GameScene extends PixelScene {
 		Dungeon.level.addMob( mob );
 		scene.addMobSprite( mob );
 		Actor.addDelayed( mob, delay );
+		mob.applyChallenges();
 	}
 	
 	public static void add( EmoIcon icon ) {

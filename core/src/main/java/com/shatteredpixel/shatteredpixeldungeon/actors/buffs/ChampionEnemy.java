@@ -232,13 +232,16 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         return 1f;
     }
 
-    public float evasionAndAccuracyFactor() {
+    public float evasionFactor() {
+        return 1f;
+    }
+    public float accuracyFactor() {
         return 1f;
     }
 
     public static class NormalChampionsDeck extends Deck<Class<? extends ChampionEnemy>> {
         {
-            filler().defaultWeight(3f)
+            Filler f = filler().defaultWeight(3f)
                     .add(Blazing.class)
                     .add(Projecting.class)
                     .add(AntiMagic.class)
@@ -247,7 +250,12 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                     .add(Growing.class)
                     .add(Flowing.class)
                     .add(Stone.class)
-                    .apply(new Class[0]);
+                    .add(Assassin.class);
+
+            if(Challenges.DARKNESS.enabled()){
+                f.put(Assassin.class, 6f);
+            }
+            f.apply(new Class[0]);
         }
     }
 
@@ -375,7 +383,12 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         @Override
-        public float evasionAndAccuracyFactor() {
+        public float evasionFactor() {
+            return 3f;
+        }
+
+        @Override
+        public float accuracyFactor() {
             return 3f;
         }
     }
@@ -407,7 +420,12 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         @Override
-        public float evasionAndAccuracyFactor() {
+        public float evasionFactor() {
+            return multiplier;
+        }
+
+        @Override
+        public float accuracyFactor() {
             return multiplier;
         }
 
@@ -458,6 +476,75 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         @Override
         public float damageTakenFactor() {
             return Math.max(0.1f, (target.HP * 1f / target.HT));
+        }
+    }
+
+    public static class Assassin extends ChampionEnemy {
+        {
+            color = 0x000000;
+        }
+
+        private static final float COOLDOWN = 10f;
+
+        private float cooldown = COOLDOWN;
+
+        @Override
+        public boolean act() {
+            if (--cooldown <= 0) {
+                Buff.affect(target, Invisibility.class, Invisibility.DURATION);
+            }
+            spend(TICK);
+            return true;
+        }
+
+        @Override
+        public float damageFactor(float dmg) {
+            return target.buff(Invisibility.class) == null ? dmg : 2 * dmg;
+        }
+
+        @Override
+        protected float damageTakenFactor() {
+            return 1.25f;
+        }
+
+        @Override
+        public void onDamageProc(int damage) {
+            cooldown = COOLDOWN;
+            Buff.affect(target,Terror.class, cooldown);
+            Buff.detach(target,Invisibility.class);
+        }
+
+        @Override
+        public void onAttackProc(Char enemy) {
+            if(target.buff(Invisibility.class)==null) {
+                Buff.affect(target, Terror.class, cooldown);
+            }
+            Buff.detach(target, Invisibility.class);
+            cooldown = COOLDOWN;
+        }
+
+        @Override
+        public float accuracyFactor() {
+            return target.buff(Invisibility.class) == null ? 1f : 10f;
+        }
+
+        @Override
+        public float evasionFactor() {
+            return target.buff(Invisibility.class) == null ? 1f : 0.5f;
+        }
+
+        private static final String CD = "cooldown";
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(CD, cooldown);
+        }
+
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            cooldown = bundle.getFloat(CD);
         }
     }
     //endregion

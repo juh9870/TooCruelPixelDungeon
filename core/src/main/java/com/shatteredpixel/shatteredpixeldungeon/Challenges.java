@@ -287,6 +287,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     MIMICS_2(87,2,3f, MIMICS),
+    AGNOSIA(89,2,2f),
     //endregion
 
 
@@ -347,6 +348,7 @@ public enum Challenges implements Hero.Doom {
     //region Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
+    BIOCHIP(90,79.5f,5, -1),
     CHAOS_WIZARD(80, 5, -4f) {
         @Override
         protected boolean _isItemBlocked(Item item) {
@@ -428,7 +430,7 @@ public enum Challenges implements Hero.Doom {
     MIMICS_GRIND(88,5, 0, GRINDING, MIMICS_2),
     //endregion
 
-    //Last id 88
+    //Last id 90
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;

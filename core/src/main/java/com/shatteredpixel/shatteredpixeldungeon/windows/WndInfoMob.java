@@ -21,6 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Agnosia;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -29,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HealthBar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.Reflection;
 
 public class WndInfoMob extends WndTitledMessage {
 	
@@ -54,6 +58,11 @@ public class WndInfoMob extends WndTitledMessage {
 			add( name );
 			
 			image = mob.sprite();
+			if (Challenges.AGNOSIA.enabled()) {
+				Agnosia agnosia = Buff.affect(mob, Agnosia.class);
+				image = Reflection.newInstance(agnosia.spriteClass);
+				image.color(agnosia.color);
+			}
 			add( image );
 
 			health = new HealthBar();

@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.badlogic.gdx.utils.IntMap;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -50,6 +51,7 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.NoosaScript;
+import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.tweeners.AlphaTweener;
@@ -63,9 +65,6 @@ import com.watabou.utils.SparseArray;
 import java.nio.Buffer;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
-
-	public float FAST_ANIM_SPEED = 0.001f;
-
 	// Color constants for floating text
 	public static final int DEFAULT		= 0xFFFFFF;
 	public static final int POSITIVE	= 0x00FF00;
@@ -117,6 +116,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected AlphaTweener invisible;
 	protected SparseArray<Emitter> emitters;
 	protected SparseArray<Flare> auras;
+	protected SparseArray<Visual> customVisuals;
 
 	protected EmoIcon emo;
 	protected CharHealthIndicator health;
@@ -127,6 +127,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected float flashTime = 0;
 	
 	protected boolean sleeping = false;
+	protected boolean hidden = Challenges.AGNOSIA.enabled() && !(this instanceof HeroSprite);
 
 	public Char ch;
 
@@ -138,10 +139,19 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		listener = this;
 		auras = new SparseArray<>();
 		emitters = new SparseArray<>();
+		customVisuals = new SparseArray<>();
 	}
 
 	public boolean fast(){
 		return !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
+	}
+
+	protected float invisibilityAlpha(){
+		float alpha = 0.4f;
+		if(ch != null && ch.alignment == Char.Alignment.ENEMY) {
+			alpha = 0.1f;
+		}
+		return alpha;
 	}
 
 	protected boolean canSkipAnimation(Animation anim) {
@@ -180,6 +190,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 
 		ch.updateSpriteState();
+		if(hidden) alpha(0);
 	}
 	
 	//used for just updating a sprite based on a given character, not linking them or placing in the game
@@ -231,7 +242,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
 		play( run );
 		
-		motion = new PosTweener( this, worldToCamera( to ), fast() ? FAST_ANIM_SPEED : moveInterval );
+		motion = new PosTweener( this, worldToCamera( to ), moveInterval );
 		motion.listener = this;
 		parent.add( motion );
 
@@ -389,11 +400,12 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				if (invisible != null) {
 					invisible.killAndErase();
 				}
-				invisible = new AlphaTweener( this, 0.4f, 0.4f );
+				invisible = new AlphaTweener( this, invisibilityAlpha(), 0.4f );
 				if (parent != null){
 					parent.add(invisible);
 				} else
-					alpha( 0.4f );
+					alpha( invisibilityAlpha() );
+				hideEmo();
 				break;
 			case PARALYSED:
 				paused = true;
@@ -449,6 +461,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 					invisible = null;
 				}
 				alpha( 1f );
+				if (hidden) alpha(0);
 				break;
 			case PARALYSED:
 				paused = false;
@@ -552,6 +565,18 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			emitters.remove(cl.hashCode());
 		}
 	}
+
+	public void bindCustomVisual(Class cl, Visual visual) {
+		customVisuals.put(cl.hashCode(), visual);
+		visual.center(center());
+	}
+
+	public void unbindCustomVisual(Class cl) {
+		Visual visual = customVisuals.get(cl.hashCode());
+		if (visual != null) {
+			customVisuals.remove(cl.hashCode());
+		}
+	}
 	
 	@Override
 	public void update() {
@@ -561,28 +586,30 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 		
 		super.update();
+
+		float alpha = invisible == null ? 1 : invisibilityAlpha();
 		
 		if (flashTime > 0 && (flashTime -= Game.elapsed) <= 0) {
 			resetColor();
 		}
 		
 		if (burning != null) {
-			burning.visible = visible;
+			burning.visible = visible && invisible == null;
 		}
 		if (levitation != null) {
-			levitation.visible = visible;
+			levitation.visible = visible && invisible == null;
 		}
 		if (iceBlock != null) {
-			iceBlock.visible = visible;
+			iceBlock.visible = visible && invisible == null;
 		}
 		if (chilled != null) {
-			chilled.visible = visible;
+			chilled.visible = visible && invisible == null;
 		}
 		if (marked != null) {
-			marked.visible = visible;
+			marked.visible = visible && invisible == null;
 		}
 		if (exterminating != null) {
-			exterminating.visible = visible;
+			exterminating.visible = visible && invisible == null;
 		}
 		for (IntMap.Entry<Flare> aura : auras) {
 			if (aura.value != null) {
@@ -591,11 +618,22 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				}
 				aura.value.visible = visible;
 				aura.value.point(center());
+				aura.value.alpha(alpha);
 			}
 		}
 		for (IntMap.Entry<Emitter> emitter : emitters) {
-			if(emitter.value!=null){
-				emitter.value.visible = visible;
+			if (emitter.value != null) {
+				emitter.value.visible = visible && invisible==null;
+			}
+		}
+		for (IntMap.Entry<Visual> visuals : customVisuals) {
+			if (visuals.value != null) {
+				visuals.value.visible = visible;
+				if (visible) {
+					visuals.value.x = x + (width() - visuals.value.width()) /2;
+					visuals.value.y = y + height() - visuals.value.height();
+					visuals.value.alpha(alpha);
+				}
 			}
 		}
 		if (sleeping) {
@@ -614,11 +652,15 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public void resetColor() {
 		super.resetColor();
 		if (invisible != null){
-			alpha(0.4f);
+			alpha(invisibilityAlpha());
+		}
+		if(hidden){
+			alpha(0);
 		}
 	}
 	
 	public void showSleep() {
+		if(!hidden && invisible == null)
 		synchronized (EmoIcon.class) {
 			if (!(emo instanceof EmoIcon.Sleep)) {
 				if (emo != null) {
@@ -641,6 +683,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void showAlert() {
+		if(!hidden && invisible == null)
 		synchronized (EmoIcon.class) {
 			if (!(emo instanceof EmoIcon.Alert)) {
 				if (emo != null) {
@@ -662,6 +705,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void showLost() {
+		if(!hidden && invisible == null)
 		synchronized (EmoIcon.class) {
 			if (!(emo instanceof EmoIcon.Lost)) {
 				if (emo != null) {

@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.DanceFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Agnosia;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Arrowhead;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
@@ -811,10 +812,14 @@ public abstract class Mob extends Char {
     @Override
     public String name() {
         Ascension asc = buff(Ascension.class);
+        String name = super.name();
+        if(Challenges.AGNOSIA.enabled()){
+            name = Messages.get(this,"name_unknown");
+        }
         if (asc == null)
-            return super.name();
+            return name;
         else
-            return Messages.get(Mob.class, "ascended" + asc.level, super.name());
+            return Messages.get(Mob.class, "ascended" + asc.level, name);
     }
 
     public boolean canAscend() {
@@ -1056,6 +1061,9 @@ public abstract class Mob extends Char {
 
     public String description() {
         String desc = Messages.get(this, "desc");
+        if(Challenges.AGNOSIA.enabled()){
+            desc = Messages.get(this,"desc_unknown");
+        }
         Ascension asc = buff(Ascension.class);
         if (asc == null)
             return desc;
@@ -1068,33 +1076,40 @@ public abstract class Mob extends Char {
         applyChallenges();
         StringBuilder desc = new StringBuilder(description());
 
-        desc.append("\n\n")
-                .append(Messages.get(Mob.class, "stats", HP, HT, (int) (attackSkill(Dungeon.hero) * MMO.skillMod()), (int) (defenseSkill * MMO.skillMod())));
+        if(Challenges.BIOCHIP.enabled()) {
+            boolean hideDistinct = Challenges.AGNOSIA.enabled();
 
-        float dmgMult = 1f;
-        for (Buff buff : buffs()) {
-            if (buff instanceof DamageAmplificationBuff) {
-                dmgMult *= ((DamageAmplificationBuff) buff).damageMultiplier();
+            desc.append("\n");
+
+            if(!hideDistinct) {
+                        desc.append("\n").append(Messages.get(Mob.class, "stats", HP, HT, (int) (attackSkill(Dungeon.hero) * MMO.skillMod()), (int) (defenseSkill * MMO.skillMod())));
             }
-        }
+            float dmgMult = 1f;
+            for (Buff buff : buffs()) {
+                if (buff instanceof DamageAmplificationBuff) {
+                    dmgMult *= ((DamageAmplificationBuff) buff).damageMultiplier();
+                }
+            }
 
-        if (dmgMult != 1f) {
+            if (dmgMult != 1f) {
+                desc.append("\n")
+                        .append(Messages.get(Mob.class, "stats_dmg", dmgMult));
+            }
+            int dmg = 0;
+            int tries = 1000;
+            for (int i = 0; i < tries; i++) {
+                dmg += damageRoll();
+            }
+            if(!hideDistinct) {
+                desc.append("\n")
+                        .append(Messages.get(Mob.class, "stats_avg_atk", dmg / tries));
+            }
             desc.append("\n")
-                    .append(Messages.get(Mob.class, "stats_dmg", dmgMult));
+                    .append(Messages.get(Mob.class, "stats_atk",
+                            AttackAmplificationBuff.damageFormula(buffs()),
+                            hideDistinct ? "???" : AttackAmplificationBuff.damageFactor(dmg / tries, buffs())
+                    ));
         }
-        int dmg = 0;
-        int tries = 1000;
-        for (int i = 0; i < tries; i++) {
-            dmg+=damageRoll();
-        }
-        desc.append("\n")
-                .append(Messages.get(Mob.class, "stats_avg_atk", dmg / tries));
-        desc.append("\n")
-                .append(Messages.get(Mob.class, "stats_atk",
-                        AttackAmplificationBuff.damageFormula(buffs()),
-                        AttackAmplificationBuff.damageFactor(dmg / tries, buffs())
-                ));
-
         for (Buff b : buffs(ChampionEnemy.class)){
             desc.append("\n\n_").append(Messages.titleCase(b.toString())).append("_\n").append(b.desc());
         }
@@ -1102,11 +1117,14 @@ public abstract class Mob extends Char {
         return desc.toString();
     }
 
-    protected void applyChallenges(){
+    public void applyChallenges(){
         if(adjusted) return;
         adjusted = true;
         if(Challenges.GRINDING_2.enabled() && !(this instanceof NPC) && mmo == null){
             mmo = Buff.affect(this, MMO.class);
+        }
+        if(Challenges.AGNOSIA.enabled()){
+            Buff.affect(this, Agnosia.class);
         }
     }
 

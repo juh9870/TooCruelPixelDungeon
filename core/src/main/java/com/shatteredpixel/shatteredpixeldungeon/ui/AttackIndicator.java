@@ -21,17 +21,22 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.ui;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Agnosia;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.RatSprite;
 import com.watabou.input.GameAction;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
+import java.sql.Ref;
 import java.util.ArrayList;
 
 //FIXME needs a refactor, lots of weird thread interaction here.
@@ -143,8 +148,13 @@ public class AttackIndicator extends Tag {
 			sprite.killAndErase();
 			sprite = null;
 		}
-		
-		sprite = Reflection.newInstance(lastTarget.spriteClass);
+		if(Challenges.AGNOSIA.enabled()){
+			Agnosia agnosia = Buff.affect(lastTarget,Agnosia.class);
+			sprite = Reflection.newInstance(agnosia.spriteClass);
+			sprite.color(agnosia.color);
+		} else {
+			sprite = Reflection.newInstance(lastTarget.spriteClass);
+		}
 		active = true;
 		sprite.linkVisuals(lastTarget);
 		sprite.idle();
