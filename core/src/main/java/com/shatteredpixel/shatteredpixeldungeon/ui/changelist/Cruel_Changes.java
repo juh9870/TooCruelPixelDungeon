@@ -61,10 +61,48 @@ public class Cruel_Changes {
         SmartTexture icons = TextureCache.get(Assets.Interfaces.BUFFS_LARGE);
         film = new TextureFilm(icons, 16, 16);
 
+        add_v1_0_0_Changes(changeInfos);
         add_v0_4_0_Changes(changeInfos);
         add_v0_3_0_Changes(changeInfos);
         add_v0_2_0_Changes(changeInfos);
         add_v0_1_0_Changes(changeInfos);
+    }
+
+    public static void add_v1_0_0_Changes(ArrayList<ChangeInfo> changeInfos) {
+        ChangeInfo changes = new ChangeInfo("v1.0.4", true, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+                "_-_ Updated to SHPD v1.0.3\n" +
+                        "_-_ Major optimisations to game code for better performance with large mobs amounts"));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 5 new challenges and 2 modifiers\n" +
+                        "_-_ Added 3 new champion titles and 3 new elite champion titles\n" +
+                        "_-_ Limited Revenge Rage attack bonus to _Over 9000!_\n" +
+                        "_-_ Tweaked Korean MMO again..."
+        ));
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "Fixed:\n" +
+                        "_-_ Fixed a lot of bugs, for full list of bug fixes refer to commit history"
+        ));
+
+        changes = new ChangeInfo("Challenges", false, null);
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL), Messages.get(Challenges.class, "king_of_a_hill"), Messages.get(Challenges.class, "king_of_a_hill_desc")));
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), Messages.get(Challenges.class, "hail_to_the_king"), Messages.get(Challenges.class, "hail_to_the_king_desc")));
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.ITEMS, 64, 32, 16, 14), Messages.get(Challenges.class, "mimics"), Messages.get(Challenges.class, "mimics_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.ITEMS, 80, 32, 16, 14), Messages.get(Challenges.class, "mimics_2"), Messages.get(Challenges.class, "mimics_2_desc")));
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.ITEMS, 96, 32, 16, 14), Messages.get(Challenges.class, "mimics_grind"), Messages.get(Challenges.class, "mimics_grind_desc")));
     }
 
     public static void add_v0_4_0_Changes(ArrayList<ChangeInfo> changeInfos) {
