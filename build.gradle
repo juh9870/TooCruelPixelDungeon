@@ -12,8 +12,8 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'DEV Too Cruel Pixel Dungeon'
-        appPackageName = 'ua.dreamfools.toocruelpixeldungeon.dev'
+        appName = 'Too Cruel Pixel Dungeon'
+        appPackageName = 'ua.dreamfools.toocruelpixeldungeon'
 
         appVersionCode = 574
         appVersionName = '1.0.0'

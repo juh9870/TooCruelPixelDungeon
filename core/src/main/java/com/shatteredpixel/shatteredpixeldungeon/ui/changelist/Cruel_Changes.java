@@ -79,7 +79,7 @@ public class Cruel_Changes {
 
         changes.addButton(new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
                 "_-_ Updated to SHPD v1.0.3\n" +
-                        "_-_ Major optimisations to game code for better performance with large mobs amounts"));
+                        "_-_ Major optimizations to game code for better performance with large mobs amounts"));
 
         changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
                 "_-_ Added 5 new challenges and 2 modifiers\n" +
