@@ -1354,7 +1354,7 @@ public class Hero extends Char {
 		boolean newMob = false;
 		
 		Mob target = null;
-		for (Mob m : Dungeon.level.mobs.toArray(new Mob[0])) {
+		for (Mob m : fastGetMobsInFov()) {
 			if (fieldOfView[m.pos()] && m.alignment == Alignment.ENEMY) {
 				visible.add(m);
 				if (!visibleEnemies.contains(m)) {

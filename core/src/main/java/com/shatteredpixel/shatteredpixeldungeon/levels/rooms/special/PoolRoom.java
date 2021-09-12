@@ -109,7 +109,7 @@ public class PoolRoom extends SpecialRoom {
 
 				Piranha piranha = new Piranha();
 				piranha.pos(cell);
-				level.mobs.add(piranha);
+				level.addMob(piranha);
 				nFish--;
 			}
 		} else {
@@ -120,7 +120,7 @@ public class PoolRoom extends SpecialRoom {
 					_pos = level.pointToCell(random());
 				} while (level.map[_pos] != Terrain.WATER || level.findMob(_pos) != null);
 				piranha.pos(_pos);
-				level.mobs.add(piranha);
+				level.addMob(piranha);
 			}
 		}
 	}

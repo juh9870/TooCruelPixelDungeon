@@ -98,7 +98,7 @@ public class BossHealthBar extends Component {
 	public void update() {
 		super.update();
 		if (boss != null){
-			if (!boss.isAlive() || !Dungeon.level.mobs.contains(boss)){
+			if (!boss.isAlive() || !Dungeon.level.mobs().contains(boss)){
 				boss = null;
 				visible = active = false;
 			} else {
@@ -131,7 +131,7 @@ public class BossHealthBar extends Component {
 	}
 	
 	public static boolean isAssigned(){
-		return boss != null && boss.isAlive() && Dungeon.level.mobs.contains(boss);
+		return boss != null && boss.isAlive() && Dungeon.level.mobs().contains(boss);
 	}
 
 	public static void bleed(boolean value){

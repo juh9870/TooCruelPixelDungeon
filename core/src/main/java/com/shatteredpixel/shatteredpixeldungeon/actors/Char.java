@@ -531,6 +531,73 @@ public abstract class Char extends Actor {
 		if ( buff( Haste.class ) != null) speed *= 3f;
 		return speed;
 	}
+
+	public HashSet<Char> fastGetCharsInFov() {
+		HashSet<Char> mobs = new HashSet<>();
+		if (Actor.chars().size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1) || this == Dungeon.hero){
+			for (Char ch : Actor.chars()) {
+				if(fieldOfView[ch.pos()] && ch.invisible <= 0){
+					mobs.add(ch);
+				}
+			}
+		} else {
+			int w = Dungeon.level.width();
+			int x = pos() % w;
+			int y = pos() / w;
+			int left = Math.max(1, x - viewDistance);
+			int right = Math.min(w - 2, x + viewDistance);
+			int top = Math.max(1, y - viewDistance * w);
+			int bottom = Math.min(w - 2, y + viewDistance * w);
+
+			for (int i = left; i <= right; i++) {
+				for (int j = top; j < bottom; j++) {
+					int cell = j * w + i;
+					if(!Dungeon.level.insideMap(cell))
+						continue;
+					if (fieldOfView[cell]) {
+						Char ch = Actor.findChar(cell);
+						if (ch.invisible <= 0) {
+							mobs.add(ch);
+						}
+					}
+				}
+			}
+		}
+		return mobs;
+	}
+	public HashSet<Mob> fastGetMobsInFov() {
+		HashSet<Mob> mobs = new HashSet<>();
+		if (Dungeon.level.mobs().size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1) || this == Dungeon.hero){
+			for (Mob mob : Dungeon.level.mobs()) {
+				if(fieldOfView[mob.pos()] && mob.invisible <= 0){
+					mobs.add(mob);
+				}
+			}
+		} else {
+			int w = Dungeon.level.width();
+			int x = pos() % w;
+			int y = pos() / w;
+			int left = Math.max(1, x - viewDistance);
+			int right = Math.min(w - 2, x + viewDistance);
+			int top = Math.max(1, y - viewDistance * w);
+			int bottom = Math.min(w - 2, y + viewDistance * w);
+
+			for (int i = left; i <= right; i++) {
+				for (int j = top; j < bottom; j++) {
+					int cell = j * w + i;
+					if(!Dungeon.level.insideMap(cell))
+						continue;
+					if (fieldOfView[cell]) {
+						Char ch = Actor.findChar(cell);
+						if (ch instanceof Mob && ch.invisible <= 0) {
+							mobs.add((Mob) ch);
+						}
+					}
+				}
+			}
+		}
+		return mobs;
+	}
 	
 	//used so that buffs(Shieldbuff.class) isn't called every time unnecessarily
 	private int cachedShield = 0;
@@ -661,17 +728,15 @@ public abstract class Char extends Actor {
 			if ((OVERKILL > 0 || Challenges.REVENGE_FURY.enabled()) && Challenges.REVENGE.enabled()) {
 				if (alignment != Char.Alignment.ALLY) {
 					boolean fury = Challenges.REVENGE_FURY.enabled();
-					for (Mob mob : Dungeon.level.mobs) {
-						if (fieldOfView[mob.pos()]) {
-							if (mob instanceof NPC) continue;
-							if (mob == this) continue;
-							if (mob.alignment == Char.Alignment.ALLY) continue;
-							if(OVERKILL>0)
-								Buff.affect(mob, RevengeRage.class).add(OVERKILL);
-							if(fury)
-								Buff.append(mob, RevengeFury.class, 10f);
-							mob.sprite.emitter().start(Speck.factory(Speck.UP), 0.2f, 3);
-						}
+					for (Mob mob : fastGetMobsInFov()) {
+						if (mob instanceof NPC) continue;
+						if (mob == this) continue;
+						if (mob.alignment == Alignment.ALLY) continue;
+						if(OVERKILL>0)
+							Buff.affect(mob, RevengeRage.class).add(OVERKILL);
+						if(fury)
+							Buff.append(mob, RevengeFury.class, 10f);
+						mob.sprite.emitter().start(Speck.factory(Speck.UP), 0.2f, 3);
 					}
 				}
 			}

@@ -166,7 +166,7 @@ public class CavesBossLevel extends Level {
 				if (findMob(i) == null) {
 					Pylon pylon = new Pylon();
 					pylon.pos(i);
-					mobs.add(pylon);
+					addMob(pylon);
 				}
 			}
 
@@ -178,7 +178,7 @@ public class CavesBossLevel extends Level {
 		for (int i : pylonPositions) {
 			Pylon pylon = new Pylon();
 			pylon.pos(i);
-			mobs.add(pylon);
+			addMob(pylon);
 		}
 	}
 
@@ -306,7 +306,7 @@ public class CavesBossLevel extends Level {
 
 	public void activatePylon(){
 		ArrayList<Pylon> pylons = new ArrayList<>();
-		for (Mob m : mobs){
+		for (Mob m : mobs()){
 			if (m instanceof Pylon && m.alignment == Char.Alignment.NEUTRAL){
 				pylons.add((Pylon) m);
 			}
@@ -336,7 +336,7 @@ public class CavesBossLevel extends Level {
 	public void eliminatePylon(){
 		if (customArenaVisuals != null) customArenaVisuals.updateState();
 		int pylonsRemaining = 0;
-		for (Mob m : mobs){
+		for (Mob m : mobs()){
 			if (m instanceof DM300){
 				((DM300) m).loseSupercharge();
 				PylonEnergy.energySourceSprite = m.sprite;

@@ -58,7 +58,7 @@ public class HolderMimic extends Mimic {
         MeleeWeapon wep = null;
         boolean hasTokens = false;
         for (Item item : items) {
-            if (item instanceof MeleeWeapon) {
+            if (item instanceof MeleeWeapon && wep==null) {
                 wep = (MeleeWeapon) item;
             }
             if (item instanceof PokerToken) {
@@ -80,7 +80,7 @@ public class HolderMimic extends Mimic {
             mob = spawnAt(pos, items, HolderMimic.class);
         }
         if (Actor.findChar(pos) == null) {
-            level.mobs.add(mob);
+            level.addMob(mob);
         } else {
             level.setObject(new DelayedMobSpawn(mob), pos);
         }

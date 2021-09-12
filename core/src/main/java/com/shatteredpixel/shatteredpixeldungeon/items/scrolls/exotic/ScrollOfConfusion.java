@@ -40,7 +40,7 @@ public class ScrollOfConfusion extends ExoticScroll {
 	
 	@Override
 	public void doRead() {
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs().toArray( new Mob[0] )) {
 			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos()]) {
 				Buff.prolong(mob, Vertigo.class, Vertigo.DURATION);
 				Buff.prolong(mob, Blindness.class, Blindness.DURATION);

@@ -279,7 +279,7 @@ public class GameScene extends PixelScene {
 		hero.updateArmor();
 		mobs.add( hero );
 		
-		for (Mob mob : Dungeon.level.mobs) {
+		for (Mob mob : Dungeon.level.mobs()) {
 			addMobSprite( mob );
 			if (Statistics.amuletObtained) {
 				mob.beckon(Dungeon.hero.pos());
@@ -488,7 +488,7 @@ public class GameScene extends PixelScene {
 
 				int spawnersAbove = Statistics.spawnersAlive;
 				if (spawnersAbove > 0 && Dungeon.depth <= 25) {
-					for (Mob m : Dungeon.level.mobs) {
+					for (Mob m : Dungeon.level.mobs()) {
 						if (m instanceof DemonSpawner && ((DemonSpawner) m).spawnRecorded) {
 							spawnersAbove--;
 						}
@@ -553,7 +553,7 @@ public class GameScene extends PixelScene {
 				case SECRETS:   GLog.w(Messages.get(this, "secrets"));  break;
 			}
 
-			for (Mob mob : Dungeon.level.mobs) {
+			for (Mob mob : Dungeon.level.mobs()) {
 				if (!mob.buffs(ChampionEnemy.class).isEmpty()) {
 //					GLog.w(Messages.get(ChampionEnemy.class, "warn"));
 				}
@@ -906,7 +906,7 @@ public class GameScene extends PixelScene {
 	}
 	
 	public static void add( Mob mob ) {
-		Dungeon.level.mobs.add( mob );
+		Dungeon.level.addMob( mob );
 		scene.addMobSprite( mob );
 		Actor.add( mob );
 	}
@@ -916,7 +916,7 @@ public class GameScene extends PixelScene {
 	}
 	
 	public static void add( Mob mob, float delay ) {
-		Dungeon.level.mobs.add( mob );
+		Dungeon.level.addMob( mob );
 		scene.addMobSprite( mob );
 		Actor.addDelayed( mob, delay );
 	}
@@ -1087,7 +1087,7 @@ public class GameScene extends PixelScene {
 	
 	public static void afterObserve() {
 		if (scene != null) {
-			for (Mob mob : Dungeon.level.mobs) {
+			for (Mob mob : Dungeon.level.mobs()) {
 				if (mob.sprite != null)
 					mob.sprite.visible = Dungeon.level.heroFOV[mob.pos()];
 			}

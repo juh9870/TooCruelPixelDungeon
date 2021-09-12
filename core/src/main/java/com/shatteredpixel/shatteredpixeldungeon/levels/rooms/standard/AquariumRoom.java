@@ -67,7 +67,7 @@ public class AquariumRoom extends StandardRoom {
 
 			Piranha piranha = new Piranha();
 			piranha.pos(cell);
-			level.mobs.add(piranha);
+			level.addMob(piranha);
 			numFish--;
 		}
 		

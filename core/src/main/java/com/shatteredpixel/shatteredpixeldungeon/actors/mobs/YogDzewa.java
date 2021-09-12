@@ -437,7 +437,7 @@ public class YogDzewa extends Mob {
 
 	@Override
 	public void aggro(Char ch) {
-		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
+		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs().clone()) {
 			if (Dungeon.level.distance(pos(), mob.pos()) <= 4 &&
 					(mob instanceof Larva || mob instanceof RipperDemon)) {
 				mob.aggro(ch);
@@ -449,7 +449,7 @@ public class YogDzewa extends Mob {
 	@Override
 	public void die( Object cause ) {
 
-		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
+		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs().clone()) {
 			if (mob instanceof Larva || mob instanceof RipperDemon) {
 				mob.die( cause );
 			}

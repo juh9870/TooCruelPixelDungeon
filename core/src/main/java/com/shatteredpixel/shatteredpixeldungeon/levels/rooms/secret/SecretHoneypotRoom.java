@@ -50,7 +50,7 @@ public class SecretHoneypotRoom extends SecretRoom {
 		bee.spawn( Dungeon.depth );
 		bee.HP = bee.HT;
 		bee.pos(level.pointToCell(brokenPotPos));
-		level.mobs.add( bee );
+		level.addMob( bee );
 		
 		bee.setPotInfo(level.pointToCell(brokenPotPos), null);
 		

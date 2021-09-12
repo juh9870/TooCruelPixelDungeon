@@ -96,7 +96,7 @@ public class CellSelector extends ScrollArea {
 			}
 
 			//then mobs
-			for (Char mob : Dungeon.level.mobs.toArray(new Mob[0])){
+			for (Char mob : Dungeon.level.mobs().toArray(new Mob[0])){
 				if (mob.sprite != null && mob.sprite.overlapsPoint( p.x, p.y )){
 					PointF c = DungeonTilemap.tileCenterToWorld(mob.pos());
 					if (Math.abs(p.x - c.x) <= 12 && Math.abs(p.y - c.y) <= 12) {

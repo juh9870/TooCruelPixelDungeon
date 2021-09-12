@@ -417,7 +417,7 @@ public class Dungeon {
 
 		hero.pos(pos);
 		
-		for(Mob m : level.mobs){
+		for(Mob m : level.mobs()){
 			if (m.pos() == hero.pos()){
 				//displace mob
 				for(int i : PathFinder.NEIGHBOURS8){
@@ -425,6 +425,10 @@ public class Dungeon {
 						m.pos(m.pos() + i);
 						break;
 					}
+				}
+
+				if (m.pos() == hero.pos()){
+					m.destroy();
 				}
 			}
 		}
@@ -833,7 +837,7 @@ public class Dungeon {
 		GameScene.updateFog(l, t, width, height);
 		
         boolean mw = hero.buff(MindVision.class) != null;
-        for (Mob m : level.mobs.toArray(new Mob[0])){
+        for (Mob m : level.mobs().toArray(new Mob[0])){
 			if (mw || m.properties().contains(Char.Property.ALWAYS_VISIBLE) || m.buff(Revealing.class) != null) {
 				BArray.or( level.visited, level.heroFOV, m.pos() - 1 - level.width(), 3, level.visited );
 				BArray.or( level.visited, level.heroFOV, m.pos(), 3, level.visited );

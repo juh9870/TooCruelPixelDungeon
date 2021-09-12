@@ -624,7 +624,7 @@ public enum Challenges implements Hero.Doom {
     public static int checkExterminators(boolean reveal) {
         int left = 0;
         if (EXTERMINATION.enabled())
-            for (Mob m : Dungeon.level.mobs) {
+            for (Mob m : Dungeon.level.mobs()) {
                 if (m.buff(Extermination.class) != null) {
                     left++;
                     if (reveal) Buff.affect(m, Revealing.class, 1f);

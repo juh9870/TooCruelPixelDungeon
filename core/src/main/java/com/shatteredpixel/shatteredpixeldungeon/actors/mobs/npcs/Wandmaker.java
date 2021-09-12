@@ -297,7 +297,7 @@ public class Wandmaker extends NPC {
 						validPos = false;
 					}
 				} while (!validPos);
-				level.mobs.add( npc );
+				level.addMob( npc );
 
 				spawned = true;
 

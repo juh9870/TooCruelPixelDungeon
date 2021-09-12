@@ -205,72 +205,12 @@ public abstract class Mob extends Char {
         return enemy != null ? enemy.pos() : -1;
     }
 
-    public HashSet<Mob> fastGetMobsInFov() {
-        HashSet<Mob> mobs = new HashSet<>();
-        if (Dungeon.level.mobs.size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1)){
-            for (Mob mob : Dungeon.level.mobs) {
-                if(fieldOfView[mob.pos()] && mob.invisible <= 0){
-                    mobs.add(mob);
-                }
-            }
-        } else {
-            int w = Dungeon.level.width();
-            int x = pos() % w;
-            int y = pos() / w;
-            int left = Math.max(1, x - viewDistance);
-            int right = Math.min(w - 2, x + viewDistance);
-            int top = Math.max(1, y - viewDistance * w);
-            int bottom = Math.min(w - 2, y + viewDistance * w);
-
-            for (int i = left; i <= right; i++) {
-                for (int j = top; j < bottom; j++) {
-                    int cell = j * w + i;
-                    if(!Dungeon.level.insideMap(cell))
-                        continue;
-                    if (fieldOfView[cell]) {
-                        Char ch = Actor.findChar(cell);
-                        if (ch instanceof Mob && ch.invisible <= 0) {
-                            mobs.add((Mob) ch);
-                        }
-                    }
-                }
-            }
+    @Override
+    public void pos(int pos) {
+        if(Dungeon.level!=null){
+            Dungeon.level.moveMob(this, pos(), pos);
         }
-        return mobs;
-    }
-
-    public HashSet<Char> fastGetCharsInFov() {
-        HashSet<Char> mobs = new HashSet<>();
-        if (Actor.chars().size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1)){
-            for (Char ch : Actor.chars()) {
-                if(fieldOfView[ch.pos()] && ch.invisible <= 0){
-                    mobs.add(ch);
-                }
-            }
-        } else {
-            int w = Dungeon.level.width();
-            int x = pos() % w;
-            int y = pos() / w;
-            int left = Math.max(1, x - viewDistance);
-            int right = Math.min(w - 2, x + viewDistance);
-            int top = Math.max(1, y - viewDistance * w);
-            int bottom = Math.min(w - 2, y + viewDistance * w);
-
-            for (int i = left; i <= right; i++) {
-                for (int j = top; j < bottom; j++) {
-                    int cell = j * w + i;
-                    if(!Dungeon.level.insideMap(cell))
-                        continue;
-                    if (fieldOfView[cell]) {
-                        Char ch = Actor.findChar(cell);
-                        if (ch.invisible <= 0) {
-                            mobs.add(ch);
-                        }
-                    }
-                }
-            }
-        }
-        return mobs;
+        super.pos(pos);
     }
 
     @Override
@@ -687,13 +627,14 @@ public abstract class Mob extends Char {
 
     @Override
     public boolean attack(Char enemy, float dmgMulti, float dmgBonus, float accMulti) {
+        HashSet<ChampionEnemy> buffs = enemy.buffs(ChampionEnemy.class);
         if(super.attack(enemy, dmgMulti, dmgBonus, accMulti)){
             if (!enemy.isAlive()) {
                 if(Challenges.KING_OF_A_HILL.enabled() && enemy instanceof Mob) {
                     if (alignment == Alignment.ENEMY && buff(Corruption.class) == null) {
                         Mob loser = (Mob) enemy;
                         kills++;
-                        for (ChampionEnemy buff : loser.buffs(ChampionEnemy.class)) {
+                        for (ChampionEnemy buff : buffs) {
                             if (!ChampionEnemy.bannedFromKoth(buff.getClass())) {
                                 ChampionEnemy b = Buff.append(this, buff.getClass());
                                 if(b instanceof ChampionEnemy.EliteChampion){
@@ -826,7 +767,7 @@ public abstract class Mob extends Char {
         }
 
         if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE) {
-            dmg = Challenges.distributeDamage(this, new HashSet<>(Dungeon.level.mobs), dmg);
+            dmg = Challenges.distributeDamage(this, new HashSet<>(Dungeon.level.mobs()), dmg);
         }
         super.damage( dmg, src );
     }
@@ -837,7 +778,7 @@ public abstract class Mob extends Char {
 
         super.destroy();
 
-        Dungeon.level.mobs.remove( this );
+        Dungeon.level.removeMob( this );
 
         if (Dungeon.hero.isAlive()) {
 
@@ -920,14 +861,12 @@ public abstract class Mob extends Char {
                 }
 
                 if (fieldOfView != null) {
-                    for (Mob m : Dungeon.level.mobs) {
+                    for (Mob m : fastGetMobsInFov()) {
                         if (m instanceof NPC) continue;
                         if (m == this) continue;
                         if (m.alignment == Char.Alignment.ALLY) continue;
                         if (m.buff(SavingSlumber.class) != null) continue;
-                        if (fieldOfView[m.pos()]) {
-                            m.beckon(oldPos);
-                        }
+                        m.beckon(oldPos);
                     }
                 }
             }
@@ -1258,7 +1197,7 @@ public abstract class Mob extends Char {
             }
 
             if (alignment == Alignment.ENEMY && Challenges.SWARM_INTELLIGENCE.enabled()) {
-                for (Mob mob : Dungeon.level.mobs) {
+                for (Mob mob : Dungeon.level.mobs()) {
                     if (mob.paralysed <= 0
                             && Dungeon.level.distance(pos(), mob.pos()) <= 8
                             && mob.state != mob.HUNTING) {
@@ -1296,7 +1235,7 @@ public abstract class Mob extends Char {
             target = enemy.pos();
 
             if (alignment == Alignment.ENEMY && Challenges.SWARM_INTELLIGENCE.enabled()) {
-                for (Mob mob : Dungeon.level.mobs) {
+                for (Mob mob : Dungeon.level.mobs()) {
                     if ((Challenges.HEART_OF_HIVE.enabled() && enemy == Dungeon.hero) ||
                             (mob.paralysed <= 0
                             && Dungeon.level.distance(pos(), mob.pos()) <= 8
@@ -1446,18 +1385,18 @@ public abstract class Mob extends Char {
 
     public static void holdAllies( Level level, int holdFromPos ){
         heldAllies.clear();
-        for (Mob mob : level.mobs.toArray( new Mob[0] )) {
+        for (Mob mob : level.mobs().toArray( new Mob[0] )) {
             //preserve directable allies no matter where they are
             if (mob instanceof DirectableAlly) {
                 ((DirectableAlly) mob).clearDefensingPos();
-                level.mobs.remove( mob );
+                level.removeMob( mob );
                 heldAllies.add(mob);
 
                 //preserve intelligent allies if they are near the hero
             } else if (mob.alignment == Alignment.ALLY
                     && mob.intelligentAlly
                     && Dungeon.level.distance(holdFromPos, mob.pos()) <= 5){
-                level.mobs.remove( mob );
+                level.removeMob( mob );
                 heldAllies.add(mob);
             }
         }
@@ -1491,7 +1430,7 @@ public abstract class Mob extends Char {
             }
 
             for (Mob ally : heldAllies) {
-                level.mobs.add(ally);
+                level.addMob(ally);
                 ally.state = ally.WANDERING;
 
                 if (!candidatePositions.isEmpty()){

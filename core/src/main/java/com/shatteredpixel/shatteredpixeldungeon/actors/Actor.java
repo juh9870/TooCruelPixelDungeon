@@ -185,7 +185,7 @@ public abstract class Actor implements Bundlable {
 		
 		add( Dungeon.hero );
 		
-		for (Mob mob : Dungeon.level.mobs) {
+		for (Mob mob : Dungeon.level.mobs()) {
 			add( mob );
 		}
 		
@@ -333,6 +333,10 @@ public abstract class Actor implements Bundlable {
 		
 		if (actor instanceof Char) {
 			Char ch = (Char)actor;
+			Char oldChar = charsPositioned.get(ch.pos());
+			if (oldChar != null && oldChar.isAlive() && chars.contains(oldChar)) {
+				throw new Error("Position is already occupied");
+			}
 			charsPositioned.put( ch.pos(), ch );
 			chars.add( ch );
 			for (Buff buff : ch.buffs()) {

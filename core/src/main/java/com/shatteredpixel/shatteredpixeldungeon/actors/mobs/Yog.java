@@ -110,7 +110,7 @@ public class Yog extends Mob {
 
 		HashSet<Mob> fists = new HashSet<>();
 
-		for (Mob mob : Dungeon.level.mobs)
+		for (Mob mob : Dungeon.level.mobs())
 			if (mob instanceof RottingFist || mob instanceof BurningFist)
 				fists.add( mob );
 
@@ -143,7 +143,7 @@ public class Yog extends Mob {
 			Actor.addDelayed( new Pushing( larva, pos(), larva.pos()), -1 );
 		}
 
-		for (Mob mob : Dungeon.level.mobs) {
+		for (Mob mob : Dungeon.level.mobs()) {
 			if (mob instanceof BurningFist || mob instanceof RottingFist || mob instanceof Larva) {
 				mob.aggro( enemy );
 			}
@@ -160,7 +160,7 @@ public class Yog extends Mob {
 	@Override
 	public void die( Object cause ) {
 
-		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
+		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs().clone()) {
 			if (mob instanceof BurningFist || mob instanceof RottingFist) {
 				mob.die( cause );
 			}

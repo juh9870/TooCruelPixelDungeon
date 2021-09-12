@@ -103,7 +103,7 @@ public class ShopRoom extends SpecialRoom {
 
 		Mob shopkeeper = new Shopkeeper();
 		shopkeeper.pos(pos);
-		level.mobs.add( shopkeeper );
+		level.addMob( shopkeeper );
 
 	}
 

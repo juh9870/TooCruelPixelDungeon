@@ -137,7 +137,7 @@ public class Tengu extends Mob {
 
 	@Override
 	public void damage(int dmg, Object src) {
-		if (!Dungeon.level.mobs.contains(this)){
+		if (!Dungeon.level.mobs().contains(this)){
 			return;
 		}
 
@@ -194,7 +194,7 @@ public class Tengu extends Mob {
 	
 	@Override
 	public boolean isAlive() {
-		return super.isAlive() || Dungeon.level.mobs.contains(this); //Tengu has special death rules, see prisonbosslevel.progress()
+		return super.isAlive() || Dungeon.level.mobs().contains(this); //Tengu has special death rules, see prisonbosslevel.progress()
 	}
 
 	@Override

@@ -207,7 +207,7 @@ public class Imp extends NPC {
 						//The imp doesn't move, so he cannot obstruct a passageway
 						!(level.passable[npc.pos() + PathFinder.CIRCLE4[0]] && level.passable[npc.pos() + PathFinder.CIRCLE4[2]]) ||
 						!(level.passable[npc.pos() + PathFinder.CIRCLE4[1]] && level.passable[npc.pos() + PathFinder.CIRCLE4[3]]));
-				level.mobs.add( npc );
+				level.addMob( npc );
 				
 				spawned = true;
 

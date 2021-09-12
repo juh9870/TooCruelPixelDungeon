@@ -306,7 +306,7 @@ public abstract class RegularLevel extends Level {
 		if (Challenges.EXTERMINATION.enabled()) {
 			Buff.affect(mob, Extermination.class);
 		}
-		mobs.add(mob);
+		addMob(mob);
 		return true;
 	}
 	
@@ -411,12 +411,12 @@ public abstract class RegularLevel extends Level {
 					if (Challenges.EXTERMINATION.enabled()) {
 						Buff.affect(mob, Extermination.class);
 					}
-					mobs.add(mob);
+					addMob(mob);
 				}
 			}
 		}
 
-		for (Mob m : mobs){
+		for (Mob m : mobs()){
 			if (map[m.pos()] == Terrain.HIGH_GRASS || map[m.pos()] == Terrain.FURROWED_GRASS) {
 				map[m.pos()] = Terrain.GRASS;
 				losBlocking[m.pos()] = false;
@@ -519,7 +519,7 @@ public abstract class RegularLevel extends Level {
 				break;
 			case 5:
 				if (Dungeon.depth > 1 && findMob(cell) == null){
-					mobs.add(Mimic.spawnAt(cell, toDrop));
+					addMob(Mimic.spawnAt(cell, toDrop));
 					continue;
 				}
 				type = Heap.Type.CHEST;
@@ -533,7 +533,7 @@ public abstract class RegularLevel extends Level {
 					(toDrop.isUpgradable() && Random.Int(4 - toDrop.level()) == 0)){
 
 				if (Dungeon.depth > 1 && Random.Int(10) == 0 && findMob(cell) == null){
-					mobs.add(Mimic.spawnAt(cell, toDrop, GoldenMimic.class));
+					addMob(Mimic.spawnAt(cell, toDrop, GoldenMimic.class));
 				} else {
 					Heap dropped = drop(toDrop, cell);
 					if (heaps.get(cell) == dropped) {
@@ -760,7 +760,7 @@ public abstract class RegularLevel extends Level {
 					}
 				}
 			}
-			for (Mob mob : mobs) {
+			for (Mob mob : mobs()) {
 				cells.remove(mob.pos());
 			}
 			return Random.element(cells);

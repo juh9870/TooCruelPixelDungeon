@@ -101,7 +101,11 @@ public class ArmoredStatue extends Statue {
 	@Override
 	public void die( Object cause ) {
 		super.die( cause );
-		if (buff(NoReward.class) == null && !isAlive()) {
+	}
+
+	@Override
+	public void rollToDropLoot() {
+		if (buff(NoReward.class) == null) {
 			armor.identify();
 			if (Challenges.CURSED.enabled()) {
 				armor.cursed = true;
@@ -109,6 +113,7 @@ public class ArmoredStatue extends Statue {
 			}
 			Dungeon.level.drop(armor, pos()).sprite.drop();
 		}
+		super.rollToDropLoot();
 	}
 
 	@Override

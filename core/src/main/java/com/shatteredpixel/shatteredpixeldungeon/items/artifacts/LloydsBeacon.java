@@ -159,7 +159,7 @@ public class LloydsBeacon extends Artifact {
 			
 			if (returnDepth == Dungeon.depth) {
 				ScrollOfTeleportation.appear( hero, returnPos );
-				for(Mob m : Dungeon.level.mobs){
+				for(Mob m : Dungeon.level.mobs()){
 					if (m.pos() == hero.pos()){
 						//displace mob
 						for(int i : PathFinder.NEIGHBOURS8){
@@ -168,6 +168,9 @@ public class LloydsBeacon extends Artifact {
 								m.sprite.point(m.sprite.worldToCamera(m.pos()));
 								break;
 							}
+						}
+						if (m.pos() == hero.pos()){
+							m.destroy();
 						}
 					}
 				}

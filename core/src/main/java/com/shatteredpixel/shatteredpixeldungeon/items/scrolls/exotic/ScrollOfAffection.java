@@ -42,7 +42,7 @@ public class ScrollOfAffection extends ExoticScroll {
 		curUser.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 		Sample.INSTANCE.play( Assets.Sounds.CHARMS );
 		
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs().toArray( new Mob[0] )) {
 			if (Dungeon.level.heroFOV[mob.pos()]) {
 				Buff.affect( mob, Charm.class, Charm.DURATION*2f ).object = curUser.id();
 				mob.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );

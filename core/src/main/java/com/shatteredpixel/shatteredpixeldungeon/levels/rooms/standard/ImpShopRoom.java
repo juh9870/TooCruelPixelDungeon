@@ -89,7 +89,7 @@ public class ImpShopRoom extends ShopRoom {
 		if (ShatteredPixelDungeon.scene() instanceof GameScene) {
 			GameScene.add(shopkeeper);
 		} else {
-			level.mobs.add(shopkeeper);
+			level.addMob(shopkeeper);
 		}
 
 	}

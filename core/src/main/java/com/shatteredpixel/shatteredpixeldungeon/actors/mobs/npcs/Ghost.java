@@ -286,7 +286,7 @@ public class Ghost extends NPC {
 				do {
 					ghost.pos(level.randomRespawnCell( ghost ));
 				} while (ghost.pos() == -1);
-				level.mobs.add( ghost );
+				level.addMob( ghost );
 				
 				spawned = true;
 				//dungeon depth determines type of quest.

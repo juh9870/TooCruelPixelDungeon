@@ -64,7 +64,7 @@ public class ThinPillarsGooRoom extends GooBossRoom {
 		
 		Goo boss = new Goo();
 		boss.pos(level.pointToCell(center()));
-		level.mobs.add( boss );
+		level.addMob( boss );
 		
 	}
 	

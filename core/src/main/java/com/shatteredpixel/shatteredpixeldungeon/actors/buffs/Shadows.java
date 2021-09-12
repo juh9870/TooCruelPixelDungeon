@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 
 public class Shadows extends Invisibility {
 	
@@ -56,8 +57,10 @@ public class Shadows extends Invisibility {
 	@Override
 	public boolean attachTo( Char target ) {
 		if (Dungeon.level != null) {
-			for (Mob m : Dungeon.level.mobs) {
-				if (Dungeon.level.adjacent(m.pos(), target.pos()) && m.alignment != target.alignment) {
+			for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
+				int cell = PathFinder.NEIGHBOURS8[i] + target.pos();
+				Mob m = Dungeon.level.findMob(cell);
+				if (m != null && m.alignment != target.alignment) {
 					return false;
 				}
 			}
@@ -90,8 +93,11 @@ public class Shadows extends Invisibility {
 				return true;
 			}
 
-			for (Mob m : Dungeon.level.mobs){
-				if (Dungeon.level.adjacent(m.pos(), target.pos()) && m.alignment != target.alignment){
+
+			for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
+				int cell = PathFinder.NEIGHBOURS8[i] + target.pos();
+				Mob m = Dungeon.level.findMob(cell);
+				if (m != null && m.alignment != target.alignment) {
 					detach();
 					return true;
 				}

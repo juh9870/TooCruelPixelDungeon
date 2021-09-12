@@ -61,7 +61,7 @@ public class BlackjackRoom extends SpecialRoom {
 
         Mob shopkeeper = new Blackjackkeeper();
         shopkeeper.pos(pos);
-        level.mobs.add( shopkeeper );
+        level.addMob( shopkeeper );
 
     }
 

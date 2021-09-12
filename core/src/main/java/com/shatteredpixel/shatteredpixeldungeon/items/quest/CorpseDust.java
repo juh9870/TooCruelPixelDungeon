@@ -90,7 +90,7 @@ public class CorpseDust extends Item {
 		public boolean act() {
 			spawnPower++;
 			int wraiths = 1; //we include the wraith we're trying to spawn
-			for (Mob mob : Dungeon.level.mobs){
+			for (Mob mob : Dungeon.level.mobs()){
 				if (mob instanceof Wraith){
 					wraiths++;
 				}
@@ -118,7 +118,7 @@ public class CorpseDust extends Item {
 
 		public void dispel(){
 			detach();
-			for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
+			for (Mob mob : Dungeon.level.mobs().toArray(new Mob[0])){
 				if (mob instanceof Wraith){
 					mob.die(null);
 				}

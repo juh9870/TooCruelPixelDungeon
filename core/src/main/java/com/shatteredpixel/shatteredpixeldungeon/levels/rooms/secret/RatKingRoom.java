@@ -67,7 +67,7 @@ public class RatKingRoom extends SecretRoom {
 
 		RatKing king = new RatKing();
 		king.pos(level.pointToCell(random( 2 )));
-		level.mobs.add( king );
+		level.addMob( king );
 	}
 	
 	private static void addChest( Level level, int pos, int door ) {

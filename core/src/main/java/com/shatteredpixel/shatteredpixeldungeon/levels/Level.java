@@ -158,7 +158,8 @@ public abstract class Level implements Bundlable {
 	//when a boss level has become locked.
 	public boolean locked = false;
 	
-	public HashSet<Mob> mobs;
+	private HashSet<Mob> mobs;
+	private HashMap<Integer,Mob> mobsPositioned;
 	public HashSet<LevelObject> objects;
 	public SparseArray<Heap> heaps;
 	public HashMap<Class<? extends Blob>,Blob> blobs;
@@ -201,6 +202,7 @@ public abstract class Level implements Bundlable {
 			width = height = length = 0;
 
 			mobs = new HashSet<>();
+			mobsPositioned = new HashMap<>();
 			objects = new HashSet<>();
 			heaps = new SparseArray<>();
 			blobs = new HashMap<>();
@@ -313,6 +315,7 @@ public abstract class Level implements Bundlable {
 		
 		createMobs();
 		createItems();
+		recalculateMobsPositions();
 		postCreate();
 
 		if (Challenges.DANCE_FLOOR.enabled()) {
@@ -351,13 +354,20 @@ public abstract class Level implements Bundlable {
 	}
 	
 	public void reset() {
-		
+
 		for (Mob mob : mobs.toArray( new Mob[0] )) {
 			if (!mob.reset()) {
 				mobs.remove( mob );
 			}
 		}
 		createMobs();
+	}
+
+	public void recalculateMobsPositions() {
+		mobsPositioned.clear();
+		for (Mob mob : mobs) {
+			addMob(mob);
+		}
 	}
 	
 	@Override
@@ -373,6 +383,7 @@ public abstract class Level implements Bundlable {
 		setSize( bundle.getInt(WIDTH), bundle.getInt(HEIGHT));
 		
 		mobs = new HashSet<>();
+		mobsPositioned = new HashMap<>();
 		objects = new HashSet<>();
 		heaps = new SparseArray<>();
 		blobs = new HashMap<>();
@@ -426,7 +437,7 @@ public abstract class Level implements Bundlable {
 		for (Bundlable m : collection) {
 			Mob mob = (Mob)m;
 			if (mob != null) {
-				mobs.add( mob );
+				addMob( mob );
 			}
 		}
 
@@ -460,6 +471,7 @@ public abstract class Level implements Bundlable {
 
 		buildFlagMaps();
 		cleanWalls();
+		recalculateMobsPositions();
 	}
 	
 	@Override
@@ -636,9 +648,40 @@ public abstract class Level implements Bundlable {
 	}
 
 	public Mob findMob( int pos ){
-    	Char ch = Actor.findChar(pos);
-    	if(ch instanceof Mob) return (Mob) ch;
+    	Mob mob = mobsPositioned.get(pos);
+    	if(mob!=null) return mob;
     	return null;
+	}
+
+	public HashSet<Mob> mobs() {
+		return mobs;
+	}
+
+	public void addMob(Mob mob) {
+		mobs.add(mob);
+		Mob old = mobsPositioned.get(mob.pos());
+		if (old != null && old.isAlive()) {
+			throw new Error("Position is already occupied");
+		}
+		mobsPositioned.put(mob.pos(), mob);
+	}
+
+	public void removeMob(Char ch) {
+		mobs.remove(ch);
+		Mob old = mobsPositioned.get(ch.pos());
+		if (old == ch) {
+			mobsPositioned.remove(ch.pos());
+		}
+	}
+
+	public void moveMob(Mob mob, int oldPos, int newPos){
+		if (!mob.isAlive() || !mobs.contains(mob)) return;
+		mobsPositioned.remove(oldPos);
+		Char oldChar = mobsPositioned.get(newPos);
+		if (oldChar != null && oldChar.isAlive() && mobs.contains(mob)) {
+			throw new Error("Position is already occupied");
+		}
+		mobsPositioned.put(newPos, mob);
 	}
 
 	private Respawner respawner;

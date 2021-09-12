@@ -49,7 +49,7 @@ public class ScrollOfPolymorph extends ExoticScroll {
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		boolean injuredOnly = Challenges.GRINDING_3.enabled();
 		
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs().toArray( new Mob[0] )) {
 			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos()]) {
 				if (!mob.properties().contains(Char.Property.BOSS)
 						&& !mob.properties().contains(Char.Property.MINIBOSS)){
@@ -65,7 +65,7 @@ public class ScrollOfPolymorph extends ExoticScroll {
 					
 					mob.destroy();
 					mob.sprite.killAndErase();
-					Dungeon.level.mobs.remove(mob);
+					Dungeon.level.removeMob(mob);
 					TargetHealthIndicator.instance.target(null);
 					GameScene.add(sheep);
 					CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);

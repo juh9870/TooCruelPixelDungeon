@@ -323,7 +323,7 @@ public class DwarfKing extends Mob {
 
 	private HashSet<Mob> getSubjects(){
 		HashSet<Mob> subjects = new HashSet<>();
-		for (Mob m : Dungeon.level.mobs){
+		for (Mob m : Dungeon.level.mobs()){
 			if (m.alignment == alignment && (m instanceof Ghoul || m instanceof Monk || m instanceof Warlock || m instanceof Golem)){
 				subjects.add(m);
 			}
@@ -470,7 +470,7 @@ public class DwarfKing extends Mob {
 				for (Summoning s : buffs(Summoning.class)) {
 					s.detach();
 				}
-				for (Mob m : Dungeon.level.mobs.toArray(new Mob[0])) {
+				for (Mob m : Dungeon.level.mobs().toArray(new Mob[0])) {
 					if (m instanceof Ghoul || m instanceof Monk || m instanceof Warlock || m instanceof Golem) {
 						m.die(null);
 					}
@@ -703,7 +703,7 @@ public class DwarfKing extends Mob {
 		@Override
 		public void detach() {
 			super.detach();
-			for (Mob m : Dungeon.level.mobs){
+			for (Mob m : Dungeon.level.mobs()){
 				if (m instanceof DwarfKing){
 					int damage = m.HT / (Challenges.STRONGER_BOSSES.enabled() ? 18 : 12);
 					m.damage(damage, this);

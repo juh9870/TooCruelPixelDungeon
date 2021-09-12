@@ -92,7 +92,7 @@ public class RotGardenRoom extends SpecialRoom {
 
 	private static void placePlant(Level level, int pos, Mob plant){
 		plant.pos(pos);
-		level.mobs.add( plant );
+		level.addMob( plant );
 
 		for(int i : PathFinder.NEIGHBOURS8) {
 			if (level.map[pos + i] == Terrain.GRASS){

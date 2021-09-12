@@ -269,7 +269,7 @@ public class CursedWand {
 					sheep.pos(ch.pos());
 					ch.destroy();
 					ch.sprite.killAndErase();
-					Dungeon.level.mobs.remove(ch);
+					Dungeon.level.removeMob(ch);
 					TargetHealthIndicator.instance.target(null);
 					GameScene.add(sheep);
 					CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);

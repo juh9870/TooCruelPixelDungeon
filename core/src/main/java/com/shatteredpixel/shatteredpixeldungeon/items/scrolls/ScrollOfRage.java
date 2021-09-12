@@ -42,7 +42,7 @@ public class ScrollOfRage extends Scroll {
 	@Override
 	public void doRead() {
 
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs().toArray( new Mob[0] )) {
 			mob.beckon(curUser.pos());
 			if (mob.alignment != Char.Alignment.ALLY && Dungeon.level.heroFOV[mob.pos()]) {
 				Buff.prolong(mob, Amok.class, 5f);

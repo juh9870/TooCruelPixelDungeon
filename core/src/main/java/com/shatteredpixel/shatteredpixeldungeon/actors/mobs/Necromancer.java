@@ -246,7 +246,7 @@ public class Necromancer extends Mob {
 			
 			if (mySkeleton != null &&
 					(!mySkeleton.isAlive()
-					|| !Dungeon.level.mobs.contains(mySkeleton)
+					|| !Dungeon.level.mobs().contains(mySkeleton)
 					|| mySkeleton.alignment != alignment)){
 				mySkeleton = null;
 			}

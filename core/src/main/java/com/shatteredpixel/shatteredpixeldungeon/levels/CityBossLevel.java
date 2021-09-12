@@ -216,7 +216,7 @@ public class CityBossLevel extends Level {
 	}
 
 	private Mob getKing(){
-		for (Mob m : mobs){
+		for (Mob m : mobs()){
 			if (m instanceof DwarfKing) return m;
 		}
 		return null;

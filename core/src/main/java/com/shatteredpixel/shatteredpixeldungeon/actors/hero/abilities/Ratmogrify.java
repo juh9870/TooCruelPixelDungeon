@@ -111,7 +111,7 @@ public class Ratmogrify extends ArmorAbility {
 
 			Actor.remove( ch );
 			ch.sprite.killAndErase();
-			Dungeon.level.mobs.remove(ch);
+			Dungeon.level.removeMob(ch);
 
 			GameScene.add(rat);
 

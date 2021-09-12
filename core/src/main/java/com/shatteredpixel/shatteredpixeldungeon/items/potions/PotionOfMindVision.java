@@ -41,7 +41,7 @@ public class PotionOfMindVision extends Potion {
 		Buff.affect( hero, MindVision.class, MindVision.DURATION );
 		Dungeon.observe();
 		
-		if (Dungeon.level.mobs.size() > 0) {
+		if (Dungeon.level.mobs().size() > 0) {
 			GLog.i( Messages.get(this, "see_mobs") );
 		} else {
 			GLog.i( Messages.get(this, "see_none") );

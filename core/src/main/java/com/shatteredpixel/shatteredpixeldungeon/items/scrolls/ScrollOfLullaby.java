@@ -51,7 +51,7 @@ public class ScrollOfLullaby extends Scroll {
 		curUser.sprite.centerEmitter().start( Speck.factory( Speck.NOTE ), 0.3f, 5 );
 		Sample.INSTANCE.play( Assets.Sounds.LULLABY );
 
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs().toArray( new Mob[0] )) {
 			if (Dungeon.level.heroFOV[mob.pos()]) {
 				Buff.affect( mob, Drowsy.class );
 				mob.sprite.centerEmitter().start( Speck.factory( Speck.NOTE ), 0.3f, 5 );

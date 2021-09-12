@@ -42,8 +42,8 @@ public class Legion extends Buff {
             if (turnsToNextWave <= 0 || turnsSinceLastWave >= delay()) {
                 turnsToNextWave = delay();
                 int wantSpawn = waveSize();
-                for (Mob mob : Dungeon.level.mobs) {
-                    if (mob.alignment == Char.Alignment.ENEMY) wantSpawn--;
+                for (Mob mob : Dungeon.level.mobs()) {
+                    if (mob.alignment == Char.Alignment.ENEMY) wantSpawn -= mob.spawningWeight();
                 }
 
                 if (wantSpawn > 0) {
