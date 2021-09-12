@@ -69,7 +69,7 @@ public class Cruel_Changes {
     }
 
     public static void add_v1_0_0_Changes(ArrayList<ChangeInfo> changeInfos) {
-        ChangeInfo changes = new ChangeInfo("v1.0.4", true, "");
+        ChangeInfo changes = new ChangeInfo("v1.0.0", true, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
