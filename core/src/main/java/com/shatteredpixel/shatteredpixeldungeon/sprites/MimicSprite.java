@@ -88,6 +88,11 @@ public class MimicSprite extends MobSprite {
 		super.showSleep();
 	}
 
+	@Override
+	protected boolean canSkipAnimation(Animation anim) {
+		return super.canSkipAnimation(anim) && anim != hiding;
+	}
+
 	public static class Golden extends MimicSprite{
 		@Override
 		protected int texOffset() {

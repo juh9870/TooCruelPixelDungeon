@@ -59,7 +59,7 @@ public class Weakness extends FlavourBuff implements AttackAmplificationBuff {
 	}
 
 	@Override
-	public int damageFactor(int dmg) {
+	public float damageFactor(float dmg) {
 		return (int)(dmg * 0.67f);
 	}
 }

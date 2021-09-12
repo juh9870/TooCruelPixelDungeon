@@ -220,7 +220,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
     }
 
     @Override
-    public int damageFactor(int dmg) {
+    public float damageFactor(float dmg) {
         return (int) (dmg * meleeDamageFactor());
     }
 
@@ -932,7 +932,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             }
             if (!target.fieldOfView[Dungeon.hero.pos()]) {
 
-                if (targ.enemyPos() == Dungeon.hero.pos() || targ.enemyPos() == -1) {
+                if (targ.isTargeting(Dungeon.hero) || targ.isTargeting(null)) {
                     targ.beckon(Dungeon.hero.pos());
                     for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
                         int cell = targ.pos() + PathFinder.NEIGHBOURS8[i];

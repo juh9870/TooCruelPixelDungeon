@@ -65,7 +65,7 @@ public class Fury extends Buff implements AttackAmplificationBuff {
 	}
 
 	@Override
-	public int damageFactor(int dmg) {
+	public float damageFactor(float dmg) {
 		return (int)(dmg * 1.5f);
 	}
 }

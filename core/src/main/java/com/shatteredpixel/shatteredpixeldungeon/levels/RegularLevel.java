@@ -68,6 +68,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WornDartTrap;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -646,7 +647,7 @@ public abstract class RegularLevel extends Level {
 	}
 	
     @Override
-    protected BlackjackRoom getBlackjackRoom() {
+    public BlackjackRoom getBlackjackRoom() {
         for (Room r : rooms) {
             if (r instanceof BlackjackRoom) return (BlackjackRoom) r;
         }

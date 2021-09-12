@@ -145,7 +145,14 @@ public class Item implements Bundlable {
 			return false;
 		}
 	}
-	
+
+	@Override
+	public Item clone() {
+		Bundle b = new Bundle();
+		b.put("item", this);
+		return (Item) b.get("item");
+	}
+
 	public void doDrop( Hero hero ) {
 		hero.spendAndNext(TIME_TO_DROP);
 		int pos = hero.pos();

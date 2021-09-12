@@ -1,7 +1,5 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -12,6 +10,7 @@ public class RevengeRage extends Buff implements AttackAmplificationBuff {
 
     public void add(int amount) {
         boost += amount;
+        boost = Math.min(boost, 9001);
     }
 
     {
@@ -19,12 +18,12 @@ public class RevengeRage extends Buff implements AttackAmplificationBuff {
     }
 
     @Override
-    public int damageFactorPriority() {
-        return -1;
+    public Type damageFactorPriority() {
+        return Type.FLAT_2;
     }
 
     @Override
-    public int damageFactor(int dmg) {
+    public float damageFactor(float dmg) {
         return dmg + boost;
     }
 

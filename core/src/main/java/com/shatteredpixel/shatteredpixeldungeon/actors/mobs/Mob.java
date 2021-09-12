@@ -34,11 +34,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Arrowhead;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AttackAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.DamageAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -429,7 +431,7 @@ public abstract class Mob extends Char {
                 //if no better enemies are found, start infighting
                 if(enemies.isEmpty() && Challenges.KING_OF_A_HILL.enabled()){
                     for (Mob mob : mobsInFov)
-                        if (mob.alignment == Alignment.ENEMY && enemy != this)
+                        if (mob.alignment == Alignment.ENEMY && mob != this)
                             enemies.add(mob);
                 }
             }
@@ -686,7 +688,7 @@ public abstract class Mob extends Char {
     @Override
     public boolean attack(Char enemy, float dmgMulti, float dmgBonus, float accMulti) {
         if(super.attack(enemy, dmgMulti, dmgBonus, accMulti)){
-            if (!enemy.isAlive() || (enemy.HP == 1 && enemy.HP != enemy.HT)) {
+            if (!enemy.isAlive()) {
                 if(Challenges.KING_OF_A_HILL.enabled() && enemy instanceof Mob) {
                     if (alignment == Alignment.ENEMY && buff(Corruption.class) == null) {
                         Mob loser = (Mob) enemy;
@@ -698,7 +700,6 @@ public abstract class Mob extends Char {
                                     ((ChampionEnemy.EliteChampion) b).guardiansCooldown = ChampionEnemy.EliteChampion.GUARDS_SUMMON_COOLDOWN;
                                 }
                             }
-                            buff.detach();
                         }
                         Class<? extends ChampionEnemy> toAdd;
                         do {
@@ -715,10 +716,6 @@ public abstract class Mob extends Char {
                         PotionOfHealing.cure(this);
                         HP = HT;
                         CellEmitter.get(this.pos()).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
-
-                        if (enemy.HP == 1) {
-                            enemy.damage(9000, this);
-                        }
                     }
                 }
             }
@@ -1135,10 +1132,29 @@ public abstract class Mob extends Char {
         desc.append("\n\n")
                 .append(Messages.get(Mob.class, "stats", HP, HT, (int) (attackSkill(Dungeon.hero) * MMO.skillMod()), (int) (defenseSkill * MMO.skillMod())));
 
-        if (mmo != null) {
-            desc.append("\n")
-                    .append(Messages.get(Mob.class, "stats_mmo", MMO.modifier()));
+        float dmgMult = 1f;
+        for (Buff buff : buffs()) {
+            if (buff instanceof DamageAmplificationBuff) {
+                dmgMult *= ((DamageAmplificationBuff) buff).damageMultiplier();
+            }
         }
+
+        if (dmgMult != 1f) {
+            desc.append("\n")
+                    .append(Messages.get(Mob.class, "stats_dmg", dmgMult));
+        }
+        int dmg = 0;
+        int tries = 1000;
+        for (int i = 0; i < tries; i++) {
+            dmg+=damageRoll();
+        }
+        desc.append("\n")
+                .append(Messages.get(Mob.class, "stats_avg_atk", dmg / tries));
+        desc.append("\n")
+                .append(Messages.get(Mob.class, "stats_atk",
+                        AttackAmplificationBuff.damageFormula(buffs()),
+                        AttackAmplificationBuff.damageFactor(dmg / tries, buffs())
+                ));
 
         for (Buff b : buffs(ChampionEnemy.class)){
             desc.append("\n\n_").append(Messages.titleCase(b.toString())).append("_\n").append(b.desc());

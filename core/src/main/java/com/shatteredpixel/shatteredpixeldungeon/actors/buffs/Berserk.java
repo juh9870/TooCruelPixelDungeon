@@ -109,7 +109,7 @@ public class Berserk extends Buff implements AttackAmplificationBuff {
 	}
 
 	@Override
-	public int damageFactor(int dmg){
+	public float damageFactor(float dmg){
 		float bonus = Math.min(1.5f, 1f + (power / 2f));
 		return Math.round(dmg * bonus);
 	}

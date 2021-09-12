@@ -5,8 +5,9 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 
 public class RevengeFury extends FlavourBuff implements AttackAmplificationBuff, DamageAmplificationBuff {
+
     @Override
-    public int damageFactor(int dmg) {
+    public float damageFactor(float dmg) {
         return dmg * 2;
     }
 

@@ -51,6 +51,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bestiary;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.HolderMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogFist;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Sheep;
@@ -312,9 +313,7 @@ public abstract class Level implements Bundlable {
 		
 		createMobs();
 		createItems();
-        if ((!(Dungeon.bossLevel())) && Challenges.BLACKJACK.enabled()) {
-            blackjackHeaps();
-        }
+		postCreate();
 
 		if (Challenges.DANCE_FLOOR.enabled()) {
 			GameScene.add(Blob.seed(0, 1, DanceFloor.class, this));
@@ -531,52 +530,73 @@ public abstract class Level implements Bundlable {
 
 	abstract protected void createItems();
 
-    protected BlackjackRoom getBlackjackRoom() {
+    public BlackjackRoom getBlackjackRoom() {
         return null;
     }
 
     protected void blackjackHeaps() {
-
         BlackjackRoom room = getBlackjackRoom();
         if (room == null) return;
         Heap h;
-        for (int c = 0; c < length; c++) {
-            h = heaps.get(c);
-            if (h != null) {
-                if (h.type == Heap.Type.FOR_SALE) continue;
-                int tokensCount = 0;
-                for (Item i : (LinkedList<Item>) h.items.clone()) {
-                    if (Currency.TOKENS.sellPrice(i) > 0) {
-                        tokensCount += (int) (Currency.TOKENS.sellPrice(i) * Random.NormalFloat(0.33f, 1f));
-                        switch (h.type) {
-                            case LOCKED_CHEST:
-                                room.chestItems.add(i);
-                                break;
-                            case CRYSTAL_CHEST:
-                                room.crystalItems.add(i);
-                                break;
-                            default:
-                                room.sellItems.add(i);
-                        }
-                        h.items.remove(i);
-                    }
-                }
-                if (h.items.size() == 0) {
-                    heaps.remove(c);
-                }
-                if (tokensCount > 0) {
-                    Heap gold = drop(new PokerToken(tokensCount), c);
-                    gold.haunted = h.haunted;
-                    if (h.type == Heap.Type.SKELETON
-                            || h.type == Heap.Type.REMAINS
-                            || h.type == Heap.Type.CHEST
-                            || h.type == Heap.Type.TOMB) {
-                        gold.type = h.type;
-                    }
-                }
-            }
-        }
+		for (int c : heaps.keyArray()) {
+			h = heaps.get(c);
+			if (h != null) {
+				if (h.type == Heap.Type.FOR_SALE) continue;
+				int tokensCount = 0;
+				for (Item i : (LinkedList<Item>) h.items.clone()) {
+					if (Currency.TOKENS.sellPrice(i) > 0) {
+						tokensCount += (int) (Currency.TOKENS.sellPrice(i) * Random.NormalFloat(0.33f, 1f));
+						switch (h.type) {
+							case LOCKED_CHEST:
+								room.chestItems.add(i);
+								break;
+							case CRYSTAL_CHEST:
+								room.crystalItems.add(i);
+								break;
+							default:
+								room.sellItems.add(i);
+						}
+						h.items.remove(i);
+					}
+				}
+				if (h.items.size() == 0) {
+					heaps.remove(c);
+				}
+				if (tokensCount > 0) {
+					Heap gold = drop(new PokerToken(tokensCount), c);
+					gold.haunted = h.haunted;
+					if (h.type == Heap.Type.SKELETON
+							|| h.type == Heap.Type.REMAINS
+							|| h.type == Heap.Type.CHEST
+							|| h.type == Heap.Type.TOMB) {
+						gold.type = h.type;
+					}
+				}
+			}
+		}
     }
+
+	protected void mimicsHeaps() {
+		Heap h;
+		for (int c : heaps.keyArray()) {
+			h = heaps.get(c);
+			if (h != null) {
+				if (h.type == Heap.Type.CHEST || Challenges.MIMICS_2.enabled()) {
+					heaps.remove(c);
+					HolderMimic.spawnAt(c, h.items, this);
+				}
+			}
+		}
+	}
+
+    protected void postCreate(){
+    	if(!Dungeon.bossLevel() && Challenges.BLACKJACK.enabled()){
+    		blackjackHeaps();
+		}
+    	if(!Dungeon.bossLevel() && Challenges.MIMICS.enabled()){
+    		mimicsHeaps();
+		}
+	}
 	public void seal(){
 		if (!locked) {
 			locked = true;

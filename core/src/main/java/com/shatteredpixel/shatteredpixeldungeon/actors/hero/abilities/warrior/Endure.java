@@ -145,12 +145,12 @@ public class Endure extends ArmorAbility {
 		}
 
 		@Override
-		public int damageFactorPriority() {
-			return -1;
+		public Type damageFactorPriority() {
+			return Type.FLAT;
 		}
 
 		@Override
-		public int damageFactor(int damage){
+		public float damageFactor(float damage){
 			if (enduring){
 				return damage;
 			} else {

@@ -144,11 +144,15 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		return !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
 	}
 
+	protected boolean canSkipAnimation(Animation anim) {
+		return anim != idle && anim != die;
+	}
+
 	@Override
 	public void play(Animation anim) {
 		//Shouldn't interrupt the dieing animation
 		if (curAnim == null || curAnim != die) {
-			if (anim != idle && anim != die && fast()) {
+			if (canSkipAnimation(anim) && fast()) {
 				onComplete(anim);
 				return;
 			}

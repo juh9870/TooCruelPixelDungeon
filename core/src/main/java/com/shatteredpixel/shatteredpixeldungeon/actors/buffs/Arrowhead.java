@@ -45,7 +45,7 @@ public class Arrowhead extends Buff implements DamageAmplificationBuff, AttackAm
     }
 
     @Override
-    public int damageFactor(int dmg) {
+    public float damageFactor(float dmg) {
         return (int) (dmg * (1 + stacks * 0.1f));
     }
 

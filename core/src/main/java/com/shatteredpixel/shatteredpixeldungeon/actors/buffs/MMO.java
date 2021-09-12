@@ -48,7 +48,7 @@ public class MMO extends Buff implements AttackAmplificationBuff {
     }
 
     @Override
-    public int damageFactor(int dmg) {
+    public float damageFactor(float dmg) {
         if (Challenges.GRINDING_3.enabled())
             return (int) (dmg * Math.pow(SCALING_FACTOR, Dungeon.depth - 1));
         return dmg;

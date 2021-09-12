@@ -23,7 +23,9 @@ public enum Difficulty {
     ULTIMATE_13(80, "ultimate"),
     ISEKAI_14(90, "isekai"),
 
-    POINTLESS_15(1000, "pointless");
+    BOUNTY_15(1000, "bounty"),
+    LEONARD_16(1000, "leonard"),
+    SIA_17(1000, "sia");
 
     private static final HashSet<DifficultyModifier> MODIFIERS;
     private static final float DELTA = 0.0001f;
@@ -53,7 +55,9 @@ public enum Difficulty {
             total += modifier.modifier;
         }
 
-        POINTLESS_15.margin = total;
+        SIA_17.margin = total;
+        LEONARD_16.margin = total - 25;
+        BOUNTY_15.margin = total - 50;
     }
 
     public float margin;

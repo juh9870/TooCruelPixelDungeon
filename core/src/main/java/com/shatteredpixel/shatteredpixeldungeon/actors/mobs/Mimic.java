@@ -275,6 +275,8 @@ public class Mimic extends Mob {
 			m = new GoldenMimic();
 		} else if (mimicType == CrystalMimic.class) {
 			m = new CrystalMimic();
+		}else if(mimicType == HolderMimic.class){
+			m = new HolderMimic();
 		} else {
 			m = new Mimic();
 		}

@@ -356,21 +356,10 @@ public abstract class Char extends Actor {
 
 			dmg = Math.round(dmg*dmgMulti);
 
-			Berserk berserk = buff(Berserk.class);
-			if (berserk != null) dmg = berserk.damageFactor(dmg);
-
-			if (buff( Fury.class ) != null) {
-				dmg *= 1.5f;
-			}
-
 			dmg += dmgBonus;
 
-			//friendly endure
-			Endure.EndureTracker endure = buff(Endure.EndureTracker.class);
-			if (endure != null) dmg = endure.damageFactor(dmg);
-
 			//enemy endure
-			endure = enemy.buff(Endure.EndureTracker.class);
+			Endure.EndureTracker endure = enemy.buff(Endure.EndureTracker.class);
 			if (endure != null){
 				dmg = endure.adjustDamageTaken(dmg);
 			}

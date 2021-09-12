@@ -177,6 +177,7 @@ public enum Challenges implements Hero.Doom {
     BARRIER_BREAKER(68, 1, 1f),
     TUMBLER(71, 1, 1f),
     REVENGE(76, 1, 1.5f),
+    MIMICS(86,1,1f),
     //endregion
 
 
@@ -285,6 +286,7 @@ public enum Challenges implements Hero.Doom {
             return 1.5f;
         }
     },
+    MIMICS_2(87,2,3f, MIMICS),
     //endregion
 
 
@@ -423,9 +425,10 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING_3(83, 5, 0, GRINDING_2),
+    MIMICS_GRIND(88,5, 0, GRINDING, MIMICS_2),
     //endregion
 
-    //Last id 85
+    //Last id 88
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
