@@ -61,7 +61,7 @@ public class TenguSprite extends MobSprite {
 	}
 	
 	@Override
-	public void move( int from, int to ) {
+	public void move( int from, int to, float moveIntervalMultiplier ) {
 		
 		place( to );
 		

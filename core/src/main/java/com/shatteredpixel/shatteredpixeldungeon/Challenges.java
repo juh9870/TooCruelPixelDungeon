@@ -426,8 +426,9 @@ public enum Challenges implements Hero.Doom {
             }
         }
     },
-    GRINDING_3(83, 5, 0, GRINDING_2),
+    GRINDING_3(83, 5, 0, GRINDING_2, BIOCHIP),
     MIMICS_GRIND(88,5, 0, GRINDING, MIMICS_2),
+    SLIDING(91,5,-7f),
     //endregion
 
     //Last id 90

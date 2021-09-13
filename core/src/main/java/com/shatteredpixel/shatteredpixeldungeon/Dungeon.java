@@ -74,6 +74,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -209,9 +210,9 @@ public class Dungeon {
 
 		Generator.Category.hardReset();
 
-//        if(DeviceCompat.isDebug()){
-//        	seed = 4950725242298l;
-//		}
+        if(DeviceCompat.isDebug()){
+        	seed = 2592635102693L;
+		}
 
         modifiers = SPDSettings.modifiers();
         extraData.init();
@@ -221,9 +222,9 @@ public class Dungeon {
             challengesInform = true;
         }
 
-//        if(DeviceCompat.isDebug()){
-//        	modifiers.fromBigIntString("axq5jfy6w5wlmmf4");
-//		}
+        if(DeviceCompat.isDebug()){
+        	modifiers.fromBigIntString("7ahfotpexdcapupz4");
+		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 
 		Actor.clear();

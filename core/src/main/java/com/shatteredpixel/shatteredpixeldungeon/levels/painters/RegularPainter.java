@@ -52,6 +52,7 @@ public abstract class RegularPainter extends Painter {
 	public RegularPainter setWater(float fill, int smoothness){
 		waterFill = fill;
         if (Challenges.DESERT.enabled()) waterFill /= 2;
+        if (Challenges.SLIDING.enabled()) waterFill *= 1.5f;
 		waterSmoothness = smoothness;
 		return this;
 	}

@@ -60,13 +60,13 @@ public class GhoulSprite extends MobSprite {
 	}
 
 	@Override
-	public void move(int from, int to) {
+	public void move( int from, int to, float moveIntervalMultiplier ) {
 		if (parent == null){
 			//fixme this happens rarely, likely due to ghoul life link?
 			Game.reportException(new RuntimeException("ghoul sprite tried to move with null parent! ghoul HP: " + ch.HP));
 			return;
 		}
-		super.move(from, to);
+		super.move(from, to, moveIntervalMultiplier);
 	}
 
 	@Override

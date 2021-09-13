@@ -232,6 +232,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void move( int from, int to ) {
+		move(from, to, 1f);
+	}
+	public void move( int from, int to, float moveIntervalMultiplier ) {
 		turnTo( from , to );
 
 		if(fast() || parent == null){
@@ -242,7 +245,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
 		play( run );
 		
-		motion = new PosTweener( this, worldToCamera( to ), moveInterval );
+		motion = new PosTweener( this, worldToCamera( to ), moveInterval * moveIntervalMultiplier );
 		motion.listener = this;
 		parent.add( motion );
 
@@ -256,6 +259,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	
 	public static void setMoveInterval( float interval){
 		moveInterval = interval;
+	}
+	public static float getMoveInterval(){
+		return moveInterval;
 	}
 	
 	//returns where the center of this sprite will be after it completes any motion in progress
