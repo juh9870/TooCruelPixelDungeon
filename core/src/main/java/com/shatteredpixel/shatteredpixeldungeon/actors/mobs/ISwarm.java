@@ -49,9 +49,19 @@ public interface ISwarm {
         }
 
         if (Challenges.ELITE_CHAMPIONS.enabled()) {
-            ChampionEnemy buff = Random.element(original.buffs(ChampionEnemy.class));
-            if (buff != null) {
-                Buff.affect(clone, buff.getClass());
+            for (Buff buff : original.buffs()) {
+                if (buff != null &&
+                        !(buff instanceof ChampionEnemy.EliteChampion)) {
+                    Buff.append(clone, buff.getClass());
+                }
+            }
+
+            if(Challenges.DUNGEON_OF_CHAMPIONS.enabled()){
+                ChampionEnemy.EliteChampion buff = Random.element(original.buffs(ChampionEnemy.EliteChampion.class));
+
+                if(buff!=null){
+                    Buff.append(clone, buff.getClass()).guardiansCooldown = buff.guardsSummonCooldown();
+                }
             }
         }
 

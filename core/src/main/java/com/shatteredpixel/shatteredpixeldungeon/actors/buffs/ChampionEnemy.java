@@ -552,7 +552,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
     //region Elite
     public static class EliteChampion extends ChampionEnemy {
 
-        public static final String GUARDIANS_COOLDOWN = "guardians_cooldown";
+        private static final String GUARDIANS_COOLDOWN = "guardians_cooldown";
         public static final int GUARDS_SUMMON_COOLDOWN = 30;
         public int guardiansCooldown = 0;
 
@@ -579,7 +579,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
             return mobs;
         }
 
-        protected int guardsSummonCooldown() {
+        public int guardsSummonCooldown() {
             return GUARDS_SUMMON_COOLDOWN;
         }
 
@@ -1130,7 +1130,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         @Override
-        protected int guardsSummonCooldown() {
+        public int guardsSummonCooldown() {
             return super.guardsSummonCooldown() * 5;
         }
 
