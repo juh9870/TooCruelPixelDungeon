@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
@@ -32,7 +31,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArcaneArmor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AttackAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -47,7 +45,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.DamageAmplification
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FireImbue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FrostImbue;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Fury;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -556,7 +553,7 @@ public abstract class Char extends Actor {
 						continue;
 					if (fieldOfView[cell]) {
 						Char ch = Actor.findChar(cell);
-						if (ch.invisible <= 0) {
+						if (ch != null && ch.invisible <= 0) {
 							mobs.add(ch);
 						}
 					}
@@ -627,6 +624,7 @@ public abstract class Char extends Actor {
 			return;
 		}
 
+		boolean capAtOne = dmg > 0 && src instanceof Hero;
 		for (Buff buff : this.buffs()) {
 			if(buff instanceof DamageAmplificationBuff && !isImmune(buff.getClass())){
 				dmg *= ((DamageAmplificationBuff) buff).damageMultiplier();
@@ -636,6 +634,7 @@ public abstract class Char extends Actor {
 		for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
 			buff.onDamageProc(dmg);
 		}
+		if (capAtOne) dmg = Math.max(dmg, 1);
 
 		if (!(src instanceof LifeLink) && buff(LifeLink.class) != null){
 			HashSet<LifeLink> links = buffs(LifeLink.class);
@@ -982,6 +981,9 @@ public abstract class Char extends Actor {
 	//similar to isImmune, but only factors in damage.
 	//Is used in AI decision-making
 	public boolean isInvulnerable( Class effect ){
+		for (Buff buff : buffs()) {
+			if(buff.isInvulnerable(effect)) return true;
+		}
 		return false;
 	}
 

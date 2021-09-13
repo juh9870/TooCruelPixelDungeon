@@ -60,6 +60,10 @@ public class Buff extends Actor {
 	public HashSet<Class> immunities() {
 		return new HashSet<>(immunities);
 	}
+
+	public boolean isInvulnerable( Class effect ){
+		return false;
+	}
 	
 	public boolean attachTo( Char target ) {
 

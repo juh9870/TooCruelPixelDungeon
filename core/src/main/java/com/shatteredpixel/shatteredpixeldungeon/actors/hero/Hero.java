@@ -1995,11 +1995,6 @@ public class Hero extends Char {
 		return super.isImmune(effect);
 	}
 
-	@Override
-	public boolean isInvulnerable(Class effect) {
-		return buff(AnkhInvulnerability.class) != null;
-	}
-
 	public boolean search( boolean intentional ) {
 		if (!isAlive()) return false;
 		
