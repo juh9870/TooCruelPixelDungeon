@@ -160,6 +160,7 @@ public abstract class Level implements Bundlable {
 	
 	private HashSet<Mob> mobs;
 	private HashMap<Integer,Mob> mobsPositioned;
+	private HashSet<Mob> dispositionedMobs;
 	public HashSet<LevelObject> objects;
 	public SparseArray<Heap> heaps;
 	public HashMap<Class<? extends Blob>,Blob> blobs;
@@ -202,6 +203,7 @@ public abstract class Level implements Bundlable {
 			width = height = length = 0;
 
 			mobs = new HashSet<>();
+			dispositionedMobs = new HashSet<>();
 			mobsPositioned = new HashMap<>();
 			objects = new HashSet<>();
 			heaps = new SparseArray<>();
@@ -383,6 +385,7 @@ public abstract class Level implements Bundlable {
 		setSize( bundle.getInt(WIDTH), bundle.getInt(HEIGHT));
 		
 		mobs = new HashSet<>();
+		dispositionedMobs = new HashSet<>();
 		mobsPositioned = new HashMap<>();
 		objects = new HashSet<>();
 		heaps = new SparseArray<>();
@@ -660,8 +663,8 @@ public abstract class Level implements Bundlable {
 	public void addMob(Mob mob) {
 		mobs.add(mob);
 		Mob old = mobsPositioned.get(mob.pos());
-		if (old != null && old.isAlive()) {
-			throw new Error("Position is already occupied");
+		if (old != null && mobs.contains(old)) {
+			dispositionedMobs.add(old);
 		}
 		mobsPositioned.put(mob.pos(), mob);
 	}
@@ -675,13 +678,38 @@ public abstract class Level implements Bundlable {
 	}
 
 	public void moveMob(Mob mob, int oldPos, int newPos){
-		if (!mob.isAlive() || !mobs.contains(mob)) return;
+		if (!mobs.contains(mob)) return;
 		mobsPositioned.remove(oldPos);
-		Char oldChar = mobsPositioned.get(newPos);
-		if (oldChar != null && oldChar.isAlive() && mobs.contains(mob)) {
-			throw new Error("Position is already occupied");
+		Mob oldChar = mobsPositioned.get(newPos);
+		if (oldChar != null && mobs.contains(oldChar)) {
+			dispositionedMobs.add(oldChar);
 		}
 		mobsPositioned.put(newPos, mob);
+	}
+
+	public void fixDispositionedMobs(){
+		if (dispositionedMobs.size() > 0) {
+			Mob[] toRemove = new Mob[dispositionedMobs.size()];
+			int i = 0;
+			for (Mob ch : dispositionedMobs) {
+				if (!mobs.contains(ch)) {
+					toRemove[i] = ch;
+					i++;
+					continue;
+				}
+				Mob old = findMob(ch.pos());
+				if (old == null || !mobs.contains(old)) {
+					mobsPositioned.put(ch.pos(), ch);
+					toRemove[i] = ch;
+					i++;
+					continue;
+				}
+			}
+
+			for (; i >= 0; i--) {
+				dispositionedMobs.remove(toRemove[i]);
+			}
+		}
 	}
 
 	private Respawner respawner;

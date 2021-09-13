@@ -134,6 +134,7 @@ public abstract class Actor implements Bundlable {
 	
 	private static HashSet<Actor> all = new HashSet<>();
 	private static HashSet<Char> chars = new HashSet<>();
+	private static HashSet<Char> dispositionedChars = new HashSet<>();
 	private static HashMap<Integer,Char> charsPositioned = new HashMap<>();
 	private static volatile Actor current;
 
@@ -152,6 +153,8 @@ public abstract class Actor implements Bundlable {
 
 		all.clear();
 		chars.clear();
+
+		dispositionedChars.clear();
 		charsPositioned.clear();
 
 		ids.clear();
@@ -235,7 +238,33 @@ public abstract class Actor implements Bundlable {
 		boolean interrupted = false;
 
 		do {
-			
+			if (dispositionedChars.size() > 0) {
+				Char[] toRemove = new Char[dispositionedChars.size()];
+				int i = 0;
+				for (Char ch : dispositionedChars) {
+					if (!chars.contains(ch)) {
+						toRemove[i] = ch;
+						i++;
+						continue;
+					}
+					Char old = findChar(ch.pos());
+					if (old == null || !chars.contains(old)) {
+						charsPositioned.put(ch.pos(), ch);
+						toRemove[i] = ch;
+						i++;
+						continue;
+					}
+				}
+
+				for (; i >= 0; i--) {
+					dispositionedChars.remove(toRemove[i]);
+				}
+			}
+
+			if(Dungeon.level!=null) {
+				Dungeon.level.fixDispositionedMobs();
+			}
+
 			current = null;
 			if (!interrupted) {
 				float earliest = Float.MAX_VALUE;
@@ -334,9 +363,10 @@ public abstract class Actor implements Bundlable {
 		if (actor instanceof Char) {
 			Char ch = (Char)actor;
 			Char oldChar = charsPositioned.get(ch.pos());
-			if (oldChar != null && oldChar.isAlive() && chars.contains(oldChar)) {
-				throw new Error("Position is already occupied");
+			if (oldChar != null && chars.contains(oldChar)) {
+				dispositionedChars.add(oldChar);
 			}
+			dispositionedChars.remove(ch);
 			charsPositioned.put( ch.pos(), ch );
 			chars.add( ch );
 			for (Buff buff : ch.buffs()) {
@@ -346,12 +376,13 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static synchronized void move(Char ch, int oldPos, int newPos) {
-		if (!ch.isAlive() || !chars.contains(ch)) return;
+		if (!chars.contains(ch)) return;
 		charsPositioned.remove(oldPos);
 		Char oldChar = charsPositioned.get(newPos);
-		if (oldChar != null && oldChar.isAlive() && chars.contains(oldChar)) {
-			throw new Error("Position is already occupied");
+		if (oldChar != null && chars.contains(oldChar)) {
+			dispositionedChars.add(oldChar);
 		}
+		dispositionedChars.remove(ch);
 		charsPositioned.put(newPos, ch);
 	}
 	
@@ -362,6 +393,7 @@ public abstract class Actor implements Bundlable {
 				if (charsPositioned.get(((Char) actor).pos()) == actor)
 					charsPositioned.remove(((Char) actor).pos());
 				chars.remove(actor);
+				dispositionedChars.remove(actor);
 			}
 			actor.onRemove();
 

@@ -60,6 +60,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfSto
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -154,7 +155,7 @@ public enum HeroClass {
 			new ScrollOfMagicMapping().quantity(64).identify().collect();
 			new ScrollOfRage().quantity(64).identify().collect();
 			new ScrollOfUpgrade().quantity(100).identify().collect();
-//			new ScrollOfEnchantment().quantity(1).identify().collect();
+			new ScrollOfMirrorImage().quantity(100).identify().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
 //			new ScrollOfRemoveCurse().quantity(1).identify().collect();
 //			new ScrollOfMysticalEnergy().quantity(1).identify().collect();
