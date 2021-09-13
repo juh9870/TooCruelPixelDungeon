@@ -210,9 +210,9 @@ public class Dungeon {
 
 		Generator.Category.hardReset();
 
-        if(DeviceCompat.isDebug()){
-        	seed = 2592635102693L;
-		}
+//        if(DeviceCompat.isDebug()){
+//        	seed = 2592635102693L;
+//		}
 
         modifiers = SPDSettings.modifiers();
         extraData.init();
@@ -222,9 +222,9 @@ public class Dungeon {
             challengesInform = true;
         }
 
-        if(DeviceCompat.isDebug()){
-        	modifiers.fromBigIntString("7ahfotpexdcapupz4");
-		}
+//        if(DeviceCompat.isDebug()){
+//        	modifiers.fromBigIntString("7ahfotpexdcapupz4");
+//		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 
 		Actor.clear();

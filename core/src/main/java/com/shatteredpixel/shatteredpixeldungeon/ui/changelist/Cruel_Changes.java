@@ -73,6 +73,23 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
+
+        changes = new ChangeInfo("v1.0.1", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 1 new modifier\n" +
+                        "_-_ Reworked/nerfed Summoning Champion\n" +
+                        "_-_ Nerfed Stone champion\n" +
+                        "_-_ Nerfed swarm/swarming champions interactions with champion titles" +
+                        "_-_ Champions can no longer reduce received damage to 0 when attacked by a hero\n" +
+                        "_-_ Fixed typos in challenges descriptions"
+        ));
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                        "_-_ Fixed various of crashes caused by recent code optimizations"
+        ));
+
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
@@ -85,6 +102,7 @@ public class Cruel_Changes {
                 "_-_ Added 5 new challenges and 2 modifiers\n" +
                         "_-_ Added 3 new champion titles and 3 new elite champion titles\n" +
                         "_-_ Limited Revenge Rage attack bonus to _Over 9000!_\n" +
+                        "_-_ Champions are now using deck-based spawning system\n" +
                         "_-_ Tweaked Korean MMO again..."
         ));
 

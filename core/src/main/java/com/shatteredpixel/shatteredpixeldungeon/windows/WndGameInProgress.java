@@ -82,7 +82,7 @@ public class WndGameInProgress extends Window {
 					Bundle bundle = FileUtils.bundleFromFile(GamesInProgress.gameFile(slot));
 					ShatteredPixelDungeon.scene().addToFront(new WndMessage("_Debug Info:_\n\n" +
 							"Version: " + Game.version + " (" + Game.versionCode + ")\n" +
-							"Seed: " + bundle.getLong("seed") + "\n" +
+							"Seed: " + Long.toString(bundle.getLong("seed"),36) + "\n" +
 							"Challenges: " + Challenges.displayString(info.modifiers.challenges)));
 				} catch (IOException ignored) { }
 				return true;

@@ -431,7 +431,7 @@ public enum Challenges implements Hero.Doom {
     SLIDING(91,5,-7f),
     //endregion
 
-    //Last id 90
+    //Last id 91
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;
