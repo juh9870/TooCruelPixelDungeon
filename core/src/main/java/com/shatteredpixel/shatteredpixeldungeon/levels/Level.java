@@ -706,7 +706,7 @@ public abstract class Level implements Bundlable {
 				}
 			}
 
-			for (; i >= 0; i--) {
+			for (i -= 1; i >= 0; i--) {
 				dispositionedMobs.remove(toRemove[i]);
 			}
 		}

@@ -256,7 +256,7 @@ public abstract class Actor implements Bundlable {
 					}
 				}
 
-				for (; i >= 0; i--) {
+				for (i -= 1; i >= 0; i--) {
 					dispositionedChars.remove(toRemove[i]);
 				}
 			}
