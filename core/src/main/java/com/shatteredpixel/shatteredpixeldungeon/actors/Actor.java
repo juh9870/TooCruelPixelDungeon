@@ -261,7 +261,7 @@ public abstract class Actor implements Bundlable {
 				}
 			}
 
-			if(Dungeon.level!=null) {
+			if(Dungeon.level != null) {
 				Dungeon.level.fixDispositionedMobs();
 			}
 
@@ -401,6 +401,10 @@ public abstract class Actor implements Bundlable {
 				ids.remove( actor.id );
 			}
 		}
+	}
+
+	public static synchronized Class<? extends Actor> getCurrentActorClass() {
+		return current == null ? null : current.getClass();
 	}
 
 	public static synchronized Char findChar(int pos) {

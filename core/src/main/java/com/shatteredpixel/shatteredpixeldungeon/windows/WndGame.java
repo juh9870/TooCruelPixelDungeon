@@ -21,10 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.HeroSelectScene;
@@ -36,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 
 import java.io.IOException;
 
@@ -124,6 +127,17 @@ public class WndGame extends Window {
 			}
 		} );
 		curBtn.icon(Icons.get(Icons.DISPLAY));
+
+		if(!Dungeon.hero.ready) {
+			// Debug
+			addButton(curBtn = new RedButton(Messages.get(this, "debug")) {
+				@Override
+				protected void onClick() {
+					GameScene.logActorThread = true;
+				}
+			});
+			curBtn.icon(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16));
+		}
 
 		resize( WIDTH, pos );
 	}

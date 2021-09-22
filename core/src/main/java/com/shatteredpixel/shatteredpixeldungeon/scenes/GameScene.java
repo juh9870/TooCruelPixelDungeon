@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.badlogic.gdx.Gdx;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
@@ -651,7 +652,7 @@ public class GameScene extends PixelScene {
 	}
 
 	private static Thread actorThread;
-	private static boolean logActorThread;
+	public static boolean logActorThread;
 
 	//sometimes UI changes can be prompted by the actor thread.
 	// We queue any removed element destruction, rather than destroying them in the actor thread.
@@ -718,11 +719,15 @@ public class GameScene extends PixelScene {
 					s += "\n";
 					s += t.toString();
 				}
+				Class<? extends Actor> cl = Actor.getCurrentActorClass();
+				String msg = "Actor thread dump was requested. " +
+						"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " current actor:" + cl + "\ntrace:" +
+						s;
+				Gdx.app.getClipboard().setContents(msg);
 				ShatteredPixelDungeon.reportException(
-						new RuntimeException("Actor thread dump was requested. " +
-								"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " trace:" +
-								s)
+						new RuntimeException(msg)
 				);
+				add(new WndMessage(Messages.get(this, "copied")));
 			}
 		}
 
