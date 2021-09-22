@@ -1508,9 +1508,6 @@ public class Hero extends Char {
 						{
 							listener = (Tweener tweener)->{
 								GameScene.updateMap(nextStep);
-//								pos(nextStep);
-//								Dungeon.observe();
-//								search(false);
 							};
 						}
 					});

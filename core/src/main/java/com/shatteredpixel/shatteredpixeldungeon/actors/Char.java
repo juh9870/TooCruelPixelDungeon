@@ -794,22 +794,12 @@ public abstract class Char extends Actor {
 	protected void spend( float time ) {
 		
 		float timeScale = 1f;
-
-		if(timeScale<0.2f){
-			GLog.w("Timescale is less than 0.2! There might be an issue. Current timescale: "+timeScale);
-			timeScale=0.2f;
-		}
-		if(timeScale>5f){
-			GLog.w("Timescale is higher than 5! There might be an issue. Current timescale: "+timeScale);
-			timeScale=5f;
-		}
-		
 		super.spend( time / timeScale );
 
-		if(Math.abs(this.getTime()-Actor.now())>20){
-			GLog.w("Character time is way off game time. Current time: " + Actor.now() + ", " + this.name() + " time: " + this.getTime());
-			this.postpone(time/timeScale);
-		}
+//		if(Math.abs(this.getTime()-Actor.now())>20){
+//			GLog.w("Character time is way off game time. Current time: " + Actor.now() + ", " + this.name() + " time: " + this.getTime());
+//			this.postpone(time/timeScale);
+//		}
 	}
 	
 	public synchronized HashSet<Buff> buffs() {
