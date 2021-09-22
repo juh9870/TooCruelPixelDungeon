@@ -530,6 +530,10 @@ public abstract class Char extends Actor {
 	}
 
 	public HashSet<Char> fastGetCharsInFov() {
+		if(fieldOfView == null) {
+			fieldOfView = new boolean[Dungeon.level.length()];
+			Dungeon.level.updateFieldOfView(this, fieldOfView);
+		}
 		HashSet<Char> mobs = new HashSet<>();
 		if (Actor.chars().size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1) || this == Dungeon.hero){
 			for (Char ch : Actor.chars()) {
@@ -563,6 +567,10 @@ public abstract class Char extends Actor {
 		return mobs;
 	}
 	public HashSet<Mob> fastGetMobsInFov() {
+		if(fieldOfView == null) {
+			fieldOfView = new boolean[Dungeon.level.length()];
+			Dungeon.level.updateFieldOfView(this, fieldOfView);
+		}
 		HashSet<Mob> mobs = new HashSet<>();
 		if (Dungeon.level.mobs().size() < (viewDistance * 2 + 1) * (viewDistance * 2 + 1) || this == Dungeon.hero){
 			for (Mob mob : Dungeon.level.mobs()) {
