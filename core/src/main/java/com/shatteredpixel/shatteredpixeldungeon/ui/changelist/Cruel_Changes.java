@@ -36,6 +36,8 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.AlbinoSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BlackjackkeeperSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CrabSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
@@ -73,6 +75,26 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
+        changes = new ChangeInfo("v1.0.2", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 1 new challenge\n" +
+                        "_-_ Hail to the King no longer depends on Elite Champions\n" +
+                        "_-_ Nerfed Stone champion\n" +
+                        "_-_ Reworked Scorched Earth interaction with Brimstone"
+        ));
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                        "_-_ Fixed crash related to mob position conflicts\n" +
+                                "_-_ Fixed crash related to concurrent modification while trying to displace a mob\n" +
+                                "_-_ Fixed crash related to missing mob FoV\n" +
+                                "_-_ Fixed rankings sorting\n" +
+                                "_-_ Added debug info button in game menu"
+        ));
+        CharSprite sp = new CrabSprite();
+        sp.color(0xFFFF00);
+        changes.addButton(new ChangeButton(sp, Messages.get(Challenges.class, "crab_rave"), Messages.get(Challenges.class, "crab_rave_desc")));
 
         changes = new ChangeInfo("v1.0.1", false, "");
         changes.hardlight(Window.TITLE_COLOR);
