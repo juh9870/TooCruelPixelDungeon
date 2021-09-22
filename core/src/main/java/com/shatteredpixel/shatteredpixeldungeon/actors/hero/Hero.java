@@ -1508,9 +1508,9 @@ public class Hero extends Char {
 						{
 							listener = (Tweener tweener)->{
 								GameScene.updateMap(nextStep);
-								pos(nextStep);
-								Dungeon.observe();
-								search(false);
+//								pos(nextStep);
+//								Dungeon.observe();
+//								search(false);
 							};
 						}
 					});
@@ -1521,49 +1521,39 @@ public class Hero extends Char {
 
 			sprite.move(pos(), step, Dungeon.level.distance(pos(), step));
 
-			int finalStep = step;
-			sprite.parent.add(new Delayer((Dungeon.level.distance(pos(), step)-1) * CharSprite.getMoveInterval()){
-				{
-					listener = (Tweener tweener) -> {
-						busy();
-						spend(1 / speed);
-						justMoved = true;
-						move(finalStep);
-						search(false);
+			spend(1 / speed);
+			justMoved = true;
+			move(step);
+			search(false);
 
-						if(Challenges.BARRIER_BREAKER.enabled() &&
-								(
-										Dungeon.level.map[finalStep]==Terrain.DOOR ||
-												Dungeon.level.map[finalStep]==Terrain.OPEN_DOOR
-								)
-						){
-							Level.set(finalStep, Terrain.EMBERS);
-							Sample.INSTANCE.play(Assets.Sounds.BLAST);
-							CellEmitter.center(finalStep).burst(SmokeParticle.FACTORY, 5);
-							spend(1);
-						}
+			if(Challenges.BARRIER_BREAKER.enabled() &&
+					(
+							Dungeon.level.map[step]==Terrain.DOOR ||
+									Dungeon.level.map[step]==Terrain.OPEN_DOOR
+					)
+			){
+				Level.set(step, Terrain.EMBERS);
+				Sample.INSTANCE.play(Assets.Sounds.BLAST);
+				CellEmitter.center(step).burst(SmokeParticle.FACTORY, 5);
+				spend(1);
+			}
 
-						if(Challenges.GRINDING_2.enabled()){
-							for (int i = 0; i < PathFinder.NEIGHBOURS9.length; i++) {
-								int c = pos() + PathFinder.NEIGHBOURS9[i];
-								Heap h = Dungeon.level.heaps.get(c);
-								if (h != null && h.type == Type.HEAP) {
-									while(!h.isEmpty()) {
-										if (h.peek().doPickUp(Hero.this)) {
-											h.pickUp();
-											spend(-Item.TIME_TO_PICK_UP);
-										} else {
-											break;
-										}
-									}
-								}
+			if(Challenges.GRINDING_2.enabled()){
+				for (int i = 0; i < PathFinder.NEIGHBOURS9.length; i++) {
+					int c = pos() + PathFinder.NEIGHBOURS9[i];
+					Heap h = Dungeon.level.heaps.get(c);
+					if (h != null && h.type == Type.HEAP) {
+						while(!h.isEmpty()) {
+							if (h.peek().doPickUp(Hero.this)) {
+								h.pickUp();
+								spend(-Item.TIME_TO_PICK_UP);
+							} else {
+								break;
 							}
 						}
-
-						next();
-					};
+					}
 				}
-			});
+			}
 
 			return true;
 
