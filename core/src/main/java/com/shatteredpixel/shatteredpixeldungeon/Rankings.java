@@ -489,8 +489,8 @@ public enum Rankings {
 		public int compare( Record lhs, Record rhs ) {
 			int result = 0;
 			if(lhs.score > 0 && rhs.score > 0) result = (int)Math.signum( rhs.score - lhs.score );
-			else if (lhs.score < 0 && rhs.score > 0) result = -1;
-			else if (rhs.score < 0 && lhs.score > 0) result = 1;
+			else if (lhs.score < 0 && rhs.score > 0) result = 1;
+			else if (rhs.score < 0 && lhs.score > 0) result = -1;
 			if (result == 0) {
 				return (int)Math.signum( rhs.gameID.hashCode() - lhs.gameID.hashCode());
 			} else{
@@ -507,8 +507,8 @@ public enum Rankings {
 				int ls = lhs.score();
 				int rs = rhs.score();
 				if(ls > 0 && rs > 0) result = (int) Math.signum( rs - ls );
-				else if (ls < 0 && rs > 0) result = -1;
-				else if (rs < 0 && ls > 0) result = 1;
+				else if (ls < 0 && rs > 0) result = 1;
+				else if (rs < 0 && ls > 0) result = -1;
 				if (result == 0) {
 					result = (int) Math.signum(rhs.records.get(0).gameID.hashCode() - lhs.records.get(0).hashCode());
 				}
