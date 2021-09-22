@@ -5,10 +5,14 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Brimstone;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.CursedWand;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 
@@ -18,9 +22,10 @@ public class ScorchedEarth extends Buff {
     private float turnsLeft = maxTime();
 
 
-    private static float maxTime(){
+    private static float maxTime() {
         return Challenges.DESERT.enabled() ? WATER_TIME * 1.5f : WATER_TIME;
     }
+
     @Override
     public boolean act() {
         if (Dungeon.level.water[target.pos()]) {
@@ -30,13 +35,22 @@ public class ScorchedEarth extends Buff {
                 turnsLeft += maxTime();
                 for (int i : PathFinder.NEIGHBOURS4) {
                     int c = target.pos() + i;
-                    if(Dungeon.level.flamable[c] || Dungeon.level.passable[c] || Dungeon.level.avoid[c])
-                    if (Dungeon.level.water[c]) {
-                        Dungeon.level.removeWater(c);
-                    }
+                    if (Dungeon.level.flamable[c] || Dungeon.level.passable[c] || Dungeon.level.avoid[c])
+                        if (Dungeon.level.water[c]) {
+                            Dungeon.level.removeWater(c);
+                        }
                     GameScene.add(Blob.seed(c, 4, Fire.class));
                 }
-                Buff.affect(target, DesertBurning.class).reignite(target);
+                Buff.affect(target, Burning.class).reignite(target);
+                if (target instanceof Hero) {
+                    Hero h = (Hero) target;
+                    if (h.belongings.armor != null && h.belongings.armor.glyph instanceof Brimstone) {
+                        new Bomb().explode(h.pos());
+                        CursedWand.cursedEffect(null, h, h);
+                        h.belongings.armor.inscribe(Armor.Glyph.randomCurse());
+                        h.belongings.armor.cursed = h.belongings.armor.cursedKnown = true;
+                    }
+                }
             }
             turnsLeft -= TICK;
         }
@@ -78,18 +92,5 @@ public class ScorchedEarth extends Buff {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         turnsLeft = bundle.getFloat(LEFT);
-    }
-
-    public static class DesertBurning extends Burning {
-        @Override
-        public void tintIcon(Image icon) {
-            icon.tint(0xff6600);
-        }
-
-        @Override
-        public boolean act() {
-            Buff.detach(target, Burning.class);
-            return super.act();
-        }
     }
 }
