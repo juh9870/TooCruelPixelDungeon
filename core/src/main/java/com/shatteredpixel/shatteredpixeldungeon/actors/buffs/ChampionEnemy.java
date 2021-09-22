@@ -598,7 +598,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                 Mob mob = (Mob) target;
                 if (mob.state == mob.HUNTING) {
                     if (guardiansCooldown <= 0) {
-                        SummoningTrap.summonMobs(target.pos(), guardsNumber(), 3, 1, 0, new GuardianAction());
+                        SummoningTrap.summonMobs(target.pos(), guardsNumber(), 3, new GuardianAction());
                     }
                     guardiansCooldown = Math.max(guardsSummonCooldown(), guardiansCooldown);
                 } else {
