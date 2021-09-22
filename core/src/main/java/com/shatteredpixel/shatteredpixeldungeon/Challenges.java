@@ -329,7 +329,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     HUMPPA(74, 3, 7f, DANCE_FLOOR),
-    HAIL_TO_THE_KING(85,3,6f, KING_OF_A_HILL, ELITE_CHAMPIONS),
+    HAIL_TO_THE_KING(85,3,6f, KING_OF_A_HILL),
     //endregion
 
 
@@ -342,6 +342,7 @@ public enum Challenges implements Hero.Doom {
     },
 
     THE_LAST_WALTZ(73, 4, 11f, DANCE_FLOOR, MARATHON),
+    CRAB_RAVE(92,4,69f, THE_LAST_WALTZ, AGNOSIA, HUMPPA, ON_A_BEAT),
     //endregion
 
 
@@ -431,7 +432,7 @@ public enum Challenges implements Hero.Doom {
     SLIDING(91,5,-7f),
     //endregion
 
-    //Last id 91
+    //Last id 92
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;

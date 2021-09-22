@@ -815,6 +815,9 @@ public abstract class Mob extends Char {
         String name = super.name();
         if(Challenges.AGNOSIA.enabled()){
             name = Messages.get(this,"name_unknown");
+            if(Challenges.CRAB_RAVE.enabled()){
+                name = Messages.get(this,"name_rave");
+            }
         }
         if (asc == null)
             return name;
@@ -1063,6 +1066,9 @@ public abstract class Mob extends Char {
         String desc = Messages.get(this, "desc");
         if(Challenges.AGNOSIA.enabled()){
             desc = Messages.get(this,"desc_unknown");
+            if(Challenges.CRAB_RAVE.enabled()){
+                desc = Messages.get(this,"desc_rave");
+            }
         }
         Ascension asc = buff(Ascension.class);
         if (asc == null)
