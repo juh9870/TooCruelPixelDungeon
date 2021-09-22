@@ -418,7 +418,7 @@ public class Dungeon {
 
 		hero.pos(pos);
 		
-		for(Mob m : level.mobs()){
+		for(Mob m : level.mobs().toArray(new Mob[0])){
 			if (m.pos() == hero.pos()){
 				//displace mob
 				for(int i : PathFinder.NEIGHBOURS8){
