@@ -80,7 +80,7 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public void execute(Hero hero, String action) {
 		super.execute(hero, action);
-		if (action.equals(AC_TIER)) {
+		if (action.equals(AC_TIER) && level() >= lvlToNextTier(tier)) {
 			level(level() - lvlToNextTier(tier));
 			tier++;
 			ScrollOfUpgrade.upgrade(hero);

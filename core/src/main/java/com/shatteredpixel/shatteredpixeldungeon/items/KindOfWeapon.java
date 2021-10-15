@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -43,7 +44,10 @@ abstract public class KindOfWeapon extends EquipableItem {
 
 	protected String hitSound = Assets.Sounds.HIT;
 	protected float hitSoundPitch = 1f;
-	
+	{
+		if(Challenges.GRINDING_2.enabled())
+		defaultAction = AC_TIER;
+	}
 	@Override
 	public boolean isEquipped( Hero hero ) {
 		return hero.belongings.weapon() == this;

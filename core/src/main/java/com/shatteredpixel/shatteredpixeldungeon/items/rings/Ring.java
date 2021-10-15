@@ -314,6 +314,9 @@ public class Ring extends KindofMisc {
 	}
 
 	public int soloBonus(){
+		if (Challenges.GRINDING_2.enabled()) {
+			return (int) (Math.log(Ring.this.level()+1) / Math.log(2));
+		}
 		if (cursed){
 			return Math.min( 0, Ring.this.level()-2 );
 		} else {
@@ -322,6 +325,9 @@ public class Ring extends KindofMisc {
 	}
 
 	public int soloBuffedBonus(){
+		if (Challenges.GRINDING_2.enabled()) {
+			return (int) (Math.log(Ring.this.buffedLvl()+1) / Math.log(2));
+		}
 		if (cursed){
 			return Math.min( 0, Ring.this.buffedLvl()-2 );
 		} else {
