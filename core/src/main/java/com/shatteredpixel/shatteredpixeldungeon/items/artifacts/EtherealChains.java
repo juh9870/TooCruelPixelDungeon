@@ -112,7 +112,7 @@ public class EtherealChains extends Artifact {
 		public void onSelect(Integer target) {
 			if (target != null && (Dungeon.level.visited[target] || Dungeon.level.mapped[target])){
 
-				if (Dungeon.level.visited[target] && Challenges.LINEAR.enabled()){
+				if (!Dungeon.level.visited[target] && Challenges.LINEAR.enabled()){
 					GLog.w( Messages.get(EtherealChains.class, "cant_reach") );
 					return;
 				}
