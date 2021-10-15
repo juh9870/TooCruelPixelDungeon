@@ -205,7 +205,7 @@ public abstract class RegularLevel extends Level {
 		if (Dungeon.shopOnLevel())
 			initRooms.add(new ShopRoom());
 
-        if (Challenges.BLACKJACK.enabled() && !Dungeon.bossLevel() && Dungeon.depth != 21) {
+        if (Challenges.BLACKJACK.enabled() && !Dungeon.bossLevel()) {
             initRooms.add(new BlackjackRoom());
         }
 		//force max special rooms and add one more for large levels
