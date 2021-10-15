@@ -103,7 +103,7 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	//FIXME some logic here assumes the items are in the player's inventory. Might need to adjust
 	public Item upgrade() {
-		if (!bundleRestoring) {
+		if (!bundleRestoring && Dungeon.hero != null && Dungeon.hero.belongings != null && Dungeon.hero.belongings.contains(this)) {
 			durability = MAX_DURABILITY;
 			if (quantity > 1) {
 				MissileWeapon upgraded = (MissileWeapon) split(1);
