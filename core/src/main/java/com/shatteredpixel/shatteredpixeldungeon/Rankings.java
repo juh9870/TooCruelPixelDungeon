@@ -295,7 +295,7 @@ public enum Rankings {
             }
         }
 
-        for (Dynasty dynasty : dynasties.values()) {
+        for (Dynasty dynasty : new HashSet<>(dynasties.values())) {
             if (!dynasty.finished) continue;
             if (dynasty.length() < 2) {
                 dynasties.remove(dynasty.id);
