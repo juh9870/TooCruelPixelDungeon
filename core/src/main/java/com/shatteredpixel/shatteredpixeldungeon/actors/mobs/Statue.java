@@ -158,11 +158,11 @@ public class Statue extends Mob {
 	public void beckon( int cell ) {
 		// Do nothing
 	}
-	
+
 	@Override
-	public void die( Object cause ) {
-		super.die( cause );
-		if (buff(NoReward.class) == null && !isAlive()) {
+	public void rollToDropLoot() {
+		super.rollToDropLoot();
+		if (buff(NoReward.class) == null) {
 			weapon.identify();
 			if (Challenges.CURSED.enabled()) {
 				weapon.cursed = true;

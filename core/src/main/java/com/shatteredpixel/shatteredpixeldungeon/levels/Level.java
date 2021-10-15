@@ -597,9 +597,10 @@ public abstract class Level implements Bundlable {
 		for (int c : heaps.keyArray()) {
 			h = heaps.get(c);
 			if (h != null) {
-				if (h.type == Heap.Type.CHEST || Challenges.MIMICS_2.enabled()) {
+				if (h.type == Heap.Type.CHEST ||
+						Challenges.MIMICS_2.enabled()) {
 					heaps.remove(c);
-					HolderMimic.spawnAt(c, h.items, this);
+					HolderMimic.spawnAt(c, this, h);
 				}
 			}
 		}

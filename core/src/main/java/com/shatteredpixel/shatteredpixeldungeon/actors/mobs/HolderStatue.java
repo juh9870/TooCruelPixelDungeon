@@ -21,72 +21,65 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
-import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.StatueSprite;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.LinkedList;
 
 public class HolderStatue extends Statue {
 
-	{
-		spriteClass = StatueSprite.class;
-	}
+    {
+        spriteClass = StatueSprite.class;
+    }
 
-	public ArrayList<Item> items;
+    public HolderStatue() {
+        super();
 
-	public HolderStatue(){
-		super();
+        //reduced HP
+        HP = HT = 10 + Dungeon.depth * 3;
+    }
 
-		//reduced HP
-		HP = HT = 10 + Dungeon.depth * 3;
-	}
+    public Heap heap;
 
-	public HolderStatue(MeleeWeapon wep, List<Item> items){
-		this();
-		weapon = wep;
-		this.items = new ArrayList<>(items);
-	}
+    public HolderStatue(MeleeWeapon wep, Heap heap) {
+        this();
+        weapon = wep;
+        heap.copyTo(this.heap = new Heap());
 
-	@Override
-	public void die(Object cause) {
-		super.die(cause);
-		if(!isAlive()){
-			if (items != null) {
-				for (Item item : items) {
-					Dungeon.level.drop( item, pos()).sprite.drop();
-				}
-				items = null;
-			}
-		}
-	}
+    }
 
-	private static final String ITEMS	= "items";
+    @Override
+    public void rollToDropLoot() {
+        super.rollToDropLoot();
+        if (heap != null) {
+            HolderMimic.dropHeap(heap, this.pos());
+            heap = null;
+        }
+    }
 
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		if (items != null) bundle.put( ITEMS, items );
-	}
+    private static final String ITEMS = "items";
+    private static final String HEAP = "heap";
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		if (bundle.contains( ITEMS )) {
-			items = new ArrayList<>((Collection<Item>) ((Collection<?>) bundle.getCollection(ITEMS)));
-		}
-		super.restoreFromBundle(bundle);
-	}
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        if (heap != null) bundle.put(HEAP, heap);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        if (bundle.contains(ITEMS)) {
+            heap = new Heap();
+            heap.items = new LinkedList<>((Collection<Item>) ((Collection<?>) bundle.getCollection(ITEMS)));
+        } else if (bundle.contains(HEAP)) {
+            heap = (Heap) bundle.get(HEAP);
+        }
+        super.restoreFromBundle(bundle);
+    }
 }

@@ -405,6 +405,14 @@ public class Heap implements Bundlable {
 		}
 	}
 
+	public void copyTo(Heap h) {
+		h.items = new LinkedList<>(items);
+		h.type = type;
+		h.paid = paid;
+		h.currency = currency;
+		h.haunted = haunted;
+	}
+
 	private static final String POS		= "pos";
 	private static final String SEEN	= "seen";
 	private static final String TYPE	= "type";

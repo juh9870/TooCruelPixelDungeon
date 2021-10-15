@@ -22,31 +22,44 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.levelobjects.DelayedMobSpawn;
+import com.shatteredpixel.shatteredpixeldungeon.items.DummyItem;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.PokerToken;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MimicSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class HolderMimic extends Mimic {
     {
         spriteClass = MimicSprite.class;
     }
 
+    public Heap heap;
+
     @Override
     public void setLevel(int level) {
         float mult = 0.75f;
-        if(Challenges.MIMICS_GRIND.enabled())mult = 1.33f;
+        if (Challenges.MIMICS_GRIND.enabled()) mult = 1.33f;
         super.setLevel(Math.round(level * mult));
     }
+
+    private static final String HEAP = "heap";
 
     @Override
     protected void generatePrize() {
@@ -54,11 +67,31 @@ public class HolderMimic extends Mimic {
         // No additional reward
     }
 
-    public static void spawnAt(int pos, List<Item> items, Level level) {
+    @Override
+    public void rollToDropLoot() {
+        super.rollToDropLoot();
+        HolderMimic.dropHeap(heap, this.pos());
+    }
+
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        if (heap != null) bundle.put(HEAP, heap);
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        if (bundle.contains(HEAP)) {
+            heap = (Heap) bundle.get(HEAP);
+        }
+        super.restoreFromBundle(bundle);
+    }
+
+    public static void spawnAt(int pos, Level level, Heap heap) {
         MeleeWeapon wep = null;
         boolean hasTokens = false;
-        for (Item item : items) {
-            if (item instanceof MeleeWeapon && wep==null) {
+        for (Item item : heap.items) {
+            if (item instanceof MeleeWeapon && wep == null) {
                 wep = (MeleeWeapon) item;
             }
             if (item instanceof PokerToken) {
@@ -73,16 +106,59 @@ public class HolderMimic extends Mimic {
         }
         Mob mob;
         if (wep != null && Challenges.MIMICS_2.enabled()) {
-            mob = new HolderStatue((MeleeWeapon) wep.clone(), items);
+            mob = new HolderStatue((MeleeWeapon) wep.clone(), heap);
             mob.pos(pos);
             Buff.affect(mob, NoReward.class);
         } else {
-            mob = spawnAt(pos, items, HolderMimic.class);
+            mob = spawnAt(pos, Collections.EMPTY_LIST, HolderMimic.class);
+            heap.copyTo(((HolderMimic) mob).heap = new Heap());
         }
         if (Actor.findChar(pos) == null) {
             level.addMob(mob);
+            if(ShatteredPixelDungeon.scene() instanceof GameScene){
+                GameScene.add(mob);
+            }
         } else {
             level.setObject(new DelayedMobSpawn(mob), pos);
         }
+    }
+
+    public static void dropHeap(Heap heap, int pos) {
+        if (Dungeon.level.heaps.containsKey(pos) ||
+                Dungeon.level.pit[pos] ||
+                !(Dungeon.level.passable[pos] || Dungeon.level.avoid[pos])
+        ) {
+            PathFinder.buildDistanceMap(pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
+            HashSet<Integer> validCells = new HashSet<>();
+            int minDistance = Integer.MAX_VALUE;
+            for (int i = 0; i < PathFinder.distance.length; i++) {
+                int dist = PathFinder.distance[i];
+                if (dist <= minDistance) {
+                    if (Dungeon.level.heaps.containsKey(i) || !(Dungeon.level.passable[i] || Dungeon.level.avoid[i]) || Dungeon.level.pit[i]) {
+                        continue;
+                    }
+                    if (dist == minDistance) {
+                        validCells.add(i);
+                    } else {
+                        validCells.clear();
+                        validCells.add(i);
+                        minDistance = dist;
+                    }
+                }
+            }
+            if (validCells.size() > 0) {
+                pos = Random.element(validCells);
+            } else {
+                for (Item item : heap.items) {
+                    Dungeon.level.drop(item, pos);
+                }
+                return;
+            }
+        }
+
+        Heap h = Dungeon.level.drop(new DummyItem(), pos);
+        heap.copyTo(h);
+        h.sprite.link();
+        h.sprite.drop();
     }
 }
