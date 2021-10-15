@@ -281,7 +281,7 @@ public class GameScene extends PixelScene {
 		hero.updateArmor();
 		mobs.add( hero );
 		
-		for (Mob mob : Dungeon.level.mobs()) {
+		for (Mob mob : Dungeon.level.mobs().toArray(new Mob[0])) {
 			addMobSprite( mob );
 			if (Statistics.amuletObtained) {
 				mob.beckon(Dungeon.hero.pos());
