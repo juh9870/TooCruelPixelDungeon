@@ -94,6 +94,7 @@ import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
@@ -1301,6 +1302,12 @@ public abstract class Level implements Bundlable {
 	private static boolean[] heroMindFov;
 
 	public void updateFieldOfView( Char c, boolean[] fieldOfView ) {
+
+		// Ignore issue if mob is out of bounds, but only in release version
+		if(!insideMap(c.pos()) && !DeviceCompat.isDebug()){
+			BArray.setFalse(fieldOfView);
+			return;
+		}
 
 		int cx = c.pos() % width();
 		int cy = c.pos() / width();
