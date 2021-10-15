@@ -74,7 +74,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -158,7 +157,7 @@ public class Dungeon {
 				} else {
 					lim.setCount(0);
 				}
-				
+
 			}
 		}
 
@@ -187,7 +186,7 @@ public class Dungeon {
 	public static Level level;
 
 	public static QuickSlot quickslot = new QuickSlot();
-	
+
 	public static int depth;
 	public static int gold;
 	public static int tokens;
@@ -200,7 +199,7 @@ public class Dungeon {
 	public static int version;
 
 	public static long seed;
-	
+
 	public static void init() {
 
 		version = Game.versionCode;
@@ -229,7 +228,7 @@ public class Dungeon {
 
 		Actor.clear();
 		Actor.resetNextID();
-		
+
 		Random.pushGenerator( seed );
 
 			Scroll.initLabels();
@@ -241,13 +240,13 @@ public class Dungeon {
 			Challenges.initGenerator();
 
 		Random.resetGenerators();
-		
+
 		Statistics.reset();
 		Notes.reset();
 
 		quickslot.reset();
 		QuickSlotButton.reset();
-		
+
 		depth = 0;
 //		if (DeviceCompat.isDebug())
 //			depth = 21;
@@ -258,9 +257,9 @@ public class Dungeon {
 		portedItems = new SparseArray<>();
 
 		LimitedDrops.reset();
-		
+
 		chapters = new HashSet<>();
-		
+
 		Ghost.Quest.reset();
 		Wandmaker.Quest.reset();
 		Blacksmith.Quest.reset();
@@ -269,28 +268,28 @@ public class Dungeon {
 		Generator.fullReset();
 		hero = new Hero();
 		hero.live();
-		
+
 		Badges.reset();
-		
+
 		GamesInProgress.selectedClass.initHero( hero );
 	}
 
     public static boolean isChallenged(int id) {
         return modifiers.isChallenged(id);
 	}
-	
+
 	public static Level newLevel() {
-		
+
 		Dungeon.level = null;
 		Actor.clear();
-		
+
 		depth++;
 		if (depth > Statistics.deepestFloor) {
             if (Challenges.COUNTDOWN.enabled()) {
                 Buff.prolong(Dungeon.hero, Countdown.class, Countdown.DESCEND_TIME * Countdown.timeMultiplier());
             }
 			Statistics.deepestFloor = depth;
-			
+
 			if (Statistics.qualifiedForNoKilling) {
 				Statistics.completedWithNoKilling = true;
 			} else {
@@ -302,7 +301,7 @@ public class Dungeon {
                 Buff.prolong(Dungeon.hero, Countdown.class, Countdown.ASCEND_TIME * Countdown.timeMultiplier());
             }
 		}
-		
+
 		Level level;
 		switch (depth) {
 		case 1:
@@ -358,16 +357,16 @@ public class Dungeon {
 			Statistics.deepestFloor--;
 		}
 		level.create();
-		
+
 		Statistics.qualifiedForNoKilling = !bossLevel();
-		
+
 		return level;
 	}
-	
+
 	public static void resetLevel() {
-		
+
 		Actor.clear();
-		
+
 		level.reset();
 		switchLevel( level, level.entrance );
 	}
@@ -387,19 +386,19 @@ public class Dungeon {
 		Random.popGenerator();
 		return result;
 	}
-	
+
 	public static boolean shopOnLevel() {
 		return depth == 6 || depth == 11 || depth == 16;
 	}
-	
+
 	public static boolean bossLevel() {
 		return bossLevel( depth );
 	}
-	
+
 	public static boolean bossLevel( int depth ) {
 		return depth == 5 || depth == 10 || depth == 15 || depth == 20 || depth == 25;
 	}
-	
+
 	public static void switchLevel( final Level level, int pos ) {
 
 		if (pos == -2){
@@ -407,9 +406,9 @@ public class Dungeon {
 		} else if (pos < 0 || pos >= level.length() || (!level.passable[pos] && !level.avoid[pos])){
 			pos = level.entrance;
 		}
-		
+
 		PathFinder.setMapSize(level.width(), level.height());
-		
+
 		Dungeon.level = level;
 		Mob.restoreAllies( level, pos );
 		Actor.init();
@@ -417,7 +416,7 @@ public class Dungeon {
 		level.addRespawner();
 
 		hero.pos(pos);
-		
+
 		for(Mob m : level.mobs().toArray(new Mob[0])){
 			if (m.pos() == hero.pos()){
 				//displace mob
@@ -433,10 +432,10 @@ public class Dungeon {
 				}
 			}
 		}
-		
+
 		Light light = hero.buff( Light.class );
 		hero.viewDistance = light == null ? level.viewDistance : Math.max( Light.DISTANCE, level.viewDistance );
-		
+
 		hero.curAction = hero.lastAction = null;
 
 		observe();
@@ -473,7 +472,7 @@ public class Dungeon {
 		else return false;
 
 	}
-	
+
 	public static boolean souNeeded() {
 		int souLeftThisSet;
 		//3 SOU each floor set, 1.5 (rounded) on forbidden runes challenge
@@ -488,7 +487,7 @@ public class Dungeon {
 		//chance is floors left / scrolls left
 		return Random.Int(5 - floorThisSet) < souLeftThisSet;
 	}
-	
+
 	public static boolean asNeeded() {
 		//1 AS each floor set
 		int asLeftThisSet = 1 - (LimitedDrops.ARCANE_STYLI.getCount() - (depth / 5));
@@ -498,7 +497,7 @@ public class Dungeon {
 		//chance is floors left / scrolls left
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
-	
+
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
     private static final String MODIFIERS   = "modifiers";
@@ -517,7 +516,7 @@ public class Dungeon {
 	private static final String CHAPTERS	= "chapters";
 	private static final String QUESTS		= "quests";
 	private static final String BADGES		= "badges";
-	
+
 	public static void saveGame( int save ) {
 		try {
 			Bundle bundle = new Bundle();
@@ -537,7 +536,7 @@ public class Dungeon {
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(Messages.format(DROPPED, d), droppedItems.get(d));
 			}
-			
+
 			for (int p : portedItems.keyArray()){
 				bundle.put(Messages.format(PORTED, p), portedItems.get(p));
 			}
@@ -547,56 +546,56 @@ public class Dungeon {
 			Bundle limDrops = new Bundle();
 			LimitedDrops.store( limDrops );
 			bundle.put ( LIMDROPS, limDrops );
-			
+
 			int count = 0;
 			int ids[] = new int[chapters.size()];
 			for (Integer id : chapters) {
 				ids[count++] = id;
 			}
 			bundle.put( CHAPTERS, ids );
-			
+
 			Bundle quests = new Bundle();
 			Ghost		.Quest.storeInBundle( quests );
 			Wandmaker	.Quest.storeInBundle( quests );
 			Blacksmith	.Quest.storeInBundle( quests );
 			Imp			.Quest.storeInBundle( quests );
 			bundle.put( QUESTS, quests );
-			
+
 			SpecialRoom.storeRoomsInBundle( bundle );
 			SecretRoom.storeRoomsInBundle( bundle );
-			
+
 			Statistics.storeInBundle( bundle );
 			Notes.storeInBundle( bundle );
 			Generator.storeInBundle( bundle );
-			
+
 			Scroll.save( bundle );
 			Potion.save( bundle );
 			Ring.save( bundle );
 
 			Actor.storeNextID( bundle );
-			
+
 			Bundle badges = new Bundle();
 			Badges.saveLocal( badges );
 			bundle.put( BADGES, badges );
-			
+
 			FileUtils.bundleToFile( GamesInProgress.gameFile(save), bundle);
-			
+
 		} catch (IOException e) {
 			GamesInProgress.setUnknown( save );
 			ShatteredPixelDungeon.reportException(e);
 		}
 	}
-	
+
 	public static void saveLevel( int save ) throws IOException {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
-		
+
 		FileUtils.bundleToFile(GamesInProgress.depthFile( save, depth), bundle);
 	}
-	
+
 	public static void saveAll() throws IOException {
 		if (hero != null && (hero.isAlive() || WndResurrect.instance != null)) {
-			
+
 			Actor.fixTime();
 			saveGame( GamesInProgress.curSlot );
 			saveLevel( GamesInProgress.curSlot );
@@ -605,13 +604,13 @@ public class Dungeon {
 
 		}
 	}
-	
+
 	public static void loadGame( int save ) throws IOException {
 		loadGame( save, true );
 	}
-	
+
 	public static void loadGame( int save, boolean fullLoad ) throws IOException {
-		
+
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
 		version = bundle.getInt( VERSION );
@@ -639,18 +638,18 @@ public class Dungeon {
         Challenges.initGenerator();
 
 		Dungeon.mobsToChampion = bundle.getInt( MOBS_TO_CHAMPION );
-		
+
 		Dungeon.level = null;
 		Dungeon.depth = -1;
-		
+
 		Scroll.restore( bundle );
 		Potion.restore( bundle );
 		Ring.restore( bundle );
 
 		quickslot.restorePlaceholders( bundle );
-		
+
 		if (fullLoad) {
-			
+
 			LimitedDrops.restore( bundle.getBundle(LIMDROPS) );
 
 			chapters = new HashSet<>();
@@ -660,7 +659,7 @@ public class Dungeon {
 					chapters.add( id );
 				}
 			}
-			
+
 			Bundle quests = bundle.getBundle( QUESTS );
 			if (!quests.isNull()) {
 				Ghost.Quest.restoreFromBundle( quests );
@@ -673,23 +672,23 @@ public class Dungeon {
 				Blacksmith.Quest.reset();
 				Imp.Quest.reset();
 			}
-			
+
 			SpecialRoom.restoreRoomsFromBundle(bundle);
 			SecretRoom.restoreRoomsFromBundle(bundle);
 		}
-		
+
 		Bundle badges = bundle.getBundle(BADGES);
 		if (!badges.isNull()) {
 			Badges.loadLocal( badges );
 		} else {
 			Badges.reset();
 		}
-		
+
 		Notes.restoreFromBundle( bundle );
-		
+
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
-		
+
 		gold = bundle.getInt( GOLD );
 		tokens = bundle.getInt( BJTOKENS );
 		depth = bundle.getInt( DEPTH );
@@ -699,14 +698,14 @@ public class Dungeon {
 		} else {
 			extraData.init();
 		}
-		
+
 		Statistics.restoreFromBundle( bundle );
 		Generator.restoreFromBundle( bundle );
 
 		droppedItems = new SparseArray<>();
 		portedItems = new SparseArray<>();
 		for (int i=1; i <= 26; i++) {
-			
+
 			//dropped items
 			ArrayList<Item> items = new ArrayList<>();
 			if (bundle.contains(Messages.format( DROPPED, i )))
@@ -716,7 +715,7 @@ public class Dungeon {
 			if (!items.isEmpty()) {
 				droppedItems.put( i, items );
 			}
-			
+
 			//ported items
 			items = new ArrayList<>();
 			if (bundle.contains(Messages.format( PORTED, i )))
@@ -728,34 +727,34 @@ public class Dungeon {
 			}
 		}
 	}
-	
+
 	public static Level loadLevel( int save ) throws IOException {
-		
+
 		Dungeon.level = null;
 		Actor.clear();
-		
+
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile( save, depth)) ;
-		
+
 		Level level = (Level)bundle.get( LEVEL );
-		
+
 		if (level == null){
 			throw new IOException();
 		} else {
 			return level;
 		}
 	}
-	
+
 	public static void deleteGame( int save, boolean deleteLevels ) {
-		
+
 		FileUtils.deleteFile(GamesInProgress.gameFile(save));
-		
+
 		if (deleteLevels) {
 			FileUtils.deleteDir(GamesInProgress.gameFolder(save));
 		}
-		
+
 		GamesInProgress.delete( save );
 	}
-	
+
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
 		info.depth = bundle.getInt( DEPTH );
 		info.version = bundle.getInt( VERSION );
@@ -773,13 +772,13 @@ public class Dungeon {
 		Hero.preview( info, bundle.getBundle( HERO ) );
 		Statistics.preview( info, bundle );
 	}
-	
+
 	public static void fail( Class cause ) {
 		if (WndResurrect.instance == null) {
 			Rankings.INSTANCE.submit( false, cause );
 		}
 	}
-	
+
 	public static void win( Class cause ) {
 
 		hero.belongings.identify();
@@ -793,7 +792,7 @@ public class Dungeon {
 		dist *= 1f + 0.25f*Dungeon.hero.pointsInTalent(Talent.FARSIGHT);
 		observe( dist+1 );
 	}
-	
+
 	public static void observe( int dist ) {
 
 		if (level == null) {
@@ -810,18 +809,18 @@ public class Dungeon {
 
 		int x = hero.pos() % level.width();
 		int y = hero.pos() / level.width();
-	
+
 		//left, right, top, bottom
 		int l = Math.max( 0, x - dist );
 		int r = Math.min( x + dist, level.width() - 1 );
 		int t = Math.max( 0, y - dist );
 		int b = Math.min( y + dist, level.height() - 1 );
-	
+
 		int width = r - l + 1;
 		int height = b - t + 1;
-		
+
 		int pos = l + t * level.width();
-	
+
 		for (int i = t; i <= b; i++) {
 			BArray.or( level.visited, level.heroFOV, pos, width, level.visited );
 			pos+=level.width();
@@ -836,7 +835,7 @@ public class Dungeon {
         }
 
 		GameScene.updateFog(l, t, width, height);
-		
+
         boolean mw = hero.buff(MindVision.class) != null;
         for (Mob m : level.mobs().toArray(new Mob[0])){
 			if (mw || m.properties().contains(Char.Property.ALWAYS_VISIBLE) || m.buff(Revealing.class) != null) {
@@ -847,7 +846,7 @@ public class Dungeon {
 				GameScene.updateFog(m.pos(), 2);
 			}
 		}
-		
+
 		if (hero.buff(Awareness.class) != null){
 			for (Heap h : level.heaps.valueList()){
 				BArray.or( level.visited, level.heroFOV, h.pos - 1 - level.width(), 3, level.visited );
@@ -946,7 +945,7 @@ public class Dungeon {
 		return PathFinder.find(ch.pos(), to, passable );
 
 	}
-	
+
 	public static int findStep(Char ch, int to, boolean[] pass, boolean[] visible, boolean chars ) {
 
 		if (Dungeon.level.adjacent(ch.pos(), to )) {
@@ -971,11 +970,11 @@ public class Dungeon {
 				}
 			}
 		}
-		
+
 		return PathFinder.getStep(ch.pos(), to, passable );
 
 	}
-	
+
 	public static int flee( Char ch, int from, boolean[] pass, boolean[] visible, boolean chars ) {
 
 		setupPassable();
@@ -992,13 +991,15 @@ public class Dungeon {
 		passable[ch.pos()] = true;
 
 		//only consider chars impassable if our retreat path runs into them
-		int step = PathFinder.getStepBack(ch.pos(), from, passable );
-		while (step != -1 && Actor.findChar(step) != null){
+		int step = PathFinder.getStepBack( ch.pos(), from, passable );
+		int tries = 10;
+		while (step != -1 && Actor.findChar(step) != null && tries-- > 0) {
 			passable[step] = false;
-			step = PathFinder.getStepBack(ch.pos(), from, passable );
+			step = PathFinder.getStepBack( ch.pos(), from, passable );
 		}
+		if (tries <= 0) return -1;
 		return step;
-		
+
 	}
 
 }

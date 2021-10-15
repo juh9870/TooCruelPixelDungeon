@@ -65,10 +65,9 @@ public class ScrollOfUpgrade extends InventoryScroll {
 				stack.quantity(stack.quantity() - repeats + 1);
 			}
 		}
+		upgrade(curUser);
+		Degrade.detach(curUser, Degrade.class);
 		while (repeats-- > 0) {
-			upgrade(curUser);
-
-			Degrade.detach(curUser, Degrade.class);
 
 			//logic for telling the user when item properties change from upgrades
 			//...yes this is rather messy
