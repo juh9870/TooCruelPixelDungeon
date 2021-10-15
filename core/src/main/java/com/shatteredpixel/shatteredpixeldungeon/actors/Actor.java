@@ -419,7 +419,7 @@ public abstract class Actor implements Bundlable {
 		return new HashSet<>(all);
 	}
 
-	public static synchronized HashSet<Char> chars() { return chars; }
+	public static synchronized HashSet<Char> chars() { return new HashSet<>(chars); }
 
-	public static synchronized HashMap<Integer, Char> charsPositioned() { return charsPositioned; }
+	public static synchronized HashMap<Integer, Char> charsPositioned() { return new HashMap<>(charsPositioned); }
 }

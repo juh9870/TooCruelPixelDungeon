@@ -49,8 +49,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 
-import java.util.HashSet;
-
 public class Combo extends Buff implements ActionIndicator.Action {
 	
 	private int count = 0;
@@ -340,7 +338,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 				case CRUSH:
 					WandOfBlastWave.BlastWave.blast(enemy.pos());
 					PathFinder.buildDistanceMap(target.pos(), BArray.not(Dungeon.level.solid, null), 3);
-					for (Char ch : (HashSet<Char>)Actor.chars().clone()) {
+					for (Char ch : Actor.chars()) {
 						if (ch != enemy && ch.alignment == Char.Alignment.ENEMY
 								&& PathFinder.distance[ch.pos()] < Integer.MAX_VALUE) {
 							int aoeHit = Math.round(target.damageRoll() * 0.25f * count);
