@@ -94,6 +94,8 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 	
 	public Augment augment = Augment.NONE;
+
+	public boolean tierFixed = false;
 	
 	private static final int USES_TO_ID = 20;
 	private float usesLeftToID = USES_TO_ID;
@@ -132,6 +134,8 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 
 	protected int fixTier(int tier){
+		if (tierFixed) return tier;
+		tierFixed = true;
 		if (Challenges.RETIERED.enabled()) {
 			if (tier != 1) {
 				switch (Random.Int(4)) {
@@ -162,6 +166,7 @@ abstract public class Weapon extends KindOfWeapon {
 	private static final String ENCHANTMENT	    = "enchantment";
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String AUGMENT	        = "augment";
+	private static final String TIER_FIXED	    = "tier_fixed";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -171,6 +176,7 @@ abstract public class Weapon extends KindOfWeapon {
 		bundle.put( ENCHANTMENT, enchantment );
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( AUGMENT, augment );
+		bundle.put( TIER_FIXED, tierFixed );
 	}
 	
 	@Override
@@ -180,6 +186,7 @@ abstract public class Weapon extends KindOfWeapon {
 		availableUsesToID = bundle.getFloat( AVAILABLE_USES );
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
+		tierFixed = bundle.getBoolean( TIER_FIXED );
 
 		augment = bundle.getEnum(AUGMENT, Augment.class);
 	}

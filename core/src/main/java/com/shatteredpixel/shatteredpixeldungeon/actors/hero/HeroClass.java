@@ -63,6 +63,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMappi
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
@@ -155,7 +156,7 @@ public enum HeroClass {
 			new ScrollOfMagicMapping().quantity(64).identify().collect();
 			new ScrollOfRage().quantity(64).identify().collect();
 			new ScrollOfUpgrade().quantity(100).identify().collect();
-			new ScrollOfMirrorImage().quantity(100).identify().collect();
+			new ScrollOfTransmutation().quantity(100).identify().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
 //			new ScrollOfRemoveCurse().quantity(1).identify().collect();
 //			new ScrollOfMysticalEnergy().quantity(1).identify().collect();

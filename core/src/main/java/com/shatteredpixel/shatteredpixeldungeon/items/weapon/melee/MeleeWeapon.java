@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -164,9 +165,14 @@ public class MeleeWeapon extends Weapon {
 	}
 
 	@Override
-	public boolean collect() {
+	public boolean collect( Bag container ) {
 		tier = fixTier(tier);
-		return super.collect();
+		return super.collect(container);
+	}
+
+	@Override
+	public boolean isSimilar(Item item) {
+		return super.isSimilar(item) && ((MeleeWeapon) item).tier == tier;
 	}
 
 	private static final String TIER = "tier";

@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
@@ -148,15 +149,33 @@ public class ScrollOfTransmutation extends InventoryScroll {
 		
 		Weapon n;
 		Generator.Category c;
+		int targetTier = 0;
 		if (w instanceof MeleeWeapon) {
-			c = Generator.wepTiers[((MeleeWeapon)w).tier - 1];
+			int tier = GameMath.gate(0,((MeleeWeapon)w).tier - 1,4);
+			targetTier = ((MeleeWeapon) w).tier;
+			if(Challenges.RETIERED.enabled()){
+				tier = Random.Int(4);
+			}
+			c = Generator.wepTiers[tier];
 		} else {
-			c = Generator.misTiers[((MissileWeapon)w).tier - 1];
+			int tier = GameMath.gate(0,((MissileWeapon)w).tier - 1,4);
+			targetTier = ((MissileWeapon) w).tier;
+			if(Challenges.RETIERED.enabled()){
+				tier = Random.Int(4);
+			}
+			c = Generator.misTiers[tier];
 		}
 		
 		do {
 			n = (Weapon) Reflection.newInstance(c.classes[Random.chances(c.probs)]);
 		} while (Challenges.isItemBlocked(n) || n.getClass() == w.getClass());
+
+		if (n instanceof MeleeWeapon) {
+			((MeleeWeapon) n).tier = targetTier;
+		} else {
+			((MissileWeapon) n).tier = targetTier;
+		}
+		n.tierFixed = true;
 		
 		int level = w.level();
 		if (w.curseInfusionBonus) level--;

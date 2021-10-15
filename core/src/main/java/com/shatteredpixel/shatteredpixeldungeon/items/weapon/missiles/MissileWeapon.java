@@ -159,6 +159,7 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	public boolean collect(Bag container) {
 		if (container instanceof MagicalHolster) holster = true;
+		tier = fixTier(tier);
 		return super.collect(container);
 	}
 	
@@ -352,7 +353,12 @@ abstract public class MissileWeapon extends Weapon {
 		super.reset();
 		durability = MAX_DURABILITY;
 	}
-	
+
+	@Override
+	public boolean isSimilar(Item item) {
+		return super.isSimilar(item) && ((MissileWeapon) item).tier == tier;
+	}
+
 	@Override
 	public Item merge(Item other) {
 		super.merge(other);
@@ -388,12 +394,6 @@ abstract public class MissileWeapon extends Weapon {
 	public boolean doPickUp(Hero hero) {
 		parent = null;
 		return super.doPickUp(hero);
-	}
-
-	@Override
-	public boolean collect() {
-		tier = fixTier(tier);
-		return super.collect();
 	}
 
 	@Override
