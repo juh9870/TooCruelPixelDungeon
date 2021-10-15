@@ -114,6 +114,7 @@ public class ScrollOfEnchantment extends ExoticScroll {
 					
 					@Override
 					protected void onSelect(int index) {
+						curItem = ScrollOfEnchantment.this;
 						if (index < 3) {
 							((Weapon) item).enchant(enchants[index]);
 							GLog.p(Messages.get(StoneOfEnchantment.class, "weapon"));
