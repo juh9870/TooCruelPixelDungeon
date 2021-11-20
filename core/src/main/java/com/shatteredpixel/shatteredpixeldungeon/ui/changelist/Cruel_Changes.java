@@ -24,10 +24,12 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.MirrorWraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
+import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
@@ -74,6 +76,35 @@ public class Cruel_Changes {
         ChangeInfo changes = new ChangeInfo("v1.0.0", true, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
+
+        changes = new ChangeInfo("v1.0.3", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Added 3 new challenges\n" +
+                        "_-_ Removed Korean MMO and Grindlands\n" +
+                        "_-_ Tweaked Fort Knox\n" +
+                        "_-_ Tweaked Flowing Champion\n" +
+                        "_-_ Tweaked Insomnia\n" +
+                        "_-_ Moved all enlargement challenges to Modifiers"
+        ));
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                        "_-_ Fixed crash related to Combo ability\n" +
+                                "_-_ Fixed crash related to Scroll of Enchantment\n" +
+                                "_-_ Fixed crash related to Dynasties\n" +
+                                "_-_ Fixed crashes related to character movement\n" +
+                                "_-_ Fixed issues with Retiered\n" +
+                                "_-_ Fixed missing Blackjack room on floor 21\n" +
+                                "_-_ Fixed chains issues with Straight Path\n" +
+                                "_-_ Fixed multiple issues related to Dance Dance\n" +
+                                "_-_ Fixed missing pit room in even more crashes\n" +
+                                "_-_ Speculatively fixed freezes with King of a Hill"
+        ));
+
+        changes.addButton(new ChangeButton(new Ankh(), Messages.get(Challenges.class, "repopulation"), Messages.get(Challenges.class, "repopulation_desc")));
+        changes.addButton(new ChangeButton(new RotHeartSprite(), Messages.get(Challenges.class, "fractal_hive"), Messages.get(Challenges.class, "fractal_hive_desc")));
+        changes.addButton(new ChangeButton(new LostBackpack(), Messages.get(Challenges.class, "second_try"), Messages.get(Challenges.class, "second_try_desc")));
 
         changes = new ChangeInfo("v1.0.2", false, "");
         changes.hardlight(Window.TITLE_COLOR);
