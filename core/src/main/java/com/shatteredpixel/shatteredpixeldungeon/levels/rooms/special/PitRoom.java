@@ -34,7 +34,9 @@ import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class PitRoom extends SpecialRoom {
-
+	{
+		important = preserve = true;
+	}
 	@Override //increase min size slightly to prevent tiny 3x3 wraith fights
 	public int minWidth() { return 6; }
 	public int minHeight() {

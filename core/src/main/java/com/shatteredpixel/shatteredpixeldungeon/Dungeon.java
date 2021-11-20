@@ -74,6 +74,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -209,9 +210,9 @@ public class Dungeon {
 
 		Generator.Category.hardReset();
 
-//        if(DeviceCompat.isDebug()){
-//        	seed = 2592635102693L;
-//		}
+        if(DeviceCompat.isDebug()){
+        	seed = 2369620896496L;
+		}
 
         modifiers = SPDSettings.modifiers();
         extraData.init();

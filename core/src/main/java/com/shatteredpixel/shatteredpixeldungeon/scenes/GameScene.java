@@ -724,8 +724,8 @@ public class GameScene extends PixelScene {
 				}
 				Class<? extends Actor> cl = Actor.getCurrentActorClass();
 				String msg = "Actor thread dump was requested. " +
-						"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " current actor:" + cl + "\ntrace:" +
-						s;
+						"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " challenges:" + Challenges.displayString(Dungeon.modifiers.challenges) +
+						" current actor:" + cl + "\ntrace:" + s;
 				Gdx.app.getClipboard().setContents(msg);
 				ShatteredPixelDungeon.reportException(
 						new RuntimeException(msg)
