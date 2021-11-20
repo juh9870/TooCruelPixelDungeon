@@ -23,8 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -33,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class StatueRoom extends SpecialRoom {
@@ -78,6 +78,7 @@ public class StatueRoom extends SpecialRoom {
 		nStatues = (int) Math.max(nStatues * Math.sqrt(mult), nStatues + mult - 1);
 
 		if (nStatues > 1) {
+			ArrayList<Mob> statues = new ArrayList<>();
 			// 1 drop per 8 statues in a room
 			int dropStatues = (int) Math.ceil(nStatues / 8f);
 			// Offset target center a bit to randomize statues distribution around the main statue
@@ -98,12 +99,10 @@ public class StatueRoom extends SpecialRoom {
 				Statue statue = Statue.random();
 				statue.pos(cell);
 				level.addMob(statue);
-				if (dropStatues <= 0) {
-					Buff.affect(statue, NoReward.class);
-				}
-				dropStatues--;
+				statues.add(statue);
 				nStatues--;
 			}
+			PoolRoom.unlootMobs(statues, dropStatues);
 		} else {
 			Statue statue = Statue.random();
 			statue.pos(cx + cy * level.width());

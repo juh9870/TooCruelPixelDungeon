@@ -213,10 +213,13 @@ public class Blob extends Actor {
 	}
 
 	public void fullyClear(){
+		fullyClear(Dungeon.level);
+	}
+	public void fullyClear(Level level){
 		volume = 0;
 		area.setEmpty();
-		cur = new int[Dungeon.level.length()];
-		off = new int[Dungeon.level.length()];
+		cur = new int[level.length()];
+		off = new int[level.length()];
 	}
 	
 	public String tileDesc(int cell) {

@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -482,7 +483,18 @@ public abstract class RegularLevel extends Level {
 			
 		}
 	}
-	
+
+	@Override
+	protected void applySecondTry() {
+		super.applySecondTry();
+		for (Mob mob : new ArrayList<>(mobs())) {
+			if (mob instanceof NPC) continue;
+			if (room(mob.pos()) instanceof SpecialRoom) {
+				removeMob(mob);
+			}
+		}
+	}
+
 	@Override
 	protected void createItems() {
 		
@@ -640,7 +652,7 @@ public abstract class RegularLevel extends Level {
 		Random.popGenerator();
 
 	}
-	
+
 	public ArrayList<Room> rooms() {
 		return new ArrayList<>(rooms);
 	}

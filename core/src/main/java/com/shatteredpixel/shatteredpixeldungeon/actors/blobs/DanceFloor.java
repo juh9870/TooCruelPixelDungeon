@@ -12,6 +12,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Godspeed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.DanceTile;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -95,13 +96,14 @@ public class DanceFloor extends Blob implements Hero.Doom {
     @Override
     public void fullyClear() {
         super.fullyClear();
-        seed(Dungeon.level,1,1);
+        seed(Dungeon.level, 1, 1);
     }
 
     private void applyEffect(Char target, int color) {
         if (target.properties().contains(Char.Property.BOSS) ||
                 target.properties().contains(Char.Property.IMMOVABLE)) return;
         if (target instanceof Mob && ((Mob) target).state == ((Mob) target).SLEEPING) return;
+        if (target instanceof NPC) return;
         switch (color) {
             case RED:
                 if (target == Dungeon.hero) {
@@ -170,7 +172,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
         }
     }
 
-    public void resetFov(){
+    public void resetFov() {
         for (IntMap.Entry<DanceTile> square : squares) {
             square.value.killAndErase();
         }

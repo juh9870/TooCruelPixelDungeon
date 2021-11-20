@@ -159,12 +159,12 @@ public enum HeroClass {
 			new ScrollOfTransmutation().quantity(100).identify().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
 //			new ScrollOfRemoveCurse().quantity(1).identify().collect();
-//			new ScrollOfMysticalEnergy().quantity(1).identify().collect();
+			new ScrollOfPsionicBlast().quantity(1).identify().collect();
 //			new ScrollOfDivination().quantity(1).identify().collect();
 //			new ScrollOfForesight().quantity(1).identify().collect();
 //			new StoneOfAugmentation().quantity(1).identify().collect();
 //			new StoneOfIntuition().quantity(1).identify().collect();
-			new ScrollOfRecharging().quantity(100).identify().collect();
+//			new ScrollOfRecharging().quantity(100).identify().collect();
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(64).identify().collect();
 			new PotionOfInvisibility().quantity(64).identify().collect();

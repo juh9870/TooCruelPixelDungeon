@@ -288,6 +288,12 @@ public enum Challenges implements Hero.Doom {
     },
     MIMICS_2(87, 2, 3f, MIMICS),
     AGNOSIA(89, 2, 2f),
+    SECOND_TRY(95, 2, 4f){
+        @Override
+        protected float _nLootMult() {
+            return 0;
+        }
+    },
     //endregion
 
 
@@ -433,7 +439,7 @@ public enum Challenges implements Hero.Doom {
     SLIDING(91, 5, -7f),
     //endregion
 
-    //Last id 92
+    //Last id 95
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;

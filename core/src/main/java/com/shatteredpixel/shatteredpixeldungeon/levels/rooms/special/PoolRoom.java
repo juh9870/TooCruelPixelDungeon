@@ -23,6 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
@@ -99,6 +102,8 @@ public class PoolRoom extends SpecialRoom {
 		float mult = Challenges.nMobsMultiplier();
 		nFish = (int) Math.max(nFish * Math.sqrt(mult), nFish + mult - 1);
 
+		ArrayList<Mob> piranhas = new ArrayList<>();
+
 		if (nFish > 10) {
 			HashSet<Integer> path = new HashSet<>(new Ballistica(level.pointToCell(door), pos, Ballistica.STOP_TARGET, level).path);
 			ArrayList<Point> points = points(1);
@@ -110,6 +115,7 @@ public class PoolRoom extends SpecialRoom {
 				Piranha piranha = new Piranha();
 				piranha.pos(cell);
 				level.addMob(piranha);
+				piranhas.add(piranha);
 				nFish--;
 			}
 		} else {
@@ -121,7 +127,22 @@ public class PoolRoom extends SpecialRoom {
 				} while (level.map[_pos] != Terrain.WATER || level.findMob(_pos) != null);
 				piranha.pos(_pos);
 				level.addMob(piranha);
+				piranhas.add(piranha);
 			}
+		}
+		unlootMobs(piranhas,3);
+	}
+
+	public static void unlootMobs(ArrayList<Mob> piranhas, int count){
+		if (piranhas.size() <= count) {
+			return;
+		}
+		Random.shuffle(piranhas);
+		for (int i = 0; i < count; i++) {
+			piranhas.remove(0);
+		}
+		for (Mob pirahna : piranhas) {
+			Buff.affect(pirahna, NoReward.class);
 		}
 	}
 	

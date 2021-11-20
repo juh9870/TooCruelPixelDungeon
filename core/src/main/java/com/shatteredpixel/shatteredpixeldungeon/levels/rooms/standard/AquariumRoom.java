@@ -22,10 +22,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.PoolRoom;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -60,6 +62,7 @@ public class AquariumRoom extends StandardRoom {
 		float mult = Challenges.nMobsMultiplier();
 		numFish = (int) Math.max(numFish * Math.sqrt(mult), numFish + mult - 1);
 		ArrayList<Point> points = points(3);
+		ArrayList<Mob> piranhas = new ArrayList<>();
 		Random.shuffle(points);
 		for (int i = 0; i < points.size() && numFish > 0; i++) {
 			int cell = level.pointToCell(points.get(i));
@@ -68,9 +71,12 @@ public class AquariumRoom extends StandardRoom {
 			Piranha piranha = new Piranha();
 			piranha.pos(cell);
 			level.addMob(piranha);
+			piranhas.add(piranha);
 			numFish--;
 		}
-		
+
+		PoolRoom.unlootMobs(piranhas, 3);
+
 		for (Door door : connected.values()) {
 			door.set( Door.Type.REGULAR );
 		}

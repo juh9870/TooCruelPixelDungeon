@@ -66,6 +66,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
@@ -172,6 +173,7 @@ public abstract class Level implements Bundlable {
 	public HashSet<CustomTilemap> customWalls;
 
 	protected ArrayList<Item> itemsToSpawn = new ArrayList<>();
+	protected ArrayList<Item> guaranteedItems = new ArrayList<>();
 
 	protected Group visuals;
 
@@ -248,6 +250,35 @@ public abstract class Level implements Bundlable {
 			if (Challenges.DESERT.enabled()) {
 				for (int i = 0; i < bonusNum; i++) {
 					addItemToSpawn( new AquaBlast() );
+				}
+			}
+
+			if(Challenges.SECOND_TRY.enabled()){
+				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + (Dungeon.depth - 1) / 3;
+
+				int offset = (Dungeon.depth - 1) - (Dungeon.depth - 1) / 3 * 3;
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.randomWeapon());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.randomArmor());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.random(Generator.Category.RING));
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.randomMissile());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.random());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.random());
 				}
 			}
 
@@ -607,7 +638,39 @@ public abstract class Level implements Bundlable {
 		}
 	}
 
+	protected void applySecondTry() {
+		for (int i = 0; i < length; i++) {
+			if (map[i] == Terrain.LOCKED_DOOR) {
+				set(i, Terrain.DOOR, this);
+			}
+			if (map[i] == Terrain.BARRICADE) {
+				set(i, Terrain.EMBERS, this);
+			}
+		}
+
+		Heap h;
+		for (int c : heaps.keyArray()) {
+			h = heaps.get(c);
+			if (h.type == Heap.Type.FOR_SALE) continue;
+			for (Item item : new ArrayList<>(h.items)) {
+				if (!guaranteedItems.contains(item) || item instanceof Key) h.items.remove(item);
+			}
+			if (h.items.isEmpty()) {
+				heaps.remove(c);
+			}
+		}
+
+		for (Blob blob : blobs.values()) {
+			if(blob instanceof WellWater){
+				blob.fullyClear(this);
+			}
+		}
+	}
+
     protected void postCreate(){
+    	if(!Dungeon.bossLevel() && Challenges.SECOND_TRY.enabled()){
+			applySecondTry();
+		}
     	if(!Dungeon.bossLevel() && Challenges.BLACKJACK.enabled()){
     		blackjackHeaps();
 		}
@@ -720,7 +783,7 @@ public abstract class Level implements Bundlable {
 	public Actor addRespawner() {
 		if (respawner == null){
 			respawner = new Respawner();
-			Actor.addDelayed(respawner, respawnCooldown());
+			Actor.addDelayed(respawner, Actor.TICK);
 		} else {
 			Actor.add(respawner);
 		}
@@ -731,6 +794,9 @@ public abstract class Level implements Bundlable {
 		{
 			actPriority = BUFF_PRIO; //as if it were a buff.
 		}
+
+		private float waitTime = 0f;
+		private static final String WAIT_TIME = "wait_time";
 
 		@Override
 		protected boolean act() {
@@ -759,7 +825,7 @@ public abstract class Level implements Bundlable {
 				}
 			}
 
-			if (leftover > 0 || fractal) {
+			if (waitTime >= cooldown && (leftover > 0 || fractal)) {
 
 				boolean allowNearHero = Challenges.EXHIBITIONISM.enabled() || Challenges.SMALL_LEVELS.enabled();
 				PathFinder.buildDistanceMap(Dungeon.hero.pos(), BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
@@ -778,16 +844,35 @@ public abstract class Level implements Bundlable {
 					if (Challenges.STACKING_SPAWN.enabled()) {
 						Buff.affect(mob, Stacking.class).count = Math.max((int) leftover, 1);
 					}
-					spend(cooldown);
+					spend(Math.min(cooldown, TICK));
+					waitTime = 1;
 				} else {
 					//try again in 1 turn
 					spend(TICK);
+					waitTime++;
 				}
 			} else {
-				spend(cooldown);
+				spend(TICK);
+				waitTime++;
 			}
 
 			return true;
+		}
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put(WAIT_TIME, waitTime);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			if (bundle.contains(WAIT_TIME)) {
+				waitTime = bundle.getInt(WAIT_TIME);
+			} else {
+				waitTime = TIME_TO_RESPAWN;
+			}
 		}
 	}
 
@@ -832,6 +917,7 @@ public abstract class Level implements Bundlable {
 	public void addItemToSpawn( Item item ) {
 		if (item != null) {
 			itemsToSpawn.add( item );
+			guaranteedItems.add( item );
 		}
 	}
 
