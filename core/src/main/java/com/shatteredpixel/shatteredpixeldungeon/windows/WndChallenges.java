@@ -57,7 +57,7 @@ public class WndChallenges extends Window {
         int tDiff = (int) Math.signum(a.tier - b.tier);
         if (tDiff != 0) return tDiff;
 
-        return (int) Math.signum(a.sortId - b.sortId);
+        return (int) Math.signum(a.ordinal() - b.ordinal());
     };
     private final int WIDTH = Math.min(160, (int) (PixelScene.uiCamera.width * 0.9));
     private final int HEIGHT = (int) (PixelScene.uiCamera.height * 0.9);
@@ -158,7 +158,7 @@ public class WndChallenges extends Window {
             Challenges chals = sorted[i];
             ChallengeButton cb = new ChallengeButton(chals, editableFilter);
             cb.updateState(modifiers);
-            cb.enable(editable);
+            cb.active = editable && !chals.deprecated;
 
             boolean checked = modifiers.isChallenged(chals.id);
             boolean filtered = editableFilter.test(chals);
@@ -376,18 +376,20 @@ public class WndChallenges extends Window {
                 text.hardlight(TIER_COLORS[challenge.tier - 2]);
             }
 
-            if (challenge.disabled) {
+            if (challenge.deprecated) {
                 enable(false);
+                if (editable) {
+                    checked(false);
+                }
             }
         }
 
         @Override
         public void checked(boolean value) {
             super.checked(value);
-            if(value && !editable){
-                super.checked(false);
-
-            }
+//            if(value && !editable){
+//                super.checked(false);
+//            }
             icon.copy(Icons.get(checked() ? tierChecked() : Icons.UNCHECKED));
         }
 
@@ -432,7 +434,7 @@ public class WndChallenges extends Window {
 
         protected boolean onClick(float x, float y) {
             if (!inside(x, y)) return false;
-            if(!active) return false;
+            if (!active) return false;
 
             Sample.INSTANCE.play(Assets.Sounds.CLICK);
             if (filter.test(challenge)) {
@@ -441,7 +443,7 @@ public class WndChallenges extends Window {
                 if (checked()) {
                     if (!mods.canDisable(challenge)) {
                         canClick = false;
-                        notification("cant_disable", mods.recursiveDependants(challenge), false);
+                        notification("cant_disable", mods.recursiveDependantsFilterEnabled(challenge, modifiers), false);
                     }
                 } else {
                     if (!mods.canEnable(challenge)) {
@@ -460,7 +462,7 @@ public class WndChallenges extends Window {
 
         @Override
         public void enable(boolean value) {
-            if (challenge.disabled) value = false;
+            if (challenge.deprecated) value = false;
             super.enable(value);
         }
 

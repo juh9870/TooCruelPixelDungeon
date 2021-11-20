@@ -127,6 +127,18 @@ public class Modifiers implements Bundlable {
         return set;
     }
 
+    public Set<Challenges> recursiveDependantsFilterEnabled(Challenges challenge, Modifiers modifiers) {
+        Set<Challenges> set = dependants(challenge);
+        Set<Challenges> retSet = new HashSet<>();
+        for (Challenges entry : new HashSet<>(set)) {
+            if (modifiers.isChallenged(entry.id)) {
+                retSet.add(entry);
+                retSet.addAll(recursiveDependantsFilterEnabled(entry, modifiers));
+            }
+        }
+        return retSet;
+    }
+
     public Set<Challenges> recursiveDependants(Challenges challenge) {
         Set<Challenges> set = dependants(challenge);
         for (Challenges entry : new HashSet<>(set)) {
@@ -148,7 +160,7 @@ public class Modifiers implements Bundlable {
 
         for (Challenges value : values) {
             if (value.isModifier()) continue;
-            if (value.disabled) continue;
+            if (value.deprecated) continue;
             oldChals = Arrays.copyOf(challenges, challenges.length);
             challenges[value.id] = true;
             for (Challenges req : recursiveRequirements(value)) {
@@ -174,7 +186,7 @@ public class Modifiers implements Bundlable {
         HashSet<Challenges> canDisable = new HashSet<>();
         for (Challenges value : Challenges.values()) {
             if (value.isModifier()) continue;
-            if (value.disabled) continue;
+            if (value.deprecated) continue;
             if (isChallenged(value.id) && canDisable(value)) canDisable.add(value);
             if (!isChallenged(value.id) && canEnable(value)) selectable.add(value);
         }
@@ -201,7 +213,7 @@ public class Modifiers implements Bundlable {
 
     public boolean validateRun(Scene scene) {
         for (Challenges val : Challenges.values()) {
-            if (isChallenged(val.id) && val.disabled) {
+            if (isChallenged(val.id) && val.deprecated) {
                 scene.add(new WndError(Messages.get(this, "disabled_challenges_message")) {
                     @Override
                     public void onBackPressed() {
