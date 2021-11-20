@@ -42,7 +42,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.InventoryScroll;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -164,7 +163,7 @@ public enum Challenges implements Hero.Doom {
             return 1.5f;
         }
     },
-    CHAMPION_ENEMIES(19, 1, 2f){
+    CHAMPION_ENEMIES(19, 1, 2f) {
         @Override
         public String description() {
             return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.NormalChampionsDeck().values);
@@ -177,7 +176,7 @@ public enum Challenges implements Hero.Doom {
     BARRIER_BREAKER(68, 1, 1f),
     TUMBLER(71, 1, 1f),
     REVENGE(76, 1, 1.5f),
-    MIMICS(86,1,1f),
+    MIMICS(86, 1, 1f),
     //endregion
 
 
@@ -199,7 +198,7 @@ public enum Challenges implements Hero.Doom {
     EVOLUTION(29, 2, 5f, MUTAGEN),
     REBIRTH(30, 2, 4f),
     CHAOTIC_CONSTRUCTION(64, 30.5f, 2, 2f, INDIFFERENT_DESIGN),
-    ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES){
+    ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES) {
         @Override
         public String description() {
             return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.EliteChampionsDeck().values);
@@ -262,7 +261,7 @@ public enum Challenges implements Hero.Doom {
     },
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
-    CURSE_ENCHANT(43, 2, 2f, CURSED){
+    CURSE_ENCHANT(43, 2, 2f, CURSED) {
         @Override
         protected boolean _isItemBlocked(Item item) {
             return item instanceof RingOfForce;
@@ -280,14 +279,14 @@ public enum Challenges implements Hero.Doom {
     DANCE_FLOOR(70, 2, 4f),
     SAVING_GRACE(72, 2, 2f, TUMBLER),
     REVENGE_FURY(77, 2, 2f, REVENGE),
-    KING_OF_A_HILL(84,2,4f, CHAMPION_ENEMIES){
+    KING_OF_A_HILL(84, 2, 4f, CHAMPION_ENEMIES) {
         @Override
         protected float _nMobsMult() {
             return 1.5f;
         }
     },
-    MIMICS_2(87,2,3f, MIMICS),
-    AGNOSIA(89,2,2f),
+    MIMICS_2(87, 2, 3f, MIMICS),
+    AGNOSIA(89, 2, 2f),
     //endregion
 
 
@@ -329,7 +328,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     HUMPPA(74, 3, 7f, DANCE_FLOOR),
-    HAIL_TO_THE_KING(85,3,6f, KING_OF_A_HILL),
+    HAIL_TO_THE_KING(85, 3, 6f, KING_OF_A_HILL),
     //endregion
 
 
@@ -342,14 +341,14 @@ public enum Challenges implements Hero.Doom {
     },
 
     THE_LAST_WALTZ(73, 4, 11f, DANCE_FLOOR, MARATHON),
-    CRAB_RAVE(92,4,69f, THE_LAST_WALTZ, AGNOSIA, HUMPPA, ON_A_BEAT),
+    CRAB_RAVE(92, 4, 69f, THE_LAST_WALTZ, AGNOSIA, HUMPPA, ON_A_BEAT),
     //endregion
 
 
     //region Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
-    BIOCHIP(90,79.5f,5, -1),
+    BIOCHIP(90, 79.5f, 5, -1),
     CHAOS_WIZARD(80, 5, -4f) {
         @Override
         protected boolean _isItemBlocked(Item item) {
@@ -357,7 +356,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING(81, 5, -50f),
-    GRINDING_2(82, 5, -300f, GRINDING) {
+    GRINDING_2(82, 82, 5, -300f, true) {
         @Override
         protected float _nLootMult() {
             return 5f;
@@ -427,9 +426,9 @@ public enum Challenges implements Hero.Doom {
             }
         }
     },
-    GRINDING_3(83, 5, 0, GRINDING_2, BIOCHIP),
-    MIMICS_GRIND(88,5, 0, GRINDING, MIMICS_2),
-    SLIDING(91,5,-7f),
+    GRINDING_3(83, 83, 5, 0, true),
+    MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
+    SLIDING(91, 5, -7f),
     //endregion
 
     //Last id 92
@@ -457,6 +456,7 @@ public enum Challenges implements Hero.Doom {
     public final float sortId;
     public final float difficulty;
     public final int tier;
+    public final boolean disabled;
     public final int[] requirements;
 
     Challenges(int id, int tier, float difficulty, Challenges... requirements) {
@@ -464,12 +464,17 @@ public enum Challenges implements Hero.Doom {
     }
 
     Challenges(int id, float sortId, int tier, float difficulty, Challenges... requirements) {
+        this(id, sortId, tier, difficulty, false, requirements);
+    }
+
+    Challenges(int id, float sortId, int tier, float difficulty, boolean disabled, Challenges... requirements) {
         this.name = name().toLowerCase();
         this.id = id;
         this.sortId = sortId;
         this.difficulty = difficulty;
         this.tier = tier;
         this.requirements = new int[requirements.length];
+        this.disabled = disabled;
         for (int i = 0; i < requirements.length; i++) {
             this.requirements[i] = requirements[i].id;
         }

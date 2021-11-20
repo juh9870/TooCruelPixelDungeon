@@ -1,8 +1,13 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.StartScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Difficulty;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndChallenges;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Scene;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -143,6 +148,7 @@ public class Modifiers implements Bundlable {
 
         for (Challenges value : values) {
             if (value.isModifier()) continue;
+            if (value.disabled) continue;
             oldChals = Arrays.copyOf(challenges, challenges.length);
             challenges[value.id] = true;
             for (Challenges req : recursiveRequirements(value)) {
@@ -168,6 +174,7 @@ public class Modifiers implements Bundlable {
         HashSet<Challenges> canDisable = new HashSet<>();
         for (Challenges value : Challenges.values()) {
             if (value.isModifier()) continue;
+            if (value.disabled) continue;
             if (isChallenged(value.id) && canDisable(value)) canDisable.add(value);
             if (!isChallenged(value.id) && canEnable(value)) selectable.add(value);
         }
@@ -190,6 +197,22 @@ public class Modifiers implements Bundlable {
 
     public Difficulty difficulty() {
         return Difficulty.align(Difficulty.calculateDifficulty(this));
+    }
+
+    public boolean validateRun(Scene scene) {
+        for (Challenges val : Challenges.values()) {
+            if (isChallenged(val.id) && val.disabled) {
+                scene.add(new WndError(Messages.get(this, "disabled_challenges_message")) {
+                    @Override
+                    public void onBackPressed() {
+                        super.onBackPressed();
+                        Game.switchScene(StartScene.class);
+                    }
+                });
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

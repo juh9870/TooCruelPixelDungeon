@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
+import com.badlogic.gdx.utils.IntMap;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -91,6 +92,12 @@ public class DanceFloor extends Blob implements Hero.Doom {
         }
     }
 
+    @Override
+    public void fullyClear() {
+        super.fullyClear();
+        seed(Dungeon.level,1,1);
+    }
+
     private void applyEffect(Char target, int color) {
         if (target.properties().contains(Char.Property.BOSS) ||
                 target.properties().contains(Char.Property.IMMOVABLE)) return;
@@ -163,7 +170,15 @@ public class DanceFloor extends Blob implements Hero.Doom {
         }
     }
 
+    public void resetFov(){
+        for (IntMap.Entry<DanceTile> square : squares) {
+            square.value.killAndErase();
+        }
+        squares.clear();
+    }
+
     public void updateFov() {
+        if (cur == null) return;
         for (int i = 0; i < cur.length; i++) {
             int value = cur[i];
             updateCellGraphic(i, value & 0xF, (value >> 8) & 0xF, ((value >> 12) & 1) != 0);

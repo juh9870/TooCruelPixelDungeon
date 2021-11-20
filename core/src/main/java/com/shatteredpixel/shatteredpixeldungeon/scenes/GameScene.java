@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Modifiers;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -390,6 +391,7 @@ public class GameScene extends PixelScene {
 //			add(new WndTitledMessage(Icons.CHALLENGE_ON.get(),Messages.get(this,"notification"),Messages.get(this,"challenges_info")));
 			Dungeon.challengesInform=false;
 		}
+		Dungeon.modifiers.validateRun(this);
 		
 		switch (InterlevelScene.mode) {
 		case RESURRECT:
@@ -575,6 +577,7 @@ public class GameScene extends PixelScene {
 
 		DanceFloor dance = (DanceFloor) Dungeon.level.blobs.get(DanceFloor.class);
 		if (dance != null) {
+			dance.resetFov();
 			dance.updateFov();
 		}
 

@@ -158,7 +158,7 @@ public class WndChallenges extends Window {
             Challenges chals = sorted[i];
             ChallengeButton cb = new ChallengeButton(chals, editableFilter);
             cb.updateState(modifiers);
-            cb.active = editable;
+            cb.enable(editable);
 
             boolean checked = modifiers.isChallenged(chals.id);
             boolean filtered = editableFilter.test(chals);
@@ -375,11 +375,19 @@ public class WndChallenges extends Window {
             if (challenge.tier > 1) {
                 text.hardlight(TIER_COLORS[challenge.tier - 2]);
             }
+
+            if (challenge.disabled) {
+                enable(false);
+            }
         }
 
         @Override
         public void checked(boolean value) {
             super.checked(value);
+            if(value && !editable){
+                super.checked(false);
+
+            }
             icon.copy(Icons.get(checked() ? tierChecked() : Icons.UNCHECKED));
         }
 
@@ -424,6 +432,7 @@ public class WndChallenges extends Window {
 
         protected boolean onClick(float x, float y) {
             if (!inside(x, y)) return false;
+            if(!active) return false;
 
             Sample.INSTANCE.play(Assets.Sounds.CLICK);
             if (filter.test(challenge)) {
@@ -447,6 +456,12 @@ public class WndChallenges extends Window {
             }
 
             return true;
+        }
+
+        @Override
+        public void enable(boolean value) {
+            if (challenge.disabled) value = false;
+            super.enable(value);
         }
 
         public void updateState(Modifiers modifiers) {
