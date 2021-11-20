@@ -34,6 +34,10 @@ import com.watabou.utils.Random;
 
 public class WeakFloorRoom extends SpecialRoom {
 
+	{
+		important = preserve = true;
+	}
+
 	public void paint( Level level ) {
 		
 		Painter.fill( level, this, Terrain.WALL );
