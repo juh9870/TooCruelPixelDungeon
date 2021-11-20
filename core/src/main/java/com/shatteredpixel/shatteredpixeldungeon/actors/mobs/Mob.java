@@ -1149,7 +1149,7 @@ public abstract class Mob extends Char {
     }
 
     public float movementTime() {
-        if (instantWaterMovement && Dungeon.level.water[pos()]) return 0;
+        if (instantWaterMovement && Dungeon.level.water[pos()]) return 1 / speed() / 10;
         return 1 / speed();
     }
 
