@@ -68,7 +68,6 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WornDartTrap;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -279,7 +278,7 @@ public abstract class RegularLevel extends Level {
 	
 	@Override
 	public int nMobs() {
-        if (Dungeon.depth <= 1) return Challenges.RESURRECTION.enabled() ? (int) (8 * Challenges.nMobsMultiplier()) : 0;
+        if (Dungeon.depth <= 1) return Challenges.REPOPULATION.enabled() ? (int) (8 * Challenges.nMobsMultiplier()) : 0;
 
 		int mobs = 3 + Dungeon.depth % 5 + Random.Int(3);
 		if (feeling == Feeling.LARGE){

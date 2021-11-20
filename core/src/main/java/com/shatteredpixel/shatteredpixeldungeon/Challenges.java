@@ -103,7 +103,7 @@ public enum Challenges implements Hero.Doom {
             return 2;
         }
     },
-    BIG_ROOMS(53, 13.5f, 1, 2f) {
+    BIG_ROOMS(53, 1, 2f) {
         @Override
         protected float _nMobsMult() {
             return 2;
@@ -128,7 +128,7 @@ public enum Challenges implements Hero.Doom {
             return 2;
         }
     },
-    SMALL_LEVELS(39, 13.5f, 1, 1f) {
+    SMALL_LEVELS(39, 1, 1f) {
         @Override
         protected float _nRoomsMult() {
             return 0.5f;
@@ -146,16 +146,16 @@ public enum Challenges implements Hero.Doom {
             return 4 / 50f;
         }
     },
-    RESURRECTION(15, 1, 3f),
+    REPOPULATION(15, 1, 2f),
     EXTREME_CAUTION(16, 1, 1) {
         @Override
         protected float _nTrapsMult() {
             return 2;
         }
     },
-    EXTREME_DANGER(32, 16.5f, 1, 2f, EXTREME_CAUTION),
-    INDIFFERENT_DESIGN(63, 16.6f, 1, 1f, EXTREME_CAUTION),
-    REPEATER(75, 16.7f, 1, 1f, EXTREME_CAUTION),
+    EXTREME_DANGER(32, 1, 2f, EXTREME_CAUTION),
+    INDIFFERENT_DESIGN(63, 1, 1f, EXTREME_CAUTION),
+    REPEATER(75, 1, 1f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     STACKING(18, 1, 1.5f) {
         @Override
@@ -189,23 +189,24 @@ public enum Challenges implements Hero.Doom {
             } else return item instanceof HornOfPlenty;
         }
     },
-    INSOMNIA(44, 21.5f, 2, 2f, SWARM_INTELLIGENCE),
+    INSOMNIA(44, 2, 2f, SWARM_INTELLIGENCE),
     INTOXICATION(22, 2, 2.5f),
     PLAGUE(23, 2, 3f, INTOXICATION),
     BLINDNESS(25, 2, 3f, DARKNESS),
     LOBOTOMY(26, 2, 3f, AMNESIA),
     INVASION(27, 2, 2f),
     EVOLUTION(29, 2, 5f, MUTAGEN),
+    RESURRECTION(93, 2, 4f, REPOPULATION),
     REBIRTH(30, 2, 4f),
-    CHAOTIC_CONSTRUCTION(64, 30.5f, 2, 2f, INDIFFERENT_DESIGN),
+    CHAOTIC_CONSTRUCTION(64, 2, 2f, INDIFFERENT_DESIGN),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES) {
         @Override
         public String description() {
             return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.EliteChampionsDeck().values);
         }
     },
-    STACKING_SPAWN(57, 33.1f, 2, 2f, STACKING),
-    STACKING_CHAMPIONS(60, 33.2f, 2, 2f, STACKING, CHAMPION_ENEMIES),
+    STACKING_SPAWN(57, 2, 2f, STACKING),
+    STACKING_CHAMPIONS(60, 2, 2f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
     BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
         @Override
@@ -223,7 +224,7 @@ public enum Challenges implements Hero.Doom {
             return 2;
         }
     },
-    LINEAR(52, 37.5f, 2, 2f, BIG_LEVELS) {
+    LINEAR(52, 2, 2f, BIG_LEVELS) {
         @Override
         protected float _nRoomsMult() {
             return 1.5f;
@@ -234,7 +235,7 @@ public enum Challenges implements Hero.Doom {
             return 1.5f;
         }
     },
-    BIGGER_ROOMS(54, 37.6f, 2, 3, BIG_ROOMS) {
+    BIGGER_ROOMS(54, 2, 3, BIG_ROOMS) {
         @Override
         protected float _nMobsMult() {
             return 2;
@@ -269,7 +270,7 @@ public enum Challenges implements Hero.Doom {
     },
     ECTOPLASM(46, 2, 2f, MIRROR_OF_RAGE),
     THOUGHTLESS(48, 2, 2.5f),
-    EXHIBITIONISM(49, 2, 2f, RESURRECTION),
+    EXHIBITIONISM(49, 2, 2f, REPOPULATION),
     MARATHON(50, 2, 3f),
     STRONGER_BOSSES(56, 2, 3f),
     ROOM_LOCK(59, 2, 2f),
@@ -292,7 +293,7 @@ public enum Challenges implements Hero.Doom {
 
     //region T3
     HEART_OF_HIVE(24, 3, 7f, INSOMNIA),
-    ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
+    ASCENSION(31, 3, 7f, REPOPULATION, REBIRTH),
     DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
     RACING_THE_DEATH(35, 3, 7f),
     MANIFESTING_MYRIADS(36, 3, 7f, LEGION, HORDE) {
@@ -328,7 +329,8 @@ public enum Challenges implements Hero.Doom {
         }
     },
     HUMPPA(74, 3, 7f, DANCE_FLOOR),
-    HAIL_TO_THE_KING(85, 3, 6f, KING_OF_A_HILL),
+    HAIL_TO_THE_KING(85, 3, 7f, KING_OF_A_HILL),
+    FRACTAL_HIVE(94, 3, 7f, REPOPULATION),
     //endregion
 
 
@@ -348,7 +350,7 @@ public enum Challenges implements Hero.Doom {
     //region Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
-    BIOCHIP(90, 79.5f, 5, -1),
+    BIOCHIP(90, 5, -1),
     CHAOS_WIZARD(80, 5, -4f) {
         @Override
         protected boolean _isItemBlocked(Item item) {
@@ -356,7 +358,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING(81, 5, -50f),
-    GRINDING_2(82, 82, 5, -300f, true) {
+    GRINDING_2(82, 5, -300f, true) {
         @Override
         protected float _nLootMult() {
             return 5f;
@@ -426,7 +428,7 @@ public enum Challenges implements Hero.Doom {
             }
         }
     },
-    GRINDING_3(83, 83, 5, 0, true),
+    GRINDING_3(83, 5, 0, true),
     MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
     SLIDING(91, 5, -7f),
     //endregion
@@ -453,28 +455,22 @@ public enum Challenges implements Hero.Doom {
 
     public final String name;
     public final int id;
-    public final float sortId;
     public final float difficulty;
     public final int tier;
-    public final boolean disabled;
+    public final boolean deprecated;
     public final int[] requirements;
 
     Challenges(int id, int tier, float difficulty, Challenges... requirements) {
-        this(id, id, tier, difficulty, requirements);
+        this(id, tier, difficulty, false, requirements);
     }
 
-    Challenges(int id, float sortId, int tier, float difficulty, Challenges... requirements) {
-        this(id, sortId, tier, difficulty, false, requirements);
-    }
-
-    Challenges(int id, float sortId, int tier, float difficulty, boolean disabled, Challenges... requirements) {
+    Challenges(int id, int tier, float difficulty, boolean deprecated, Challenges... requirements) {
         this.name = name().toLowerCase();
         this.id = id;
-        this.sortId = sortId;
         this.difficulty = difficulty;
         this.tier = tier;
         this.requirements = new int[requirements.length];
-        this.disabled = disabled;
+        this.deprecated = deprecated;
         for (int i = 0; i < requirements.length; i++) {
             this.requirements[i] = requirements[i].id;
         }
@@ -502,7 +498,7 @@ public enum Challenges implements Hero.Doom {
             case COUNTDOWN:
                 chals[RACING_THE_DEATH.id] = tier == 2;
                 break;
-            case RESURRECTION:
+            case REPOPULATION:
                 chals[REBIRTH.id] = tier > 1;
                 chals[ASCENSION.id] = tier == 3;
                 break;
