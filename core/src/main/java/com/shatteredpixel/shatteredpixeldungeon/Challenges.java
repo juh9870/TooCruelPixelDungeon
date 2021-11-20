@@ -87,47 +87,6 @@ public enum Challenges implements Hero.Doom {
     },
     COUNTDOWN(11, 1, 2),
     ANALGESIA(12, 1, 1.5f),
-    BIG_LEVELS(13, 1, 1) {
-        @Override
-        protected float _nMobsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nTrapsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nRoomsMult() {
-            return 2;
-        }
-    },
-    BIG_ROOMS(53, 1, 2f) {
-        @Override
-        protected float _nMobsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nTrapsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nRoomsMult() {
-            float mult = 1;
-            if (BIG_LEVELS.enabled()) mult *= 0.87f;
-            if (BIGGER_LEVELS.enabled()) mult *= 0.87f;
-            if (HUGE_LEVELS.enabled()) mult *= 0.7;
-            return mult;
-        }
-
-        @Override
-        protected float _roomSizeMult() {
-            return 2;
-        }
-    },
     SMALL_LEVELS(39, 1, 1f) {
         @Override
         protected float _nRoomsMult() {
@@ -208,58 +167,6 @@ public enum Challenges implements Hero.Doom {
     STACKING_SPAWN(57, 2, 2f, STACKING),
     STACKING_CHAMPIONS(60, 2, 2f, STACKING, CHAMPION_ENEMIES),
     LEGION(28, 2, 4f),
-    BIGGER_LEVELS(37, 2, 2f, BIG_LEVELS) {
-        @Override
-        protected float _nMobsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nTrapsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nRoomsMult() {
-            return 2;
-        }
-    },
-    LINEAR(52, 2, 2f, BIG_LEVELS) {
-        @Override
-        protected float _nRoomsMult() {
-            return 1.5f;
-        }
-
-        @Override
-        protected float _nMobsMult() {
-            return 1.5f;
-        }
-    },
-    BIGGER_ROOMS(54, 2, 3, BIG_ROOMS) {
-        @Override
-        protected float _nMobsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nTrapsMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _roomSizeMult() {
-            return 2;
-        }
-
-        @Override
-        protected float _nRoomsMult() {
-            float mult = 1;
-            if (BIG_LEVELS.enabled()) mult *= 0.87f;
-            if (BIGGER_LEVELS.enabled()) mult *= 0.87f;
-            if (HUGE_LEVELS.enabled()) mult *= 0.7;
-            return mult;
-        }
-    },
     ARROWHEAD(40, 2, 2.5f),
     CURSE_MAGNET(42, 2, 2f, CURSED),
     CURSE_ENCHANT(43, 2, 2f, CURSED) {
@@ -306,22 +213,6 @@ public enum Challenges implements Hero.Doom {
         @Override
         protected float _nMobsMult() {
             return 1.5f;
-        }
-    },
-    HUGE_LEVELS(38, 3, 5f, BIGGER_LEVELS) {
-        @Override
-        protected float _nMobsMult() {
-            return 3;
-        }
-
-        @Override
-        protected float _nTrapsMult() {
-            return 3;
-        }
-
-        @Override
-        protected float _nRoomsMult() {
-            return 3;
         }
     },
     SPIRITUAL_CONNECTION(47, 3, 5f, ECTOPLASM),
@@ -437,6 +328,116 @@ public enum Challenges implements Hero.Doom {
     GRINDING_3(83, 5, 0, true),
     MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
     SLIDING(91, 5, -7f),
+    BIG_LEVELS(13, 5, 0) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            return 2;
+        }
+    },
+    BIGGER_LEVELS(37, 5, 0, BIG_LEVELS) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            return 2;
+        }
+    },
+    LINEAR(52, 5, 0, BIG_LEVELS) {
+        @Override
+        protected float _nRoomsMult() {
+            return 1.5f;
+        }
+
+        @Override
+        protected float _nMobsMult() {
+            return 1.5f;
+        }
+    },
+    HUGE_LEVELS(38, 5, 0, BIGGER_LEVELS) {
+        @Override
+        protected float _nMobsMult() {
+            return 3;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 3;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            return 3;
+        }
+    },
+    BIG_ROOMS(53, 5, 0) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            float mult = 1;
+            if (BIG_LEVELS.enabled()) mult *= 0.87f;
+            if (BIGGER_LEVELS.enabled()) mult *= 0.87f;
+            if (HUGE_LEVELS.enabled()) mult *= 0.7;
+            return mult;
+        }
+
+        @Override
+        protected float _roomSizeMult() {
+            return 2;
+        }
+    },
+    BIGGER_ROOMS(54, 5, 0, BIG_ROOMS) {
+        @Override
+        protected float _nMobsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nTrapsMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _roomSizeMult() {
+            return 2;
+        }
+
+        @Override
+        protected float _nRoomsMult() {
+            float mult = 1;
+            if (BIG_LEVELS.enabled()) mult *= 0.87f;
+            if (BIGGER_LEVELS.enabled()) mult *= 0.87f;
+            if (HUGE_LEVELS.enabled()) mult *= 0.7;
+            return mult;
+        }
+    },
+
     //endregion
 
     //Last id 95
