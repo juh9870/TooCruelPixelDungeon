@@ -246,7 +246,7 @@ public abstract class Mob extends Char {
 
         boolean enemyInFOV = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos()] && enemy.invisible <= 0;
 
-        if (enemyInFOV) {
+        if (enemyInFOV && Challenges.INSOMNIA.enabled()) {
             Buff.prolong(this, InsomniaSlowdown.class, InsomniaSlowdown.DURATION);
         }
 
