@@ -67,6 +67,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesi
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
@@ -253,10 +254,11 @@ public abstract class Level implements Bundlable {
 				}
 			}
 
-			if(Challenges.SECOND_TRY.enabled()){
-				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + (Dungeon.depth - 1) / 3;
+			if (Challenges.SECOND_TRY.enabled()) {
+				int d = Dungeon.depth - 1 - Dungeon.depth / 5;
+				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + d / 3;
 
-				int offset = (Dungeon.depth - 1) - (Dungeon.depth - 1) / 3 * 3;
+				int offset = d - d / 3 * 3;
 				if (seed % 3 == offset) {
 					addItemToSpawn(Generator.randomWeapon());
 				}
@@ -270,11 +272,11 @@ public abstract class Level implements Bundlable {
 				}
 				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
 				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.randomMissile());
+					addItemToSpawn(Generator.random(Generator.Category.WAND));
 				}
 				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
 				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.random());
+					addItemToSpawn(Generator.randomMissile());
 				}
 				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
 				if (seed % 3 == offset) {
@@ -639,12 +641,14 @@ public abstract class Level implements Bundlable {
 	}
 
 	protected void applySecondTry() {
+    	int barricades = 0;
 		for (int i = 0; i < length; i++) {
 			if (map[i] == Terrain.LOCKED_DOOR) {
 				set(i, Terrain.DOOR, this);
 			}
 			if (map[i] == Terrain.BARRICADE) {
 				set(i, Terrain.EMBERS, this);
+				barricades++;
 			}
 		}
 
@@ -654,6 +658,7 @@ public abstract class Level implements Bundlable {
 			if (h.type == Heap.Type.FOR_SALE) continue;
 			for (Item item : new ArrayList<>(h.items)) {
 				if (!guaranteedItems.contains(item) || item instanceof Key) h.items.remove(item);
+				if (item instanceof PotionOfLiquidFlame && barricades-- > 0) h.items.remove(item);
 			}
 			if (h.items.isEmpty()) {
 				heaps.remove(c);

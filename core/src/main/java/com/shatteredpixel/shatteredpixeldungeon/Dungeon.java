@@ -210,9 +210,9 @@ public class Dungeon {
 
 		Generator.Category.hardReset();
 
-        if(DeviceCompat.isDebug()){
-        	seed = 2369620896496L;
-		}
+//		if (DeviceCompat.isDebug()) {
+//			seed = Long.parseLong("7yrferx3", 36);
+//		}
 
         modifiers = SPDSettings.modifiers();
         extraData.init();
@@ -223,7 +223,7 @@ public class Dungeon {
         }
 
 //        if(DeviceCompat.isDebug()){
-//        	modifiers.fromBigIntString("7ahfotpexdcapupz4");
+//        	modifiers.fromBigIntString("l1nwd0zo0");
 //		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 

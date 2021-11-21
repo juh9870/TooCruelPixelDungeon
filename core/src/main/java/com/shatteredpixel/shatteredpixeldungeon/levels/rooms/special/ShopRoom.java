@@ -152,6 +152,7 @@ public class ShopRoom extends SpecialRoom {
 	
 	protected static ArrayList<Item> generateItems() {
 
+
 		ArrayList<Item> itemsToSpawn = new ArrayList<>();
 		if(Challenges.GRINDING_2.enabled()){
 			for (int i = 0; i < 5; i++) {
@@ -159,6 +160,7 @@ public class ShopRoom extends SpecialRoom {
 			}
 			itemsToSpawn.add(new Ankh().quantity(2));
 		} else {
+			boolean lessItems = Challenges.SECOND_TRY.enabled();
 			MeleeWeapon w;
 			switch (Dungeon.depth) {
 			case 6: default:
@@ -192,9 +194,12 @@ public class ShopRoom extends SpecialRoom {
 			w.cursed = Challenges.CURSED.enabled();
 			w.level(0);
 			w.identify();
-			itemsToSpawn.add(w);
+			
+			if(!lessItems)
+				itemsToSpawn.add(w);
 
-			itemsToSpawn.add( TippedDart.randomTipped(2) );
+			if(!lessItems)
+				itemsToSpawn.add( TippedDart.randomTipped(2) );
 
 			itemsToSpawn.add( new MerchantsBeacon() );
 
@@ -203,37 +208,43 @@ public class ShopRoom extends SpecialRoom {
 
 
 			itemsToSpawn.add( new PotionOfHealing() );
-			itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
-			itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
 
-			itemsToSpawn.add( new ScrollOfIdentify() );
-			itemsToSpawn.add( new ScrollOfRemoveCurse() );
-			itemsToSpawn.add( new ScrollOfMagicMapping() );
+			if(!lessItems) {
+				itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
+				itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
 
-			for (int i=0; i < 2; i++)
-				itemsToSpawn.add( Random.Int(2) == 0 ?
-						Generator.randomUsingDefaults( Generator.Category.POTION ) :
-						Generator.randomUsingDefaults( Generator.Category.SCROLL ) );
+				itemsToSpawn.add(new ScrollOfIdentify());
+				itemsToSpawn.add(new ScrollOfRemoveCurse());
+				itemsToSpawn.add(new ScrollOfMagicMapping());
 
-
-			itemsToSpawn.add( new SmallRation() );
-			itemsToSpawn.add( new SmallRation() );
-
-			switch (Random.Int(4)){
-				case 0:
-					itemsToSpawn.add( new Bomb() );
-					break;
-				case 1:
-				case 2:
-					itemsToSpawn.add( new Bomb.DoubleBomb() );
-					break;
-				case 3:
-					itemsToSpawn.add( new Honeypot() );
-					break;
+				for (int i=0; i < 2; i++)
+					itemsToSpawn.add( Random.Int(2) == 0 ?
+							Generator.randomUsingDefaults( Generator.Category.POTION ) :
+							Generator.randomUsingDefaults( Generator.Category.SCROLL ) );
 			}
 
+			if(!lessItems)
+				itemsToSpawn.add( new SmallRation() );
+			itemsToSpawn.add( new SmallRation() );
+
+			if(!lessItems)
+				switch (Random.Int(4)){
+					case 0:
+						itemsToSpawn.add( new Bomb() );
+						break;
+					case 1:
+					case 2:
+						itemsToSpawn.add( new Bomb.DoubleBomb() );
+						break;
+					case 3:
+						itemsToSpawn.add( new Honeypot() );
+						break;
+				}
+
 			itemsToSpawn.add( new Ankh() );
-			itemsToSpawn.add( new StoneOfAugmentation() );
+
+			if(!lessItems)
+				itemsToSpawn.add( new StoneOfAugmentation() );
 		}
 
 		TimekeepersHourglass hourglass = Dungeon.hero.belongings.getItem(TimekeepersHourglass.class);
