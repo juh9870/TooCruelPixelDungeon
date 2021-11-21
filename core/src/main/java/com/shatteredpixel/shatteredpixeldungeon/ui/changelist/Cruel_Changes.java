@@ -85,7 +85,9 @@ public class Cruel_Changes {
         ));
 
         changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
-                        "_-_ Fixed slow enemies glitch"
+                "_-_ Fixed slow enemies glitch\n" +
+                        "_-_ Fixed Mirror Wrath perish time\n" +
+                        "_-_ Fixed Countdown icon fade"
         ));
 
         changes = new ChangeInfo("v1.0.3", false, "");
