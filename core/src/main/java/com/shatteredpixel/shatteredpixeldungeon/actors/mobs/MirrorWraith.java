@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.WraithSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
 public class MirrorWraith extends Mob {
@@ -133,17 +134,23 @@ public class MirrorWraith extends Mob {
         return super.act();
     }
 
-    @Override
-    protected void spend(float time) {
-        if (!Dungeon.hero.isAlive() || Dungeon.hero.buff(TimekeepersHourglass.timeStasis.class) == null) {
-            float mult = 1;
-            if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
-                float p = (float) HP / HT;
+    private float lifetimeMultiplier() {
+        float mult = 1;
+        if (Challenges.SPIRITUAL_CONNECTION.enabled()) {
+            float p = (float) HP / HT;
+            if (p >= 0.5f) {
                 // https://www.desmos.com/calculator/d3y5ojeiu8
                 mult = (float) (1 / (Math.pow(10 * (p - 0.5f), 2) + 1));
             }
-            mult = Math.max(0, Math.min(mult, 1));
-            lifetime -= time * mult;
+        }
+        mult = GameMath.gate(0, mult, 1);
+        return mult;
+    }
+
+    @Override
+    protected void spend(float time) {
+        if (!Dungeon.hero.isAlive() || Dungeon.hero.buff(TimekeepersHourglass.timeStasis.class) == null) {
+            lifetime -= time * lifetimeMultiplier();
         }
         super.spend(time);
     }
@@ -172,7 +179,14 @@ public class MirrorWraith extends Mob {
 
     @Override
     public String description() {
-        return Messages.get(this, "desc", Math.round(lifetime));
+        float time = lifetime / lifetimeMultiplier();
+        String display;
+        if (time == Float.POSITIVE_INFINITY) {
+            display = "???";
+        } else {
+            display = Long.toString((long) Math.ceil(1d * time + 1));
+        }
+        return Messages.get(this, "desc", display);
     }
 
     @Override
