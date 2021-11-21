@@ -74,7 +74,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -82,6 +81,7 @@ import com.watabou.utils.SparseArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 public class Dungeon {
@@ -197,6 +197,7 @@ public class Dungeon {
 	public static SparseArray<ArrayList<Item>> droppedItems;
 	public static SparseArray<ArrayList<Item>> portedItems;
 
+	public static ArrayList<String> versions;
 	public static int version;
 
 	public static long seed;
@@ -204,6 +205,8 @@ public class Dungeon {
 	public static void init() {
 
 		version = Game.versionCode;
+		versions = new ArrayList<>();
+		versions.add("v" + Game.version);
 		mobsToChampion = -1;
 
         seed = DungeonSeed.randomSeed();
@@ -499,6 +502,7 @@ public class Dungeon {
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
 
+	private static final String START_VERSION= "start_version";
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
     private static final String MODIFIERS   = "modifiers";
@@ -524,6 +528,7 @@ public class Dungeon {
 
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
+			bundle.put( START_VERSION, versions.toArray(new String[0]));
 			bundle.put( SEED, seed );
             bundle.put(MODIFIERS, modifiers);
 			bundle.put( MOBS_TO_CHAMPION, mobsToChampion );
@@ -615,6 +620,14 @@ public class Dungeon {
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
 		version = bundle.getInt( VERSION );
+		if(bundle.contains(START_VERSION)) {
+			versions = new ArrayList<>(Arrays.asList(bundle.getStringArray( START_VERSION )));
+		}
+		else {
+			versions = new ArrayList<>();
+			versions.add("???");
+			versions.add("b" + version);
+		}
 
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
 
@@ -650,6 +663,11 @@ public class Dungeon {
 		quickslot.restorePlaceholders( bundle );
 
 		if (fullLoad) {
+
+			String curVersion = "v"+Game.version;
+			if(!versions.get(versions.size()-1).equals(curVersion)){
+				versions.add(curVersion);
+			}
 
 			LimitedDrops.restore( bundle.getBundle(LIMDROPS) );
 

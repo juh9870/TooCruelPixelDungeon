@@ -43,6 +43,7 @@ import com.watabou.utils.FileUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -75,7 +76,8 @@ public enum Rankings {
 		rec.armorTier	= Dungeon.hero.tier();
 		rec.herolevel	= Dungeon.hero.lvl;
 		rec.depth		= Dungeon.depth;
-		rec.score	= score( win );
+		rec.score		= score( win );
+		rec.version 	= Dungeon.versions.toArray(new String[0]);
 
 		INSTANCE.saveGameData(rec);
 
@@ -215,6 +217,8 @@ public enum Rankings {
             Dungeon.modifiers = new Modifiers(Challenges.fromLegacy(data.getInt(CHALLENGES)));
         }
 
+		Dungeon.versions = new ArrayList<>(Arrays.asList(rec.version));
+
 	}
 
 	private static final String RECORDS	= "records";
@@ -315,6 +319,7 @@ public enum Rankings {
 		private static final String DEPTH	= "depth";
 		private static final String DATA	= "gameData";
 		private static final String ID      = "gameID";
+		private static final String VERSION = "version";
 
 		public Class cause;
 		public boolean win;
@@ -323,6 +328,7 @@ public enum Rankings {
 		public int armorTier;
 		public int herolevel;
 		public int depth;
+		public String[] version;
 
 		public Bundle gameData;
 		public String gameID;
@@ -368,6 +374,9 @@ public enum Rankings {
 			depth = bundle.getInt( DEPTH );
 			herolevel = bundle.getInt( LEVEL );
 
+			if (bundle.contains( VERSION ))
+				version = bundle.getStringArray( VERSION );
+			else version = new String[]{"???"};
 		}
 
 		@Override
@@ -385,6 +394,7 @@ public enum Rankings {
 
 			if (gameData != null) bundle.put( DATA, gameData );
 			bundle.put( ID, gameID );
+			bundle.put( VERSION, version );
 		}
 	}
 	public static class Dynasty implements Bundlable {

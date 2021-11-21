@@ -48,6 +48,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
 import com.watabou.noosa.ui.Component;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class WndRanking extends WndTabbed {
@@ -248,6 +249,22 @@ public class WndRanking extends WndTabbed {
 			pos = statSlot( this, Messages.get(this, "food"), Integer.toString( Statistics.foodEaten ), pos );
 			pos = statSlot( this, Messages.get(this, "alchemy"), Integer.toString( Statistics.potionsCooked ), pos );
 			pos = statSlot( this, Messages.get(this, "ankhs"), Integer.toString( Statistics.ankhsUsed ), pos );
+			StringBuilder versions = new StringBuilder();
+			ArrayList<String> strings = Dungeon.versions;
+			for (int i = 0, stringsSize = strings.size(); i < stringsSize; i++) {
+				if(i!=0) versions.append(", ");
+				versions.append(strings.get(i));
+			}
+			RedButton btnVersion = new RedButton(Messages.get(this, "versions"), 7) {
+				@Override
+				protected void onClick() {
+					Game.scene().add(new WndMessage(versions.toString()));
+				}
+			};
+			add(btnVersion);
+			btnVersion.setSize(width, btnVersion.reqHeight() + 2);
+			btnVersion.setPos(0, pos);
+			pos = btnVersion.bottom() + GAP;
 		}
 		
 		private float statSlot( Group parent, String label, String value, float pos ) {

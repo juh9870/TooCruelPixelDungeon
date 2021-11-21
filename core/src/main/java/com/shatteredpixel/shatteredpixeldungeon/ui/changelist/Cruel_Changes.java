@@ -77,6 +77,17 @@ public class Cruel_Changes {
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
 
+        changes = new ChangeInfo("v1.0.4", false, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_HELL2), "Challenges",
+                "_-_ Tweaked Second Try"
+        ));
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                        "_-_ Fixed slow enemies glitch"
+        ));
+
         changes = new ChangeInfo("v1.0.3", false, "");
         changes.hardlight(Window.TITLE_COLOR);
         changeInfos.add(changes);
