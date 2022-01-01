@@ -427,8 +427,9 @@ public class Bundle {
 			//cannot just tokenize the stream directly as that constructor doesn't exist on Android
 			BufferedReader reader = new BufferedReader( new InputStreamReader( stream ));
 
+			Bundle b = from(reader);
 			reader.close();
-			return from(reader);
+			return b;
 		} catch (Exception e) {
 			Game.reportException(e);
 			throw new IOException();
@@ -439,7 +440,7 @@ public class Bundle {
 		return from(new JsonReader().parse(string));
 	}
 
-	public static Bundle from(Reader reader) {
+	public static Bundle from(Reader reader) throws IOException {
 		return from(new JsonReader().parse(reader));
 	}
 
