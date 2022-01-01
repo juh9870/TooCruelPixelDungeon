@@ -160,7 +160,7 @@ public class Modifiers implements Bundlable {
 
         for (Challenges value : values) {
             if (value.isModifier()) continue;
-            if (value.deprecated) continue;
+            if (value.deprecated()) continue;
             oldChals = Arrays.copyOf(challenges, challenges.length);
             challenges[value.id] = true;
             for (Challenges req : recursiveRequirements(value)) {
@@ -186,7 +186,7 @@ public class Modifiers implements Bundlable {
         HashSet<Challenges> canDisable = new HashSet<>();
         for (Challenges value : Challenges.values()) {
             if (value.isModifier()) continue;
-            if (value.deprecated) continue;
+            if (value.deprecated()) continue;
             if (isChallenged(value.id) && canDisable(value)) canDisable.add(value);
             if (!isChallenged(value.id) && canEnable(value)) selectable.add(value);
         }
@@ -213,7 +213,7 @@ public class Modifiers implements Bundlable {
 
     public boolean validateRun(Scene scene) {
         for (Challenges val : Challenges.values()) {
-            if (isChallenged(val.id) && val.deprecated) {
+            if (isChallenged(val.id) && val.deprecated()) {
                 scene.add(new WndError(Messages.get(this, "disabled_challenges_message")) {
                     @Override
                     public void onBackPressed() {

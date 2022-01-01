@@ -122,7 +122,11 @@ public enum Challenges implements Hero.Doom {
             return 1.5f;
         }
     },
-    CHAMPION_ENEMIES(19, 1, 2f) {
+    /**
+     * 90 - {@link com.shatteredpixel.shatteredpixeldungeon.Challenges#BIOCHIP}
+     */
+    CHAMPION_ENEMIES(19, 1, 2f, reqs(90)) {
+
         @Override
         public String description() {
             return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.NormalChampionsDeck().values);
@@ -195,7 +199,7 @@ public enum Challenges implements Hero.Doom {
     },
     MIMICS_2(87, 2, 3f, MIMICS),
     AGNOSIA(89, 2, 2f),
-    SECOND_TRY(95, 2, 4f){
+    SECOND_TRY(95, 2, 4f) {
         @Override
         protected float _nLootMult() {
             return 0;
@@ -247,7 +251,7 @@ public enum Challenges implements Hero.Doom {
     //region Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
-    BIOCHIP(90, 5, -1){
+    BIOCHIP(90, 5, 0) {
         @Override
         public boolean isCheese() {
             return false;
@@ -260,8 +264,20 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING(81, 5, -50f),
-    GRINDING_2(82, 5, -300f, true),
-    GRINDING_3(83, 5, 0, true),
+    @Deprecated
+    GRINDING_2(82, 5, -300f) {
+        @Override
+        public boolean deprecated() {
+            return true;
+        }
+    },
+    @Deprecated
+    GRINDING_3(83, 5, 0) {
+        @Override
+        public boolean deprecated() {
+            return true;
+        }
+    },
     MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
     SLIDING(91, 5, -7f),
     BIG_LEVELS(13, 5, 0) {
@@ -400,20 +416,18 @@ public enum Challenges implements Hero.Doom {
     public final int id;
     public final float difficulty;
     public final int tier;
-    public final boolean deprecated;
     public final int[] requirements;
 
     Challenges(int id, int tier, float difficulty, Challenges... requirements) {
-        this(id, tier, difficulty, false, requirements);
+        this(id, tier, difficulty, reqs(requirements));
     }
 
-    Challenges(int id, int tier, float difficulty, boolean deprecated, Challenges... requirements) {
+    Challenges(int id, int tier, float difficulty, Requirement[] requirements) {
         this.name = name().toLowerCase();
         this.id = id;
         this.difficulty = difficulty;
         this.tier = tier;
         this.requirements = new int[requirements.length];
-        this.deprecated = deprecated;
         for (int i = 0; i < requirements.length; i++) {
             this.requirements[i] = requirements[i].id;
         }
@@ -767,8 +781,37 @@ public enum Challenges implements Hero.Doom {
         return targetDmg;
     }
 
+    public static Requirement req(Challenges chal) {
+        return new Requirement.Enabled(chal.id);
+    }
+
+    public static Requirement[] reqs(Challenges... chals) {
+        Requirement[] reqs = new Requirement[chals.length];
+        for (int i = 0; i < chals.length; i++) {
+            reqs[i] = req(chals[i]);
+        }
+        return reqs;
+    }
+
+    public static Requirement req(int id) {
+        return new Requirement.Enabled(id);
+    }
+
+    public static Requirement[] reqs(int... ids) {
+        Requirement[] reqs = new Requirement[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            reqs[i] = req(ids[i]);
+        }
+        return reqs;
+    }
+
     public String description() {
         return Messages.get(Challenges.class, name + "_desc");
+    }
+
+
+    public boolean deprecated() {
+        return false;
     }
 
     protected float _nMobsMult() {
@@ -847,6 +890,21 @@ public enum Challenges implements Hero.Doom {
     public static class ChallengeOutOfBoundsException extends Error {
         public ChallengeOutOfBoundsException(Throwable cause) {
             super("One of challenges is out of bounds.", cause);
+        }
+    }
+
+    private static class Requirement {
+        public int id;
+
+        public Requirement(int id) {
+            this.id = id;
+        }
+
+        public static class Enabled extends Requirement {
+
+            public Enabled(int id) {
+                super(id);
+            }
         }
     }
 }

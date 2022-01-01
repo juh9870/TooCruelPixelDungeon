@@ -158,7 +158,7 @@ public class WndChallenges extends Window {
             Challenges chals = sorted[i];
             ChallengeButton cb = new ChallengeButton(chals, editableFilter);
             cb.updateState(modifiers);
-            cb.active = editable && !chals.deprecated;
+            cb.active = editable && !chals.deprecated();
 
             boolean checked = modifiers.isChallenged(chals.id);
             boolean filtered = editableFilter.test(chals);
@@ -376,7 +376,7 @@ public class WndChallenges extends Window {
                 text.hardlight(TIER_COLORS[challenge.tier - 2]);
             }
 
-            if (challenge.deprecated) {
+            if (challenge.deprecated()) {
                 enable(false);
                 if (editable) {
                     checked(false);
@@ -462,7 +462,7 @@ public class WndChallenges extends Window {
 
         @Override
         public void enable(boolean value) {
-            if (challenge.deprecated) value = false;
+            if (challenge.deprecated()) value = false;
             super.enable(value);
         }
 
