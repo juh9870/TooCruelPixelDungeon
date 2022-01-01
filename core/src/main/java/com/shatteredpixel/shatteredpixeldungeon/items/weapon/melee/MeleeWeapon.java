@@ -70,24 +70,6 @@ public class MeleeWeapon extends Weapon {
 	}
 
 	@Override
-	public ArrayList<String> actions(Hero hero) {
-		ArrayList<String> actions = super.actions(hero);
-		if(Challenges.GRINDING_2.enabled() && level() >= lvlToNextTier(tier))
-			actions.add(AC_TIER);
-		return actions;
-	}
-
-	@Override
-	public void execute(Hero hero, String action) {
-		super.execute(hero, action);
-		if (action.equals(AC_TIER) && level() >= lvlToNextTier(tier)) {
-			level(level() - lvlToNextTier(tier));
-			tier++;
-			ScrollOfUpgrade.upgrade(hero);
-		}
-	}
-
-	@Override
 	public String info() {
 
 		String info = desc();

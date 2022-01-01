@@ -260,76 +260,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     GRINDING(81, 5, -50f),
-    GRINDING_2(82, 5, -300f, true) {
-        @Override
-        protected float _nLootMult() {
-            return 5f;
-        }
-
-        @Override
-        protected void _initGenerator(boolean active) {
-            if (!active) return;
-            applyToCategory(Generator.Category.POTION, 4);
-            if (Challenges.GRINDING_3.enabled())
-                boost(PotionOfStrength.class, Generator.Category.POTION, 16);
-            else
-                boost(PotionOfStrength.class, Generator.Category.POTION, 8);
-
-            applyToCategory(Generator.Category.SEED, 5);
-            boost(Rotberry.Seed.class, Generator.Category.SEED, 0);
-
-            applyToCategory(Generator.Category.SCROLL, 3);
-            if (Challenges.GRINDING_3.enabled())
-                boost(ScrollOfUpgrade.class, Generator.Category.SCROLL, 30);
-            else
-                boost(ScrollOfUpgrade.class, Generator.Category.SCROLL, 10);
-
-            applyToCategory(Generator.Category.WAND, 4);
-            deck(Generator.Category.WAND, true);
-
-            applyToCategory(Generator.Category.STONE, 5);
-
-            boost(MysteryMeat.class, Generator.Category.FOOD, 1);
-            deck(Generator.Category.FOOD, true);
-        }
-
-        private void applyToCategory(Generator.Category cat, float chance) {
-            Arrays.fill(cat.probs, chance);
-            if (cat.defaultProbs != null) {
-                cat.defaultProbs = cat.probs.clone();
-            }
-        }
-
-        private void boost(Class<?> itemClass, Generator.Category category, float prob) {
-            int i = -1;
-            for (int j = 0; j < category.classes.length; j++) {
-                if (category.classes[j] == itemClass) {
-                    i = j;
-                    break;
-                }
-            }
-            if (i == -1) {
-                int l = category.classes.length;
-                category.classes = Arrays.copyOf(category.classes, l + 1);
-                category.probs = Arrays.copyOf(category.probs, l + 1);
-                category.classes[l] = itemClass;
-                category.probs[l] = prob;
-            } else {
-                category.probs[i] = prob;
-            }
-            if (category.defaultProbs != null) {
-                category.defaultProbs = category.probs.clone();
-            }
-        }
-
-        private void deck(Generator.Category category, boolean enabled) {
-            if (enabled) {
-                category.defaultProbs = category.probs.clone();
-            } else {
-                category.defaultProbs = null;
-            }
-        }
-    },
+    GRINDING_2(82, 5, -300f, true),
     GRINDING_3(83, 5, 0, true),
     MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
     SLIDING(91, 5, -7f),

@@ -228,10 +228,6 @@ public class Potion extends Item {
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_DRINK );
-		if (isKnown() && Challenges.GRINDING_2.enabled() && !mustThrowPots.contains(this.getClass()) && quantity >= 10) {
-			actions.add( AC_DRINK_HALF );
-			actions.add( AC_DRINK_ALL );
-		}
 		return actions;
 	}
 	

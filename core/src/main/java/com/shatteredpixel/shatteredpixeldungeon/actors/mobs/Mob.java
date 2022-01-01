@@ -49,7 +49,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.InsomniaSlowdown;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
@@ -74,7 +73,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
@@ -141,7 +139,6 @@ public abstract class Mob extends Char {
 	protected boolean alerted = false;
 
     private boolean adjusted = false;
-    protected MMO mmo;
 
     public boolean instantWaterMovement = false;
     public int kills = 0;
@@ -775,11 +772,6 @@ public abstract class Mob extends Char {
 		if (state != HUNTING && !(src instanceof Corruption)) {
 			alerted = true;
 		}
-        if (mmo != null) {
-            if (dmg >= HP && dmg < HP * 2 && HP > HT / 2) {
-                dmg /= (Dungeon.depth + 1) * Math.log(Dungeon.depth + 1);
-            }
-        }
 
         if (Challenges.SHARED_PAIN.enabled() && src != SharedPain.INSTANCE) {
             dmg = Challenges.distributeDamage(this, new HashSet<>(Dungeon.level.mobs()), dmg);
@@ -807,9 +799,6 @@ public abstract class Mob extends Char {
 				}
 				int exp = EXP;
 				if (Dungeon.hero.lvl > maxLvl || buff(NoReward.class) != null) exp = 0;
-                if (Challenges.GRINDING_2.enabled()) {
-                    exp = MMO.exp(this);
-                }
 				if (exp > 0) {
 					Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "exp", exp));
 				}
@@ -970,8 +959,7 @@ public abstract class Mob extends Char {
 	}
 	
 	public void rollToDropLoot(){
-        boolean extraGrind = Challenges.GRINDING_2.enabled();
-        if ((Dungeon.hero.lvl > maxLvl + 2 || buff(NoReward.class) != null) && !extraGrind) return;
+        if ((Dungeon.hero.lvl > maxLvl + 2 || buff(NoReward.class) != null)) return;
 		
 		float lootChance = this.lootChance;
 		lootChance *= RingOfWealth.dropChanceMultiplier( Dungeon.hero );
@@ -980,17 +968,6 @@ public abstract class Mob extends Char {
 			Item loot = createLoot();
 			if (loot != null) {
                 Dungeon.level.drop(loot, pos()).sprite.drop();
-			}
-		}
-		if (extraGrind) {
-			int amount = Random.Int(3) + 1;
-			if (Challenges.GRINDING_3.enabled())
-				amount += (int) Math.round(Math.max(Math.sqrt(MMO.modifier()), Dungeon.depth));
-			for (int i = 0; i < amount; i++) {
-				Item extra = Challenges.extraLoot();
-				if (extra != null) {
-					Dungeon.level.drop(extra, pos()).sprite.drop();
-				}
 			}
 		}
 		
@@ -1099,7 +1076,7 @@ public abstract class Mob extends Char {
             desc.append("\n");
 
             if (!hideDistinct) {
-                desc.append("\n").append(Messages.get(Mob.class, "stats", HP, HT, (int) (attackSkill(Dungeon.hero) * MMO.skillMod()), (int) (defenseSkill * MMO.skillMod())));
+                desc.append("\n").append(Messages.get(Mob.class, "stats", HP, HT, (int) (attackSkill(Dungeon.hero)), (int) (defenseSkill)));
             }
             float dmgMult = 1f;
             for (Buff buff : buffs()) {
@@ -1137,9 +1114,6 @@ public abstract class Mob extends Char {
     public void applyChallenges() {
         if (adjusted) return;
         adjusted = true;
-        if (Challenges.GRINDING_2.enabled() && !(this instanceof NPC) && mmo == null) {
-            mmo = Buff.affect(this, MMO.class);
-        }
         if (Challenges.AGNOSIA.enabled()) {
             Buff.affect(this, Agnosia.class);
         }

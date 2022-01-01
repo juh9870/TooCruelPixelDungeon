@@ -40,14 +40,8 @@ abstract public class KindOfWeapon extends EquipableItem {
 	
 	protected static final float TIME_TO_EQUIP = 1f;
 
-	protected static final String AC_TIER = "TIER";
-
 	protected String hitSound = Assets.Sounds.HIT;
 	protected float hitSoundPitch = 1f;
-	{
-		if(Challenges.GRINDING_2.enabled())
-		defaultAction = AC_TIER;
-	}
 	@Override
 	public boolean isEquipped( Hero hero ) {
 		return hero.belongings.weapon() == this;

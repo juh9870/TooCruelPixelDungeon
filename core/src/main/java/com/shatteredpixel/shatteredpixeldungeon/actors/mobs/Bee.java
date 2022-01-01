@@ -27,8 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BeeSprite;
 import com.watabou.utils.Bundle;
@@ -113,11 +111,7 @@ public class Bee extends Mob {
 	
 	@Override
 	public int damageRoll() {
-		int dmg = Random.NormalIntRange( HT / 10, HT / 4 );
-		if(mmo!=null){
-			dmg /= Math.pow(MMO.modifier(), Dungeon.depth - 1);
-		}
-		return dmg;
+		return Random.NormalIntRange( HT / 10, HT / 4 );
 	}
 	
 	@Override

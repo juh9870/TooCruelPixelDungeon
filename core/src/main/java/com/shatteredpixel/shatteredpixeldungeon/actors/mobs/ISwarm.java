@@ -7,7 +7,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MMO;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.watabou.utils.Random;
 
@@ -44,9 +43,6 @@ public interface ISwarm {
         }
         if (original.buff(AllyBuff.class) != null) {
             Buff.affect(clone, Corruption.class);
-        }
-        if (original.buff(MMO.class) != null) {
-            Buff.affect(clone, MMO.class);
         }
 
         if (Challenges.ELITE_CHAMPIONS.enabled()) {

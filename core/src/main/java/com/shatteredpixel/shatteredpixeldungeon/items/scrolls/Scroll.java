@@ -158,9 +158,6 @@ public abstract class Scroll extends Item {
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_READ );
-		if(Challenges.GRINDING_2.enabled()){
-			actions.add ( AC_UPGRADIFY );
-		}
 		return actions;
 	}
 	
@@ -185,15 +182,6 @@ public abstract class Scroll extends Item {
 				doRead();
 			}
 			
-		} else if(action.equals( AC_UPGRADIFY )){
-			int amount = Random.IntRange(quantity / 2, quantity);
-			if (this instanceof ExoticScroll) {
-				amount = quantity;
-			}
-			new ScrollOfUpgrade().quantity(amount).identify().collect();
-			detachAll(Dungeon.hero.belongings.backpack);
-			ScrollOfUpgrade.upgrade(hero);
-			hero.spendAndNext(TIME_TO_UPGRADIFY);
 		}
 	}
 	

@@ -48,9 +48,6 @@ public class Belongings implements Iterable<Item> {
 
 	public static class Backpack extends Bag {
 		public int capacity(){
-			if(Challenges.GRINDING_2.enabled()){
-				return 40;
-			}
 			int cap = super.capacity();
 			for (Item item : items){
 				if (item instanceof Bag){

@@ -108,11 +108,11 @@ public class WndBag extends WndTabbed {
 		slotHeight = PixelScene.landscape() ? SLOT_HEIGHT_L : SLOT_HEIGHT_P;
 
 		nCols = PixelScene.landscape() ? COLS_L : COLS_P;
-		if (Challenges.GRINDING_2.enabled()) {
-			slotWidth = PixelScene.landscape() ? 20 : 16;
-			slotHeight = 20;
-			nCols = 7;
-		}
+//		if (Challenges.GRINDING_2.enabled()) {
+//			slotWidth = PixelScene.landscape() ? 20 : 16;
+//			slotHeight = 20;
+//			nCols = 7;
+//		}
 		nRows = (int)Math.ceil(Math.max(25,bag.capacity())/(float)nCols); //we expect to lay out 25 slots in all cases
 
 		int windowWidth = slotWidth * nCols + SLOT_MARGIN * (nCols - 1);

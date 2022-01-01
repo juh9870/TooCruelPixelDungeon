@@ -169,9 +169,6 @@ public class Dungeon {
 
 		public LimitedDrops setCount(int count) {
 			this.count = count;
-			if(!unique && Challenges.GRINDING_2.enabled()){
-				this.count = 0;
-			}
 			return this;
 		}
 	}

@@ -39,14 +39,7 @@ public class PotionOfExperience extends Potion {
 	@Override
 	public void apply( Hero hero ) {
 		identify();
-		if (Challenges.GRINDING_2.enabled() && Dungeon.hero.lvl >= 30) {
-			for (Item item : Dungeon.hero.belongings) {
-				if (item.isUpgradable() && item.isEquipped(hero)) item.upgrade();
-			}
-			ScrollOfUpgrade.upgrade(hero);
-		} else {
-			hero.earnExp(hero.maxExp(), getClass());
-		}
+		hero.earnExp(hero.maxExp(), getClass());
 	}
 	
 	@Override

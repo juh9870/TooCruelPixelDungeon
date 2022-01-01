@@ -54,27 +54,6 @@ public abstract class Runestone extends Item {
 		}
 	}
 
-	@Override
-	public ArrayList<String> actions(Hero hero) {
-		ArrayList<String> actions = super.actions(hero);
-		if(Challenges.GRINDING_3.enabled()){
-			actions.add(AC_UPGRADIFY);
-		}
-		return actions;
-	}
-
-	@Override
-	public void execute(Hero hero, String action) {
-		super.execute(hero, action);
-		 if(action.equals( AC_UPGRADIFY )){
-			int amount = Random.IntRange(quantity / 4, quantity / 3);
-			new ScrollOfUpgrade().quantity(amount).identify().collect();
-			detachAll(Dungeon.hero.belongings.backpack);
-			ScrollOfUpgrade.upgrade(hero);
-			hero.spendAndNext(TIME_TO_UPGRADIFY);
-		}
-	}
-
 	protected abstract void activate(int cell);
 	
 	@Override

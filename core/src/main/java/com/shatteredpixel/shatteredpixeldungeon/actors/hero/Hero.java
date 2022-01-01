@@ -901,48 +901,43 @@ public class Hero extends Char {
 
 			Heap heap = Dungeon.level.heaps.get(pos());
 			if (heap != null) {
-				boolean batch = Challenges.GRINDING_2.enabled();
-				do {
-					Item item = heap.peek();
-					if (item.doPickUp(this)) {
-						heap.pickUp();
+				Item item = heap.peek();
+				if (item.doPickUp(this)) {
+					heap.pickUp();
 
-						if (item instanceof Dewdrop
-								|| item instanceof TimekeepersHourglass.sandBag
-								|| item instanceof DriedRose.Petal
-								|| item instanceof Key) {
-							//Do Nothing
-						} else {
-							//TODO make all unique items important? or just POS / SOU?
-							boolean important = !batch && item.unique && item.isIdentified() &&
-									(item instanceof Scroll || item instanceof Potion);
-
-							if (important) {
-								GLog.p(Messages.get(this, "you_now_have", item.name()));
-							} else {
-								GLog.i(Messages.get(this, "you_now_have", item.name()));
-							}
-						}
-						if (batch) spend(-Item.TIME_TO_PICK_UP);
-
-						curAction = null;
+					if (item instanceof Dewdrop
+							|| item instanceof TimekeepersHourglass.sandBag
+							|| item instanceof DriedRose.Petal
+							|| item instanceof Key) {
+						//Do Nothing
 					} else {
+						//TODO make all unique items important? or just POS / SOU?
+						boolean important = item.unique && item.isIdentified() &&
+								(item instanceof Scroll || item instanceof Potion);
 
-						if (item instanceof Dewdrop
-								|| item instanceof TimekeepersHourglass.sandBag
-								|| item instanceof DriedRose.Petal
-								|| item instanceof Key) {
-							//Do Nothing
+						if (important) {
+							GLog.p(Messages.get(this, "you_now_have", item.name()));
 						} else {
-							GLog.newLine();
-							GLog.n(Messages.get(this, "you_cant_have", item.name()));
+							GLog.i(Messages.get(this, "you_now_have", item.name()));
 						}
-
-						heap.sprite.drop();
-						ready();
-						break;
 					}
-				} while (batch && !heap.isEmpty());
+
+					curAction = null;
+				} else {
+
+					if (item instanceof Dewdrop
+							|| item instanceof TimekeepersHourglass.sandBag
+							|| item instanceof DriedRose.Petal
+							|| item instanceof Key) {
+						//Do Nothing
+					} else {
+						GLog.newLine();
+						GLog.n(Messages.get(this, "you_cant_have", item.name()));
+					}
+
+					heap.sprite.drop();
+					ready();
+				}
 			} else {
 				ready();
 			}
@@ -1560,23 +1555,6 @@ public class Hero extends Char {
 				spend(1);
 			}
 
-			if(Challenges.GRINDING_2.enabled()){
-				for (int i = 0; i < PathFinder.NEIGHBOURS9.length; i++) {
-					int c = pos() + PathFinder.NEIGHBOURS9[i];
-					Heap h = Dungeon.level.heaps.get(c);
-					if (h != null && h.type == Type.HEAP) {
-						while(!h.isEmpty()) {
-							if (h.peek().doPickUp(Hero.this)) {
-								h.pickUp();
-								spend(-Item.TIME_TO_PICK_UP);
-							} else {
-								break;
-							}
-						}
-					}
-				}
-			}
-
 			return true;
 
 		} else {
@@ -1694,7 +1672,7 @@ public class Hero extends Char {
 		boolean levelUp = false;
 		while (this.exp >= maxExp()) {
 			this.exp -= maxExp();
-			if (lvl < MAX_LEVEL || Challenges.GRINDING_2.enabled()) {
+			if (lvl < MAX_LEVEL) {
 				lvl++;
 				levelUp = true;
 

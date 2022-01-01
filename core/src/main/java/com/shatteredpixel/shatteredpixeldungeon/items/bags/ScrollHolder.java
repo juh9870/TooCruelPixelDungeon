@@ -44,9 +44,6 @@ public class ScrollHolder extends Bag {
 	}
 
 	public int capacity(){
-		if(Challenges.GRINDING_2.enabled()){
-			return 38;
-		}
 		return 19;
 	}
 	

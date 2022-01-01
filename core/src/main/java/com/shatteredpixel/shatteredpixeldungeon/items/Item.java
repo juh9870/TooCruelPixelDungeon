@@ -69,7 +69,6 @@ public class Item implements Bundlable {
 
 	public static final String AC_DROP		= "DROP";
 	public static final String AC_THROW		= "THROW";
-	public static final String AC_UPGRADIFY		= "UPGRADIFY";
 
 	public String defaultAction;
 	public boolean usesTargeting;
@@ -109,9 +108,6 @@ public class Item implements Bundlable {
 		ArrayList<String> actions = new ArrayList<>();
 		actions.add( AC_DROP );
 		actions.add( AC_THROW );
-		if (isUpgradable() && !stackable && Challenges.GRINDING_2.enabled()) {
-			actions.add(AC_UPGRADIFY);
-		}
 		return actions;
 	}
 
@@ -176,14 +172,6 @@ public class Item implements Bundlable {
 			if (hero.belongings.backpack.contains(this) || isEquipped(hero)) {
 				doThrow(hero);
 			}
-		} else if(action.equals( AC_UPGRADIFY ) && isUpgradable()){
-			new ScrollOfUpgrade().quantity(level + 1).identify().collect();
-			if(this instanceof EquipableItem && isEquipped(hero)){
-				((EquipableItem) this).doUnequip(hero,true,false);
-			}
-			detachAll(Dungeon.hero.belongings.backpack);
-			ScrollOfUpgrade.upgrade(hero);
-			hero.spendAndNext(TIME_TO_UPGRADIFY);
 		}
 	}
 	

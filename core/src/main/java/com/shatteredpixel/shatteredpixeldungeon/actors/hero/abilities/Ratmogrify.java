@@ -101,10 +101,6 @@ public class Ratmogrify extends ArmorAbility {
 			GLog.w(Messages.get(this, "too_strong"));
 			return;
 		} else {
-			if(Challenges.GRINDING_3.enabled() && ch.HP > ch.HT/2){
-				GLog.w(Messages.get(this, "too_strong"));
-				return;
-			}
 			TransmogRat rat = new TransmogRat();
 			rat.setup((Mob)ch);
 			rat.pos(ch.pos());

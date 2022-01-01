@@ -112,14 +112,6 @@ public enum HeroClass {
 
 		new VelvetPouch().collect();
 		Dungeon.LimitedDrops.VELVET_POUCH.drop();
-		if(Challenges.GRINDING_2.enabled()){
-			new ScrollHolder().collect();
-			new PotionBandolier().collect();
-			new MagicalHolster().collect();
-			Dungeon.LimitedDrops.SCROLL_HOLDER.drop();
-			Dungeon.LimitedDrops.POTION_BANDOLIER.drop();
-			Dungeon.LimitedDrops.MAGICAL_HOLSTER.drop();
-		}
 
 		Waterskin waterskin = new Waterskin();
 		waterskin.collect();
