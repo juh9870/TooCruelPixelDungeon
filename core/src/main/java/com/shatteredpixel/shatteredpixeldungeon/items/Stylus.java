@@ -64,7 +64,7 @@ public class Stylus extends Item {
 	}
 
 	@Override
-	public boolean doPickUp(Hero hero) {
+	public boolean doPickUp(Hero hero, int pos) {
 		if (super.doPickUp(hero)) {
 			if (Challenges.THOUGHTLESS.enabled()) {
 				Game.runOnRenderThread(() -> {

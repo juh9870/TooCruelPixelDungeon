@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ascension;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
@@ -41,7 +42,7 @@ public interface ISwarm {
         if (original.buff(Poison.class) != null) {
             Buff.affect(clone, Poison.class).set(2);
         }
-        if (original.buff(Corruption.class) != null) {
+        if (original.buff(AllyBuff.class) != null) {
             Buff.affect(clone, Corruption.class);
         }
         if (original.buff(MMO.class) != null) {
@@ -56,10 +57,10 @@ public interface ISwarm {
                 }
             }
 
-            if(Challenges.DUNGEON_OF_CHAMPIONS.enabled()){
+            if (Challenges.DUNGEON_OF_CHAMPIONS.enabled()) {
                 ChampionEnemy.EliteChampion buff = Random.element(original.buffs(ChampionEnemy.EliteChampion.class));
 
-                if(buff!=null){
+                if (buff != null) {
                     Buff.append(clone, buff.getClass()).guardiansCooldown = buff.guardsSummonCooldown();
                 }
             }

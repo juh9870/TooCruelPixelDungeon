@@ -79,7 +79,7 @@ public abstract class InventoryStone extends Runestone {
 	}
 
 	@Override
-	public boolean doPickUp(Hero hero) {
+	public boolean doPickUp(Hero hero, int pos) {
 		if(super.doPickUp(hero)){
 			if(Challenges.isItemAutouse(this)){
 				Game.runOnRenderThread(() -> {

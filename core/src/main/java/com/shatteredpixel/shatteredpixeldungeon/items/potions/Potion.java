@@ -449,7 +449,12 @@ public class Potion extends Item {
 	public int value() {
 		return 30 * quantity;
 	}
-	
+
+	@Override
+	public int energyVal() {
+		return 6 * quantity;
+	}
+
 	public static class PlaceHolder extends Potion {
 		
 		{
@@ -548,9 +553,6 @@ public class Potion extends Item {
 			if (result instanceof PotionOfHealing) {
 				Dungeon.LimitedDrops.COOKING_HP.setCount(Dungeon.LimitedDrops.COOKING_HP.getCount() + 1);
 			}
-			
-			Statistics.potionsCooked++;
-			Badges.validatePotionsCooked();
 			
 			return result;
 		}

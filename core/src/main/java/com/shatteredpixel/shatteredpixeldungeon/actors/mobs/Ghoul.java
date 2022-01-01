@@ -24,9 +24,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
@@ -170,8 +170,8 @@ public class Ghoul extends Mob {
 	protected synchronized void onRemove() {
 		if (beingLifeLinked) {
 			for (Buff buff : buffs()) {
-				//corruption, champion, and king damager are preserved when removed via life link
-				if (!(buff instanceof Corruption)
+				//ally buffs, champion, and king damager are preserved when removed via life link
+				if (!(buff instanceof AllyBuff)
 						&& (!(buff instanceof ChampionEnemy))
 						&& !(buff instanceof DwarfKing.KingDamager)) {
 					buff.detach();
@@ -271,7 +271,7 @@ public class Ghoul extends Mob {
 				}
 				ghoul.HP = Math.round(ghoul.HT/10f);
 				Actor.add(ghoul);
-				ghoul.spend(-ghoul.cooldown());
+				ghoul.timeToNow();
 				Dungeon.level.addMob(ghoul);
 				Dungeon.level.occupyCell( ghoul );
 				ghoul.sprite.idle();
@@ -302,7 +302,7 @@ public class Ghoul extends Mob {
 			Ghoul newHost = searchForHost(ghoul);
 			if (newHost != null){
 				attachTo(newHost);
-				spend(-cooldown());
+				timeToNow();
 			} else {
 				ghoul.die(this);
 			}

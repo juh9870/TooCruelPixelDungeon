@@ -193,11 +193,34 @@ public class GameScene extends PixelScene {
 			ShatteredPixelDungeon.switchNoFade(TitleScene.class);
 			return;
 		}
+		float pyroChance = Dungeon.modifiers.difficulty().ordinal() >= Difficulty.VERY_HARD_3.ordinal() ? 1 : Float.MIN_VALUE;
 
-		Music.INSTANCE.playTracks(
-				new String[]{Assets.Music.SEWERS_1, Assets.Music.SEWERS_2, Assets.Music.SEWERS_2, Assets.Music.PYROJOKE},
-				new float[]{1, 1, 0.5f, Dungeon.modifiers.difficulty().ordinal()>=Difficulty.VERY_HARD_3.ordinal() ? 1 : Float.MIN_VALUE},
-				false);
+		if (Dungeon.depth <= 5) {
+			Music.INSTANCE.playTracks(
+					new String[]{Assets.Music.SEWERS_1, Assets.Music.SEWERS_2, Assets.Music.SEWERS_2, Assets.Music.PYROJOKE},
+					new float[]{1, 1, 0.5f, pyroChance},
+					false);
+		} else if (Dungeon.depth <= 10) {
+			Music.INSTANCE.playTracks(
+					new String[]{Assets.Music.PRISON_1, Assets.Music.PRISON_2, Assets.Music.PRISON_2, Assets.Music.PYROJOKE},
+					new float[]{1, 1, 0.5f, pyroChance},
+					false);
+		} else if (Dungeon.depth <= 15) {
+			Music.INSTANCE.playTracks(
+					new String[]{Assets.Music.CAVES_1, Assets.Music.CAVES_2, Assets.Music.CAVES_2, Assets.Music.PYROJOKE},
+					new float[]{1, 1, 0.5f, pyroChance},
+					false);
+		} else if (Dungeon.depth <= 20) {
+			Music.INSTANCE.playTracks(
+					new String[]{Assets.Music.CITY_1, Assets.Music.CITY_2, Assets.Music.CITY_2, Assets.Music.PYROJOKE},
+					new float[]{1, 1, 0.5f, pyroChance},
+					false);
+		} else {
+			Music.INSTANCE.playTracks(
+					new String[]{Assets.Music.HALLS_1, Assets.Music.HALLS_2, Assets.Music.HALLS_2, Assets.Music.PYROJOKE},
+					new float[]{1, 1, 0.5f, pyroChance},
+					false);
+		}
 
 		SPDSettings.lastClass(Dungeon.hero.heroClass.ordinal());
 		
@@ -586,14 +609,14 @@ public class GameScene extends PixelScene {
 		//re-show WndResurrect if needed
 		if (!Dungeon.hero.isAlive()){
 			//check if hero has an unblessed ankh
-			boolean hasAnkh = false;
+			Ankh ankh = null;
 			for (Ankh i : Dungeon.hero.belongings.getAllItems(Ankh.class)){
 				if (!i.isBlessed()){
-					hasAnkh = true;
+					ankh = i;
 				}
 			}
-			if (hasAnkh) {
-				add(new WndResurrect());
+			if (ankh != null) {
+				add(new WndResurrect(ankh));
 			}
 		}
 	}
@@ -605,7 +628,7 @@ public class GameScene extends PixelScene {
 	public void destroy() {
 		
 		//tell the actor thread to finish, then wait for it to complete any actions it may be doing.
-		if (!waitForActorThread( 4500 )){
+		if (!waitForActorThread( 4500, true )){
 			Throwable t = new Throwable();
 			t.setStackTrace(actorThread.getStackTrace());
 			throw new RuntimeException("timeout waiting for actor thread! ", t);
@@ -627,12 +650,12 @@ public class GameScene extends PixelScene {
 		}
 	}
 
-	public boolean waitForActorThread(int msToWait ){
+	public boolean waitForActorThread(int msToWait, boolean interrupt){
 		if (actorThread == null || !actorThread.isAlive()) {
 			return true;
 		}
 		synchronized (actorThread) {
-			actorThread.interrupt();
+			if (interrupt) actorThread.interrupt();
 			try {
 				actorThread.wait(msToWait);
 			} catch (InterruptedException e) {
@@ -645,7 +668,7 @@ public class GameScene extends PixelScene {
 	@Override
 	public synchronized void onPause() {
 		try {
-			waitForActorThread(500);
+			if (Dungeon.hero != null && !Dungeon.hero.ready) waitForActorThread(500, false);
 			Dungeon.saveAll();
 			Badges.saveGlobal();
 			Journal.saveGlobal();
@@ -1023,6 +1046,10 @@ public class GameScene extends PixelScene {
 	public static void flashForDocument( String page ){
 		if (scene != null) scene.pane.flashForPage( page );
 	}
+
+	public static void showlevelUpStars(){
+		if (scene != null) scene.pane.showStarParticles();
+	}
 	
 	public static void updateKeyDisplay(){
 		if (scene != null) scene.pane.updateKeys();
@@ -1081,6 +1108,16 @@ public class GameScene extends PixelScene {
 			cancelCellSelector();
 			scene.addToFront(wnd);
 		}
+	}
+
+	public static boolean isShowingWindow(){
+		if (scene == null) return false;
+
+		for (Gizmo g : scene.members){
+			if (g instanceof Window) return true;
+		}
+
+		return false;
 	}
 
 	public static void updateFog(){
@@ -1163,8 +1200,10 @@ public class GameScene extends PixelScene {
 			cellSelector.listener.onSelect(null);
 		}
 		cellSelector.listener = listener;
-		if (scene != null)
-			scene.prompt( listener.prompt() );
+		cellSelector.enabled = Dungeon.hero.ready;
+		if (scene != null) {
+			scene.prompt(listener.prompt());
+		}
 	}
 	
 	private static boolean cancelCellSelector() {

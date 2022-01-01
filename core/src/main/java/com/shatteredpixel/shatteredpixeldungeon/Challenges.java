@@ -247,7 +247,12 @@ public enum Challenges implements Hero.Doom {
     //region Modifiers
     ARCHERY_SCHOOL(78, 5, -2f),
     SNIPER_TRAINING(79, 5, -7f, ARCHERY_SCHOOL),
-    BIOCHIP(90, 5, -1),
+    BIOCHIP(90, 5, -1){
+        @Override
+        public boolean isCheese() {
+            return false;
+        }
+    },
     CHAOS_WIZARD(80, 5, -4f) {
         @Override
         protected boolean _isItemBlocked(Item item) {
@@ -864,6 +869,10 @@ public enum Challenges implements Hero.Doom {
 
     public boolean isModifier() {
         return tier == 5;
+    }
+
+    public boolean isCheese() {
+        return isModifier();
     }
 
     public boolean enabled() {

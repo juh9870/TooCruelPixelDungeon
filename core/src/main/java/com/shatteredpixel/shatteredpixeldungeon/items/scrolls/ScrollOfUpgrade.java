@@ -41,7 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
 public class ScrollOfUpgrade extends InventoryScroll {
-	
+
 	{
 		icon = ItemSpriteSheet.Icons.SCROLL_UPGRADE;
 		preferredBag = Belongings.Backpack.class;
@@ -56,76 +56,67 @@ public class ScrollOfUpgrade extends InventoryScroll {
 
 	@Override
 	protected void onItemSelected( Item item ) {
-
-		int repeats = 1;
-		if(Challenges.GRINDING_2.enabled()){
-			Item stack = curUser.belongings.getItem(ScrollOfUpgrade.class);
-			if (stack != null && stack.quantity() > 10) {
-				repeats = (stack.quantity() + 1) / 2;
-				stack.quantity(stack.quantity() - repeats + 1);
-			}
-		}
 		upgrade(curUser);
 		Degrade.detach(curUser, Degrade.class);
-		while (repeats-- > 0) {
 
-			//logic for telling the user when item properties change from upgrades
-			//...yes this is rather messy
-			if (item instanceof Weapon) {
-				Weapon w = (Weapon) item;
-				boolean wasCursed = w.cursed;
-				boolean hadCursedEnchant = w.hasCurseEnchant();
-				boolean hadGoodEnchant = w.hasGoodEnchant();
+		//logic for telling the user when item properties change from upgrades
+		//...yes this is rather messy
+		if (item instanceof Weapon) {
+			Weapon w = (Weapon) item;
+			boolean wasCursed = w.cursed;
+			boolean hadCursedEnchant = w.hasCurseEnchant();
+			boolean hadGoodEnchant = w.hasGoodEnchant();
 
-				w.upgrade();
+			w.upgrade();
 
-				if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()) {
-					removeCurse(Dungeon.hero);
-				} else if (w.cursedKnown && wasCursed && !w.cursed) {
-					weakenCurse(Dungeon.hero);
-				}
-				if (hadGoodEnchant && !w.hasGoodEnchant()) {
-					GLog.w(Messages.get(Weapon.class, "incompatible"));
-				}
-
-			} else if (item instanceof Armor) {
-				Armor a = (Armor) item;
-				boolean wasCursed = a.cursed;
-				boolean hadCursedGlyph = a.hasCurseGlyph();
-				boolean hadGoodGlyph = a.hasGoodGlyph();
-
-				a.upgrade();
-
-				if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()) {
-					removeCurse(Dungeon.hero);
-				} else if (a.cursedKnown && wasCursed && !a.cursed) {
-					weakenCurse(Dungeon.hero);
-				}
-				if (hadGoodGlyph && !a.hasGoodGlyph()) {
-					GLog.w(Messages.get(Armor.class, "incompatible"));
-				}
-
-			} else if (item instanceof Wand || item instanceof Ring) {
-				boolean wasCursed = item.cursed;
-
-				item.upgrade();
-
-				if (wasCursed && !item.cursed) {
-					removeCurse(Dungeon.hero);
-				}
-
-			} else {
-				item.upgrade();
+			if (w.cursedKnown && hadCursedEnchant && !w.hasCurseEnchant()) {
+				removeCurse(Dungeon.hero);
+			} else if (w.cursedKnown && wasCursed && !w.cursed) {
+				weakenCurse(Dungeon.hero);
+			}
+			if (hadGoodEnchant && !w.hasGoodEnchant()) {
+				GLog.w(Messages.get(Weapon.class, "incompatible"));
 			}
 
-			Talent.onUpgradeScrollUsed(Dungeon.hero);
+		} else if (item instanceof Armor) {
+			Armor a = (Armor) item;
+			boolean wasCursed = a.cursed;
+			boolean hadCursedGlyph = a.hasCurseGlyph();
+			boolean hadGoodGlyph = a.hasGoodGlyph();
 
-			Badges.validateItemLevelAquired(item);
-			Statistics.upgradesUsed++;
+			a.upgrade();
+
+			if (a.cursedKnown && hadCursedGlyph && !a.hasCurseGlyph()) {
+				removeCurse(Dungeon.hero);
+			} else if (a.cursedKnown && wasCursed && !a.cursed) {
+				weakenCurse(Dungeon.hero);
+			}
+			if (hadGoodGlyph && !a.hasGoodGlyph()) {
+				GLog.w(Messages.get(Armor.class, "incompatible"));
+			}
+
+		} else if (item instanceof Wand || item instanceof Ring) {
+			boolean wasCursed = item.cursed;
+
+			item.upgrade();
+
+			if (wasCursed && !item.cursed) {
+				removeCurse(Dungeon.hero);
+			}
+			if (item.cursedKnown && wasCursed && !item.cursed){
+				removeCurse( Dungeon.hero );
+			}
+
+		} else {
+			item.upgrade();
 		}
-//		Badges.validateMageUnlock();
+
+		Talent.onUpgradeScrollUsed(Dungeon.hero);
+
+        Badges.validateItemLevelAquired(item);
+        Statistics.upgradesUsed++;
 	}
-	
+
 	public static void upgrade( Hero hero ) {
 		hero.sprite.emitter().start( Speck.factory( Speck.UP ), 0.2f, 3 );
 	}
@@ -139,9 +130,14 @@ public class ScrollOfUpgrade extends InventoryScroll {
 		GLog.p( Messages.get(ScrollOfUpgrade.class, "remove_curse") );
 		hero.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10 );
 	}
-	
+
 	@Override
 	public int value() {
 		return isKnown() ? 50 * quantity : super.value();
+	}
+
+	@Override
+	public int energyVal() {
+		return isKnown() ? 8 * quantity : super.energyVal();
 	}
 }

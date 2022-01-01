@@ -76,6 +76,9 @@ public class StoneOfAugmentation extends InventoryStone {
 		return 30 * quantity;
 	}
 
+	public int energyVal() {
+		return 4 * quantity;
+	}
 	public class WndAugment extends Window {
 
 		private static final int WIDTH			= 120;

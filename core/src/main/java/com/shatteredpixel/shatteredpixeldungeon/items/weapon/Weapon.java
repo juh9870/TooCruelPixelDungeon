@@ -103,6 +103,7 @@ abstract public class Weapon extends KindOfWeapon {
 	
 	public Enchantment enchantment;
 	public boolean curseInfusionBonus = false;
+	public boolean masteryPotionBonus = false;
 	
 	@Override
 	public int proc( Char attacker, Char defender, int damage ) {
@@ -165,6 +166,7 @@ abstract public class Weapon extends KindOfWeapon {
 	private static final String AVAILABLE_USES  = "available_uses";
 	private static final String ENCHANTMENT	    = "enchantment";
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
+	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
 	private static final String AUGMENT	        = "augment";
 	private static final String TIER_FIXED	    = "tier_fixed";
 
@@ -175,6 +177,7 @@ abstract public class Weapon extends KindOfWeapon {
 		bundle.put( AVAILABLE_USES, availableUsesToID );
 		bundle.put( ENCHANTMENT, enchantment );
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
+		bundle.put( MASTERY_POTION_BONUS, masteryPotionBonus );
 		bundle.put( AUGMENT, augment );
 		bundle.put( TIER_FIXED, tierFixed );
 	}
@@ -187,6 +190,7 @@ abstract public class Weapon extends KindOfWeapon {
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
 		tierFixed = bundle.getBoolean( TIER_FIXED );
+		masteryPotionBonus = bundle.getBoolean( MASTERY_POTION_BONUS );
 
 		augment = bundle.getEnum(AUGMENT, Augment.class);
 	}
@@ -242,7 +246,11 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 
 	public int STRReq(){
-		return STRReq(level());
+		int req = STRReq(level());
+		if (masteryPotionBonus){
+			req -= 2;
+		}
+		return req;
 	}
 
 	public abstract int STRReq(int lvl);

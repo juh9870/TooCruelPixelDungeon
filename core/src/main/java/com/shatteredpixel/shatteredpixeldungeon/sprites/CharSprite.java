@@ -87,7 +87,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected float shadowOffset    = 0.25f;
 
 	public enum State {
-		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, EXTERMINATING
+		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, EXTERMINATING, HEARTS
 	}
 	private int stunStates = 0;
 	
@@ -108,6 +108,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected Emitter levitation;
 	protected Emitter healing;
 	protected Emitter exterminating;
+	protected Emitter hearts;
 	
 	protected IceBlock iceBlock;
 	protected DarkBlock darkBlock;
@@ -443,6 +444,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			case EXTERMINATING:
 				exterminating = emitter();
 				exterminating.pour( ElmoParticle.FACTORY, 0.5f );
+			case HEARTS:
+				hearts = emitter();
+				hearts.pour(Speck.factory(Speck.HEART), 0.5f);
 				break;
 		}
 	}
@@ -517,9 +521,15 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 					exterminating.on = false;
 					exterminating = null;
 				}
+			case HEARTS:
+				if (hearts != null){
+					hearts.on = false;
+					hearts = null;
+				}
 				break;
 		}
 	}
+
 
 	public void aura( int color ){
 		aura(getClass(), color);
@@ -641,6 +651,12 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 					visuals.value.alpha(alpha);
 				}
 			}
+		}
+		if (healing != null){
+			healing.visible = visible;
+		}
+		if (hearts != null){
+			hearts.visible = visible;
 		}
 		if (sleeping) {
 			showSleep();

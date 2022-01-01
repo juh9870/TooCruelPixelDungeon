@@ -51,7 +51,7 @@ public class Bones {
 		depth = Dungeon.depth;
 
 		//heroes which have won the game, who die far above their farthest depth.
-		if (Statistics.amuletObtained || (Statistics.deepestFloor - 5) >= depth || Dungeon.modifiers.isModified()) {
+		if (Statistics.amuletObtained || (Statistics.deepestFloor - 5) >= depth || Dungeon.modifiers.isCheesed()) {
 			depth = -1;
 			return;
 		}

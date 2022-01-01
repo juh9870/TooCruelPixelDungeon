@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Countdown;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Revealing;
@@ -189,8 +190,10 @@ public class Dungeon {
 	public static QuickSlot quickslot = new QuickSlot();
 
 	public static int depth;
+
 	public static int gold;
 	public static int tokens;
+	public static int energy;
 
 	public static HashSet<Integer> chapters;
 
@@ -256,6 +259,7 @@ public class Dungeon {
 //			depth = 21;
 		gold = 0;
 		tokens = 0;
+		energy = 0;
 
 		droppedItems = new SparseArray<>();
 		portedItems = new SparseArray<>();
@@ -511,9 +515,10 @@ public class Dungeon {
     private static final String HELL_CHALS  = "hell_challenges";
 	private static final String MOBS_TO_CHAMPION	= "mobs_to_champion";
 	private static final String HERO		= "hero";
+	private static final String DEPTH		= "depth";
 	private static final String GOLD		= "gold";
 	private static final String BJTOKENS	= "bj_tokens";
-	private static final String DEPTH		= "depth";
+	private static final String ENERGY		= "energy";
 	private static final String DROPPED     = "dropped%d";
 	private static final String PORTED      = "ported%d";
 	private static final String LEVEL		= "level";
@@ -533,11 +538,11 @@ public class Dungeon {
             bundle.put(MODIFIERS, modifiers);
 			bundle.put( MOBS_TO_CHAMPION, mobsToChampion );
 			bundle.put( HERO, hero );
-			bundle.put( GOLD, gold );
-			bundle.put( BJTOKENS, tokens );
 			bundle.put( DEPTH, depth );
 
-			bundle.put(EXTRA_DATA, extraData);
+			bundle.put( GOLD, gold );
+			bundle.put( BJTOKENS, tokens );
+			bundle.put( ENERGY, energy );
 
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(Messages.format(DROPPED, d), droppedItems.get(d));
@@ -707,10 +712,12 @@ public class Dungeon {
 
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
+		
+		depth = bundle.getInt( DEPTH );
 
 		gold = bundle.getInt( GOLD );
 		tokens = bundle.getInt( BJTOKENS );
-		depth = bundle.getInt( DEPTH );
+		energy = bundle.getInt( ENERGY );
 
 		if (bundle.contains(EXTRA_DATA)) {
 			extraData = (ChallengesData) bundle.get(EXTRA_DATA);
@@ -807,8 +814,13 @@ public class Dungeon {
 
 	//default to recomputing based on max hero vision, in case vision just shrank/grew
 	public static void observe(){
-		int dist = 8;
+		int dist = Math.max(Dungeon.hero.viewDistance, 8);
 		dist *= 1f + 0.25f*Dungeon.hero.pointsInTalent(Talent.FARSIGHT);
+
+		if (Dungeon.hero.buff(MagicalSight.class) != null){
+			dist = Math.max( dist, MagicalSight.DISTANCE );
+		}
+
 		observe( dist+1 );
 	}
 

@@ -89,9 +89,14 @@ public abstract class Runestone extends Item {
 	
 	@Override
 	public int value() {
-		return 10 * quantity;
+		return 15 * quantity;
 	}
-	
+
+	@Override
+	public int energyVal() {
+		return 3 * quantity;
+	}
+
 	public static class PlaceHolder extends Runestone {
 		
 		{

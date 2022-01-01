@@ -200,7 +200,7 @@ public abstract class Scroll extends Item {
 	public abstract void doRead();
 
 	@Override
-	public boolean doPickUp(Hero hero) {
+	public boolean doPickUp(Hero hero, int pos) {
 		if(super.doPickUp(hero)){
 			if(Challenges.isItemAutouse(this)){
 				Game.runOnRenderThread(() -> {
@@ -221,7 +221,7 @@ public abstract class Scroll extends Item {
 		((HeroSprite)curUser.sprite).read();
 
 		if (curUser.hasTalent(Talent.EMPOWERING_SCROLLS)){
-			Buff.affect(curUser, ScrollEmpower.class);
+			Buff.affect(curUser, ScrollEmpower.class).reset();
 			updateQuickslot();
 		}
 
@@ -293,6 +293,11 @@ public abstract class Scroll extends Item {
 	@Override
 	public int value() {
 		return 30 * quantity;
+	}
+
+	@Override
+	public int energyVal() {
+		return 6 * quantity;
 	}
 	
 	public static class PlaceHolder extends Scroll {

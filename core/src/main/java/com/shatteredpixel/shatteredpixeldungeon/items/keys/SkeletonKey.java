@@ -46,5 +46,4 @@ public class SkeletonKey extends Key {
 		super();
 		this.depth = depth;
 	}
-
 }

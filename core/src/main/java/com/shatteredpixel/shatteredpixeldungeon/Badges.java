@@ -54,47 +54,47 @@ public class Badges {
 		MASTERY_HUNTRESS,
 		FOUND_RATMOGRIFY,
 		//bronze
-		UNLOCK_MAGE(1),
-		UNLOCK_ROGUE(2),
-		UNLOCK_HUNTRESS(3),
-		MONSTERS_SLAIN_1(4),
-		MONSTERS_SLAIN_2(5),
-		GOLD_COLLECTED_1(6),
-		GOLD_COLLECTED_2(7),
-		ITEM_LEVEL_1(8),
-		LEVEL_REACHED_1(9),
-		STRENGTH_ATTAINED_1(10),
-		FOOD_EATEN_1(11),
-		POTIONS_COOKED_1(12),
-		BOSS_SLAIN_1(13),
-		DEATH_FROM_FIRE(14),
-		DEATH_FROM_POISON(15),
-		DEATH_FROM_GAS(16),
-		DEATH_FROM_HUNGER(17),
-		DEATH_FROM_FALLING(18),
-		
+		UNLOCK_MAGE                 ( 1 ),
+		UNLOCK_ROGUE                ( 2 ),
+		UNLOCK_HUNTRESS             ( 3 ),
+		MONSTERS_SLAIN_1            ( 4 ),
+		MONSTERS_SLAIN_2            ( 5 ),
+		GOLD_COLLECTED_1            ( 6 ),
+		GOLD_COLLECTED_2            ( 7 ),
+		ITEM_LEVEL_1                ( 8 ),
+		LEVEL_REACHED_1             ( 9 ),
+		STRENGTH_ATTAINED_1         ( 10 ),
+		FOOD_EATEN_1                ( 11 ),
+		ITEMS_CRAFTED_1             ( 12 ),
+		BOSS_SLAIN_1                ( 13 ),
+		DEATH_FROM_FIRE             ( 14 ),
+		DEATH_FROM_POISON           ( 15 ),
+		DEATH_FROM_GAS              ( 16 ),
+		DEATH_FROM_HUNGER           ( 17 ),
+		DEATH_FROM_FALLING          ( 18 ),
+
 		//silver
-		NO_MONSTERS_SLAIN(32),
-		GRIM_WEAPON(33),
-		MONSTERS_SLAIN_3(34),
-		MONSTERS_SLAIN_4(35),
-		GOLD_COLLECTED_3(36),
-		GOLD_COLLECTED_4(37),
-		ITEM_LEVEL_2(38),
-		ITEM_LEVEL_3(39),
-		LEVEL_REACHED_2(40),
-		LEVEL_REACHED_3(41),
-		STRENGTH_ATTAINED_2(42),
-		STRENGTH_ATTAINED_3(43),
-		FOOD_EATEN_2(44),
-		FOOD_EATEN_3(45),
-		POTIONS_COOKED_2(46),
-		POTIONS_COOKED_3(47),
-		BOSS_SLAIN_2(48),
-		BOSS_SLAIN_3(49),
-		ALL_POTIONS_IDENTIFIED(50),
-		ALL_SCROLLS_IDENTIFIED(51),
-		DEATH_FROM_GLYPH(52),
+		NO_MONSTERS_SLAIN           ( 32 ),
+		GRIM_WEAPON                 ( 33 ),
+		MONSTERS_SLAIN_3            ( 34 ),
+		MONSTERS_SLAIN_4            ( 35 ),
+		GOLD_COLLECTED_3            ( 36 ),
+		GOLD_COLLECTED_4            ( 37 ),
+		ITEM_LEVEL_2                ( 38 ),
+		ITEM_LEVEL_3                ( 39 ),
+		LEVEL_REACHED_2             ( 40 ),
+		LEVEL_REACHED_3             ( 41 ),
+		STRENGTH_ATTAINED_2         ( 42 ),
+		STRENGTH_ATTAINED_3         ( 43 ),
+		FOOD_EATEN_2                ( 44 ),
+		FOOD_EATEN_3                ( 45 ),
+		ITEMS_CRAFTED_2             ( 46 ),
+		ITEMS_CRAFTED_3             ( 47 ),
+		BOSS_SLAIN_2                ( 48 ),
+		BOSS_SLAIN_3                ( 49 ),
+		ALL_POTIONS_IDENTIFIED      ( 50 ),
+		ALL_SCROLLS_IDENTIFIED      ( 51 ),
+		DEATH_FROM_GLYPH            ( 52 ),
 		BOSS_SLAIN_1_WARRIOR,
 		BOSS_SLAIN_1_MAGE,
 		BOSS_SLAIN_1_ROGUE,
@@ -103,27 +103,26 @@ public class Badges {
 		GAMES_PLAYED_1(54, true),
 		
 		//gold
-		PIRANHAS(64),
-		//these names are a bit outdated, but it doesn't really matter.
-		BAG_BOUGHT_SEED_POUCH,
+		PIRANHAS                    ( 64 ),
+		BAG_BOUGHT_VELVET_POUCH,
 		BAG_BOUGHT_SCROLL_HOLDER,
 		BAG_BOUGHT_POTION_BANDOLIER,
-		BAG_BOUGHT_WAND_HOLSTER,
-		ALL_BAGS_BOUGHT(65),
-		MASTERY_COMBO(66),
-		ITEM_LEVEL_4(67),
-		LEVEL_REACHED_4(68),
-		STRENGTH_ATTAINED_4(69),
-		FOOD_EATEN_4(70),
-		POTIONS_COOKED_4(71),
-		BOSS_SLAIN_4(72),
-		ALL_WEAPONS_IDENTIFIED(73),
-		ALL_ARMOR_IDENTIFIED(74),
-		ALL_WANDS_IDENTIFIED(75),
-		ALL_RINGS_IDENTIFIED(76),
-		ALL_ARTIFACTS_IDENTIFIED(77),
-		VICTORY(78),
-		YASD(79, true),
+		BAG_BOUGHT_MAGICAL_HOLSTER,
+		ALL_BAGS_BOUGHT             ( 65 ),
+		MASTERY_COMBO               ( 66 ),
+		ITEM_LEVEL_4                ( 67 ),
+		LEVEL_REACHED_4             ( 68 ),
+		STRENGTH_ATTAINED_4         ( 69 ),
+		FOOD_EATEN_4                ( 70 ),
+		ITEMS_CRAFTED_4             ( 71 ),
+		BOSS_SLAIN_4                ( 72 ),
+		ALL_WEAPONS_IDENTIFIED      ( 73 ),
+		ALL_ARMOR_IDENTIFIED        ( 74 ),
+		ALL_WANDS_IDENTIFIED        ( 75 ),
+		ALL_RINGS_IDENTIFIED        ( 76 ),
+		ALL_ARTIFACTS_IDENTIFIED    ( 77 ),
+		VICTORY                     ( 78 ),
+		YASD                        ( 79, true ),
 		BOSS_SLAIN_3_GLADIATOR,
 		BOSS_SLAIN_3_BERSERKER,
 		BOSS_SLAIN_3_WARLOCK,
@@ -198,9 +197,15 @@ public class Badges {
 	}
 	
 	private static final HashMap<String, String> renamedBadges = new HashMap<>();
-	
-	static {
-		//no recently renamed badges
+	static{
+		//v1.1.0 (some names were from before 1.1.0, but conversion was added then)
+		renamedBadges.put("BAG_BOUGHT_SEED_POUCH",      "BAG_BOUGHT_VELVET_POUCH");
+		renamedBadges.put("BAG_BOUGHT_WAND_HOLSTER",    "BAG_BOUGHT_MAGICAL_HOLSTER");
+
+		renamedBadges.put("POTIONS_COOKED_1", "ITEMS_CRAFTED_1");
+		renamedBadges.put("POTIONS_COOKED_2", "ITEMS_CRAFTED_2");
+		renamedBadges.put("POTIONS_COOKED_3", "ITEMS_CRAFTED_3");
+		renamedBadges.put("POTIONS_COOKED_4", "ITEMS_CRAFTED_4");
 	}
 	
 	public static HashSet<Badge> restore(Bundle bundle) {
@@ -393,24 +398,23 @@ public class Badges {
 		displayBadge(badge);
 	}
 	
-	public static void validatePotionsCooked() {
+	public static void validateItemsCrafted() {
 		Badge badge = null;
-		
-		if (!local.contains(Badge.POTIONS_COOKED_1) && Statistics.potionsCooked >= 3) {
-			badge = Badge.POTIONS_COOKED_1;
-			local.add(badge);
+		if (!local.contains( Badge.ITEMS_CRAFTED_1 ) && Statistics.itemsCrafted >= 5) {
+			badge = Badge.ITEMS_CRAFTED_1;
+			local.add( badge );
 		}
-		if (!local.contains(Badge.POTIONS_COOKED_2) && Statistics.potionsCooked >= 6) {
-			badge = Badge.POTIONS_COOKED_2;
-			local.add(badge);
+		if (!local.contains( Badge.ITEMS_CRAFTED_2 ) && Statistics.itemsCrafted >= 10) {
+			badge = Badge.ITEMS_CRAFTED_2;
+			local.add( badge );
 		}
-		if (!local.contains(Badge.POTIONS_COOKED_3) && Statistics.potionsCooked >= 9) {
-			badge = Badge.POTIONS_COOKED_3;
-			local.add(badge);
+		if (!local.contains( Badge.ITEMS_CRAFTED_3 ) && Statistics.itemsCrafted >= 15) {
+			badge = Badge.ITEMS_CRAFTED_3;
+			local.add( badge );
 		}
-		if (!local.contains(Badge.POTIONS_COOKED_4) && Statistics.potionsCooked >= 12) {
-			badge = Badge.POTIONS_COOKED_4;
-			local.add(badge);
+		if (!local.contains( Badge.ITEMS_CRAFTED_4 ) && Statistics.itemsCrafted >= 20) {
+			badge = Badge.ITEMS_CRAFTED_4;
+			local.add( badge );
 		}
 		
 		displayBadge(badge);
@@ -468,28 +472,28 @@ public class Badges {
 		
 		Badge badge = null;
 		if (bag instanceof VelvetPouch) {
-			badge = Badge.BAG_BOUGHT_SEED_POUCH;
+			badge = Badge.BAG_BOUGHT_VELVET_POUCH;
 		} else if (bag instanceof ScrollHolder) {
 			badge = Badge.BAG_BOUGHT_SCROLL_HOLDER;
 		} else if (bag instanceof PotionBandolier) {
 			badge = Badge.BAG_BOUGHT_POTION_BANDOLIER;
 		} else if (bag instanceof MagicalHolster) {
-			badge = Badge.BAG_BOUGHT_WAND_HOLSTER;
+			badge = Badge.BAG_BOUGHT_MAGICAL_HOLSTER;
 		}
 		
 		if (badge != null) {
 			
 			local.add(badge);
-			
-			if (!local.contains(Badge.ALL_BAGS_BOUGHT) &&
-					local.contains(Badge.BAG_BOUGHT_SEED_POUCH) &&
-					local.contains(Badge.BAG_BOUGHT_SCROLL_HOLDER) &&
-					local.contains(Badge.BAG_BOUGHT_POTION_BANDOLIER) &&
-					local.contains(Badge.BAG_BOUGHT_WAND_HOLSTER)) {
-				
-				badge = Badge.ALL_BAGS_BOUGHT;
-				local.add(badge);
-				displayBadge(badge);
+
+			if (!local.contains( Badge.ALL_BAGS_BOUGHT ) &&
+				local.contains( Badge.BAG_BOUGHT_VELVET_POUCH ) &&
+				local.contains( Badge.BAG_BOUGHT_SCROLL_HOLDER ) &&
+				local.contains( Badge.BAG_BOUGHT_POTION_BANDOLIER ) &&
+				local.contains( Badge.BAG_BOUGHT_MAGICAL_HOLSTER )) {
+						
+					badge = Badge.ALL_BAGS_BOUGHT;
+					local.add( badge );
+					displayBadge( badge );
 			}
 		}
 	}
@@ -922,7 +926,7 @@ public class Badges {
 			{Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4},
 			{Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4},
 			{Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4},
-			{Badge.POTIONS_COOKED_1, Badge.POTIONS_COOKED_2, Badge.POTIONS_COOKED_3, Badge.POTIONS_COOKED_4},
+			{Badge.ITEMS_CRAFTED_1, Badge.ITEMS_CRAFTED_2, Badge.ITEMS_CRAFTED_3, Badge.ITEMS_CRAFTED_4},
 			{Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4},
 			{Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4},
 			{Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3}
@@ -944,22 +948,22 @@ public class Badges {
 			{Badge.ALL_POTIONS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED},
 			{Badge.ALL_SCROLLS_IDENTIFIED, Badge.ALL_ITEMS_IDENTIFIED}
 	};
-	
-	public static List<Badge> filterReplacedBadges(List<Badge> badges) {
-		
-		leaveBest(badges, Badge.MONSTERS_SLAIN_1, Badge.MONSTERS_SLAIN_2, Badge.MONSTERS_SLAIN_3, Badge.MONSTERS_SLAIN_4);
-		leaveBest(badges, Badge.GOLD_COLLECTED_1, Badge.GOLD_COLLECTED_2, Badge.GOLD_COLLECTED_3, Badge.GOLD_COLLECTED_4);
-		leaveBest(badges, Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4);
-		leaveBest(badges, Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4);
-		leaveBest(badges, Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4);
-		leaveBest(badges, Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4);
-		leaveBest(badges, Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4, Badge.AMULET_LEVEL_15);
-		leaveBest(badges, Badge.POTIONS_COOKED_1, Badge.POTIONS_COOKED_2, Badge.POTIONS_COOKED_3, Badge.POTIONS_COOKED_4);
-		leaveBest(badges, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4);
-		leaveBest(badges, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3, Badge.CHAMPION_4, Badge.CHAMPION_5, Badge.CHAMPION_6, Badge.CHAMPION_7);
-		
-		for (Badge[] tierReplace : tierBadgeReplacements) {
-			leaveBest(badges, tierReplace);
+
+	public static List<Badge> filterReplacedBadges( List<Badge> badges ) {
+
+		leaveBest( badges, Badge.MONSTERS_SLAIN_1, Badge.MONSTERS_SLAIN_2, Badge.MONSTERS_SLAIN_3, Badge.MONSTERS_SLAIN_4 );
+		leaveBest( badges, Badge.GOLD_COLLECTED_1, Badge.GOLD_COLLECTED_2, Badge.GOLD_COLLECTED_3, Badge.GOLD_COLLECTED_4 );
+		leaveBest( badges, Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4 );
+		leaveBest( badges, Badge.LEVEL_REACHED_1, Badge.LEVEL_REACHED_2, Badge.LEVEL_REACHED_3, Badge.LEVEL_REACHED_4 );
+		leaveBest( badges, Badge.STRENGTH_ATTAINED_1, Badge.STRENGTH_ATTAINED_2, Badge.STRENGTH_ATTAINED_3, Badge.STRENGTH_ATTAINED_4 );
+		leaveBest( badges, Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4 );
+		leaveBest( badges, Badge.ITEM_LEVEL_1, Badge.ITEM_LEVEL_2, Badge.ITEM_LEVEL_3, Badge.ITEM_LEVEL_4, Badge.AMULET_LEVEL_15 );
+		leaveBest( badges, Badge.ITEMS_CRAFTED_1, Badge.ITEMS_CRAFTED_2, Badge.ITEMS_CRAFTED_3, Badge.ITEMS_CRAFTED_4 );
+		leaveBest( badges, Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4 );
+		leaveBest( badges, Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3, Badge.CHAMPION_4, Badge.CHAMPION_5, Badge.CHAMPION_6, Badge.CHAMPION_7);
+
+		for (Badge[] tierReplace : tierBadgeReplacements){
+			leaveBest( badges, tierReplace );
 		}
 		
 		for (Badge[] metaReplace : metaBadgeReplacements) {

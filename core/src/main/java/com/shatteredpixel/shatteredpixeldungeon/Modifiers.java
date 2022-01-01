@@ -82,9 +82,9 @@ public class Modifiers implements Bundlable {
         return false;
     }
 
-    public boolean isModified() {
+    public boolean isCheesed() {
         for (int i = 0; i < challenges.length; i++) {
-            if (challenges[i] && Challenges.fromId(i).isModifier()) return true;
+            if (challenges[i] && Challenges.fromId(i).isCheese()) return true;
         }
         return false;
     }

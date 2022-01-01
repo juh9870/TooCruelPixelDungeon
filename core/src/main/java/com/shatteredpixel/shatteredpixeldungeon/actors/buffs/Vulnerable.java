@@ -24,7 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 
-public class Vulnerable extends FlavourBuff {
+public class Vulnerable extends FlavourBuff implements DamageAmplificationBuff {
 	
 	public static final float DURATION = 20f;
 	
@@ -56,5 +56,10 @@ public class Vulnerable extends FlavourBuff {
 	@Override
 	public String desc() {
 		return Messages.get(this, "desc", dispTurns());
+	}
+
+	@Override
+	public float damageMultiplier() {
+		return 1.33f;
 	}
 }

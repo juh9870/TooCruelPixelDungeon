@@ -206,6 +206,11 @@ public abstract class Plant implements Bundlable {
 		}
 
 		@Override
+		public int energyVal() {
+			return 2 * quantity;
+		}
+
+		@Override
 		public String desc() {
 			if (Challenges.LOBOTOMY.enabled()) return Messages.get(PlaceHolder.class,"desc");
 			String desc = Messages.get(plantClass, "desc");

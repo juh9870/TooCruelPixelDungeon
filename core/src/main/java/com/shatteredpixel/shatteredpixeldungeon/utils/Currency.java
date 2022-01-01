@@ -8,7 +8,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.PokerToken;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
+import com.watabou.noosa.Image;
 
 public enum Currency {
     GOLD {
@@ -41,6 +44,11 @@ public enum Currency {
         public int sellPrice(Item item) {
             return Shopkeeper.sellPrice(item);
         }
+
+        @Override
+        public Image icon() {
+            return new ItemSprite(ItemSpriteSheet.GOLD);
+        }
     },
     TOKENS {
         @Override
@@ -56,6 +64,11 @@ public enum Currency {
         @Override
         public void set(int amount) {
             Dungeon.tokens = amount;
+        }
+
+        @Override
+        public Image icon() {
+            return new ItemSprite(ItemSpriteSheet.POKER_TOKEN);
         }
     };
 
@@ -96,4 +109,6 @@ public enum Currency {
     public int sellPrice(Item item) {
         return item.value();
     }
+
+    public abstract Image icon();
 }

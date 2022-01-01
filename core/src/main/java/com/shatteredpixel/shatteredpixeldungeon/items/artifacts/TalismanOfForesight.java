@@ -98,6 +98,7 @@ public class TalismanOfForesight extends Artifact {
 				partialCharge = 0;
 				GLog.p( Messages.get(TalismanOfForesight.class, "full_charge") );
 			}
+			updateQuickslot();
 		}
 	}
 

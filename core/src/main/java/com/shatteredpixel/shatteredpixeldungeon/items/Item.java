@@ -118,25 +118,15 @@ public class Item implements Bundlable {
 	public String actionName(String action, Hero hero){
 		return Messages.get(this, "ac_" + action);
 	}
-	
-	public boolean doPickUp( Hero hero ) {
-		if(Challenges.GRINDING_2.enabled() && isUpgradable()){
-			Item copy = Dungeon.hero.belongings.getItem(getClass());
 
-			if (copy != null && this.level <= 3) {
-				if (!(this instanceof MissileWeapon) || !isSimilar(copy)) {
-					copy.upgrade(this.level + 1);
-					if (stackable) copy.quantity += quantity;
-					return true;
-				}
-			}
+	public final boolean doPickUp( Hero hero ) {
+		return doPickUp( hero, hero.pos());
+	}
 
-			levelKnown = true;
-			cursedKnown = true;
-		}
-
+	public boolean doPickUp(Hero hero, int pos) {
 		if (collect( hero.belongings.backpack )) {
-			GameScene.pickUp( this, hero.pos());
+			
+			GameScene.pickUp( this, pos );
 			Sample.INSTANCE.play( Assets.Sounds.ITEM );
 			hero.spendAndNext( TIME_TO_PICK_UP );
 			return true;
@@ -517,8 +507,14 @@ public class Item implements Bundlable {
 		quantity = value;
 		return this;
 	}
-	
+
+	//item's value in gold coins
 	public int value() {
+		return 0;
+	}
+
+	//item's value in energy crystals
+	public int energyVal() {
 		return 0;
 	}
 	

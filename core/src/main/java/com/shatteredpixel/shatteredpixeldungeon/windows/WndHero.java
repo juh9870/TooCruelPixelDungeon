@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.gltextures.SmartTexture;
@@ -79,25 +80,24 @@ public class WndHero extends WndTabbed {
 		add(buffs);
 		buffs.setRect(0, 0, WIDTH, HEIGHT);
 		buffs.setupList();
-		
-		add(new LabeledTab(Messages.get(this, "stats")) {
-			protected void select(boolean value) {
-				super.select(value);
+		add( new IconTab( Icons.get(Icons.RANKINGS) ) {
+			protected void select( boolean value ) {
+				super.select( value );
 				if (selected) lastIdx = 0;
 				stats.visible = stats.active = selected;
 			}
-		});
-		add(new LabeledTab(Messages.get(this, "talents")) {
-			protected void select(boolean value) {
-				super.select(value);
+		} );
+		add( new IconTab( Icons.get(Icons.TALENT) ) {
+			protected void select( boolean value ) {
+				super.select( value );
 				if (selected) lastIdx = 1;
 				if (selected) StatusPane.talentBlink = 0;
 				talents.visible = talents.active = selected;
 			}
-		});
-		add(new LabeledTab(Messages.get(this, "buffs")) {
-			protected void select(boolean value) {
-				super.select(value);
+		} );
+		add( new IconTab( Icons.get(Icons.BUFFS) ) {
+			protected void select( boolean value ) {
+				super.select( value );
 				if (selected) lastIdx = 2;
 				buffs.visible = buffs.active = selected;
 			}
@@ -220,7 +220,7 @@ public class WndHero extends WndTabbed {
 		@Override
 		protected void createChildren() {
 			super.createChildren();
-			pane = new TalentsPane(true);
+			pane = new TalentsPane(TalentButton.Mode.UPGRADE);
 			add(pane);
 		}
 		
@@ -307,10 +307,12 @@ public class WndHero extends WndTabbed {
 			protected void layout() {
 				super.layout();
 				icon.y = this.y;
+				txt.maxWidth((int)(width - icon.width()));
 				txt.setPos(
 						icon.width + GAP,
 						this.y + (icon.height - txt.height()) / 2
 				);
+				PixelScene.align(txt);
 			}
 			
 			protected boolean onClick(float x, float y) {

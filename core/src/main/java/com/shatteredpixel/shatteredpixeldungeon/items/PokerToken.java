@@ -54,7 +54,7 @@ public class PokerToken extends Item {
 	}
 
 	@Override
-	public boolean doPickUp( Hero hero ) {
+	public boolean doPickUp( Hero hero, int pos ) {
 
 		Dungeon.tokens += quantity;
 

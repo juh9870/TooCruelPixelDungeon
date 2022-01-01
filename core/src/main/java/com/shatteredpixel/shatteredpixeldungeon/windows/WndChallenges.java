@@ -313,7 +313,7 @@ public class WndChallenges extends Window {
     private void updateDifficulty(Modifiers modifiers) {
         String diff = Messages.get(Difficulty.class, Difficulty.align(modifiers).name);
         String text = Messages.get(this, "difficulty", diff, Difficulty.calculateDifficulty(modifiers));
-        if (modifiers.isModified()) {
+        if (modifiers.isCheesed()) {
             text = Messages.get(this, "difficulty_mod", text);
         }
         difficultyText.text(text);

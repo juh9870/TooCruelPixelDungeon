@@ -25,13 +25,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.watabou.noosa.Game;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
 public class GameSettings {
 	
 	public static final String DEFAULT_PREFS_FILE = "settings.xml";
@@ -129,7 +122,7 @@ public class GameSettings {
 
 	public static <T extends Bundlable> T getBundlable(String key, T defValue){
 		try {
-			Bundle b = Bundle.fromString(getString(key,""));
+			Bundle b = Bundle.from(getString(key,""));
 			return (T)b.get(BUNDLABLE);
 		} catch (Exception e) {
 			return defValue;

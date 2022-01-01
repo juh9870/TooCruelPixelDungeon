@@ -62,7 +62,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
     }
 
     {
-        immunities.add(Corruption.class);
+        immunities.add(AllyBuff.class);
     }
 
     public static String description(Class<? extends ChampionEnemy> cl) {

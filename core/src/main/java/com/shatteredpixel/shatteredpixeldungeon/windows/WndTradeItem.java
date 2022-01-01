@@ -34,13 +34,15 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArm
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 
 public class WndTradeItem extends WndInfoItem {
 
 	private static final float GAP		= 2;
-	private static final int BTN_HEIGHT	= 16;
+	private static final int BTN_HEIGHT	= 18;
 
 	private WndBag owner;
 	private Currency currency;
@@ -64,11 +66,12 @@ public class WndTradeItem extends WndInfoItem {
 			RedButton btnSell = new RedButton( Messages.get(this, "sell", item.value()) ) {
 				@Override
 				protected void onClick() {
-					sell( item );
+					sell( item, currency );
 					hide();
 				}
 			};
 			btnSell.setRect( 0, pos + GAP, width, BTN_HEIGHT );
+			btnSell.icon(new ItemSprite(ItemSpriteSheet.GOLD));
 			add( btnSell );
 
 			pos = btnSell.bottom();
@@ -79,20 +82,22 @@ public class WndTradeItem extends WndInfoItem {
 			RedButton btnSell1 = new RedButton( Messages.get(this, "sell_1", priceAll / item.quantity()) ) {
 				@Override
 				protected void onClick() {
-					sellOne( item );
+					sellOne( item, currency );
 					hide();
 				}
 			};
 			btnSell1.setRect( 0, pos + GAP, width, BTN_HEIGHT );
+			btnSell1.icon(new ItemSprite(ItemSpriteSheet.GOLD));
 			add( btnSell1 );
 			RedButton btnSellAll = new RedButton( Messages.get(this, "sell_all", priceAll ) ) {
 				@Override
 				protected void onClick() {
-					sell( item );
+					sell( item, currency );
 					hide();
 				}
 			};
 			btnSellAll.setRect( 0, btnSell1.bottom() + 1, width, BTN_HEIGHT );
+			btnSellAll.icon(new ItemSprite(ItemSpriteSheet.GOLD));
 			add( btnSellAll );
 
 			pos = btnSellAll.bottom();
@@ -123,7 +128,9 @@ public class WndTradeItem extends WndInfoItem {
 			}
 		};
 		btnBuy.setRect( 0, pos + GAP, width, BTN_HEIGHT );
+		btnBuy.icon(currency.icon());
 		btnBuy.enable(currency.have(price));
+		btnBuy.enable( price <= Dungeon.gold );
 		add( btnBuy );
 
 		pos = btnBuy.bottom();
@@ -154,6 +161,7 @@ public class WndTradeItem extends WndInfoItem {
 				}
 			};
 			btnSteal.setRect(0, pos + 1, width, BTN_HEIGHT);
+			btnSteal.icon(new ItemSprite(ItemSpriteSheet.ARTIFACT_ARMBAND));
 			add(btnSteal);
 
 			pos = btnSteal.bottom();
@@ -174,7 +182,7 @@ public class WndTradeItem extends WndInfoItem {
 		}
 	}
 	
-	private void sell( Item item ) {
+	public static void sell( Item item, Currency currency ) {
 		
 		Hero hero = Dungeon.hero;
 		
@@ -186,13 +194,13 @@ public class WndTradeItem extends WndInfoItem {
 		//selling items in the sell interface doesn't spend time
 		hero.spend(-hero.cooldown());
 
-		currency.receive(item.value(), hero);
+		currency.receive(currency.sellPrice(item), hero);
 	}
-	
-	private void sellOne( Item item ) {
+
+	public static void sellOne( Item item, Currency currency ) {
 		
 		if (item.quantity() <= 1) {
-			sell( item );
+			sell( item, currency );
 		} else {
 			
 			Hero hero = Dungeon.hero;
@@ -202,7 +210,7 @@ public class WndTradeItem extends WndInfoItem {
 			//selling items in the sell interface doesn't spend time
 			hero.spend(-hero.cooldown());
 
-			currency.receive(item.value(), hero);
+			currency.receive(currency.sellPrice(item), hero);
 		}
 	}
 	

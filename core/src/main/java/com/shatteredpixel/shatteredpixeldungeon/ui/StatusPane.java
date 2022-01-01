@@ -256,10 +256,7 @@ public class StatusPane extends Component {
 		if (Dungeon.hero.lvl != lastLvl) {
 			
 			if (lastLvl != -1) {
-				Emitter emitter = (Emitter) recycle(Emitter.class);
-				emitter.revive();
-				emitter.pos(27, 27);
-				emitter.burst(Speck.factory(Speck.STAR), 12);
+				showStarParticles();
 			}
 			
 			lastLvl = Dungeon.hero.lvl;
@@ -277,12 +274,19 @@ public class StatusPane extends Component {
 			avatar.copy(HeroSprite.avatar(Dungeon.hero.heroClass, tier));
 		}
 	}
-	
-	public void pickup(Item item, int cell) {
-		pickedUp.reset(item,
-				cell,
-				btnJournal.journalIcon.x + btnJournal.journalIcon.width() / 2f,
-				btnJournal.journalIcon.y + btnJournal.journalIcon.height() / 2f);
+
+	public void showStarParticles(){
+		Emitter emitter = (Emitter)recycle( Emitter.class );
+		emitter.revive();
+		emitter.pos( 27, 27 );
+		emitter.burst( Speck.factory( Speck.STAR ), 12 );
+	}
+
+	public void pickup( Item item, int cell) {
+		pickedUp.reset( item,
+			cell,
+			btnJournal.journalIcon.x + btnJournal.journalIcon.width()/2f,
+			btnJournal.journalIcon.y + btnJournal.journalIcon.height()/2f);
 	}
 
 	public void flashForPage( String page ){

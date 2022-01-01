@@ -51,6 +51,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.TippedDart;
@@ -202,6 +203,7 @@ public class ShopRoom extends SpecialRoom {
 				itemsToSpawn.add( TippedDart.randomTipped(2) );
 
 			itemsToSpawn.add( new MerchantsBeacon() );
+			itemsToSpawn.add( new Alchemize().quantity(Random.IntRange(3, 4)));
 
 
 			itemsToSpawn.add(ChooseBag(Dungeon.hero.belongings));

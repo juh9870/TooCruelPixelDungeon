@@ -34,6 +34,8 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
+import java.util.ArrayList;
+
 public class StoneOfFlock extends Runestone {
 	
 	{
@@ -47,20 +49,26 @@ public class StoneOfFlock extends Runestone {
 	protected void activate(int cell) {
 
 		PathFinder.buildDistanceMap( cell, BArray.not( Dungeon.level.solid, null ), 2 );
+		ArrayList<Integer> spawnPoints = new ArrayList<>();
 		for (int i = 0; i < PathFinder.distance.length; i++) {
 			if (PathFinder.distance[i] < Integer.MAX_VALUE) {
-				if (Dungeon.level.insideMap(i)
-						&& Actor.findChar(i) == null
-						&& !(Dungeon.level.pit[i])) {
-					Sheep sheep = new Sheep();
-					sheep.lifespan = Random.NormalIntRange( 6, 8 );
-					sheep.pos(i);
-					GameScene.add(sheep);
-					Dungeon.level.occupyCell(sheep);
-					CellEmitter.get(i).burst(Speck.factory(Speck.WOOL), 4);
-				}
+				spawnPoints.add(i);
 			}
 		}
+
+		for (int i : spawnPoints){
+			if (Dungeon.level.insideMap(i)
+					&& Actor.findChar(i) == null
+					&& !(Dungeon.level.pit[i])) {
+				Sheep sheep = new Sheep();
+				sheep.lifespan = Random.NormalIntRange( 6, 8 );
+				sheep.pos(i);
+				GameScene.add(sheep);
+				Dungeon.level.occupyCell(sheep);
+				CellEmitter.get(i).burst(Speck.factory(Speck.WOOL), 4);
+			}
+		}
+
 		CellEmitter.get(cell).burst(Speck.factory(Speck.WOOL), 4);
 		Sample.INSTANCE.play(Assets.Sounds.PUFF);
 		Sample.INSTANCE.play(Assets.Sounds.SHEEP);
