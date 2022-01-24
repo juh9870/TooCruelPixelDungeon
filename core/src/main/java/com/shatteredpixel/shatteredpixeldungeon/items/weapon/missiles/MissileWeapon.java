@@ -35,7 +35,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Projecting;
@@ -44,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Lazy;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -71,7 +71,8 @@ abstract public class MissileWeapon extends Weapon {
 	//used to reduce durability from the source weapon stack, rather than the one being thrown.
 	protected MissileWeapon parent;
 	
-	public int tier;
+	private int tier;
+	private final Lazy<Integer> tierBonus = tierBonus(0, this::tier);
 	
 	@Override
 	public int min() {
@@ -80,8 +81,8 @@ abstract public class MissileWeapon extends Weapon {
 	
 	@Override
 	public int min(int lvl) {
-		return  2 * tier +                      //base
-				(tier == 1 ? lvl : 2*lvl);      //level scaling
+		return  2 * buffedTier() +                      //base
+				(buffedTier() == 1 ? lvl : 2*lvl);      //level scaling
 	}
 	
 	@Override
@@ -91,12 +92,12 @@ abstract public class MissileWeapon extends Weapon {
 	
 	@Override
 	public int max(int lvl) {
-		return  5 * tier +                      //base
-				(tier == 1 ? 2*lvl : tier*lvl); //level scaling
+		return  5 * buffedTier() +                      //base
+				(buffedTier() == 1 ? 2*lvl : buffedTier() *lvl); //level scaling
 	}
 	
 	public int STRReq(int lvl){
-		return STRReq(tier, lvl) - 1; //1 less str than normal for their tier
+		return STRReq(strTier(), lvl) - 1; //1 less str than normal for their tier
 	}
 	
 	@Override
@@ -145,7 +146,6 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	public boolean collect(Bag container) {
 		if (container instanceof MagicalHolster) holster = true;
-		tier = fixTier(tier);
 		return super.collect(container);
 	}
 	
@@ -233,8 +233,6 @@ abstract public class MissileWeapon extends Weapon {
 				quantity++;
 			}
 		}
-
-		tier = fixTier(tier);
 		return this;
 	}
 	
@@ -343,7 +341,7 @@ abstract public class MissileWeapon extends Weapon {
 
 	@Override
 	public boolean isSimilar(Item item) {
-		return super.isSimilar(item) && ((MissileWeapon) item).tier == tier;
+		return super.isSimilar(item) && ((MissileWeapon) item).buffedTier() == buffedTier();
 	}
 
 	@Override
@@ -394,7 +392,7 @@ abstract public class MissileWeapon extends Weapon {
 		String info = desc();
 		
 		info += "\n\n" + Messages.get( MissileWeapon.class, "stats",
-				tier,
+				buffedTier(),
 				Math.round(augment.damageFactor(min())),
 				Math.round(augment.damageFactor(max())),
 				STRReq());
@@ -436,7 +434,7 @@ abstract public class MissileWeapon extends Weapon {
 	
 	@Override
 	public int value() {
-		return 6 * tier * quantity * (level() + 1);
+		return 6 * buffedTier() * quantity * (level() + 1);
 	}
 	
 	private static final String DURABILITY = "durability";
@@ -446,7 +444,7 @@ abstract public class MissileWeapon extends Weapon {
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(DURABILITY, durability);
-		bundle.put(TIER, tier);
+		bundle.put(TIER, tier());
 	}
 	
 	private static boolean bundleRestoring = false;
@@ -458,7 +456,33 @@ abstract public class MissileWeapon extends Weapon {
 		bundleRestoring = false;
 		durability = bundle.getFloat(DURABILITY);
 		if (bundle.contains(TIER))
-			tier = bundle.getInt(TIER);
+			tier(bundle.getInt(TIER));
+	}
+
+
+	@Override
+	public int buffedLvl() {
+		int lvl = super.buffedLvl();
+		if(Challenges.UNTIERED.enabled()) lvl-=tierBonus.get();
+		return lvl;
+	}
+
+	public int buffedTier() {
+		return tier() + tierBonus.get();
+	}
+
+	public int tier() {
+		return tier;
+	}
+
+	public int strTier() {
+		if (Challenges.UNTIERED.enabled())
+			return tier();
+		return buffedTier();
+	}
+
+	public void tier(int tier) {
+		this.tier = tier;
 	}
 
 	public static class PlaceHolder extends MissileWeapon {

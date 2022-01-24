@@ -10,7 +10,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.TippedDart;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -112,7 +111,7 @@ public class LiquidMetal extends Item {
 			if (item != null && item instanceof MissileWeapon) {
 				MissileWeapon m = (MissileWeapon)item;
 
-				int maxToUse = 5*(m.tier+1);
+				int maxToUse = 5*(m.buffedTier() +1);
 				maxToUse *= Math.pow(2, m.level());
 
 				float durabilityPerMetal = 100 / (float)maxToUse;
@@ -186,7 +185,7 @@ public class LiquidMetal extends Item {
 				float quantity = m.quantity()-1;
 				quantity += 0.25f + 0.0075f*m.durabilityLeft();
 				quantity *= Math.pow(2, Math.min(3, m.level()));
-				metalQuantity += Math.round((5*(m.tier+1))*quantity);
+				metalQuantity += Math.round((5*(m.buffedTier() +1))*quantity);
 			}
 
 			return new LiquidMetal().quantity(metalQuantity);

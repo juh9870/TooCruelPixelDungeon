@@ -31,14 +31,14 @@ public class Sai extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_STAB;
 		hitSoundPitch = 1.3f;
 
-		tier = 3;
+		tier(3);
 		DLY = 0.5f; //2x speed
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  Math.round(2.5f*(tier+1)) +     //10 base, down from 20
-				lvl*Math.round(0.5f*(tier+1));  //+2 per level, down from +4
+		return  Math.round(2.5f*(buffedTier() +1)) +     //10 base, down from 20
+				lvl*Math.round(0.5f*(buffedTier() +1));  //+2 per level, down from +4
 	}
 
 }

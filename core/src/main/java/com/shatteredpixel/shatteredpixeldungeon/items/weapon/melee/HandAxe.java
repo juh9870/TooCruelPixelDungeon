@@ -31,14 +31,14 @@ public class HandAxe extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_SLASH;
 		hitSoundPitch = 1f;
 
-		tier = 2;
+		tier(2);
 		ACC = 1.32f; //32% boost to accuracy
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  4*(tier+1) +    //12 base, down from 15
-				lvl*(tier+1);   //scaling unchanged
+		return  4*(buffedTier() +1) +    //12 base, down from 15
+				lvl*(buffedTier() +1);   //scaling unchanged
 	}
 
 }

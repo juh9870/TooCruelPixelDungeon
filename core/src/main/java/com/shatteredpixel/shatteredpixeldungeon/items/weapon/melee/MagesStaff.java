@@ -74,7 +74,7 @@ public class MagesStaff extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT;
 		hitSoundPitch = 1.1f;
 
-		tier = 1;
+		tier(1);
 
 		defaultAction = AC_ZAP;
 		usesTargeting = true;
@@ -89,8 +89,8 @@ public class MagesStaff extends MeleeWeapon {
 
 	@Override
 	public int max(int lvl) {
-		return  Math.round(3f*(tier+1)) +   //6 base damage, down from 10
-				lvl*(tier+1);               //scaling unaffected
+		return  Math.round(3f*(buffedTier() +1)) +   //6 base damage, down from 10
+				lvl*(buffedTier() +1);               //scaling unaffected
 	}
 
 	public MagesStaff(Wand wand){

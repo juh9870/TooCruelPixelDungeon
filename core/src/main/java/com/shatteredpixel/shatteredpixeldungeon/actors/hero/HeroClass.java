@@ -168,7 +168,9 @@ public enum HeroClass {
 //			Generator.randomWeapon(2).identify().collect();
 //			Generator.randomWeapon(3).identify().collect();
 //			Generator.randomWeapon(4).identify().collect();
-			new ForceCube().upgrade(5000).identify().collect();
+			new ForceCube().random().identify().collect();
+			new ForceCube().random().identify().collect();
+			new ForceCube().random().identify().collect();
 			new WandOfDisintegration().upgrade(5000000).identify().collect();
 			new Shortsword().enchant(new Elastic()).upgrade(0).identify().collect();
 //			new Blindweed.Seed().collect();

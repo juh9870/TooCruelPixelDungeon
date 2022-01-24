@@ -34,14 +34,14 @@ public class Bolas extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT;
 		hitSoundPitch = 1f;
 		
-		tier = 3;
+		tier(3);
 		baseUses = 5;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return  3 * tier +                      //9 base, down from 15
-				(tier == 1 ? 2*lvl : tier*lvl); //scaling unchanged
+		return  3 * buffedTier() +                      //9 base, down from 15
+				(buffedTier() == 1 ? 2*lvl : buffedTier() *lvl); //scaling unchanged
 	}
 	
 	@Override

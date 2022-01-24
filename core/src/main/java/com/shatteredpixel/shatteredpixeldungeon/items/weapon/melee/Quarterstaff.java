@@ -32,13 +32,13 @@ public class Quarterstaff extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_CRUSH;
 		hitSoundPitch = 1f;
 
-		tier = 2;
+		tier(2);
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  4*(tier+1) +    //12 base, down from 15
-				lvl*(tier+1);   //scaling unchanged
+		return  4*(buffedTier() +1) +    //12 base, down from 15
+				lvl*(buffedTier() +1);   //scaling unchanged
 	}
 
 	@Override

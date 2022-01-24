@@ -40,14 +40,14 @@ public class HeavyBoomerang extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT_CRUSH;
 		hitSoundPitch = 1f;
 		
-		tier = 4;
+		tier(4);
 		sticky = false;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return  4 * tier +                  //16 base, down from 20
-				(tier) * lvl;               //scaling unchanged
+		return  4 * buffedTier() +                  //16 base, down from 20
+				(buffedTier()) * lvl;               //scaling unchanged
 	}
 	
 	@Override

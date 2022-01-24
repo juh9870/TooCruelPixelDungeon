@@ -35,13 +35,13 @@ public class AssassinsBlade extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_STAB;
 		hitSoundPitch = 0.9f;
 
-		tier = 4;
+		tier(4);
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  4*(tier+1) +    //20 base, down from 25
-				lvl*(tier+1);   //scaling unchanged
+		return  4*(buffedTier() +1) +    //20 base, down from 25
+				lvl*(buffedTier() +1);   //scaling unchanged
 	}
 
 	@Override

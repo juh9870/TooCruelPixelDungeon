@@ -35,7 +35,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
@@ -51,7 +50,9 @@ import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
+import com.watabou.utils.Supplier;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,6 +83,8 @@ public class Item implements Bundlable {
 	public boolean dropsDownHeap = false;
 	
 	private int level = 0;
+
+	protected long randomSeed = Random.Long();
 
 	public boolean levelKnown = false;
 	
@@ -137,6 +140,19 @@ public class Item implements Bundlable {
 		Bundle b = new Bundle();
 		b.put("item", this);
 		return (Item) b.get("item");
+	}
+
+	public<T> T runWithRandom(int offset, Supplier<T> code){
+		Random.pushGenerator(randomSeed + offset);
+		T value = code.get();
+		Random.popGenerator();
+		return value;
+	}
+
+	public void runWithRandom(int offset, Callback code){
+		Random.pushGenerator(randomSeed + offset);
+		code.call();
+		Random.popGenerator();
 	}
 
 	public void doDrop( Hero hero ) {
@@ -534,7 +550,8 @@ public class Item implements Bundlable {
 	private static final String CURSED_KNOWN	= "cursedKnown";
 	private static final String QUICKSLOT		= "quickslotpos";
 	private static final String KEPT_LOST       = "kept_lost";
-	
+	private static final String RANDOM_SEED     = "random_seed";
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( QUANTITY, quantity );
@@ -546,6 +563,7 @@ public class Item implements Bundlable {
 			bundle.put( QUICKSLOT, Dungeon.quickslot.getSlot(this) );
 		}
 		bundle.put( KEPT_LOST, keptThoughLostInvent );
+		bundle.put( RANDOM_SEED, randomSeed );
 	}
 	
 	@Override
@@ -571,6 +589,7 @@ public class Item implements Bundlable {
 		}
 
 		keptThoughLostInvent = bundle.getBoolean( KEPT_LOST );
+		randomSeed = bundle.getLong( RANDOM_SEED );
 	}
 
 	public int targetingPos( Hero user, int dst ){

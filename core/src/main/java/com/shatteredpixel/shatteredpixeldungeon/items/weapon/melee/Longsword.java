@@ -31,7 +31,7 @@ public class Longsword extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_SLASH;
 		hitSoundPitch = 1f;
 
-		tier = 4;
+		tier(4);
 	}
 
 }

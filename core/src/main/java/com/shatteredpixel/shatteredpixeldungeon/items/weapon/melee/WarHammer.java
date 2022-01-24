@@ -31,14 +31,14 @@ public class WarHammer extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_CRUSH;
 		hitSoundPitch = 1f;
 
-		tier = 5;
+		tier(5);
 		ACC = 1.20f; //20% boost to accuracy
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  4*(tier+1) +    //24 base, down from 30
-				lvl*(tier+1);   //scaling unchanged
+		return  4*(buffedTier() +1) +    //24 base, down from 30
+				lvl*(buffedTier() +1);   //scaling unchanged
 	}
 
 }

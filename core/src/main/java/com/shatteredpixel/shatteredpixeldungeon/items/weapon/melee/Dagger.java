@@ -35,15 +35,15 @@ public class Dagger extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_STAB;
 		hitSoundPitch = 1.1f;
 
-		tier = 1;
+		tier(1);
 		
 		bones = false;
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  4*(tier+1) +    //8 base, down from 10
-				lvl*(tier+1);   //scaling unchanged
+		return  4*(buffedTier() +1) +    //8 base, down from 10
+				lvl*(buffedTier() +1);   //scaling unchanged
 	}
 	
 	@Override

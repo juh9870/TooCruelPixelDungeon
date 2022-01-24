@@ -33,7 +33,7 @@ public class ThrowingStone extends MissileWeapon {
 		
 		bones = false;
 		
-		tier = 1;
+		tier(1);
 		baseUses = 5;
 		sticky = false;
 	}

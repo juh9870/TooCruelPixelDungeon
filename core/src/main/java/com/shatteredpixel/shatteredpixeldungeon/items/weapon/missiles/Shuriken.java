@@ -33,14 +33,14 @@ public class Shuriken extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT_STAB;
 		hitSoundPitch = 1.2f;
 		
-		tier = 2;
+		tier(2);
 		baseUses = 5;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return  4 * tier +                      //8 base, down from 10
-				(tier == 1 ? 2*lvl : tier*lvl); //scaling unchanged
+		return  4 * buffedTier() +                      //8 base, down from 10
+				(buffedTier() == 1 ? 2*lvl : buffedTier() *lvl); //scaling unchanged
 	}
 	
 	@Override

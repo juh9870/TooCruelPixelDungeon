@@ -31,14 +31,14 @@ public class BattleAxe extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_SLASH;
 		hitSoundPitch = 0.9f;
 
-		tier = 4;
+		tier(4);
 		ACC = 1.24f; //24% boost to accuracy
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  4*(tier+1) +    //20 base, down from 25
-				lvl*(tier+1);   //scaling unchanged
+		return  4*(buffedTier() +1) +    //20 base, down from 25
+				lvl*(buffedTier() +1);   //scaling unchanged
 	}
 
 }

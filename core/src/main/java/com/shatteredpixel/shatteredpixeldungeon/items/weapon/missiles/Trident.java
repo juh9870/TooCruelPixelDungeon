@@ -31,7 +31,7 @@ public class Trident extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT_SLASH;
 		hitSoundPitch = 0.9f;
 		
-		tier = 5;
+		tier(5);
 	}
 	
 }

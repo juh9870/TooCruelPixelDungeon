@@ -163,15 +163,15 @@ public class ScrollOfTransmutation extends InventoryScroll {
 		Generator.Category c;
 		int targetTier = 0;
 		if (w instanceof MeleeWeapon) {
-			int tier = GameMath.gate(0,((MeleeWeapon)w).tier - 1,4);
-			targetTier = ((MeleeWeapon) w).tier;
+			int tier = GameMath.gate(0, ((MeleeWeapon) w).buffedTier() - 1,4);
+			targetTier = ((MeleeWeapon) w).buffedTier();
 			if(Challenges.RETIERED.enabled()){
 				tier = Random.Int(4);
 			}
 			c = Generator.wepTiers[tier];
 		} else {
-			int tier = GameMath.gate(0,((MissileWeapon)w).tier - 1,4);
-			targetTier = ((MissileWeapon) w).tier;
+			int tier = GameMath.gate(0, ((MissileWeapon) w).buffedTier() - 1,4);
+			targetTier = ((MissileWeapon) w).buffedTier();
 			if(Challenges.RETIERED.enabled()){
 				tier = Random.Int(4);
 			}
@@ -183,11 +183,10 @@ public class ScrollOfTransmutation extends InventoryScroll {
 		} while (Challenges.isItemBlocked(n) || n.getClass() == w.getClass());
 
 		if (n instanceof MeleeWeapon) {
-			((MeleeWeapon) n).tier = targetTier;
+			((MeleeWeapon) n).tier(targetTier);
 		} else {
-			((MissileWeapon) n).tier = targetTier;
+			((MissileWeapon) n).tier(targetTier);
 		}
-		n.tierFixed = true;
 		
 		int level = w.level();
 		if (w.curseInfusionBonus) level--;

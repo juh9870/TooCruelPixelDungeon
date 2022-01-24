@@ -26,33 +26,31 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.watabou.utils.Lazy;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-import java.util.ArrayList;
-
 public class MeleeWeapon extends Weapon {
 	
-	public int tier;
+	private int tier;
+	private final Lazy<Integer> tierBonus = tierBonus(0, this::tier);
 
 	@Override
 	public int min(int lvl) {
-		return  tier +  //base
+		return  buffedTier() +  //base
 				lvl;    //level scaling
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  5*(tier+1) +    //base
-				lvl*(tier+1);   //level scaling
+		return  5*(buffedTier() +1) +    //base
+				lvl*(buffedTier() +1);   //level scaling
 	}
 
 	public int STRReq(int lvl){
-		return STRReq(tier, lvl);
+		return STRReq(strTier(), lvl);
 	}
 	
 	@Override
@@ -75,14 +73,14 @@ public class MeleeWeapon extends Weapon {
 		String info = desc();
 
 		if (levelKnown) {
-			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
+			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", buffedTier(), augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
 			if (STRReq() > Dungeon.hero.STR()  && !Challenges.ANALGESIA.enabled()) {
 				info += " " + Messages.get(Weapon.class, "too_heavy");
 			} else if (Dungeon.hero.STR() > STRReq() && !Challenges.ANALGESIA.enabled()){
 				info += " " + Messages.get(Weapon.class, "excess_str", Dungeon.hero.STR() - STRReq());
 			}
 		} else {
-			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", tier, min(0), max(0), STRReq(0));
+			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", buffedTier(), min(0), max(0), STRReq(0));
 			if (STRReq(0) > Dungeon.hero.STR() && !Challenges.ANALGESIA.enabled()) {
 				info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
 			}
@@ -123,7 +121,7 @@ public class MeleeWeapon extends Weapon {
 	
 	@Override
 	public int value() {
-		int price = 20 * tier;
+		int price = 20 * buffedTier();
 		if (hasGoodEnchant()) {
 			price *= 1.5;
 		}
@@ -140,21 +138,8 @@ public class MeleeWeapon extends Weapon {
 	}
 
 	@Override
-	public Item random() {
-		super.random();
-		tier = fixTier(tier);
-		return this;
-	}
-
-	@Override
-	public boolean collect( Bag container ) {
-		tier = fixTier(tier);
-		return super.collect(container);
-	}
-
-	@Override
 	public boolean isSimilar(Item item) {
-		return super.isSimilar(item) && ((MeleeWeapon) item).tier == tier;
+		return super.isSimilar(item) && ((MeleeWeapon) item).buffedTier() == buffedTier();
 	}
 
 	private static final String TIER = "tier";
@@ -162,13 +147,38 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
-		bundle.put(TIER, tier);
+		bundle.put(TIER, tier());
 	}
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		if (bundle.contains(TIER))
-			tier = bundle.getInt(TIER);
+			tier(bundle.getInt(TIER));
+	}
+
+	@Override
+	public int buffedLvl() {
+		int lvl = super.buffedLvl();
+		if(Challenges.UNTIERED.enabled()) lvl-=tierBonus.get();
+		return lvl;
+	}
+
+	public int buffedTier() {
+		return tier() + tierBonus.get();
+	}
+
+	public int tier() {
+		return tier;
+	}
+
+	public int strTier() {
+		if (Challenges.UNTIERED.enabled())
+			return tier();
+		return buffedTier();
+	}
+
+	public void tier(int tier) {
+		this.tier = tier;
 	}
 }

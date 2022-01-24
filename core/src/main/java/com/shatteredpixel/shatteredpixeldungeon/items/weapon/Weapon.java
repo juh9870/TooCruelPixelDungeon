@@ -59,8 +59,10 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
+import com.watabou.utils.Lazy;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
+import com.watabou.utils.Supplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,8 +96,6 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 	
 	public Augment augment = Augment.NONE;
-
-	public boolean tierFixed = false;
 	
 	private static final int USES_TO_ID = 20;
 	private float usesLeftToID = USES_TO_ID;
@@ -134,32 +134,29 @@ abstract public class Weapon extends KindOfWeapon {
 		}
 	}
 
-	protected int fixTier(int tier){
-		if (tierFixed) return tier;
-		tierFixed = true;
-		if (Challenges.RETIERED.enabled()) {
-			if (tier != 1) {
-				switch (Random.Int(4)) {
-					case 0:
-						// 25% chance for tier + 1
-						tier++;
-						break;
-					case 1:
-						//25% chance for tier to remain the same
-						break;
-					default:
-						// 50% chance for tier - 1
-						tier--;
+	protected Lazy<Integer> tierBonus(int offset, Supplier<Integer> curTier) {
+		return Lazy.of(() -> runWithRandom(offset, () -> {
+			int bonus = 0;
+			if (Challenges.UNTIERED.enabled()) {
+				bonus = 1 - curTier.get();
+			} else if (Challenges.RETIERED.enabled()) {
+				if (curTier.get() != 1) {
+					switch (Random.Int(4)) {
+						case 0:
+							// 25% chance for tier + 1
+							bonus++;
+							break;
+						case 1:
+							//25% chance for tier to remain the same
+							break;
+						default:
+							// 50% chance for tier - 1
+							bonus--;
+					}
 				}
-				tier = GameMath.gate(1, tier, 5);
 			}
-		}
-		if (Challenges.UNTIERED.enabled()) {
-			int upgrade = tier - 1;
-			tier = 1;
-			upgrade(upgrade);
-		}
-		return tier;
+			return bonus;
+		}));
 	}
 	
 	private static final String USES_LEFT_TO_ID = "uses_left_to_id";
@@ -168,7 +165,6 @@ abstract public class Weapon extends KindOfWeapon {
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
 	private static final String AUGMENT	        = "augment";
-	private static final String TIER_FIXED	    = "tier_fixed";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -179,7 +175,6 @@ abstract public class Weapon extends KindOfWeapon {
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( MASTERY_POTION_BONUS, masteryPotionBonus );
 		bundle.put( AUGMENT, augment );
-		bundle.put( TIER_FIXED, tierFixed );
 	}
 	
 	@Override
@@ -189,7 +184,6 @@ abstract public class Weapon extends KindOfWeapon {
 		availableUsesToID = bundle.getFloat( AVAILABLE_USES );
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
-		tierFixed = bundle.getBoolean( TIER_FIXED );
 		masteryPotionBonus = bundle.getBoolean( MASTERY_POTION_BONUS );
 
 		augment = bundle.getEnum(AUGMENT, Augment.class);

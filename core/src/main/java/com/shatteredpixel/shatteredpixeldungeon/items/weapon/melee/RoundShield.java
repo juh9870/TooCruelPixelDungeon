@@ -33,13 +33,13 @@ public class RoundShield extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT;
 		hitSoundPitch = 1f;
 
-		tier = 3;
+		tier(3);
 	}
 
 	@Override
 	public int max(int lvl) {
-		return  Math.round(2.5f*(tier+1)) +     //10 base, down from 20
-				lvl*(tier-1);                   //+2 per level, down from +4
+		return  Math.round(2.5f*(buffedTier() +1)) +     //10 base, down from 20
+				lvl*(buffedTier() -1);                   //+2 per level, down from +4
 	}
 
 

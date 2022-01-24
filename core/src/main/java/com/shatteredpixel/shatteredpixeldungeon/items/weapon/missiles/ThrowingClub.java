@@ -31,14 +31,14 @@ public class ThrowingClub extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT_CRUSH;
 		hitSoundPitch = 1.1f;
 		
-		tier = 2;
+		tier(2);
 		baseUses = 15;
 		sticky = false;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return  4 * tier +                  //8 base, down from 10
-				(tier) * lvl;               //scaling unchanged
+		return  4 * buffedTier() +                  //8 base, down from 10
+				(buffedTier()) * lvl;               //scaling unchanged
 	}
 }

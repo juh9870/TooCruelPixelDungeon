@@ -55,7 +55,7 @@ import java.util.HashMap;
 public abstract class TippedDart extends Dart {
 	
 	{
-		tier = 2;
+		tier(2);
 
 		baseUses = 1f;
 	}

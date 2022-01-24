@@ -31,7 +31,7 @@ public class Sword extends MeleeWeapon {
 		hitSound = Assets.Sounds.HIT_SLASH;
 		hitSoundPitch = 1f;
 
-		tier = 3;
+		tier(3);
 	}
 
 }

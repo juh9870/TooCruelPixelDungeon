@@ -31,7 +31,7 @@ public class Javelin extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT_STAB;
 		hitSoundPitch = 1f;
 		
-		tier = 4;
+		tier(4);
 	}
 	
 }

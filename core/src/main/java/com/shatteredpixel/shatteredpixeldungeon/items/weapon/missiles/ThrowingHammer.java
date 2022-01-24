@@ -31,14 +31,14 @@ public class ThrowingHammer extends MissileWeapon {
 		hitSound = Assets.Sounds.HIT_CRUSH;
 		hitSoundPitch = 0.8f;
 		
-		tier = 5;
+		tier(5);
 		baseUses = 15;
 		sticky = false;
 	}
 	
 	@Override
 	public int max(int lvl) {
-		return  4 * tier +                  //20 base, down from 25
-				(tier) * lvl;               //scaling unchanged
+		return  4 * buffedTier() +                  //20 base, down from 25
+				(buffedTier()) * lvl;               //scaling unchanged
 	}
 }
