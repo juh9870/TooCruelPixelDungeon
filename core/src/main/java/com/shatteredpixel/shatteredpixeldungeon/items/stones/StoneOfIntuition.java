@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.stones;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Identification;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -111,7 +112,10 @@ public class StoneOfIntuition extends InventoryStone {
 
 						if (curUser.buff(IntuitionUseTracker.class) == null){
 							GLog.h( Messages.get(WndGuess.class, "preserved") );
-							new StoneOfIntuition().collect();
+							if (!Challenges.isItemAutouse(StoneOfIntuition.this))
+								new StoneOfIntuition().collect();
+							else
+								Dungeon.level.drop(new StoneOfIntuition(), curUser.pos());
 							Buff.affect(curUser, IntuitionUseTracker.class);
 						} else {
 							curUser.buff(IntuitionUseTracker.class).detach();
@@ -213,6 +217,8 @@ public class StoneOfIntuition extends InventoryStone {
 
 			if(!Challenges.isItemAutouse(StoneOfIntuition.this))
 				new StoneOfIntuition().collect();
+			else
+				StoneOfIntuition.this.confirmCancelation();
 		}
 	}
 }

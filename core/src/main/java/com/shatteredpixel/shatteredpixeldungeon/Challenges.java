@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
@@ -604,6 +605,7 @@ public enum Challenges implements Hero.Doom {
             if (item instanceof ScrollOfMysticalEnergy) return true;
             if (item instanceof ScrollOfDivination) return true;
             if (item instanceof ScrollOfForesight) return true;
+            if (item instanceof Stylus) return true;
             return item instanceof InventoryStone;
         }
         return false;

@@ -60,7 +60,7 @@ public abstract class InventoryStone extends Runestone {
 		}
 	}
 
-	private void confirmCancelation() {
+	protected void confirmCancelation() {
 		GameScene.show( new WndOptions( Messages.titleCase(name()), Messages.get(this, "warning"),
 				Messages.get(this, "yes"), Messages.get(this, "no") ) {
 			@Override
@@ -80,7 +80,7 @@ public abstract class InventoryStone extends Runestone {
 
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
-		if(super.doPickUp(hero)){
+		if(super.doPickUp(hero, pos)){
 			if(Challenges.isItemAutouse(this)){
 				Game.runOnRenderThread(() -> {
 					curUser = hero;

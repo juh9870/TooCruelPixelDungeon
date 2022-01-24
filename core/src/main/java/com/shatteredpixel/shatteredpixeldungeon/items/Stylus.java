@@ -65,7 +65,7 @@ public class Stylus extends Item {
 
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
-		if (super.doPickUp(hero)) {
+		if (super.doPickUp(hero, pos)) {
 			if (Challenges.THOUGHTLESS.enabled()) {
 				Game.runOnRenderThread(() -> {
 					execute(hero, AC_INSCRIBE);
@@ -122,9 +122,15 @@ public class Stylus extends Item {
 
 		if (!armor.isIdentified() ){
 			GLog.w( Messages.get(this, "identify"));
+			if(Challenges.isItemAutouse(Stylus.this)){
+				execute(curUser,AC_INSCRIBE);
+			}
 			return;
 		} else if ((armor.cursed || armor.hasCurseGlyph()) && !Challenges.CURSE_ENCHANT.enabled()){
 			GLog.w( Messages.get(this, "cursed"));
+			if(Challenges.isItemAutouse(Stylus.this)){
+				execute(curUser,AC_INSCRIBE);
+			}
 			return;
 		}
 		
@@ -170,7 +176,7 @@ public class Stylus extends Item {
 			if (item != null) {
 				Stylus.this.inscribe( (Armor)item );
 			} else {
-				if(Challenges.THOUGHTLESS.enabled()){
+				if(Challenges.isItemAutouse(Stylus.this)){
 					confirmCancelation();
 				}
 			}
