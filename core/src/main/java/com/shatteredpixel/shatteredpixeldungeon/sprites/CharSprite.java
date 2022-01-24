@@ -193,7 +193,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		ch.updateSpriteState();
 		if(hidden) alpha(0);
 	}
-	
+
 	//used for just updating a sprite based on a given character, not linking them or placing in the game
 	public void linkVisuals( Char ch ){
 		//do nothin by default
@@ -604,6 +604,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		super.update();
 
 		float alpha = invisible == null ? 1 : invisibilityAlpha();
+		if(hidden) alpha(0);
 		
 		if (flashTime > 0 && (flashTime -= Game.elapsed) <= 0) {
 			resetColor();

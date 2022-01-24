@@ -16,17 +16,18 @@ public class Agnosia extends Buff {
     public final Class<? extends CharSprite> spriteClass = Challenges.CRAB_RAVE.enabled() ? CrabSprite.class : RatSprite.class;
     public int color = 0;
 
-    private void reset(){
-        if(Challenges.CRAB_RAVE.enabled()){
+    private void reset() {
+        if (Challenges.CRAB_RAVE.enabled()) {
             image = Reflection.newInstance(spriteClass);
         } else {
             image = new Image(Reflection.newInstance(spriteClass));
         }
-        color = ColorMath.interpolate( Random.Float(),0xFF0000,0xFF7F00, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0x9400D3);
+        color = ColorMath.interpolate(Random.Float(), 0xFF0000, 0xFF7F00, 0xFFFF00, 0x00FF00, 0x00FFFF, 0x0000FF, 0x9400D3);
         image.color(color);
     }
 
     private void showImage() {
+        if (image != null) hideImage();
         reset();
         GameScene.effect(image);
         target.sprite.bindCustomVisual(Agnosia.class, image);
