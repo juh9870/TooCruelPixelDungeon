@@ -85,6 +85,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortswor
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ForceCube;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlockTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
@@ -168,16 +169,16 @@ public enum HeroClass {
 //			new Stylus().quantity(1).identify().collect();
 			new PotionOfMindVision().quantity(64).identify().collect();
 			new PotionOfInvisibility().quantity(64).identify().collect();
-//			new ReclaimTrap().setStoredTrap(GuardianTrap.class).collect();
+			new ReclaimTrap().setStoredTrap(FlockTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 //			Generator.randomWeapon(0).identify().collect();
 //			Generator.randomWeapon(1).identify().collect();
 //			Generator.randomWeapon(2).identify().collect();
 //			Generator.randomWeapon(3).identify().collect();
 //			Generator.randomWeapon(4).identify().collect();
-//			new ForceCube().random().identify().collect();
-//			new ForceCube().random().identify().collect();
-//			new ForceCube().random().identify().collect();
+			new ForceCube().random().identify().collect();
+			new ForceCube().random().identify().collect();
+			new ForceCube().random().identify().collect();
 //			new WandOfDisintegration().upgrade(5000000).identify().collect();
 			new Shortsword().enchant(new Elastic()).upgrade(0).identify().collect();
 //			new Blindweed.Seed().collect();

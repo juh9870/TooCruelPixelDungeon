@@ -103,7 +103,7 @@ public abstract class Trap implements Bundlable {
 
 	public boolean visible;
 	public boolean active = true;
-	public boolean disarmedByActivation = true;
+	public boolean disarmedByActivation = !Challenges.REPEATER.enabled();
 	
 	public boolean canBeHidden = true;
 	public boolean canBeSearched = true;
@@ -151,6 +151,18 @@ public abstract class Trap implements Bundlable {
 				disarm();
 				Dungeon.level.discover(pos);
 			}
+			if (Challenges.DUPLICATOR.enabled()) {
+				if (!getClass().isAnonymousClass()) {
+					int nTraps = 2;
+					for (int i = 0; i < nTraps; i++) {
+						int cell = Dungeon.level.randomTrapCell();
+						if (cell == -1) break;
+						Trap t = Dungeon.level.setTrap(clone(), cell);
+						Level.set(cell, Terrain.TRAP);
+						t.reveal();
+					}
+				}
+			}
 			if(!Challenges.CHAOTIC_CONSTRUCTION.enabled()){
 				activate();
 				return;
@@ -192,6 +204,16 @@ public abstract class Trap implements Bundlable {
 	}
 
 	public abstract void activate();
+
+	@Override
+	protected Trap clone() {
+		if(getClass().isAnonymousClass())return null;
+		Trap t = Reflection.newInstance(getClass());
+		Bundle b = new Bundle();
+		storeInBundle(b);
+		t.restoreFromBundle(b);
+		return t;
+	}
 
 	public void disarm(){
 		active = false;

@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -8,6 +9,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -98,6 +101,14 @@ public class GatewayTrap extends Trap {
 						telePositions.remove((Integer)newPos);
 						largeCharPositions.remove((Integer)newPos);
 
+						if (Challenges.DUPLICATOR.enabled()) {
+							Trap target = Dungeon.level.traps.get(newPos);
+							if (target instanceof GatewayTrap || Challenges.TRAP_TESTING_FACILITY.enabled()) {
+								if (Random.Float() < 0.1f) {
+									Level.set(newPos, Terrain.PIT);
+								}
+							}
+						}
 						if (ScrollOfTeleportation.teleportToLocation(ch, newPos)){
 							if (ch instanceof Mob && ((Mob) ch).state == ((Mob) ch).HUNTING) {
 								((Mob) ch).state = ((Mob) ch).WANDERING;
@@ -116,6 +127,13 @@ public class GatewayTrap extends Trap {
 			}
 		}
 
+	}
+
+	@Override
+	protected GatewayTrap clone() {
+		GatewayTrap t = (GatewayTrap) super.clone();
+		t.telePos = -1;
+		return t;
 	}
 
 	private static final String TELE_POS = "tele_pos";

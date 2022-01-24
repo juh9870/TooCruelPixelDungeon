@@ -934,6 +934,14 @@ public abstract class Level implements Bundlable {
 		return cell;
 	}
 
+	public int randomTrapCell() {
+		int cell;
+		do {
+			cell = Random.Int( length() );
+		} while (solid[cell] || pit[cell] || cell == entrance || cell == exit || hasCustomTerrain(cell));
+		return cell;
+	}
+
 	public void addItemToSpawn( Item item ) {
 		if (item != null) {
 			itemsToSpawn.add( item );
