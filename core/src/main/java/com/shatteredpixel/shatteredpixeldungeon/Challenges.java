@@ -160,6 +160,7 @@ public enum Challenges implements Hero.Doom {
     INVASION(27, 2, 2f),
     EVOLUTION(29, 2, 5f, MUTAGEN),
     RESURRECTION(93, 2, 4f, REPOPULATION),
+    FRACTAL_HIVE(94, 2, 3f, REPOPULATION),
     REBIRTH(30, 2, 4f),
     CHAOTIC_CONSTRUCTION(64, 2, 2f, INDIFFERENT_DESIGN),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES) {
@@ -210,7 +211,7 @@ public enum Challenges implements Hero.Doom {
 
     //region T3
     HEART_OF_HIVE(24, 3, 7f, INSOMNIA),
-    ASCENSION(31, 3, 7f, REPOPULATION, REBIRTH),
+    ASCENSION(31, 3, 7f, RESURRECTION, REBIRTH),
     DUNGEON_OF_CHAMPIONS(34, 3, 7f, ELITE_CHAMPIONS),
     RACING_THE_DEATH(35, 3, 7f),
     MANIFESTING_MYRIADS(36, 3, 7f, LEGION, HORDE) {
@@ -231,7 +232,6 @@ public enum Challenges implements Hero.Doom {
     },
     HUMPPA(74, 3, 7f, DANCE_FLOOR),
     HAIL_TO_THE_KING(85, 3, 7f, KING_OF_A_HILL),
-    FRACTAL_HIVE(94, 3, 7f, REPOPULATION),
     //endregion
 
 
