@@ -86,8 +86,10 @@ public class Toolbar extends Component {
 		add(btnWait = new Tool(24, 0, 20, 26) {
 			@Override
 			protected void onClick() {
+				if (!GameScene.cancel()) {
 				examining = false;
 				Dungeon.hero.rest(false);
+			}
 			}
 			
 			@Override
@@ -96,8 +98,10 @@ public class Toolbar extends Component {
 			}
 			
 			protected boolean onLongClick() {
+				if (!GameScene.cancel()) {
 				examining = false;
 				Dungeon.hero.rest(true);
+				}
 				return true;
 			}
 		});
