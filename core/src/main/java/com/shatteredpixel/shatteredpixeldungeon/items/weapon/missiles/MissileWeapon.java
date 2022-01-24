@@ -374,7 +374,7 @@ abstract public class MissileWeapon extends Weapon {
 		
 		return split;
 	}
-	
+
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
 		parent = null;

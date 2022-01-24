@@ -528,6 +528,7 @@ public class Item implements Bundlable {
 		
 		item.quantity = 0;
 		item.level = level;
+		item.randomSeed = randomSeed;
 		return item;
 	}
 	
