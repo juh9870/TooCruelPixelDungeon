@@ -25,9 +25,11 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.levelobjects.DelayedMobSpawn;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.DummyItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -38,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRo
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MimicSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -115,7 +118,7 @@ public class HolderMimic extends Mimic {
         }
         if (Actor.findChar(pos) == null) {
             level.addMob(mob);
-            if(ShatteredPixelDungeon.scene() instanceof GameScene){
+            if (ShatteredPixelDungeon.scene() instanceof GameScene) {
                 GameScene.add(mob);
             }
         } else {
@@ -124,6 +127,7 @@ public class HolderMimic extends Mimic {
     }
 
     public static void dropHeap(Heap heap, int pos) {
+        if (heap == null) return;
         if (Dungeon.level.heaps.containsKey(pos) ||
                 Dungeon.level.pit[pos] ||
                 !(Dungeon.level.passable[pos] || Dungeon.level.avoid[pos])
@@ -131,10 +135,14 @@ public class HolderMimic extends Mimic {
             PathFinder.buildDistanceMap(pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
             HashSet<Integer> validCells = new HashSet<>();
             int minDistance = Integer.MAX_VALUE;
+            Mob m;
             for (int i = 0; i < PathFinder.distance.length; i++) {
                 int dist = PathFinder.distance[i];
                 if (dist <= minDistance) {
                     if (Dungeon.level.heaps.containsKey(i) || !(Dungeon.level.passable[i] || Dungeon.level.avoid[i]) || Dungeon.level.pit[i]) {
+                        continue;
+                    }
+                    if ((m = Dungeon.level.findMob(i)) != null && (m.properties().contains(Property.IMMOVABLE) || m instanceof NPC)) {
                         continue;
                     }
                     if (dist == minDistance) {
@@ -160,5 +168,22 @@ public class HolderMimic extends Mimic {
         heap.copyTo(h);
         h.sprite.link();
         h.sprite.drop();
+    }
+
+    public static void clearForSaleHeaps(Currency currency) {
+        for (Mob mob : Dungeon.level.mobs()) {
+            if (mob instanceof HolderMimic &&
+                    ((HolderMimic) mob).heap.type == Heap.Type.FOR_SALE &&
+                    ((HolderMimic) mob).heap.currency == currency) {
+                ((HolderMimic) mob).heap = null;
+                ((HolderMimic) mob).wakeup();
+            }
+            if (mob instanceof HolderStatue &&
+                    ((HolderStatue) mob).heap.type == Heap.Type.FOR_SALE &&
+                    ((HolderStatue) mob).heap.currency == currency) {
+                ((HolderStatue) mob).heap = null;
+                ((HolderStatue) mob).wakeup();
+            }
+        }
     }
 }

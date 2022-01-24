@@ -180,6 +180,13 @@ public class Mimic extends Mob {
 		super.damage(dmg, src);
 	}
 
+	public void wakeup(){
+		if (state == PASSIVE){
+			alignment = Alignment.ENEMY;
+			stopHiding();
+		}
+	}
+
 	public void stopHiding(){
 		state = HUNTING;
 		if (sprite != null) sprite.idle();

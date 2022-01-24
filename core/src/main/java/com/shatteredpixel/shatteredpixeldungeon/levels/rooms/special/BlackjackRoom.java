@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.HolderMimic;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.HolderStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blackjackkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
@@ -168,6 +169,8 @@ public class BlackjackRoom extends SpecialRoom {
                 }
             }
         }
+        if (Challenges.MIMICS.enabled())
+            HolderMimic.clearForSaleHeaps(Currency.TOKENS);
         GameScene.updateMap();
     }
 
