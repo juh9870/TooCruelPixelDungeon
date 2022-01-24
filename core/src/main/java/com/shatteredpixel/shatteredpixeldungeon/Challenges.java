@@ -76,6 +76,17 @@ public enum Challenges implements Hero.Doom {
     },
     SWARM_INTELLIGENCE(4, 1, 1.5f),
     DARKNESS(5, 1, 1),
+    /**
+     * 90 - {@link com.shatteredpixel.shatteredpixeldungeon.Challenges#BIOCHIP}
+     */
+    CHAMPION_ENEMIES(19, 1, 2f, reqs(90)) {
+
+        @Override
+        public String description() {
+            return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.NormalChampionsDeck().values);
+        }
+    },
+    STRONGER_BOSSES(56, 1, 2f),
     FORBIDDEN_RUNES(6, 1, 1.5f),
     AMNESIA(7, 1, 1.5f),
     CURSED(8, 1, 2),
@@ -107,6 +118,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     REPOPULATION(15, 1, 2f),
+    FRACTAL_HIVE(94, 1, 2f, REPOPULATION),
     EXTREME_CAUTION(16, 1, 1) {
         @Override
         protected float _nTrapsMult() {
@@ -121,16 +133,6 @@ public enum Challenges implements Hero.Doom {
         @Override
         protected float _nMobsMult() {
             return 1.5f;
-        }
-    },
-    /**
-     * 90 - {@link com.shatteredpixel.shatteredpixeldungeon.Challenges#BIOCHIP}
-     */
-    CHAMPION_ENEMIES(19, 1, 2f, reqs(90)) {
-
-        @Override
-        public String description() {
-            return super.description() + "\n" + ChampionEnemy.description(new ChampionEnemy.NormalChampionsDeck().values);
         }
     },
     NO_PERKS(20, 1, 3f),
@@ -161,7 +163,6 @@ public enum Challenges implements Hero.Doom {
     INVASION(27, 2, 2f),
     EVOLUTION(29, 2, 5f, MUTAGEN),
     RESURRECTION(93, 2, 4f, REPOPULATION),
-    FRACTAL_HIVE(94, 2, 3f, REPOPULATION),
     REBIRTH(30, 2, 4f),
     CHAOTIC_CONSTRUCTION(64, 2, 2f, INDIFFERENT_DESIGN),
     ELITE_CHAMPIONS(33, 2, 4f, CHAMPION_ENEMIES) {
@@ -185,7 +186,6 @@ public enum Challenges implements Hero.Doom {
     THOUGHTLESS(48, 2, 2.5f),
     EXHIBITIONISM(49, 2, 2f, REPOPULATION),
     MARATHON(50, 2, 3f),
-    STRONGER_BOSSES(56, 2, 3f),
     ROOM_LOCK(59, 2, 2f),
     SCORCHED_EARTH(61, 2, 2f),
     UNTIERED(67, 2, 2f, RETIERED),
