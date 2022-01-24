@@ -1514,15 +1514,15 @@ public class Hero extends Char {
 
 			float speed = speed();
 
-			if(Challenges.SLIDING.enabled() && Dungeon.level.water[step]){
+			if(Challenges.SLIDING.enabled() && Dungeon.level.water[step] && !flying){
 				int move = step - pos();
 				do {
 					int nextStep = step + move;
 					if(!Dungeon.level.water[step]) break;
 					if (Actor.findChar(nextStep) != null) break;
 					if(!Dungeon.level.passable[nextStep] && !Dungeon.level.avoid[nextStep]) break;
-					if(Random.Float()<.20f){
-						Level.set(step, Terrain.EMPTY);
+					if (Random.Float() < .20f) {
+						Level.set(nextStep, Terrain.EMPTY);
 					}
 					sprite.parent.add(new Delayer((Dungeon.level.distance(pos(),nextStep)-1) * CharSprite.getMoveInterval()){
 						{

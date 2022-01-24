@@ -279,7 +279,7 @@ public enum Challenges implements Hero.Doom {
         }
     },
     MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
-    SLIDING(91, 5, -7f),
+    SLIDING(91, 5, 0),
     BIG_LEVELS(13, 5, 0) {
         @Override
         protected float _nMobsMult() {
@@ -670,53 +670,6 @@ public enum Challenges implements Hero.Doom {
             return Icons.CHALLENGE_HELL2;
         } else {
             return Icons.CHALLENGE_HELL3;
-        }
-    }
-
-    public static Item extraLoot() {
-        int max = 0;
-        int min = 0;
-        switch (Dungeon.depth) {
-            case 1:
-            case 2:
-                max = 10;
-                break;
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                max = 8;
-                min = 1;
-                break;
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                max = 6;
-                min = 2;
-                break;
-            default:
-                max = 5;
-                min = 3;
-
-        }
-        switch (Random.Int(max) + min) {
-            case 0:
-            case 1:
-            case 2:
-                return Generator.random();
-            case 3:
-                return RingOfWealth.genConsumableDrop(0);
-            case 4:
-                return RingOfWealth.genConsumableDrop(5);
-            case 5:
-                return RingOfWealth.genConsumableDrop(10);
-            case 6:
-                return RingOfWealth.genConsumableDrop(15);
-            case 7:
-                return RingOfWealth.genConsumableDrop(20);
-            default:
-                return null;
         }
     }
 
