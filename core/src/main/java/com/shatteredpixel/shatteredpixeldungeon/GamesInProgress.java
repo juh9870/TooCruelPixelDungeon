@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
@@ -46,7 +47,7 @@ public class GamesInProgress {
 	
 	private static final String GAME_FOLDER = "game%d";
 	private static final String GAME_FILE	= "game.dat";
-	private static final String DEPTH_FILE	= "depth%d.dat";
+	private static final String DEPTH_FILE	= "depth%s.dat";
 	
 	public static boolean gameExists( int slot ){
 		return FileUtils.dirExists(Messages.format(GAME_FOLDER, slot));
@@ -60,7 +61,7 @@ public class GamesInProgress {
 		return gameFolder(slot) + "/" + GAME_FILE;
 	}
 	
-	public static String depthFile( int slot, int depth ) {
+	public static String depthFile( int slot, String depth ) {
 		return gameFolder(slot) + "/" + Messages.format(DEPTH_FILE, depth);
 	}
 	
@@ -120,7 +121,7 @@ public class GamesInProgress {
 		}
 	}
 
-	public static void set(int slot, int depth, Modifiers modifiers, Hero hero) {
+	public static void set(int slot, Marker depth, Modifiers modifiers, Hero hero) {
 		Info info = new Info();
 		info.slot = slot;
 		
@@ -155,7 +156,7 @@ public class GamesInProgress {
 	public static class Info {
 		public int slot;
 		
-		public int depth;
+		public Marker depth;
 		public int version;
 		public Modifiers modifiers;
 		
@@ -171,14 +172,14 @@ public class GamesInProgress {
 		public int armorTier;
 		
 		public int goldCollected;
-		public int maxDepth;
+		public Marker maxDepth;
 	}
 	
 	public static final Comparator<GamesInProgress.Info> scoreComparator = new Comparator<GamesInProgress.Info>() {
 		@Override
 		public int compare(GamesInProgress.Info lhs, GamesInProgress.Info rhs ) {
-			int lScore = (lhs.level * lhs.maxDepth * 100) + lhs.goldCollected;
-			int rScore = (rhs.level * rhs.maxDepth * 100) + rhs.goldCollected;
+			int lScore = (lhs.level * lhs.maxDepth.scalingDepth() * 100) + lhs.goldCollected;
+			int rScore = (rhs.level * rhs.maxDepth.scalingDepth() * 100) + rhs.goldCollected;
 			return (int)Math.signum( rScore - lScore );
 		}
 	};

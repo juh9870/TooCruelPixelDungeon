@@ -122,7 +122,7 @@ public class WndGameInProgress extends Window {
 		
 		pos += GAP;
 		statSlot( Messages.get(this, "gold"), info.goldCollected, amnesia );
-		statSlot( Messages.get(this, "depth"), info.maxDepth, amnesia );
+		statSlot( Messages.get(this, "depth"), info.maxDepth.displayName(), amnesia );
 		
 		pos += GAP;
 		

@@ -41,7 +41,7 @@ public class HolderStatue extends Statue {
         super();
 
         //reduced HP
-        HP = HT = 10 + Dungeon.depth * 3;
+        HP = HT = 10 + Dungeon.scalingFactor() * 3;
     }
 
     public Heap heap;

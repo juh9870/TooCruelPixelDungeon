@@ -94,11 +94,12 @@ public class HighGrass {
 					targetFloor -= berries.count();
 					targetFloor += (targetFloor >= 5) ? 3 : 2;
 
+					// Juh9870: Using scaling factor here cuz that makes sence with talent's nature
 					//If we're behind: 1/10, if we're on page: 1/30, if we're ahead: 1/90
 					boolean droppingBerry = false;
-					if (Dungeon.depth > targetFloor)        droppingBerry = Random.Int(10) == 0;
-					else if (Dungeon.depth == targetFloor)  droppingBerry = Random.Int(30) == 0;
-					else if (Dungeon.depth < targetFloor)   droppingBerry = Random.Int(90) == 0;
+					if (Dungeon.scalingFactor() > targetFloor)        droppingBerry = Random.Int(10) == 0;
+					else if (Dungeon.scalingFactor() == targetFloor)  droppingBerry = Random.Int(30) == 0;
+					else if (Dungeon.scalingFactor() < targetFloor)   droppingBerry = Random.Int(90) == 0;
 
 					if (droppingBerry){
 						berries.countDown(1);

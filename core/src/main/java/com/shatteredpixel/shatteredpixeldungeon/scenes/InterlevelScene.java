@@ -27,7 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -36,6 +35,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
@@ -77,7 +78,7 @@ public class InterlevelScene extends PixelScene {
 	}
 	public static Mode mode;
 	
-	public static int returnDepth;
+	public static Marker returnDepth;
 	public static int returnPos;
 	
 	public static boolean noStory = false;
@@ -97,7 +98,7 @@ public class InterlevelScene extends PixelScene {
 	private static Exception error = null;
 	private float waitingTime;
 
-	public static int lastRegion = -1;
+	public static Chapter lastRegion = Chapter.EMPTY;
 
 	{
 		inGameScene = true;
@@ -108,12 +109,12 @@ public class InterlevelScene extends PixelScene {
 		super.create();
 		
 		String loadingAsset;
-		int loadingDepth;
+		Marker loadingDepth;
 		final float scrollSpeed;
 		fadeTime = NORM_FADE;
 		switch (mode){
 			default:
-				loadingDepth = Dungeon.depth;
+				loadingDepth = Dungeon.depth();
 				scrollSpeed = 0;
 				break;
 			case CONTINUE:
@@ -122,47 +123,46 @@ public class InterlevelScene extends PixelScene {
 				break;
 			case DESCEND:
 				if (Dungeon.hero == null){
-					loadingDepth = 1;
+					loadingDepth = null;
 					fadeTime = SLOW_FADE;
 				} else {
-					loadingDepth = Dungeon.depth+1;
-					if (!(Statistics.deepestFloor < loadingDepth)) {
+					loadingDepth = Dungeon.levelPack.nextLevel();
+					if (Dungeon.levelPack.visitedNextLevel(loadingDepth)) {
 						fadeTime = FAST_FADE;
-					} else if (loadingDepth == 6 || loadingDepth == 11
-							|| loadingDepth == 16 || loadingDepth == 21) {
+					} else if (Dungeon.depth().chapterProgression() == 1) {
 						fadeTime = SLOW_FADE;
 					}
 				}
 				scrollSpeed = 5;
 				break;
 			case FALL:
-				loadingDepth = Dungeon.depth+1;
+				loadingDepth = Dungeon.levelPack.curPitFallTarget();
 				scrollSpeed = 50;
 				break;
 			case ASCEND:
 				fadeTime = FAST_FADE;
-				loadingDepth = Dungeon.depth-1;
+				loadingDepth = Dungeon.levelPack.prevLevel();
 				scrollSpeed = -5;
 				break;
 			case RETURN:
 				loadingDepth = returnDepth;
-				scrollSpeed = returnDepth > Dungeon.depth ? 15 : -15;
+				scrollSpeed = returnDepth.compareTo(Dungeon.depth()) > 0 ? 15 : -15;
 				break;
 		}
 
 		//flush the texture cache whenever moving between regions, helps reduce memory load
-		int region = (int)Math.ceil(loadingDepth / 5f);
+		Chapter region = loadingDepth == null ? Chapter.SEWERS : loadingDepth.chapter();
 		if (region != lastRegion){
 			TextureCache.clear();
 			lastRegion = region;
 		}
 
-		if      (lastRegion == 1)    loadingAsset = Assets.Interfaces.LOADING_SEWERS;
-		else if (lastRegion == 2)    loadingAsset = Assets.Interfaces.LOADING_PRISON;
-		else if (lastRegion == 3)    loadingAsset = Assets.Interfaces.LOADING_CAVES;
-		else if (lastRegion == 4)    loadingAsset = Assets.Interfaces.LOADING_CITY;
-		else if (lastRegion == 5)    loadingAsset = Assets.Interfaces.LOADING_HALLS;
-		else                         loadingAsset = Assets.Interfaces.SHADOW;
+		if      (lastRegion == Chapter.SEWERS)	loadingAsset = Assets.Interfaces.LOADING_SEWERS;
+		else if (lastRegion == Chapter.PRISON)  loadingAsset = Assets.Interfaces.LOADING_PRISON;
+		else if (lastRegion == Chapter.CAVES)   loadingAsset = Assets.Interfaces.LOADING_CAVES;
+		else if (lastRegion == Chapter.CITY)    loadingAsset = Assets.Interfaces.LOADING_CITY;
+		else if (lastRegion == Chapter.HALLS)   loadingAsset = Assets.Interfaces.LOADING_HALLS;
+		else                         			loadingAsset = Assets.Interfaces.SHADOW;
 		
 		//slow down transition when displaying an install prompt
 		if (Updates.isInstallable()){
@@ -340,8 +340,17 @@ public class InterlevelScene extends PixelScene {
 				else if (error.getMessage() != null &&
 						error.getMessage().equals("old save")) errorMsg = Messages.get(this, "io_error");
 
-				else throw new RuntimeException("fatal error occured while moving between floors. " +
-							"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth, error);
+				else {
+					String depth;
+					if (Dungeon.levelPack != null && Dungeon.levelPack.curLvl != null) {
+						depth = Dungeon.levelPack.curLvl.debugInfo();
+					} else {
+						depth = "{Missing}";
+					}
+					throw new RuntimeException("fatal error occured while moving between floors. " +
+								"Seed:" + Dungeon.seed + " depth:" + depth, error);
+				}
+				ShatteredPixelDungeon.reportException(error);
 
 				add( new WndError( errorMsg ) {
 					public void onBackPressed() {
@@ -360,7 +369,7 @@ public class InterlevelScene extends PixelScene {
 				}
 				ShatteredPixelDungeon.reportException(
 						new RuntimeException("waited more than 10 seconds on levelgen. " +
-								"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " trace:" +
+								"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth().debugInfo() + " trace:" +
 								s)
 				);
 			}
@@ -384,10 +393,10 @@ public class InterlevelScene extends PixelScene {
 		}
 
 		Level level;
-		if (Dungeon.depth >= Statistics.deepestFloor) {
+		if (!Dungeon.levelPack.visitedNextLevel(Dungeon.depth())) {
 			level = Dungeon.newLevel();
 		} else {
-			Dungeon.depth++;
+			Dungeon.levelPack.curLvl = Dungeon.levelPack.nextLevel();
 			level = Dungeon.loadLevel( GamesInProgress.curSlot );
 		}
 		Dungeon.switchLevel( level, level.entrance );
@@ -402,14 +411,14 @@ public class InterlevelScene extends PixelScene {
 		
 		
 		int exterminators = Challenges.checkExterminators();
-		if (exterminators>0){
-			Dungeon.depth--;
+		if (exterminators > 0) {
+			Dungeon.levelPack.curLvl = Dungeon.levelPack.prevLevel();
 		}
 		Level level;
-		if (Dungeon.depth >= Statistics.deepestFloor) {
+		if (!Dungeon.levelPack.visitedNextLevel(Dungeon.depth())) {
 			level = Dungeon.newLevel();
 		} else {
-			Dungeon.depth++;
+			Dungeon.levelPack.curLvl = Dungeon.levelPack.nextLevel();
 			level = Dungeon.loadLevel( GamesInProgress.curSlot );
 		}
 		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
@@ -420,7 +429,7 @@ public class InterlevelScene extends PixelScene {
 		Mob.holdAllies( Dungeon.level );
 
 		Dungeon.saveAll();
-		Dungeon.depth--;
+		Dungeon.levelPack.curLvl = Dungeon.levelPack.prevLevel();
 		Level level = Dungeon.loadLevel( GamesInProgress.curSlot );
 		Dungeon.switchLevel( level, level.exit );
 	}
@@ -430,7 +439,7 @@ public class InterlevelScene extends PixelScene {
 		Mob.holdAllies( Dungeon.level );
 
 		Dungeon.saveAll();
-		Dungeon.depth = returnDepth;
+		Dungeon.levelPack.curLvl = returnDepth;
 		Level level = Dungeon.loadLevel( GamesInProgress.curSlot );
 		Dungeon.switchLevel( level, returnPos );
 	}
@@ -442,8 +451,8 @@ public class InterlevelScene extends PixelScene {
 		GameLog.wipe();
 
 		Dungeon.loadGame( GamesInProgress.curSlot );
-		if (Dungeon.depth == -1) {
-			Dungeon.depth = Statistics.deepestFloor;
+		if (Dungeon.levelPack.curLvl == null) {
+			Dungeon.levelPack.curLvl = Dungeon.levelPack.firstLevel();
 			Dungeon.switchLevel( Dungeon.loadLevel( GamesInProgress.curSlot ), -1 );
 		} else {
 			Level level = Dungeon.loadLevel( GamesInProgress.curSlot );
@@ -460,7 +469,7 @@ public class InterlevelScene extends PixelScene {
 			ArrayList<Item> preservedItems = Dungeon.level.getItemsToPreserveFromSealedResurrect();
 
 			Dungeon.hero.resurrect();
-			Dungeon.depth--;
+			Dungeon.levelPack.curLvl = Dungeon.levelPack.prevLevel();
 			level = Dungeon.newLevel();
 			Dungeon.hero.pos(level.randomRespawnCell(Dungeon.hero));
 
@@ -500,9 +509,9 @@ public class InterlevelScene extends PixelScene {
 		
 		Mob.holdAllies( Dungeon.level );
 
-		SpecialRoom.resetPitRoom(Dungeon.depth+1);
+		SpecialRoom.resetPitRoom(Dungeon.levelPack.nextLevel());
 
-		Dungeon.depth--;
+		Dungeon.levelPack.curLvl = Dungeon.levelPack.prevLevel();
 		Level level = Dungeon.newLevel();
 		Dungeon.switchLevel( level, level.entrance );
 	}

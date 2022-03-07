@@ -194,7 +194,7 @@ public class Imp extends NPC {
 		}
 		
 		public static void spawn( CityLevel level ) {
-			if (!spawned && Dungeon.depth > 16 && Random.Int( 20 - Dungeon.depth ) == 0) {
+			if (!spawned && Dungeon.depth().chapterProgression() > 1 && Random.Int( 5 - Dungeon.depth().chapterProgression() ) == 0) {
 				
 				Imp npc = new Imp();
 				do {
@@ -212,14 +212,14 @@ public class Imp extends NPC {
 				spawned = true;
 
 				//always assigns monks on floor 17, golems on floor 19, and 50/50 between either on 18
-				switch (Dungeon.depth){
-					case 17: default:
+				switch (Dungeon.depth().chapterProgression()){
+					case 2: default:
 						alternative = true;
 						break;
-					case 18:
+					case 3:
 						alternative = Random.Int(2) == 0;
 						break;
-					case 19:
+					case 4:
 						alternative = false;
 						break;
 				}
@@ -234,7 +234,7 @@ public class Imp extends NPC {
 		}
 		
 		public static void process( Mob mob ) {
-			if (spawned && given && !completed && Dungeon.depth != 20) {
+			if (spawned && given && !completed && !Dungeon.bossLevel()) {
 				if ((alternative && mob instanceof Monk) ||
 					(!alternative && mob instanceof Golem)) {
 					

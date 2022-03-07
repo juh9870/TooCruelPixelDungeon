@@ -424,7 +424,7 @@ public class SpiritBow extends Weapon {
 					int shotPos = throwPos(user, dst);
 					if (Actor.findChar(shotPos) == null) {
 						RevealedArea a = Buff.affect(user, RevealedArea.class, 5 * user.pointsInTalent(Talent.SEER_SHOT));
-						a.depth = Dungeon.depth;
+						a.depth = Dungeon.depth();
 						a.pos = shotPos;
 						Buff.affect(user, Talent.SeerShotCooldown.class, 20f);
 					}

@@ -30,6 +30,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -60,11 +62,11 @@ public class Noisemaker extends Bomb {
 		}
 
 		int cell;
-		int floor;
+		Marker floor;
 		int left;
 		
 		public void set(int cell){
-			floor = Dungeon.depth;
+			floor = Dungeon.depth();
 			this.cell = cell;
 			left = 6;
 		}
@@ -72,7 +74,7 @@ public class Noisemaker extends Bomb {
 		@Override
 		public boolean act() {
 
-			if (Dungeon.depth != floor){
+			if (!Dungeon.depth().equals(floor)){
 				spend(TICK);
 				return true;
 			}
@@ -123,7 +125,8 @@ public class Noisemaker extends Bomb {
 		}
 
 		private static final String CELL = "cell";
-		private static final String FLOOR = "floor";
+		private static final String FLOOR_OLD = "floor";
+		private static final String FLOOR = "marker";
 		private static final String LEFT = "left";
 
 		@Override
@@ -138,7 +141,7 @@ public class Noisemaker extends Bomb {
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
 			cell = bundle.getInt(CELL);
-			floor = bundle.getInt(FLOOR);
+			floor = DefaultLevelPack.getOrLoadFromDepth(bundle, FLOOR_OLD, FLOOR);
 			left = bundle.getInt(LEFT);
 		}
 	}

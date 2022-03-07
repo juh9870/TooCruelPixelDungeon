@@ -80,6 +80,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoome
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.HighGrass;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.BlackjackRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -253,35 +254,36 @@ public abstract class Level implements Bundlable {
 				}
 			}
 
-			if (Challenges.SECOND_TRY.enabled()) {
-				int d = Dungeon.depth - 1 - Dungeon.depth / 5;
-				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + d / 3;
-
-				int offset = d - d / 3 * 3;
-				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.randomWeapon());
-				}
-				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.randomArmor());
-				}
-				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.random(Generator.Category.RING));
-				}
-				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.random(Generator.Category.WAND));
-				}
-				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.randomMissile());
-				}
-				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-				if (seed % 3 == offset) {
-					addItemToSpawn(Generator.random());
-				}
-			}
+			//TODO juh9870: rework second try
+//			if (Challenges.SECOND_TRY.enabled()) {
+//				int d = Dungeon.depth - 1 - Dungeon.depth / 5;
+//				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + d / 3;
+//
+//				int offset = d - d / 3 * 3;
+//				if (seed % 3 == offset) {
+//					addItemToSpawn(Generator.randomWeapon());
+//				}
+//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+//				if (seed % 3 == offset) {
+//					addItemToSpawn(Generator.randomArmor());
+//				}
+//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+//				if (seed % 3 == offset) {
+//					addItemToSpawn(Generator.random(Generator.Category.RING));
+//				}
+//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+//				if (seed % 3 == offset) {
+//					addItemToSpawn(Generator.random(Generator.Category.WAND));
+//				}
+//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+//				if (seed % 3 == offset) {
+//					addItemToSpawn(Generator.randomMissile());
+//				}
+//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+//				if (seed % 3 == offset) {
+//					addItemToSpawn(Generator.random());
+//				}
+//			}
 
 			if (Dungeon.posNeeded()) {
 				addItemToSpawn( new PotionOfStrength() );
@@ -297,16 +299,17 @@ public abstract class Level implements Bundlable {
 			}
 			//one scroll of transmutation is guaranteed to spawn somewhere on chapter 2-4
 			int enchChapter = (int)((Dungeon.seed / 10) % 3) + 1;
-			if ( Dungeon.depth / 5 == enchChapter &&
-					Dungeon.seed % 4 + 1 == Dungeon.depth % 5){
+			if ( Dungeon.depth().chapterId() == enchChapter &&
+					Dungeon.seed % 4 + 1 == Dungeon.depth().chapterProgression() ){
 				addItemToSpawn( new StoneOfEnchantment() );
 			}
 
-			if ( Dungeon.depth == ((Dungeon.seed % 3) + 1)){
-				addItemToSpawn( new StoneOfIntuition() );
+			if (Dungeon.depth().chapter() == Chapter.SEWERS &&
+					Dungeon.depth().chapterProgression() == ((Dungeon.seed % 3) + 1)) {
+				addItemToSpawn(new StoneOfIntuition());
 			}
 
-			if (Dungeon.depth > 1) {
+			if (!Dungeon.depth().firstLevel()) {
 				//50% chance of getting a level feeling
 				//~7.15% chance for each feeling
 				switch (Random.Int( 14 )) {
@@ -565,7 +568,7 @@ public abstract class Level implements Bundlable {
 
 	public Mob createMob() {
 		if (mobsToSpawn == null || mobsToSpawn.isEmpty()) {
-			mobsToSpawn = Bestiary.getMobRotation(Dungeon.depth);
+			mobsToSpawn = Bestiary.getMobRotation(Dungeon.depth());
 		}
 
 		Mob m = Reflection.newInstance(mobsToSpawn.remove(0));
@@ -709,7 +712,7 @@ public abstract class Level implements Bundlable {
 			}
 		}
 		for (HeavyBoomerang.CircleBack b : Dungeon.hero.buffs(HeavyBoomerang.CircleBack.class)){
-			if (b.activeDepth() == Dungeon.depth) items.add(b.cancel());
+			if (b.activeDepth().equals(Dungeon.depth())) items.add(b.cancel());
 		}
 		return items;
 	}
@@ -1565,7 +1568,7 @@ public abstract class Level implements Bundlable {
 			}
 
 			for (TalismanOfForesight.HeapAwareness h : c.buffs(TalismanOfForesight.HeapAwareness.class)){
-				if (Dungeon.depth != h.depth) continue;
+				if (!Dungeon.depth().equals(h.depth)) continue;
 				for (int i : PathFinder.NEIGHBOURS9) heroMindFov[h.pos+i] = true;
 			}
 
@@ -1582,7 +1585,7 @@ public abstract class Level implements Bundlable {
 			}
 
 			for (RevealedArea a : c.buffs(RevealedArea.class)){
-				if (Dungeon.depth != a.depth) continue;
+				if (!Dungeon.depth().equals(a.depth)) continue;
 				for (int i : PathFinder.NEIGHBOURS9) heroMindFov[a.pos+i] = true;
 			}
 

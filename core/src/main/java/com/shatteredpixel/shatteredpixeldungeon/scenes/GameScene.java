@@ -60,6 +60,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -198,22 +199,22 @@ public class GameScene extends PixelScene {
 		}
 		float pyroChance = Dungeon.modifiers.difficulty().ordinal() >= Difficulty.VERY_HARD_3.ordinal() ? 1 : Float.MIN_VALUE;
 
-		if (Dungeon.depth <= 5) {
+		if (Dungeon.depth().chapter() == Chapter.SEWERS) {
 			Music.INSTANCE.playTracks(
 					new String[]{Assets.Music.SEWERS_1, Assets.Music.SEWERS_2, Assets.Music.SEWERS_2, Assets.Music.PYROJOKE},
 					new float[]{1, 1, 0.5f, pyroChance},
 					false);
-		} else if (Dungeon.depth <= 10) {
+		} else if (Dungeon.depth().chapter() == Chapter.PRISON) {
 			Music.INSTANCE.playTracks(
 					new String[]{Assets.Music.PRISON_1, Assets.Music.PRISON_2, Assets.Music.PRISON_2, Assets.Music.PYROJOKE},
 					new float[]{1, 1, 0.5f, pyroChance},
 					false);
-		} else if (Dungeon.depth <= 15) {
+		} else if (Dungeon.depth().chapter() == Chapter.CAVES) {
 			Music.INSTANCE.playTracks(
 					new String[]{Assets.Music.CAVES_1, Assets.Music.CAVES_2, Assets.Music.CAVES_2, Assets.Music.PYROJOKE},
 					new float[]{1, 1, 0.5f, pyroChance},
 					false);
-		} else if (Dungeon.depth <= 20) {
+		} else if (Dungeon.depth().chapter() == Chapter.CITY) {
 			Music.INSTANCE.playTracks(
 					new String[]{Assets.Music.CITY_1, Assets.Music.CITY_2, Assets.Music.CITY_2, Assets.Music.PYROJOKE},
 					new float[]{1, 1, 0.5f, pyroChance},
@@ -430,20 +431,20 @@ public class GameScene extends PixelScene {
 			break;
 		case DESCEND:
 			case FALL:
-			switch (Dungeon.depth) {
-			case 1:
+			switch (Dungeon.depth().chapter()) {
+			case SEWERS:
 				WndStory.showChapter( WndStory.ID_SEWERS );
 				break;
-			case 6:
+			case PRISON:
 				WndStory.showChapter( WndStory.ID_PRISON );
 				break;
-			case 11:
+			case CAVES:
 				WndStory.showChapter( WndStory.ID_CAVES );
 				break;
-			case 16:
+			case CITY:
 				WndStory.showChapter( WndStory.ID_CITY );
 				break;
-			case 21:
+			case HALLS:
 				WndStory.showChapter( WndStory.ID_HALLS );
 				break;
 			}
@@ -453,7 +454,7 @@ public class GameScene extends PixelScene {
 			break;
 		}
 
-		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon.depth );
+		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon.depth() );
 		if (dropped != null) {
 			for (Item item : dropped) {
 				int pos = Dungeon.level.randomRespawnCell( null );
@@ -468,10 +469,10 @@ public class GameScene extends PixelScene {
 					Dungeon.level.drop( item, pos );
 				}
 			}
-			Dungeon.droppedItems.remove( Dungeon.depth );
+			Dungeon.droppedItems.remove( Dungeon.depth() );
 		}
 		
-		ArrayList<Item> ported = Dungeon.portedItems.get( Dungeon.depth );
+		ArrayList<Item> ported = Dungeon.portedItems.get( Dungeon.depth() );
 		if (ported != null){
 			//TODO currently items are only ported to boss rooms, so this works well
 			//might want to have a 'near entrance' function if items can be ported elsewhere
@@ -487,7 +488,7 @@ public class GameScene extends PixelScene {
 			}
 			Dungeon.level.heaps.get(pos).type = Heap.Type.CHEST;
 			Dungeon.level.heaps.get(pos).sprite.link(); //sprite reset to show chest
-			Dungeon.portedItems.remove( Dungeon.depth );
+			Dungeon.portedItems.remove( Dungeon.depth() );
 		}
 
 		Dungeon.hero.next();
@@ -505,10 +506,10 @@ public class GameScene extends PixelScene {
 		Camera.main.panTo(hero.center(), 2.5f);
 
 		if (InterlevelScene.mode != InterlevelScene.Mode.NONE) {
-			if (Dungeon.depth == Statistics.deepestFloor
+			if (Dungeon.depth() == Statistics.deepestFloor
 					&& (InterlevelScene.mode == InterlevelScene.Mode.DESCEND || InterlevelScene.mode == InterlevelScene.Mode.FALL)) {
 				if (!Challenges.AMNESIA.enabled())
-					GLog.h(Messages.get(this, "descend"), Dungeon.depth);
+					GLog.h(Messages.get(this, "descend"), Dungeon.displayDepth());
 				Sample.INSTANCE.play(Assets.Sounds.DESCEND);
 				
 				for (Char ch : Actor.chars()){
@@ -518,7 +519,9 @@ public class GameScene extends PixelScene {
 				}
 
 				int spawnersAbove = Statistics.spawnersAlive;
-				if (spawnersAbove > 0 && Dungeon.depth <= 25) {
+				if (spawnersAbove > 0 &&
+						Dungeon.depth().chapter() == Chapter.HALLS &&
+						Dungeon.depth().chapterProgression() <= 5) {
 					for (Mob m : Dungeon.level.mobs()) {
 						if (m instanceof DemonSpawner && ((DemonSpawner) m).spawnRecorded) {
 							spawnersAbove--;
@@ -537,9 +540,9 @@ public class GameScene extends PixelScene {
 			} else if (InterlevelScene.mode == InterlevelScene.Mode.RESET) {
 				GLog.h(Messages.get(this, "warp"));
 			} else if (InterlevelScene.mode == InterlevelScene.Mode.RESURRECT) {
-				GLog.h(Messages.get(this, "resurrect"), Dungeon.depth);
+				GLog.h(Messages.get(this, "resurrect"), Dungeon.displayDepth());
 			} else if (!Challenges.AMNESIA.enabled()) {
-				GLog.h(Messages.get(this, "return"), Dungeon.depth);
+				GLog.h(Messages.get(this, "return"), Dungeon.displayDepth());
 			}
 
 			if (Dungeon.hero.hasTalent(Talent.ROGUES_FORESIGHT)
@@ -749,7 +752,7 @@ public class GameScene extends PixelScene {
 				}
 				Class<? extends Actor> cl = Actor.getCurrentActorClass();
 				String msg = "Actor thread dump was requested. " +
-						"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth + " challenges:" + Challenges.displayString(Dungeon.modifiers.challenges) +
+						"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth().debugInfo() + " challenges:" + Challenges.displayString(Dungeon.modifiers.challenges) +
 						" current actor:" + cl + "\ntrace:" + s;
 				Gdx.app.getClipboard().setContents(msg);
 				ShatteredPixelDungeon.reportException(

@@ -184,7 +184,7 @@ public class WndHero extends WndTabbed {
 			} else {
 				
 				statSlot(Messages.get(this, "gold"), Statistics.goldCollected);
-				statSlot(Messages.get(this, "depth"), Statistics.deepestFloor);
+				statSlot(Messages.get(this, "depth"), Statistics.deepestFloor.displayName());
 			}
 			
 			pos += GAP;

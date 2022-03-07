@@ -585,17 +585,17 @@ public class Badges {
 	
 	public static void validateBossSlain() {
 		Badge badge = null;
-		switch (Dungeon.depth) {
-			case 5:
+		switch (Dungeon.depth().chapter()) {
+			case SEWERS:
 				badge = Badge.BOSS_SLAIN_1;
 				break;
-			case 10:
+			case PRISON:
 				badge = Badge.BOSS_SLAIN_2;
 				break;
-			case 15:
+			case CAVES:
 				badge = Badge.BOSS_SLAIN_3;
 				break;
-			case 20:
+			case CITY:
 				badge = Badge.BOSS_SLAIN_4;
 				break;
 		}

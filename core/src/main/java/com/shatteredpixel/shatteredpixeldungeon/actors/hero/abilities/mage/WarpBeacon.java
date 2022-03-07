@@ -37,6 +37,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -91,14 +93,14 @@ public class WarpBeacon extends ArmorAbility {
 				protected void onSelect(int index) {
 					if (index == 0){
 
-						if (tracker.depth != Dungeon.depth && !hero.hasTalent(Talent.LONGRANGE_WARP)){
+						if (!tracker.depth.equals(Dungeon.depth()) && !hero.hasTalent(Talent.LONGRANGE_WARP)){
 							GLog.w( Messages.get(WarpBeacon.class, "depths") );
 							return;
 						}
 
 						float chargeNeeded = chargeUse(hero);
 
-						if (tracker.depth != Dungeon.depth){
+						if (!tracker.depth.equals(Dungeon.depth())){
 							chargeNeeded *= 1.833f - 0.333f*Dungeon.hero.pointsInTalent(Talent.LONGRANGE_WARP);
 						}
 
@@ -110,7 +112,7 @@ public class WarpBeacon extends ArmorAbility {
 						armor.charge -= chargeNeeded;
 						armor.updateQuickslot();
 
-						if (tracker.depth == Dungeon.depth){
+						if (tracker.depth.equals(Dungeon.depth())){
 							Char existing = Actor.findChar(tracker.pos);
 
 							ScrollOfTeleportation.appear(hero, tracker.pos);
@@ -201,7 +203,7 @@ public class WarpBeacon extends ArmorAbility {
 
 			WarpBeaconTracker tracker = new WarpBeaconTracker();
 			tracker.pos = target;
-			tracker.depth = Dungeon.depth;
+			tracker.depth = Dungeon.depth();
 			tracker.attachTo(hero);
 
 			hero.sprite.operate(target);
@@ -218,13 +220,13 @@ public class WarpBeacon extends ArmorAbility {
 		}
 
 		int pos;
-		int depth;
+		Marker depth;
 
 		Emitter e;
 
 		@Override
 		public void fx(boolean on) {
-			if (on && depth == Dungeon.depth) {
+			if (on && depth.equals(Dungeon.depth())) {
 				e = CellEmitter.center(pos);
 				e.pour(MagicMissile.WardParticle.UP, 0.05f);
 			}
@@ -232,20 +234,21 @@ public class WarpBeacon extends ArmorAbility {
 		}
 
 		public static final String POS = "pos";
-		public static final String DEPTH = "depth";
+		public static final String DEPTH_OLD = "depth";
+		public static final String MARKER = "marker";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
 			bundle.put(POS, pos);
-			bundle.put(DEPTH, depth);
+			bundle.put(MARKER, depth);
 		}
 
 		@Override
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
 			pos = bundle.getInt(POS);
-			depth = bundle.getInt(DEPTH);
+			depth = DefaultLevelPack.getOrLoadFromDepth(bundle, DEPTH_OLD, MARKER);
 		}
 	}
 

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret;
 
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -63,11 +64,11 @@ public abstract class SecretRoom extends SpecialRoom {
 		
 	}
 	
-	public static int secretsForFloor(int depth){
-		if (depth == 1) return 0;
+	public static int secretsForFloor(Marker depth){
+		if (depth.firstLevel()) return 0;
 		
-		int region = depth/5;
-		int floor = depth%5;
+		int region = depth.chapterId();
+		int floor = depth.chapterProgression()-1;
 		
 		int floorsLeft = 5 - floor;
 		

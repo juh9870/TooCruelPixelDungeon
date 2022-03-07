@@ -21,12 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.watabou.utils.Bundle;
 
 public class Statistics {
 	
 	public static int goldCollected;
-	public static int deepestFloor;
+	public static Marker deepestFloor;
 	public static int enemiesSlain;
 	public static int foodEaten;
 	public static int itemsCrafted;
@@ -46,12 +48,12 @@ public class Statistics {
 	public static boolean completedWithNoKilling = false;
 	
 	public static boolean amuletObtained = false;
-	public static int amuletHighestFloor;
+	public static Marker amuletHighestFloor;
 	
 	public static void reset() {
 		
 		goldCollected	= 0;
-		deepestFloor	= 0;
+		deepestFloor	= Dungeon.levelPack.prevLevel(Dungeon.levelPack.firstLevel());
 		enemiesSlain	= 0;
 		foodEaten		= 0;
 		itemsCrafted    = 0;
@@ -69,12 +71,13 @@ public class Statistics {
 		qualifiedForNoKilling = false;
 		
 		amuletObtained = false;
-		amuletHighestFloor = 26;
+		amuletHighestFloor = Dungeon.levelPack.amuletFloor();
 		
 	}
 	
 	private static final String GOLD		= "score";
-	private static final String DEEPEST		= "maxDepth";
+	private static final String DEEPEST		= "maxDepthMarker";
+	private static final String OLD_DEEPEST	= "maxDepth";
 	private static final String SLAIN		= "enemiesSlain";
 	private static final String FOOD		= "foodEaten";
 	private static final String ALCHEMY		= "potionsCooked";
@@ -92,8 +95,9 @@ public class Statistics {
 	private static final String NO_KILLING_QUALIFIED	= "qualifiedForNoKilling";
 	
 	private static final String AMULET		= "amuletObtained";
-	private static final String AMULETFLOOR	= "amuletFloor";
-	
+	private static final String AMULETFLOOR	= "amuletFloorMarker";
+	private static final String OLD_AMULETFLOOR	= "amuletFloor";
+
 	public static void storeInBundle( Bundle bundle ) {
 		bundle.put( GOLD,		goldCollected );
 		bundle.put( DEEPEST,	deepestFloor );
@@ -119,7 +123,7 @@ public class Statistics {
 	
 	public static void restoreFromBundle( Bundle bundle ) {
 		goldCollected	= bundle.getInt( GOLD );
-		deepestFloor	= bundle.getInt( DEEPEST );
+		deepestFloor	= DefaultLevelPack.getOrLoadFromDepth(bundle, OLD_DEEPEST, DEEPEST);
 		enemiesSlain	= bundle.getInt( SLAIN );
 		foodEaten		= bundle.getInt( FOOD );
 		itemsCrafted    = bundle.getInt( ALCHEMY );
@@ -137,12 +141,12 @@ public class Statistics {
 		qualifiedForNoKilling = bundle.getBoolean( NO_KILLING_QUALIFIED );
 		
 		amuletObtained	= bundle.getBoolean( AMULET );
-		amuletHighestFloor = bundle.getInt( AMULETFLOOR );
+		amuletHighestFloor = DefaultLevelPack.getOrLoadFromDepth(bundle, OLD_AMULETFLOOR, AMULETFLOOR);
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ){
 		info.goldCollected  = bundle.getInt( GOLD );
-		info.maxDepth       = bundle.getInt( DEEPEST );
+		info.maxDepth       = DefaultLevelPack.getOrLoadFromDepth(bundle, OLD_DEEPEST, DEEPEST);
 	}
 
 }

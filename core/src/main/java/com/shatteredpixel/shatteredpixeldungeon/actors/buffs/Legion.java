@@ -66,7 +66,7 @@ public class Legion extends Buff {
 
     private int waveSize() {
         int wantSpawn = (int) (Dungeon.level.nMobs() * (Statistics.amuletObtained ? 2 : 1.5));
-        if (wantSpawn == 0 && Dungeon.depth == 1) wantSpawn = (int) (15 * Challenges.nMobsMultiplier());
+        if (wantSpawn == 0 && Dungeon.depth().firstLevel()) wantSpawn = (int) (15 * Challenges.nMobsMultiplier());
         return wantSpawn;
     }
 

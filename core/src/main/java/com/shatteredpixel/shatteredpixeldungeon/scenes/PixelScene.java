@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -77,8 +78,8 @@ public class PixelScene extends Scene {
 		GameScene.scene = null;
 
 		//flush the texture cache whenever moving from ingame to menu, helps reduce memory load
-		if (!inGameScene && InterlevelScene.lastRegion != -1){
-			InterlevelScene.lastRegion = -1;
+		if (!inGameScene && InterlevelScene.lastRegion != Chapter.EMPTY){
+			InterlevelScene.lastRegion = Chapter.EMPTY;
 			TextureCache.clear();
 		}
 

@@ -75,7 +75,7 @@ public enum Rankings {
 		rec.heroClass	= Dungeon.hero.heroClass;
 		rec.armorTier	= Dungeon.hero.tier();
 		rec.herolevel	= Dungeon.hero.lvl;
-		rec.depth		= Dungeon.depth;
+		rec.depth		= Dungeon.displayDepth();
 		rec.score		= score( win );
 		rec.version 	= Dungeon.versions.toArray(new String[0]);
 
@@ -124,7 +124,7 @@ public enum Rankings {
         return dynasties.get(id);
     }
 	private int score( boolean win ) {
-        return (int) ((Statistics.goldCollected + Dungeon.hero.lvl * (win ? 26 : Dungeon.depth) * 100) * (win ? 2 : 1)
+        return (int) ((Statistics.goldCollected + Dungeon.hero.lvl * (win ? 26 : Dungeon.scalingFactor()) * 100) * (win ? 2 : 1)
                 * Difficulty.calculateDifficulty(Dungeon.modifiers));
 	}
 
@@ -316,7 +316,8 @@ public enum Rankings {
 		private static final String CLASS	= "class";
 		private static final String TIER	= "tier";
 		private static final String LEVEL	= "level";
-		private static final String DEPTH	= "depth";
+		private static final String DEPTH_OLD = "depth";
+		private static final String DEPTH	= "sdepth";
 		private static final String DATA	= "gameData";
 		private static final String ID      = "gameID";
 		private static final String VERSION = "version";
@@ -327,7 +328,7 @@ public enum Rankings {
 		public HeroClass heroClass;
 		public int armorTier;
 		public int herolevel;
-		public int depth;
+		public String depth;
 		public String[] version;
 
 		public Bundle gameData;
@@ -371,7 +372,11 @@ public enum Rankings {
 
 			if (gameID == null) gameID = UUID.randomUUID().toString();
 
-			depth = bundle.getInt( DEPTH );
+			if(bundle.contains(DEPTH_OLD)){
+				depth = Integer.toString(bundle.getInt(DEPTH_OLD));
+			} else {
+				depth = bundle.getString(DEPTH);
+			}
 			herolevel = bundle.getInt( LEVEL );
 
 			if (bundle.contains( VERSION ))

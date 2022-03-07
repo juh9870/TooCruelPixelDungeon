@@ -30,6 +30,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPassage;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -49,13 +51,13 @@ public class BeaconOfReturning extends Spell {
 		image = ItemSpriteSheet.RETURN_BEACON;
 	}
 	
-	public int returnDepth	= -1;
+	public Marker returnDepth = null;
 	public int returnPos;
 	
 	@Override
 	protected void onCast(final Hero hero) {
 		
-		if (returnDepth == -1){
+		if (returnDepth == null){
 			setBeacon(hero);
 		} else {
 			GameScene.show(new WndOptions(new ItemSprite(this),
@@ -81,18 +83,18 @@ public class BeaconOfReturning extends Spell {
 	
 	@Override
 	protected void onThrow(int cell) {
-		returnDepth = -1;
+		returnDepth = null;
 		super.onThrow(cell);
 	}
 	
 	@Override
 	public void doDrop(Hero hero) {
-		returnDepth = -1;
+		returnDepth = null;
 		super.doDrop(hero);
 	}
 	
 	private void setBeacon(Hero hero ){
-		returnDepth = Dungeon.depth;
+		returnDepth = Dungeon.depth();
 		returnPos = hero.pos();
 		
 		hero.spend( 1f );
@@ -119,7 +121,7 @@ public class BeaconOfReturning extends Spell {
 			}
 		}
 		
-		if (returnDepth == Dungeon.depth) {
+		if (returnDepth.equals(Dungeon.depth())) {
 			if (!Dungeon.level.passable[returnPos] && !Dungeon.level.avoid[returnPos]){
 				returnPos = Dungeon.level.entrance;
 			}
@@ -161,7 +163,7 @@ public class BeaconOfReturning extends Spell {
 	@Override
 	public String desc() {
 		String desc = super.desc();
-		if (returnDepth != -1){
+		if (returnDepth != null){
 			desc += "\n\n" + Messages.get(this, "desc_set", returnDepth);
 		}
 		return desc;
@@ -171,17 +173,18 @@ public class BeaconOfReturning extends Spell {
 	
 	@Override
 	public ItemSprite.Glowing glowing() {
-		return returnDepth != -1 ? WHITE : null;
+		return returnDepth != null ? WHITE : null;
 	}
 	
-	private static final String DEPTH	= "depth";
+	private static final String DEPTH_OLD	= "depth";
+	private static final String DEPTH	= "marker";
 	private static final String POS		= "pos";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( DEPTH, returnDepth );
-		if (returnDepth != -1) {
+		if (returnDepth != null) {
 			bundle.put( POS, returnPos );
 		}
 	}
@@ -189,7 +192,7 @@ public class BeaconOfReturning extends Spell {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
-		returnDepth	= bundle.getInt( DEPTH );
+		returnDepth = DefaultLevelPack.getOrLoadFromDepth(bundle, DEPTH_OLD, DEPTH);
 		returnPos	= bundle.getInt( POS );
 	}
 	

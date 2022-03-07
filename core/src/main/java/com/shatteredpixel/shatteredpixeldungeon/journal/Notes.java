@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.journal;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -34,9 +36,9 @@ public class Notes {
 	
 	public static abstract class Record implements Comparable<Record>, Bundlable {
 		
-		protected int depth;
+		protected Marker depth;
 
-		public int depth(){
+		public Marker depth(){
 			return depth;
 		}
 		
@@ -47,14 +49,15 @@ public class Notes {
 		
 		@Override
 		public int compareTo( Record another ) {
-			return another.depth() - depth();
+			return another.depth().compareTo(depth());
 		}
 		
-		private static final String DEPTH	= "depth";
-		
+		private static final String DEPTH_OLD	= "depth";
+		private static final String DEPTH		= "ndepth";
+
 		@Override
 		public void restoreFromBundle( Bundle bundle ) {
-			depth = bundle.getInt( DEPTH );
+			depth = DefaultLevelPack.getOrLoadFromDepth(bundle, DEPTH_OLD, DEPTH);
 		}
 
 		@Override
@@ -88,7 +91,7 @@ public class Notes {
 		
 		public LandmarkRecord() {}
 		
-		public LandmarkRecord(Landmark landmark, int depth ) {
+		public LandmarkRecord(Landmark landmark, Marker depth ) {
 			this.landmark = landmark;
 			this.depth = depth;
 		}
@@ -131,7 +134,7 @@ public class Notes {
 		}
 		
 		@Override
-		public int depth() {
+		public Marker depth() {
 			return key.depth;
 		}
 		
@@ -193,9 +196,9 @@ public class Notes {
 	}
 	
 	public static boolean add( Landmark landmark ) {
-		LandmarkRecord l = new LandmarkRecord( landmark, Dungeon.depth );
+		LandmarkRecord l = new LandmarkRecord( landmark, Dungeon.depth() );
 		if (!records.contains(l)) {
-			boolean result = records.add(new LandmarkRecord(landmark, Dungeon.depth));
+			boolean result = records.add(new LandmarkRecord(landmark, Dungeon.depth()));
 			Collections.sort(records);
 			return result;
 		}
@@ -203,7 +206,7 @@ public class Notes {
 	}
 	
 	public static boolean remove( Landmark landmark ) {
-		return records.remove( new LandmarkRecord(landmark, Dungeon.depth) );
+		return records.remove( new LandmarkRecord(landmark, Dungeon.depth()) );
 	}
 	
 	public static boolean add( Key key ){

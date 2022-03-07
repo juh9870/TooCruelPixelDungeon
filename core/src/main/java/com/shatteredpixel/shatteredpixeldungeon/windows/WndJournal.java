@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -153,21 +154,21 @@ public class WndJournal extends WndTabbed {
 		protected Image icon;
 		
 		public ListItem( Image icon, String text ) {
-			this(icon, text, -1);
+			this(icon, text, null);
 		}
 		
-		public ListItem( Image icon, String text, int d ) {
+		public ListItem( Image icon, String text, Marker d ) {
 			super();
 			
 			this.icon.copy(icon);
 			
 			label.text( text );
 			
-			if (d >= 0) {
-				depth.text(Integer.toString(d));
+			if (d != null) {
+				depth.text(d.displayName());
 				depth.measure();
 				
-				if (d == Dungeon.depth) {
+				if (d == Dungeon.depth()) {
 					label.hardlight(TITLE_COLOR);
 					depth.hardlight(TITLE_COLOR);
 				}

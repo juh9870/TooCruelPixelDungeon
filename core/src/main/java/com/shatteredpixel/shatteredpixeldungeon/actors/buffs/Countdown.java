@@ -28,7 +28,7 @@ public class Countdown extends FlavourBuff implements Hero.Doom {
 
     @Override
     public boolean act() {
-        target.damage((Statistics.deepestFloor / 5 + 1) * 3, this);
+        target.damage((Statistics.deepestFloor.scalingDepth() / 5 + 1) * 3, this);
 //        BuffIndicator.refreshHero();
         spend(TICK);
         return true;

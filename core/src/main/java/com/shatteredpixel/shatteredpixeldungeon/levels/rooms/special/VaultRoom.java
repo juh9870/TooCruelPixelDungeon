@@ -89,10 +89,10 @@ public class VaultRoom extends SpecialRoom {
 		Painter.set(level, i1Pos, Terrain.PEDESTAL);
 		Painter.set(level, i2Pos, Terrain.PEDESTAL);
 		
-		level.addItemToSpawn(new CrystalKey(Dungeon.depth));
+		level.addItemToSpawn(new CrystalKey(Dungeon.depth()));
 		
 		entrance().set(Door.Type.LOCKED);
-		level.addItemToSpawn(new IronKey(Dungeon.depth));
+		level.addItemToSpawn(new IronKey(Dungeon.depth()));
 	}
 	
 	private Item prize() {

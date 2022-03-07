@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RatKingSprite;
@@ -76,21 +77,21 @@ public class RatKing extends NPC {
 	@Override
 	protected void onAdd() {
 		super.onAdd();
-		if (Dungeon.depth != 5){
+		if (Dungeon.depth().chapter() != Chapter.SEWERS || !Dungeon.bossLevel()) {
 			yell(Messages.get(this, "confused"));
 		}
 	}
 
 	@Override
 	protected boolean act() {
-		if (Dungeon.depth < 5){
+		if (Dungeon.depth().chapter() == Chapter.SEWERS && !Dungeon.bossLevel()){
 			if (pos() == Dungeon.level.exit){
 				destroy();
 				sprite.killAndErase();
 			} else {
 				target = Dungeon.level.exit;
 			}
-		} else if (Dungeon.depth > 5){
+		} else if (Dungeon.depth().chapter() != Chapter.SEWERS){
 			if (pos() == Dungeon.level.entrance){
 				destroy();
 				sprite.killAndErase();

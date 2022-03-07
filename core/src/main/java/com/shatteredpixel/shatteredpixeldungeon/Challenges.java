@@ -485,7 +485,7 @@ public enum Challenges implements Hero.Doom {
 
         float chance = .33f;
 
-        float _m = Math.max(m.maxLvl, Dungeon.depth);
+        float _m = Math.max(m.maxLvl, Dungeon.scalingFactor());
         float h = Dungeon.hero.lvl;
         float a = buff == null ? 0 : buff.level;
 

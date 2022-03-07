@@ -41,6 +41,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
@@ -201,7 +203,7 @@ public class Ghost extends NPC {
 		private static boolean given;
 		private static boolean processed;
 		
-		private static int depth;
+		private static Marker depth;
 		
 		public static Weapon weapon;
 		public static Armor armor;
@@ -223,7 +225,8 @@ public class Ghost extends NPC {
 		private static final String TYPE        = "type";
 		private static final String GIVEN		= "given";
 		private static final String PROCESSED	= "processed";
-		private static final String DEPTH		= "depth";
+		private static final String DEPTH_OLD	= "depth";
+		private static final String MARKER		= "marker";
 		private static final String WEAPON		= "weapon";
 		private static final String ARMOR		= "armor";
 		private static final String ENCHANT		= "enchant";
@@ -240,7 +243,7 @@ public class Ghost extends NPC {
 				node.put( TYPE, type );
 				
 				node.put( GIVEN, given );
-				node.put( DEPTH, depth );
+				node.put( MARKER, depth );
 				node.put( PROCESSED, processed );
 				
 				node.put( WEAPON, weapon );
@@ -265,7 +268,7 @@ public class Ghost extends NPC {
 				given	= node.getBoolean( GIVEN );
 				processed = node.getBoolean( PROCESSED );
 
-				depth	= node.getInt( DEPTH );
+				depth	= DefaultLevelPack.getOrLoadFromDepth(node, DEPTH_OLD, MARKER);
 				
 				weapon	= (Weapon)node.get( WEAPON );
 				armor	= (Armor)node.get( ARMOR );
@@ -280,7 +283,7 @@ public class Ghost extends NPC {
 		}
 		
 		public static void spawn( SewerLevel level ) {
-			if (!spawned && Dungeon.depth > 1 && Random.Int( 5 - Dungeon.depth ) == 0) {
+			if (!spawned && Dungeon.depth().chapterProgression() > 1 && Random.Int( 5 - Dungeon.depth().chapterProgression() ) == 0) {
 				
 				Ghost ghost = new Ghost();
 				do {
@@ -291,11 +294,11 @@ public class Ghost extends NPC {
 				spawned = true;
 				//dungeon depth determines type of quest.
 				//depth2=fetid rat, 3=gnoll trickster, 4=great crab
-				type = Dungeon.depth-1;
+				type = Dungeon.depth().chapterProgression()-1;
 				
 				given = false;
 				processed = false;
-				depth = Dungeon.depth;
+				depth = Dungeon.depth();
 
 				//50%:tier2, 30%:tier3, 15%:tier4, 5%:tier5
 				switch (Random.chances(new float[]{0, 0, 10, 6, 3, 1})){
@@ -335,7 +338,7 @@ public class Ghost extends NPC {
 		}
 		
 		public static void process() {
-			if (spawned && given && !processed && (depth == Dungeon.depth)) {
+			if (spawned && given && !processed && (depth.equals(Dungeon.depth()))) {
 				GLog.n( Messages.get(Ghost.class, "find_me") );
 				Sample.INSTANCE.play( Assets.Sounds.GHOST );
 				processed = true;

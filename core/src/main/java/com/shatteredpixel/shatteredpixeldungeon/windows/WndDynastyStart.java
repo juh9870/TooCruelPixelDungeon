@@ -46,7 +46,7 @@ public class WndDynastyStart extends WndOptions {
             }
             current = new Rankings.Dynasty();
             current.epic = epic;
-            current.surface = Dungeon.depth == 1;
+            current.surface = Dungeon.depth().firstLevel();
             current.records.add(cur);
         }
         if (!cur.win) {

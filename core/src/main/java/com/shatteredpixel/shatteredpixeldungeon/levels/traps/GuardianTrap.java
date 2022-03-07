@@ -54,7 +54,7 @@ public class GuardianTrap extends MobSummonTrap {
 
 		Sample.INSTANCE.play( Assets.Sounds.ALERT );
 
-		summonMobs((Dungeon.depth - 5)/5);
+		summonMobs((Dungeon.scalingFactor() - 5)/5);
 	}
 
 	@Override

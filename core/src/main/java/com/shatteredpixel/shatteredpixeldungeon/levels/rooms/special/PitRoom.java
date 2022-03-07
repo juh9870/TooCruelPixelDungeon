@@ -68,7 +68,7 @@ public class PitRoom extends SpecialRoom {
 			remains = level.pointToCell(random());
 		}
 		
-		level.drop( new IronKey( Dungeon.depth ), remains ).type = Heap.Type.SKELETON;
+		level.drop( new IronKey( Dungeon.depth() ), remains ).type = Heap.Type.SKELETON;
 		Item mainLoot = null;
 		do {
 			switch (Random.Int(3)){

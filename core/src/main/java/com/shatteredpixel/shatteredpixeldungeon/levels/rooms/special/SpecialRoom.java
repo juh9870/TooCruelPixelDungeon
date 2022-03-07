@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -93,7 +95,7 @@ public abstract class SpecialRoom extends Room {
 	public static ArrayList<Class<? extends Room>> runSpecials = new ArrayList<>();
 	public static ArrayList<Class<? extends Room>> floorSpecials = new ArrayList<>();
 	
-	private static int pitNeededDepth = -1;
+	private static Marker pitNeededDepth = null;
 	
 	public static void initForRun() {
 		runSpecials = new ArrayList<>();
@@ -114,14 +116,14 @@ public abstract class SpecialRoom extends Room {
 			if (!runConsSpecials.isEmpty())     runSpecials.add(runConsSpecials.remove(0));
 		}
 
-		pitNeededDepth = -1;
+		pitNeededDepth = null;
 	}
-	
+
 	public static void initForFloor(){
 		floorSpecials = (ArrayList<Class<?extends Room>>) runSpecials.clone();
 		
 		//laboratory rooms spawn at set intervals every chapter
-		if (Dungeon.depth%5 == (Dungeon.seed%3 + 2)){
+		if (Dungeon.depth().chapterProgression() == (Dungeon.seed % 3 + 2)) {
 			floorSpecials.add(0, LaboratoryRoom.class);
 		}
 	}
@@ -133,12 +135,12 @@ public abstract class SpecialRoom extends Room {
 		}
 	}
 
-	public static void resetPitRoom(int depth){
-		if (pitNeededDepth == depth) pitNeededDepth = -1;
+	public static void resetPitRoom(Marker depth){
+		if (pitNeededDepth.equals(depth)) pitNeededDepth = null;
 	}
 
 	public static int minSpecialRooms() {
-		if (Dungeon.depth == pitNeededDepth) return 1;
+		if (Dungeon.depth().equals(pitNeededDepth)) return 1;
 		return 0;
 	}
 
@@ -147,8 +149,8 @@ public abstract class SpecialRoom extends Room {
 		if(floorSpecials.size() == 0){
 			floorSpecials = (ArrayList<Class<?extends Room>>) runSpecials.clone();
 		}
-		if (Dungeon.depth == pitNeededDepth){
-			pitNeededDepth = -1;
+		if (Dungeon.depth().equals(pitNeededDepth)){
+			pitNeededDepth = null;
 			
 			floorSpecials.remove( ArmoryRoom.class );
 			floorSpecials.remove( CryptRoom.class );
@@ -168,7 +170,7 @@ public abstract class SpecialRoom extends Room {
 		
 		} else {
 			
-			if (Dungeon.bossLevel(Dungeon.depth + 1)){
+			if (Dungeon.bossLevel(Dungeon.levelPack.curPitFallTarget())){
 				floorSpecials.remove(WeakFloorRoom.class);
 			}
 
@@ -178,7 +180,7 @@ public abstract class SpecialRoom extends Room {
 
 			Room r = Reflection.newInstance(floorSpecials.get( index ));
 			if (r instanceof WeakFloorRoom){
-				pitNeededDepth = Dungeon.depth + 1;
+				pitNeededDepth = Dungeon.levelPack.curPitFallTarget();
 			}
 			
 			useType( r.getClass() );
@@ -188,8 +190,9 @@ public abstract class SpecialRoom extends Room {
 	}
 	
 	private static final String ROOMS	= "special_rooms";
-	private static final String PIT	    = "pit_needed";
-	
+	private static final String PIT_OLD	= "pit_needed";
+	private static final String PIT	    = "pit_needed_marker";
+
 	public static void restoreRoomsFromBundle( Bundle bundle ) {
 		runSpecials.clear();
 		if (bundle.contains( ROOMS )) {
@@ -200,7 +203,7 @@ public abstract class SpecialRoom extends Room {
 			initForRun();
 			ShatteredPixelDungeon.reportException(new Exception("specials array didn't exist!"));
 		}
-		pitNeededDepth = bundle.getInt(PIT);
+		pitNeededDepth = DefaultLevelPack.getOrLoadFromDepth(bundle, PIT_OLD, PIT);
 	}
 	
 	public static void storeRoomsInBundle( Bundle bundle ) {

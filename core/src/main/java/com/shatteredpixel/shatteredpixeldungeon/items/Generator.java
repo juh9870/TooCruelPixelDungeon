@@ -545,7 +545,7 @@ public class Generator {
 	}
 
 	public static Armor randomArmor(){
-		return randomArmor(Dungeon.depth / 5);
+		return randomArmor(Dungeon.depth().chapterId());
 	}
 	
 	public static Armor randomArmor(int floorSet) {
@@ -566,7 +566,7 @@ public class Generator {
 	};
 
 	public static MeleeWeapon randomWeapon(){
-		return randomWeapon(Dungeon.depth / 5);
+		return randomWeapon(Dungeon.depth().chapterId());
 	}
 	
 	public static MeleeWeapon randomWeapon(int floorSet) {
@@ -588,7 +588,7 @@ public class Generator {
 	};
 	
 	public static MissileWeapon randomMissile(){
-		return randomMissile(Dungeon.depth / 5);
+		return randomMissile(Dungeon.depth().chapterId());
 	}
 	
 	public static MissileWeapon randomMissile(int floorSet) {

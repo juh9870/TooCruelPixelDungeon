@@ -49,6 +49,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.builders.FigureEightBuild
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LineBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.RegularBuilder;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.TunnelRoom;
@@ -223,7 +225,7 @@ public abstract class RegularLevel extends Level {
 			initRooms.add(s);
 		}
 		
-		int secrets = SecretRoom.secretsForFloor(Dungeon.depth);
+		int secrets = SecretRoom.secretsForFloor(Dungeon.depth());
 		//one additional secret for secret levels
 		if (feeling == Feeling.SECRETS) secrets++;
 		for (int i = 0; i < secrets; i++) {
@@ -262,11 +264,11 @@ public abstract class RegularLevel extends Level {
 	
 	protected int nTraps() {
 		if(Challenges.TRAP_TESTING_FACILITY.enabled()){
-			return (int) ((3 + (Dungeon.depth / 3)) * Challenges.nTrapsMultiplier());
+			return (int) ((3 + (Dungeon.scalingFactor() / 3)) * Challenges.nTrapsMultiplier());
 		} else if (Challenges.EXTREME_DANGER.enabled()) {
-            return (int) (Random.NormalIntRange(1 + (Dungeon.depth / 6), 3 + (Dungeon.depth / 3)) * Challenges.nTrapsMultiplier());
+            return (int) (Random.NormalIntRange(1 + (Dungeon.scalingFactor() / 6), 3 + (Dungeon.scalingFactor() / 3)) * Challenges.nTrapsMultiplier());
         } else
-            return (int) (Random.NormalIntRange(2, 3 + (Dungeon.depth / 5)) * Challenges.nTrapsMultiplier());
+            return (int) (Random.NormalIntRange(2, 3 + (Dungeon.depth().chapterId())) * Challenges.nTrapsMultiplier());
 	}
 	
 	protected Class<?>[] trapClasses(){
@@ -279,9 +281,9 @@ public abstract class RegularLevel extends Level {
 	
 	@Override
 	public int nMobs() {
-        if (Dungeon.depth <= 1) return Challenges.REPOPULATION.enabled() ? (int) (8 * Challenges.nMobsMultiplier()) : 0;
+        if (Dungeon.depth().firstLevel()) return Challenges.REPOPULATION.enabled() ? (int) (8 * Challenges.nMobsMultiplier()) : 0;
 
-		int mobs = 3 + Dungeon.depth % 5 + Random.Int(3);
+		int mobs = 3 + Dungeon.depth().chapterProgression() + Random.Int(3);
 		if (feeling == Feeling.LARGE){
 			mobs = (int)Math.ceil(mobs * 1.33f);
 		}
@@ -313,7 +315,7 @@ public abstract class RegularLevel extends Level {
 	@Override
 	protected void createMobs() {
 		//on floor 1, 8 pre-set mobs are created so the player can get level 2.
-        int mobsToSpawn = Dungeon.depth == 1 ? (int) (8 * Challenges.nMobsMultiplier()) : nMobs();
+        int mobsToSpawn = Dungeon.depth().firstLevel() ? (int) (8 * Challenges.nMobsMultiplier()) : nMobs();
 
         boolean allowEntrance = Challenges.EXHIBITIONISM.enabled();
         boolean allowCorridors = Challenges.isTooManyMobs();
@@ -529,7 +531,7 @@ public abstract class RegularLevel extends Level {
 				type = Heap.Type.CHEST;
 				break;
 			case 5:
-				if (Dungeon.depth > 1 && findMob(cell) == null){
+				if (!Dungeon.depth().firstLevel() && findMob(cell) == null){
 					addMob(Mimic.spawnAt(cell, toDrop));
 					continue;
 				}
@@ -543,13 +545,13 @@ public abstract class RegularLevel extends Level {
 			if ((toDrop instanceof Artifact && Random.Int(2) == 0) ||
 					(toDrop.isUpgradable() && Random.Int(4 - toDrop.level()) == 0)){
 
-				if (Dungeon.depth > 1 && Random.Int(10) == 0 && findMob(cell) == null){
+				if (!Dungeon.depth().firstLevel() && Random.Int(10) == 0 && findMob(cell) == null){
 					addMob(Mimic.spawnAt(cell, toDrop, GoldenMimic.class));
 				} else {
 					Heap dropped = drop(toDrop, cell);
 					if (heaps.get(cell) == dropped) {
 						dropped.type = Heap.Type.LOCKED_CHEST;
-						addItemToSpawn(new GoldenKey(Dungeon.depth));
+						addItemToSpawn(new GoldenKey(Dungeon.depth()));
 					}
 				}
 			} else {
@@ -574,20 +576,20 @@ public abstract class RegularLevel extends Level {
 		//use a separate generator for this to prevent held items, meta progress, and talents from affecting levelgen
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 
-		Item item = Bones.get();
-		if (item != null) {
-			int cell = randomDropCell();
-			if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
-				map[cell] = Terrain.GRASS;
-				losBlocking[cell] = false;
-			}
-			drop( item, cell ).setHauntedIfCursed().type = Heap.Type.REMAINS;
-		}
+		Item item;
+//		if (item != null) {
+//			int cell = randomDropCell();
+//			if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
+//				map[cell] = Terrain.GRASS;
+//				losBlocking[cell] = false;
+//			}
+//			drop( item, cell ).setHauntedIfCursed().type = Heap.Type.REMAINS;
+//		}
 
 		DriedRose rose = Dungeon.hero.belongings.getItem( DriedRose.class );
 		if (rose != null && rose.isIdentified() && !rose.cursed){
 			//aim to drop 1 petal every 2 floors
-			int petalsNeeded = (int) Math.ceil((float)((Dungeon.depth / 2) - rose.droppedPetals) / 3);
+			int petalsNeeded = Dungeon.levelPack.petalsNeeded(rose);
 
 			for (int i=1; i <= petalsNeeded; i++) {
 				//the player may miss a single petal and still max their rose.
@@ -636,8 +638,12 @@ public abstract class RegularLevel extends Level {
 		//a total of 6 pages drop randomly, the rest are specially dropped or are given at the start
 		missingPages.remove(Document.GUIDE_SEARCHING);
 
+		Marker m = Dungeon.depth();
 		//chance to find a page is 0/25/50/75/100% for floors 1/2/3/4/5+
-		float dropChance = 0.25f*(Dungeon.depth-1);
+		float dropChance = 1;
+		if(m.chapter() == Chapter.SEWERS) {
+			dropChance = 0.25f*(m.chapterProgression()-1);
+		}
 		if (!missingPages.isEmpty() && Random.Float() < dropChance){
 			GuidePage p = new GuidePage();
 			p.page(missingPages.get(0));

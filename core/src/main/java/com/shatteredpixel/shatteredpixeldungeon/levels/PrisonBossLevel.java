@@ -307,7 +307,7 @@ public class PrisonBossLevel extends Level {
 		}
 		
 		for (HeavyBoomerang.CircleBack b : Dungeon.hero.buffs(HeavyBoomerang.CircleBack.class)){
-			if (b.activeDepth() == Dungeon.depth
+			if (b.activeDepth() == Dungeon.depth()
 					&& (safeArea == null || !safeArea.inside(cellToPoint(b.returnPos())))){
 				storedItems.add(b.cancel());
 			}
@@ -523,11 +523,11 @@ public class PrisonBossLevel extends Level {
 	
 	@Override
 	protected void createItems() {
-		Item item = Bones.get();
-		if (item != null) {
-			drop( item, randomRespawnCell( null ) ).setHauntedIfCursed().type = Heap.Type.REMAINS;
-		}
-		drop(new IronKey(10), randomPrisonCellPos());
+//		Item item = Bones.get();
+//		if (item != null) {
+//			drop( item, randomRespawnCell( null ) ).setHauntedIfCursed().type = Heap.Type.REMAINS;
+//		}
+		drop(new IronKey(Dungeon.depth()), randomPrisonCellPos());
 	}
 
 	@Override

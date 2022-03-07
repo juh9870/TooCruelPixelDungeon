@@ -32,6 +32,9 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PitfallParticl
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -47,14 +50,14 @@ public class PitfallTrap extends Trap {
 
 	@Override
 	public void activate() {
-		
-		if( Dungeon.bossLevel() || Dungeon.depth > 25){
+
+		if (Dungeon.bossLevel() || Dungeon.levelPack.curPitFallTarget().chapter() == Chapter.EMPTY) {
 			GLog.w(Messages.get(this, "no_pit"));
 			return;
 		}
 
 		DelayedPit p = Buff.affect(Dungeon.hero, DelayedPit.class, 1);
-		p.depth = Dungeon.depth;
+		p.depth = Dungeon.depth();
 		p.pos = pos;
 
 		for (int i : PathFinder.NEIGHBOURS9){
@@ -78,13 +81,13 @@ public class PitfallTrap extends Trap {
 		}
 
 		int pos;
-		int depth;
+		Marker depth;
 
 		@Override
 		public boolean act() {
 
 			boolean herofell = false;
-			if (depth == Dungeon.depth) {
+			if (depth.equals(Dungeon.depth())) {
 				for (int i : PathFinder.NEIGHBOURS9) {
 
 					int cell = pos + i;
@@ -129,7 +132,8 @@ public class PitfallTrap extends Trap {
 		}
 
 		private static final String POS = "pos";
-		private static final String DEPTH = "depth";
+		private static final String OLD_DEPTH = "depth";
+		private static final String DEPTH = "marker";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
@@ -142,7 +146,7 @@ public class PitfallTrap extends Trap {
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
 			pos = bundle.getInt(POS);
-			depth = bundle.getInt(DEPTH);
+			depth = DefaultLevelPack.getOrLoadFromDepth(bundle, OLD_DEPTH, DEPTH);
 		}
 
 	}

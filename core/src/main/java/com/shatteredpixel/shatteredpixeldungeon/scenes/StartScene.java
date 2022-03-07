@@ -191,7 +191,7 @@ public class StartScene extends PixelScene {
 				if ((info.modifiers.isChallenged(Challenges.AMNESIA.id))){
 					depth.text("??");
 				} else {
-					depth.text(Integer.toString(info.depth));
+					depth.text(info.depth.displayName());
 				}
 				depth.measure();
 

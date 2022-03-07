@@ -7,6 +7,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -27,11 +29,12 @@ import java.util.List;
 public class RacingTheDeath extends Buff implements Hero.Doom {
     private static final int TRAIL_LENGTH = 10;
     private static final String TRAIL_CELLS = "trail_cells";
-    private static final String DEPTH = "last_depth";
+    private static final String DEPTH_OLD = "last_depth";
+    private static final String DEPTH = "last_marker";
     Emitter.Factory particles = PurpleParticle.BURST;
     private List<Integer> trailCells;
     private ArrayList<Image> trail;
-    private int lastDepth = -1;
+    private Marker lastDepth = null;
     private boolean fx = false;
 
     {
@@ -54,12 +57,12 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
 
     public void tick() {
 
-        if (Dungeon.depth != lastDepth) {
+        if (!Dungeon.depth().equals(lastDepth)) {
             resetTrail();
-            lastDepth = Dungeon.depth;
+            lastDepth = Dungeon.depth();
         }
 
-        int damage = (Statistics.deepestFloor / 5 + 1) * 3;
+        int damage = (Statistics.deepestFloor.scalingDepth() / 5 + 1) * 3;
 
         trailCells.remove(TRAIL_LENGTH - 1);
 
@@ -156,8 +159,8 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
         if (trail != null)
             eraseTrail();
 
-        if (Dungeon.depth != lastDepth) {
-            lastDepth = Dungeon.depth;
+        if (!Dungeon.depth().equals(lastDepth)) {
+            lastDepth = Dungeon.depth();
             resetTrail();
             return;
         }
@@ -249,7 +252,7 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
             trailCells.add(cells[i]);
         }
 
-        lastDepth = bundle.getInt(DEPTH);
+        lastDepth = DefaultLevelPack.getOrLoadFromDepth(bundle, DEPTH_OLD, DEPTH);
     }
 
 

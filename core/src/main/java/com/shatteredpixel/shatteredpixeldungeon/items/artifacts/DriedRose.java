@@ -50,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetributio
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -742,25 +743,25 @@ public class DriedRose extends Artifact {
 		}
 		
 		public void sayAppeared(){
-			int depth = (Dungeon.depth - 1) / 5;
+			Chapter chapter = Dungeon.depth().chapter();
 			
 			//only some lines are said on the first floor of a depth
-			int variant = Dungeon.depth % 5 == 1 ? Random.IntRange(1, 3) : Random.IntRange(1, 6);
+			int variant = Dungeon.depth().chapterProgression() == 1 ? Random.IntRange(1, 3) : Random.IntRange(1, 6);
 			
-			switch(depth){
-				case 0:
+			switch(chapter){
+				case SEWERS:
 					yell( Messages.get( this, "dialogue_sewers_" + variant ));
 					break;
-				case 1:
+				case PRISON:
 					yell( Messages.get( this, "dialogue_prison_" + variant ));
 					break;
-				case 2:
+				case CAVES:
 					yell( Messages.get( this, "dialogue_caves_" + variant ));
 					break;
-				case 3:
+				case CITY:
 					yell( Messages.get( this, "dialogue_city_" + variant ));
 					break;
-				case 4: default:
+				case HALLS: default:
 					yell( Messages.get( this, "dialogue_halls_" + variant ));
 					break;
 			}
@@ -770,22 +771,22 @@ public class DriedRose extends Artifact {
 		}
 		
 		public void sayBoss(){
-			int depth = (Dungeon.depth - 1) / 5;
+			Chapter chapter = Dungeon.depth().chapter();
 			
-			switch(depth){
-				case 0:
+			switch(chapter){
+				case SEWERS:
 					yell( Messages.get( this, "seen_goo_" + Random.IntRange(1, 3) ));
 					break;
-				case 1:
+				case PRISON:
 					yell( Messages.get( this, "seen_tengu_" + Random.IntRange(1, 3) ));
 					break;
-				case 2:
+				case CAVES:
 					yell( Messages.get( this, "seen_dm300_" + Random.IntRange(1, 3) ));
 					break;
-				case 3:
+				case CITY:
 					yell( Messages.get( this, "seen_king_" + Random.IntRange(1, 3) ));
 					break;
-				case 4: default:
+				case HALLS: default:
 					yell( Messages.get( this, "seen_yog_" + Random.IntRange(1, 3) ));
 					break;
 			}

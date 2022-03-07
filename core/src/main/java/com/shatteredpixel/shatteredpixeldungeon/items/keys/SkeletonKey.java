@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSupportPrompt;
 import com.watabou.noosa.Game;
@@ -39,10 +40,10 @@ public class SkeletonKey extends Key {
 	}
 	
 	public SkeletonKey() {
-		this( 0 );
+		this( null );
 	}
 	
-	public SkeletonKey( int depth ) {
+	public SkeletonKey( Marker depth ) {
 		super();
 		this.depth = depth;
 	}

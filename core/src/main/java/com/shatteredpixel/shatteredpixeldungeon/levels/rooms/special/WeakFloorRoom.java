@@ -86,7 +86,7 @@ public class WeakFloorRoom extends SpecialRoom {
 		@Override
 		public Tilemap create() {
 			Tilemap v = super.create();
-			v.map( new int[]{Dungeon.depth/5}, 1);
+			v.map( new int[]{Dungeon.depth().chapterId()}, 1);
 			return v;
 		}
 

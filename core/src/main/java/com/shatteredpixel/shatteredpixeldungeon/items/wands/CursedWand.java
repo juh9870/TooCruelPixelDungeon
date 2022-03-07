@@ -203,7 +203,7 @@ public class CursedWand {
 			case 1:
 				final Char target = Actor.findChar( targetPos );
 				if (target != null) {
-					int damage = Dungeon.depth * 2;
+					int damage = Dungeon.scalingFactor() * 2;
 					Char toHeal, toDamage;
 
 					if (Random.Int(2) == 0){
@@ -291,26 +291,19 @@ public class CursedWand {
 
 			//inter-level teleportation
 			case 2:
-				if (Dungeon.depth > 1 && !Dungeon.bossLevel() && user == Dungeon.hero) {
-
-					//each depth has 1 more weight than the previous depth.
-					float[] depths = new float[Dungeon.depth-1];
-					for (int i = 1; i < Dungeon.depth; i++) depths[i-1] = i;
-					int depth = 1+Random.chances(depths);
-
+				if (!Dungeon.depth().firstLevel() && !Dungeon.bossLevel() && user == Dungeon.hero) {
 					TimekeepersHourglass.timeFreeze timeFreeze = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
 					if (timeFreeze != null) timeFreeze.disarmPressedTraps();
 					Swiftthistle.TimeBubble timeBubble = Dungeon.hero.buff(Swiftthistle.TimeBubble.class);
 					if (timeBubble != null) timeBubble.disarmPressedTraps();
 
 					InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-					InterlevelScene.returnDepth = depth;
+					InterlevelScene.returnDepth = Dungeon.levelPack.cursedTeleportBack();
 					InterlevelScene.returnPos = -1;
 					Game.switchScene(InterlevelScene.class);
 
 				} else {
 					ScrollOfTeleportation.teleportChar(user);
-
 				}
 				return true;
 

@@ -26,6 +26,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
@@ -110,7 +112,7 @@ public abstract class Trap implements Bundlable {
 
 	private void applyChallengedSprite(){
 		if (Challenges.INDIFFERENT_DESIGN.enabled()) {
-			Random.pushGenerator(Dungeon.seed + Dungeon.depth);
+			Random.pushGenerator(Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode());
 			color = Random.Int(8);
 			shape = Random.Int(7);
 			Random.popGenerator();
@@ -168,7 +170,7 @@ public abstract class Trap implements Bundlable {
 				return;
 			}
 
-			Random.pushGenerator(Dungeon.seed + Dungeon.depth);
+			Random.pushGenerator(Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode());
 			int repeats = Challenges.TRAP_TESTING_FACILITY.enabled() ? Random.NormalIntRange(2, 5) : 1;
 			Class<? extends Trap>[] traps = new Class[repeats];
 			for (int i = 0; i < repeats; i++) {
@@ -178,13 +180,14 @@ public abstract class Trap implements Bundlable {
 			for (Class<? extends Trap> trap : traps) {
 				Trap t = Reflection.newInstance(trap);
 
+				Marker m = Dungeon.depth();
 				// No grim trap before halls
-				if(Dungeon.depth <= 20 && t instanceof GrimTrap) t = new DisintegrationTrap();
+				if(m.chapter() != Chapter.HALLS && t instanceof GrimTrap) t = new DisintegrationTrap();
 				// No disintegration and distortion before city
-				if(Dungeon.depth <= 15 && t instanceof DisintegrationTrap) t = new CursedWandTrap();
-				if(Dungeon.depth <= 15 && t instanceof DistortionTrap) t = new SummoningTrap();
+				if(m.chapterId() < Chapter.CITY.ordinal() && t instanceof DisintegrationTrap) t = new CursedWandTrap();
+				if(m.chapterId() < Chapter.CITY.ordinal() && t instanceof DistortionTrap) t = new SummoningTrap();
 				// No tengu traps before caves
-				if(Dungeon.depth <= 10 && t instanceof TenguDartTrap) t = new CursedWandTrap();
+				if(m.chapterId() < Chapter.CAVES.ordinal() && t instanceof TenguDartTrap) t = new CursedWandTrap();
 
 				// Gateway doesn't work with randomization
 				if (t instanceof GatewayTrap) t = new TeleportationTrap();

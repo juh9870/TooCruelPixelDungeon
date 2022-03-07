@@ -103,7 +103,7 @@ public class GatewayTrap extends Trap {
 
 						if (Challenges.DUPLICATOR.enabled()) {
 							Trap target = Dungeon.level.traps.get(newPos);
-							if (target instanceof GatewayTrap || Challenges.TRAP_TESTING_FACILITY.enabled()) {
+							if (target instanceof GatewayTrap) {
 								if (Random.Float() < 0.1f) {
 									Level.set(newPos, Terrain.PIT);
 								}

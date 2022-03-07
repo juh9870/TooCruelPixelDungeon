@@ -160,14 +160,14 @@ public class HallsBossLevel extends Level {
 
 	@Override
 	protected void createItems() {
-		Item item = Bones.get();
-		if (item != null) {
-			int pos;
-			do {
-				pos = randomRespawnCell(null );
-			} while (pos == entrance);
-			drop( item, pos ).setHauntedIfCursed().type = Heap.Type.REMAINS;
-		}
+//		Item item = Bones.get();
+//		if (item != null) {
+//			int pos;
+//			do {
+//				pos = randomRespawnCell(null );
+//			} while (pos == entrance);
+//			drop( item, pos ).setHauntedIfCursed().type = Heap.Type.REMAINS;
+//		}
 	}
 
 	@Override

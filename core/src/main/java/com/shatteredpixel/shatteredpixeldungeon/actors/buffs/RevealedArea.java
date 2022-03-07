@@ -23,6 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.DefaultLevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.LevelPack;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -35,7 +38,8 @@ public class RevealedArea extends FlavourBuff{
 		type = Buff.buffType.POSITIVE;
 	}
 
-	public int pos, depth;
+	public int pos;
+	public Marker depth = Dungeon.depth();
 
 	@Override
 	public void detach() {
@@ -69,20 +73,22 @@ public class RevealedArea extends FlavourBuff{
 		return Messages.get(this, "desc", (int)visualcooldown());
 	}
 
-	private static final String DEPTH = "depth";
+
 	private static final String POS = "pos";
+	private static final String DEPTH = "depth";
+	private static final String MARKER = "marker";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
-		bundle.put(DEPTH, depth);
+		bundle.put(MARKER, depth);
 		bundle.put(POS, pos);
 	}
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
-		depth = bundle.getInt(DEPTH);
 		pos = bundle.getInt(POS);
+		depth = DefaultLevelPack.getOrLoadFromDepth(bundle, DEPTH, MARKER);
 	}
 }

@@ -49,7 +49,7 @@ public class StatueRoom extends SpecialRoom {
 		Door door = entrance();
 		
 		door.set( Door.Type.LOCKED );
-		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
+		level.addItemToSpawn( new IronKey( Dungeon.depth() ) );
 		
 		if (door.x == left) {
 			

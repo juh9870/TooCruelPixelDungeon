@@ -47,7 +47,7 @@ public class PoisonDartTrap extends TargetingTrap {
 	}
 	
 	protected int poisonAmount(){
-		return 8 + Math.round(2*Dungeon.depth / 3f);
+		return 8 + Math.round(2*Dungeon.scalingFactor() / 3f);
 	}
 
 

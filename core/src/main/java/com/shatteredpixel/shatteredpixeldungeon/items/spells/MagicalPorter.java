@@ -25,6 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.MerchantsBeacon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -33,14 +35,15 @@ import java.util.ArrayList;
 
 //beacon was removed from drops, here for pre-1.1.0 saves
 public class MagicalPorter extends InventorySpell {
-	
+
 	{
 		image = ItemSpriteSheet.MAGIC_PORTER;
 	}
 
 	@Override
 	protected void onCast(Hero hero) {
-		if (Dungeon.depth >= 25){
+        if (Dungeon.depth().chapter() == Chapter.EMPTY ||
+                (Dungeon.depth().chapter() == Chapter.HALLS && Dungeon.bossLevel())) {
 			GLog.w(Messages.get(this, "nowhere"));
 		} else {
 			super.onCast(hero);
@@ -54,34 +57,34 @@ public class MagicalPorter extends InventorySpell {
 
 	@Override
 	protected void onItemSelected(Item item) {
-		
+
 		Item result = item.detachAll(curUser.belongings.backpack);
-		int portDepth = 5 * (1 + Dungeon.depth/5);
+		Marker portDepth = Dungeon.levelPack.nextBossFloor();
 		ArrayList<Item> ported = Dungeon.portedItems.get(portDepth);
 		if (ported == null) {
 			Dungeon.portedItems.put(portDepth, ported = new ArrayList<>());
 		}
 		ported.add(result);
-		
+
 	}
-	
+
 	@Override
 	public int value() {
 		//prices of ingredients, divided by output quantity
 		return Math.round(quantity * ((5 + 40) / 8f));
 	}
-	
+
 	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
-		
+
 		{
 			inputs =  new Class[]{MerchantsBeacon.class, ArcaneCatalyst.class};
 			inQuantity = new int[]{1, 1};
-			
+
 			cost = 4;
-			
+
 			output = MagicalPorter.class;
 			outQuantity = 8;
 		}
-		
+
 	}
 }

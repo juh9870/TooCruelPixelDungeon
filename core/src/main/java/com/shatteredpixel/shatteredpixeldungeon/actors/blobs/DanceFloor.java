@@ -110,7 +110,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
                     target.damage(target.HT / (CYCLE_LENGTH + 1), this);
                     Dungeon.hero.interrupt();
                 } else
-                    target.damage((Dungeon.depth / 5 + 1) * 3, this);
+                    target.damage((Dungeon.depth().chapterId() + 1) * 3, this);
             case GREEN:
                 Buff.prolong(target, DanceSpeed.class, 1);
                 break;
@@ -118,7 +118,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
                 Buff.prolong(target, DancingStun.class, 1);
                 break;
             case BLACK:
-                int dmg = (Dungeon.depth / 5 + 1) * 5;
+                int dmg = (Dungeon.depth().chapterId() + 1) * 5;
                 if (target == Dungeon.hero) {
                     dmg = target.HT / (CYCLE_LENGTH - 1);
                     Dungeon.hero.interrupt();
@@ -200,7 +200,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
         boolean waltzEnabled = Challenges.HUMPPA.enabled();
         int row = level.width();
         int[] squares = new int[row * row];
-        Random.pushGenerator(Dungeon.seed + Dungeon.depth);
+        Random.pushGenerator(Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode());
         for (int i = 0; i < squares.length; i++) {
             int color = Random.Int(LAST_COLOR) + 1;
             if (color == RED || color == BLACK) {

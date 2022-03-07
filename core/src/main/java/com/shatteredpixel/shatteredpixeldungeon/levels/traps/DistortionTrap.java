@@ -40,6 +40,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -112,14 +114,15 @@ public class DistortionTrap extends MobSummonTrap{
 			Mob mob;
 			switch (summoned){
 				case 1:
-					if (Dungeon.depth != 5 && Random.Int(100) == 0){
+					Marker m = Dungeon.depth();
+					if ((m.chapter() != Chapter.SEWERS || m.chapterProgression() != 5) && Random.Int(100) == 0) {
 						mob = new RatKing();
 						break;
 					}
 				case 3: case 5 : default:
-					int floor;
+					Marker floor;
 					do {
-						floor = Random.Int(25);
+						floor = Dungeon.levelPack.randomFloor();
 					} while( Dungeon.bossLevel(floor));
 					mob = Reflection.newInstance(Bestiary.getMobRotation(floor).get(0));
 					break;
