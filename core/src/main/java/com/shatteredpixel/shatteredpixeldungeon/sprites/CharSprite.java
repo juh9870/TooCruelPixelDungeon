@@ -27,8 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.effects.DarkBlock;
 import com.shatteredpixel.shatteredpixeldungeon.effects.EmoIcon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
@@ -145,8 +143,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		customVisuals = new SparseArray<>();
 	}
 
+	private boolean noFast = false;
 	public boolean fast(){
-		return !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
+		return !noFast && !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
 	}
 
 	protected float invisibilityAlpha(){
@@ -176,6 +175,10 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	//intended to be used for placing a character in the game world
 	public void link( Char ch ) {
 		linkVisuals( ch );
+
+		if (ch.properties().contains(Char.Property.BOSS) || ch.properties().contains(Char.Property.MINIBOSS)) {
+			noFast = true;
+		}
 		
 		this.ch = ch;
 		ch.sprite = this;
