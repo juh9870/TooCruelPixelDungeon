@@ -253,7 +253,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                     .add(Assassin.class);
 
             if (Challenges.DARKNESS.enabled()) {
-                f.put(Assassin.class, 6f);
+                f.add(Assassin.class, 6f);
             }
             f.apply(new Class[0]);
         }
@@ -272,7 +272,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
                     .add(Citadel.class)
 
                     // Citadels are less common
-                    .put(Citadel.class, 1f)
+                    .add(Citadel.class, 1f)
                     .apply(new Class[0]);
         }
     }

@@ -1,4 +1,4 @@
-package com.shatteredpixel.shatteredpixeldungeon.utils.killers;
+package com.shatteredpixel.shatteredpixeldungeon.killers;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;

@@ -254,36 +254,35 @@ public abstract class Level implements Bundlable {
 				}
 			}
 
-			//TODO juh9870: rework second try
-//			if (Challenges.SECOND_TRY.enabled()) {
-//				int d = Dungeon.depth - 1 - Dungeon.depth / 5;
-//				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + d / 3;
-//
-//				int offset = d - d / 3 * 3;
-//				if (seed % 3 == offset) {
-//					addItemToSpawn(Generator.randomWeapon());
-//				}
-//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-//				if (seed % 3 == offset) {
-//					addItemToSpawn(Generator.randomArmor());
-//				}
-//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-//				if (seed % 3 == offset) {
-//					addItemToSpawn(Generator.random(Generator.Category.RING));
-//				}
-//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-//				if (seed % 3 == offset) {
-//					addItemToSpawn(Generator.random(Generator.Category.WAND));
-//				}
-//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-//				if (seed % 3 == offset) {
-//					addItemToSpawn(Generator.randomMissile());
-//				}
-//				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
-//				if (seed % 3 == offset) {
-//					addItemToSpawn(Generator.random());
-//				}
-//			}
+			if (Challenges.SECOND_TRY.enabled()) {
+				int d = Dungeon.legacyDepth() - 1 - Dungeon.legacyDepth() / 5;
+				long seed = Dungeon.seed + Challenges.SECOND_TRY.id + d / 3;
+
+				int offset = d - d / 3 * 3;
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.randomWeapon());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.randomArmor());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.random(Generator.Category.RING));
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.random(Generator.Category.WAND));
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.randomMissile());
+				}
+				seed = Math.abs(((seed + 347) * 397) ^ (seed * 349));
+				if (seed % 3 == offset) {
+					addItemToSpawn(Generator.random());
+				}
+			}
 
 			if (Dungeon.posNeeded()) {
 				addItemToSpawn( new PotionOfStrength() );
@@ -659,6 +658,7 @@ public abstract class Level implements Bundlable {
 			h = heaps.get(c);
 			if (h.type == Heap.Type.FOR_SALE) continue;
 			for (Item item : new ArrayList<>(h.items)) {
+				if (item.unique) continue;
 				if (!guaranteedItems.contains(item) || item instanceof Key) h.items.remove(item);
 				if (item instanceof PotionOfLiquidFlame && barricades-- > 0) h.items.remove(item);
 			}

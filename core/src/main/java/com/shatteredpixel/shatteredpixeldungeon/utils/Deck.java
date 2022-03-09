@@ -5,11 +5,12 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class Deck<T> implements Bundlable {
 
+    private static final String PROBS = "probs";
     public T[] values;
     public float[] defaultProbs;
     public float[] probs = null;
@@ -26,7 +27,8 @@ public abstract class Deck<T> implements Bundlable {
         probs[i]--;
         return values[i];
     }
-    public void add(T value){
+
+    public void add(T value) {
         for (int i = 0; i < values.length; i++) {
             if (values[i] == value) {
                 probs[i]++;
@@ -43,8 +45,6 @@ public abstract class Deck<T> implements Bundlable {
         return new Filler();
     }
 
-    private static final String PROBS = "probs";
-
     @Override
     public void restoreFromBundle(Bundle bundle) {
         probs = bundle.getFloatArray(PROBS);
@@ -56,7 +56,7 @@ public abstract class Deck<T> implements Bundlable {
     }
 
     public class Filler {
-        private Map<T, Float> valuesMap = new HashMap<>();
+        private final Map<T, Float> valuesMap = new LinkedHashMap<>();
         private float defaultWeight = 1f;
 
         public Filler defaultWeight(float value) {
@@ -69,21 +69,21 @@ public abstract class Deck<T> implements Bundlable {
             return this;
         }
 
-        public Filler add(T[] values) {
+        public Filler add(T value, float weight) {
+            valuesMap.put(value, weight);
+            return this;
+        }
+
+        public Filler addAll(T[] values) {
             for (T value : values) {
                 add(value);
             }
             return this;
         }
 
-        public Filler put(T value, float weight) {
-            valuesMap.put(value, weight);
-            return this;
-        }
-
-        public Filler flat(T[] array, float weight) {
+        public Filler addAll(T[] array, float weight) {
             for (T t : array) {
-                put(t, weight);
+                add(t, weight);
             }
             return this;
         }

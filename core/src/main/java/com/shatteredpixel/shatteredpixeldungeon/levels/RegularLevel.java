@@ -491,8 +491,11 @@ public abstract class RegularLevel extends Level {
 		super.applySecondTry();
 		for (Mob mob : new ArrayList<>(mobs())) {
 			if (mob instanceof NPC) continue;
-			if (room(mob.pos()) instanceof SpecialRoom) {
-				removeMob(mob);
+			Room room = room(mob.pos());
+			if (room instanceof SpecialRoom) {
+				if (!mob.properties().contains(Char.Property.MINIBOSS)) {
+					removeMob(mob);
+				}
 			}
 		}
 	}

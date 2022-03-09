@@ -155,7 +155,6 @@ public class ShopRoom extends SpecialRoom {
 
 
 		ArrayList<Item> itemsToSpawn = new ArrayList<>();
-		boolean lessItems = Challenges.SECOND_TRY.enabled();
 		MeleeWeapon w;
 		switch (Dungeon.depth().chapter()) {
 		case SEWERS: default:
@@ -190,11 +189,9 @@ public class ShopRoom extends SpecialRoom {
 		w.level(0);
 		w.identify();
 
-		if(!lessItems)
-			itemsToSpawn.add(w);
+		itemsToSpawn.add(w);
 
-		if(!lessItems)
-			itemsToSpawn.add( TippedDart.randomTipped(2) );
+		itemsToSpawn.add( TippedDart.randomTipped(2) );
 
 		itemsToSpawn.add( new MerchantsBeacon() );
 		itemsToSpawn.add( new Alchemize().quantity(Random.IntRange(3, 4)));
@@ -205,42 +202,37 @@ public class ShopRoom extends SpecialRoom {
 
 		itemsToSpawn.add( new PotionOfHealing() );
 
-		if(!lessItems) {
-			itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
-			itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
+		itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
+		itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
 
-			itemsToSpawn.add(new ScrollOfIdentify());
-			itemsToSpawn.add(new ScrollOfRemoveCurse());
-			itemsToSpawn.add(new ScrollOfMagicMapping());
+		itemsToSpawn.add(new ScrollOfIdentify());
+		itemsToSpawn.add(new ScrollOfRemoveCurse());
+		itemsToSpawn.add(new ScrollOfMagicMapping());
 
-			for (int i=0; i < 2; i++)
-				itemsToSpawn.add( Random.Int(2) == 0 ?
-						Generator.randomUsingDefaults( Generator.Category.POTION ) :
-						Generator.randomUsingDefaults( Generator.Category.SCROLL ) );
-		}
+		for (int i=0; i < 2; i++)
+			itemsToSpawn.add( Random.Int(2) == 0 ?
+					Generator.randomUsingDefaults( Generator.Category.POTION ) :
+					Generator.randomUsingDefaults( Generator.Category.SCROLL ) );
 
-		if(!lessItems)
-			itemsToSpawn.add( new SmallRation() );
+		itemsToSpawn.add( new SmallRation() );
 		itemsToSpawn.add( new SmallRation() );
 
-		if(!lessItems)
-			switch (Random.Int(4)){
-				case 0:
-					itemsToSpawn.add( new Bomb() );
-					break;
-				case 1:
-				case 2:
-					itemsToSpawn.add( new Bomb.DoubleBomb() );
-					break;
-				case 3:
-					itemsToSpawn.add( new Honeypot() );
-					break;
-			}
+		switch (Random.Int(4)){
+			case 0:
+				itemsToSpawn.add( new Bomb() );
+				break;
+			case 1:
+			case 2:
+				itemsToSpawn.add( new Bomb.DoubleBomb() );
+				break;
+			case 3:
+				itemsToSpawn.add( new Honeypot() );
+				break;
+		}
 
 		itemsToSpawn.add( new Ankh() );
 
-		if(!lessItems)
-			itemsToSpawn.add( new StoneOfAugmentation() );
+		itemsToSpawn.add( new StoneOfAugmentation() );
 
 		TimekeepersHourglass hourglass = Dungeon.hero.belongings.getItem(TimekeepersHourglass.class);
 		if (hourglass != null && hourglass.isIdentified() && !hourglass.cursed){

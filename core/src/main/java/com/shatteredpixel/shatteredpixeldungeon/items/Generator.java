@@ -240,6 +240,10 @@ public class Generator {
 			return Short.MAX_VALUE+item.image();
 		}
 
+		public Item random(){
+			return Generator.random(this);
+		}
+
 		static {
 			hardReset();
 		}
