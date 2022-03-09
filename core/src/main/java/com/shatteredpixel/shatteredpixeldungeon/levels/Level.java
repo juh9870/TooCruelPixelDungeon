@@ -1617,11 +1617,7 @@ public abstract class Level implements Bundlable {
 		int ay = a / width();
 		int bx = b % width();
 		int by = b / width();
-        if (!Dungeon.rook) {
 		return Math.max( Math.abs( ax - bx ), Math.abs( ay - by ) );
-        } else {
-            return Math.abs(ax - bx) + Math.abs(ay - by);
-        }
 	}
 
 	public boolean adjacent( int a, int b ) {

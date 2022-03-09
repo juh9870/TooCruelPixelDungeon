@@ -64,6 +64,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -167,8 +168,6 @@ public class Dungeon {
     public static ChallengesData extraData = new ChallengesData();
     public static boolean challengesInform;
 
-    //Variable for Rook challenge
-    public static boolean rook = false;
 	public static int mobsToChampion;
 
 	public static Hero hero;
@@ -204,7 +203,7 @@ public class Dungeon {
 		Generator.Category.hardReset();
 
 //		if (DeviceCompat.isDebug()) {
-//			seed = Long.parseLong("7yrferx3", 36);
+//			seed = Long.parseLong("2lq439du", 36);
 //		}
 
         modifiers = SPDSettings.modifiers();
@@ -216,7 +215,7 @@ public class Dungeon {
         }
 
 //        if(DeviceCompat.isDebug()){
-//        	modifiers.fromBigIntString("l1nwd0zo0");
+//        	modifiers.fromBigIntString("axq5j8k4jb9hsf0g");
 //		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 		levelPack = new DefaultLevelPack();
