@@ -14,6 +14,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.CursedWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -52,7 +53,8 @@ public class ScorchedEarth extends Buff {
 
     private boolean validTile(int pos) {
         if (Challenges.TOUCH_THE_GRASS.enabled()) {
-            return Dungeon.level.flamable[pos];
+            int tile = Dungeon.level.map[pos];
+            return tile == Terrain.GRASS || tile == Terrain.HIGH_GRASS || tile == Terrain.FURROWED_GRASS;
         }
         return Dungeon.level.water[pos];
     }
