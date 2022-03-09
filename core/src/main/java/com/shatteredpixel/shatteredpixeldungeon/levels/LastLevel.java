@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -86,8 +87,12 @@ public class LastLevel extends Level {
 
 	@Override
 	protected boolean build() {
-		
-		setSize(16, 64);
+
+		int h = 64;
+		h *= Challenges.nRoomsMult() * Challenges.roomSizeMult();
+		h = Math.min(4096, h);
+
+		setSize(16, h);
 		Arrays.fill( map, Terrain.CHASM );
 
 		final int MID = width/2;
