@@ -80,6 +80,7 @@ public class Imp extends NPC {
 	
 	@Override
 	public void add( Buff buff ) {
+		if (buff.visualOnly) super.add(buff);
 	}
 	
 	@Override

@@ -65,6 +65,7 @@ public class Blackjackkeeper extends NPC {
 	
 	@Override
 	public void add( Buff buff ) {
+		if (buff.visualOnly) super.add(buff);
 	}
 	
 	public void flee() {

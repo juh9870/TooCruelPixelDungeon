@@ -164,6 +164,7 @@ public class Pylon extends Mob {
 
 	@Override
 	public void add(Buff buff) {
+		if (buff.visualOnly) super.add(buff);
 		//immune to all buffs/debuffs when inactive
 		if (alignment != Alignment.NEUTRAL) {
 			super.add(buff);

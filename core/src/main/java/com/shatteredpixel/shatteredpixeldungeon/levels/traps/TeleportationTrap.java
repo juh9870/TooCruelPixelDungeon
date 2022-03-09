@@ -54,7 +54,7 @@ public class TeleportationTrap extends Trap {
 			Char ch = Actor.findChar(pos + i);
 			if (ch != null){
 				if (Challenges.DUPLICATOR.enabled() && !ch.flying) {
-					Buff.affect(ch, Levitation.class, 2f);
+					Buff.affect(ch, Levitation.class, 1f);
 				}
 				if (ScrollOfTeleportation.teleportChar(ch)) {
 					if (ch instanceof Mob && ((Mob) ch).state == ((Mob) ch).HUNTING) {

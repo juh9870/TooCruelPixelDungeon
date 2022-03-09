@@ -12,9 +12,13 @@ import com.watabou.utils.Reflection;
 
 public class Agnosia extends Buff {
 
-    private Image image;
     public final Class<? extends CharSprite> spriteClass = Challenges.CRAB_RAVE.enabled() ? CrabSprite.class : RatSprite.class;
     public int color = 0;
+    private Image image;
+
+    {
+        visualOnly = true;
+    }
 
     private void reset() {
         if (Challenges.CRAB_RAVE.enabled()) {

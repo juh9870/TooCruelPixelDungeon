@@ -43,114 +43,117 @@ import com.watabou.utils.Callback;
 
 public class Shopkeeper extends NPC {
 
-	{
-		spriteClass = ShopkeeperSprite.class;
+    private static final WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
+        @Override
+        public String textPrompt() {
+            return Messages.get(Shopkeeper.class, "sell");
+        }
 
-		properties.add(Property.IMMOVABLE);
-	}
-	
-	@Override
-	protected boolean act() {
+        @Override
+        public boolean itemSelectable(Item item) {
+            return Shopkeeper.canSell(item);
+        }
 
-		if (Dungeon.level.heroFOV[pos()]){
-			Notes.add(Notes.Landmark.SHOP);
-		}
-		
-		sprite.turnTo(pos(), Dungeon.hero.pos());
-		spend( TICK );
-		return super.act();
-	}
-	
-	@Override
-	public void damage( int dmg, Object src ) {
-		flee();
-	}
-	
-	@Override
-	public void add( Buff buff ) {
-		flee();
-	}
-	
-	public void flee() {
-		destroy();
+        @Override
+        public void onSelect(Item item) {
+            if (item != null) {
+                WndBag parentWnd = sell();
+                GameScene.show(new WndTradeItem(item, parentWnd));
+            }
+        }
+    };
 
-		Notes.remove(Notes.Landmark.SHOP);
-		
-		sprite.killAndErase();
-		CellEmitter.get(pos()).burst( ElmoParticle.FACTORY, 6 );
-	}
-	
-	@Override
-	public void destroy() {
-		super.destroy();
-		for (Heap heap: Dungeon.level.heaps.valueList()) {
-			if (heap.type == Heap.Type.FOR_SALE) {
-				CellEmitter.get( heap.pos ).burst( ElmoParticle.FACTORY, 4 );
-				if (heap.size() == 1) {
-					heap.destroy();
-				} else {
-					heap.items.remove(heap.size()-1);
-					heap.type = Heap.Type.HEAP;
-				}
-			}
-		}
-		if (Challenges.MIMICS.enabled())
-			HolderMimic.clearForSaleHeaps(Currency.GOLD);
-	}
-	
-	@Override
-	public boolean reset() {
-		return true;
-	}
+    {
+        spriteClass = ShopkeeperSprite.class;
 
-	//shopkeepers are greedy!
-	public static int sellPrice(Item item){
-		return item.value() * 5 * (Dungeon.depth().chapterId() + 1);
-	}
-	
-	public static WndBag sell() {
-		return GameScene.selectItem( itemSelector );
-	}
+        properties.add(Property.IMMOVABLE);
+    }
 
-	public static boolean canSell(Item item){
-		if (item.value() <= 0)                                              return false;
-		if (item.unique && !item.stackable)                                 return false;
-		if (item instanceof Armor && ((Armor) item).checkSeal() != null)    return false;
-		if (item.isEquipped(Dungeon.hero) && item.cursed)                   return false;
-		return true;
-	}
+    //shopkeepers are greedy!
+    public static int sellPrice(Item item) {
+        return item.value() * 5 * (Dungeon.depth().chapterId() + 1);
+    }
 
-	private static WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
-		@Override
-		public String textPrompt() {
-			return Messages.get(Shopkeeper.class, "sell");
-		}
+    public static WndBag sell() {
+        return GameScene.selectItem(itemSelector);
+    }
 
-		@Override
-		public boolean itemSelectable(Item item) {
-			return Shopkeeper.canSell(item);
-		}
+    public static boolean canSell(Item item) {
+        if (item.value() <= 0) return false;
+        if (item.unique && !item.stackable) return false;
+        if (item instanceof Armor && ((Armor) item).checkSeal() != null) return false;
+        return !item.isEquipped(Dungeon.hero) || !item.cursed;
+    }
 
-		@Override
-		public void onSelect( Item item ) {
-			if (item != null) {
-				WndBag parentWnd = sell();
-				GameScene.show( new WndTradeItem( item, parentWnd ) );
-			}
-		}
-	};
+    @Override
+    protected boolean act() {
 
-	@Override
-	public boolean interact(Char c) {
-		if (c != Dungeon.hero) {
-			return true;
-		}
-		Game.runOnRenderThread(new Callback() {
-			@Override
-			public void call() {
-				sell();
-			}
-		});
-		return true;
-	}
+        if (Dungeon.level.heroFOV[pos()]) {
+            Notes.add(Notes.Landmark.SHOP);
+        }
+
+        sprite.turnTo(pos(), Dungeon.hero.pos());
+        spend(TICK);
+        return super.act();
+    }
+
+    @Override
+    public void damage(int dmg, Object src) {
+        flee();
+    }
+
+    @Override
+    public void add(Buff buff) {
+        if (!buff.visualOnly) {
+            flee();
+        } else {
+            super.add(buff);
+        }
+    }
+
+    public void flee() {
+        destroy();
+
+        Notes.remove(Notes.Landmark.SHOP);
+
+        sprite.killAndErase();
+        CellEmitter.get(pos()).burst(ElmoParticle.FACTORY, 6);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        for (Heap heap : Dungeon.level.heaps.valueList()) {
+            if (heap.type == Heap.Type.FOR_SALE) {
+                CellEmitter.get(heap.pos).burst(ElmoParticle.FACTORY, 4);
+                if (heap.size() == 1) {
+                    heap.destroy();
+                } else {
+                    heap.items.remove(heap.size() - 1);
+                    heap.type = Heap.Type.HEAP;
+                }
+            }
+        }
+        if (Challenges.MIMICS.enabled())
+            HolderMimic.clearForSaleHeaps(Currency.GOLD);
+    }
+
+    @Override
+    public boolean reset() {
+        return true;
+    }
+
+    @Override
+    public boolean interact(Char c) {
+        if (c != Dungeon.hero) {
+            return true;
+        }
+        Game.runOnRenderThread(new Callback() {
+            @Override
+            public void call() {
+                sell();
+            }
+        });
+        return true;
+    }
 }
