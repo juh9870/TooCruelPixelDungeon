@@ -58,11 +58,10 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.GameMath;
-import com.watabou.utils.Lazy;
+import com.watabou.utils.function.Lazy;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
-import com.watabou.utils.Supplier;
+import com.watabou.utils.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;

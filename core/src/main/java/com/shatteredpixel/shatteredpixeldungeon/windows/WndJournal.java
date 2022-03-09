@@ -142,7 +142,7 @@ public class WndJournal extends WndTabbed {
 	}
 	
 	public void select(Tab tab) {
-		if(Challenges.AMNESIA.enabled()&&tabs.indexOf(tab)==2)return;
+		if (Challenges.AMNESIA.enabled() && tabs.indexOf(tab) == 2) return;
 		super.select(tab);
 	}
 	

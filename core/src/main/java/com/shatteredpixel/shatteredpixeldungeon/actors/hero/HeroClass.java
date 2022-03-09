@@ -43,36 +43,26 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.ScrollOfDebug;
 import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfStormClouds;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDivination;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -85,102 +75,169 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortswor
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ForceCube;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlockTrap;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GuardianTrap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
 
 public enum HeroClass {
 
-	WARRIOR( HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR ),
-	MAGE( HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK ),
-	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
-	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN );
+    WARRIOR(HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR),
+    MAGE(HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK),
+    ROGUE(HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER),
+    HUNTRESS(HeroSubClass.SNIPER, HeroSubClass.WARDEN);
 
-	private HeroSubClass[] subClasses;
+    private final HeroSubClass[] subClasses;
 
-	HeroClass( HeroSubClass...subClasses ) {
-		this.subClasses = subClasses;
-	}
+    HeroClass(HeroSubClass... subClasses) {
+        this.subClasses = subClasses;
+    }
 
-	public void initHero( Hero hero ) {
+    private static void initWarrior(Hero hero) {
+        (hero.belongings.weapon = new WornShortsword()).identify();
+        ThrowingStone stones = new ThrowingStone();
+        stones.quantity(3).collect();
+        Dungeon.quickslot.setSlot(0, stones);
 
-		hero.heroClass = this;
-		Talent.initClassTalents(hero);
+        if (hero.belongings.armor != null) {
+            hero.belongings.armor.affixSeal(new BrokenSeal());
+        }
 
-		Item i = new ClothArmor().identify();
-		if (!Challenges.isItemBlocked(i)) hero.belongings.armor = (ClothArmor)i;
+        new PotionOfHealing().identify();
+        new ScrollOfRage().identify();
+    }
 
-		i = new Food();
-		if (!Challenges.isItemBlocked(i)) i.collect();
+    private static void initMage(Hero hero) {
+        MagesStaff staff;
 
-		new VelvetPouch().collect();
-		Dungeon.LimitedDrops.VELVET_POUCH.drop();
+        staff = new MagesStaff(new WandOfMagicMissile());
 
-		Waterskin waterskin = new Waterskin();
-		waterskin.collect();
+        (hero.belongings.weapon = staff).identify();
+        hero.belongings.weapon.activate(hero);
 
-		new ScrollOfIdentify().identify();
+        Dungeon.quickslot.setSlot(0, staff);
 
-		switch (this) {
-			case WARRIOR:
-				initWarrior( hero );
-				break;
+        new ScrollOfUpgrade().identify();
+        new PotionOfLiquidFlame().identify();
+    }
 
-			case MAGE:
-				initMage( hero );
-				break;
+    private static void initRogue(Hero hero) {
+        (hero.belongings.weapon = new Dagger()).identify();
 
-			case ROGUE:
-				initRogue( hero );
-				break;
+        CloakOfShadows cloak = new CloakOfShadows();
+        (hero.belongings.artifact = cloak).identify();
+        hero.belongings.artifact.activate(hero);
 
-			case HUNTRESS:
-				initHuntress( hero );
-				break;
+        ThrowingKnife knives = new ThrowingKnife();
+        knives.quantity(3).collect();
+
+        Dungeon.quickslot.setSlot(0, cloak);
+        Dungeon.quickslot.setSlot(1, knives);
+
+        new ScrollOfMagicMapping().identify();
+        new PotionOfInvisibility().identify();
+    }
+
+    private static void initHuntress(Hero hero) {
+
+        (hero.belongings.weapon = new Gloves()).identify();
+        SpiritBow bow = new SpiritBow();
+        bow.identify().collect();
+
+        if (Challenges.CURSE_ENCHANT.enabled()) bow.enchant();
+
+        Dungeon.quickslot.setSlot(0, bow);
+
+        new PotionOfMindVision().identify();
+        new ScrollOfLullaby().identify();
+    }
+
+    public void initHero(Hero hero) {
+
+        hero.heroClass = this;
+        Talent.initClassTalents(hero);
+
+        Item i = new ClothArmor().identify();
+        if (!Challenges.isItemBlocked(i)) hero.belongings.armor = (ClothArmor) i;
+
+        i = new Food();
+        if (!Challenges.isItemBlocked(i)) i.collect();
+
+        new VelvetPouch().collect();
+        Dungeon.LimitedDrops.VELVET_POUCH.drop();
+
+        Waterskin waterskin = new Waterskin();
+        waterskin.collect();
+
+        new ScrollOfIdentify().identify();
+
+        switch (this) {
+            case WARRIOR:
+                initWarrior(hero);
+                break;
+
+            case MAGE:
+                initMage(hero);
+                break;
+
+            case ROGUE:
+                initRogue(hero);
+                break;
+
+            case HUNTRESS:
+                initHuntress(hero);
+                break;
+        }
+        if (Challenges.CURSE_ENCHANT.enabled()) {
+            ((Weapon) hero.belongings.weapon).enchant();
+            hero.belongings.armor.inscribe();
+        }
+        if (Challenges.SCORCHED_EARTH.enabled()) {
+            new AquaBlast().quantity(2).collect();
+        }
+
+        if (Challenges.HEADSTART.enabled()) {
+            new ScrollOfUpgrade().quantity(2).collect();
+            Dungeon.LimitedDrops.UPGRADE_SCROLLS.drop();
+            Dungeon.LimitedDrops.UPGRADE_SCROLLS.drop();
+        }
+
+        if (DeviceCompat.isDebug() || Challenges.DEBUG.enabled()) {
+			new ScrollOfDebug().identify().collect();
+			new PotionOfMindVision().quantity(64).identify().collect();
+			new PotionOfInvisibility().quantity(64).identify().collect();
+            new ScrollOfMagicMapping().quantity(64).identify().collect();
+			new Amulet().collect();
 		}
-		if (Challenges.CURSE_ENCHANT.enabled()){
-			((Weapon)hero.belongings.weapon).enchant();
-			hero.belongings.armor.inscribe();
-		}
-		if(Challenges.SCORCHED_EARTH.enabled()){
-			new AquaBlast().quantity(2).collect();
-		}
+        if (DeviceCompat.isDebug()) {
+            new ScrollOfIdentify().identify();
 
-		if (DeviceCompat.isDebug()) {
-			new ScrollOfIdentify().identify();
-
-			new ScrollOfMagicMapping().quantity(64).identify().collect();
-			new ScrollOfRage().quantity(64).identify().collect();
-			new ScrollOfUpgrade().quantity(100).identify().collect();
-			new ScrollOfTransmutation().quantity(100).identify().collect();
-			new Stylus().identify().collect();
-			new StoneOfIntuition().identify().collect();
-			new StoneOfIntuition().identify().collect();
-			new ScaleArmor().random().collect();
+            new ScrollOfRage().quantity(64).identify().collect();
+//			new ScrollOfUpgrade().quantity(100).identify().collect();
+//			new ScrollOfTransmutation().quantity(100).identify().collect();
+            new Stylus().identify().collect();
+            new StoneOfIntuition().identify().collect();
+            new StoneOfIntuition().identify().collect();
+            new ScaleArmor().random().collect();
 //			new ScrollOfIdentify().quantity(1).identify().collect();
 //			new ScrollOfRemoveCurse().quantity(1).identify().collect();
-			new ScrollOfPsionicBlast().quantity(1).identify().collect();
+            new ScrollOfPsionicBlast().quantity(1).identify().collect();
 //			new ScrollOfDivination().quantity(1).identify().collect();
 //			new ScrollOfForesight().quantity(1).identify().collect();
 //			new StoneOfAugmentation().quantity(1).identify().collect();
 //			new StoneOfIntuition().quantity(1).identify().collect();
 //			new ScrollOfRecharging().quantity(100).identify().collect();
 //			new Stylus().quantity(1).identify().collect();
-			new PotionOfMindVision().quantity(64).identify().collect();
-			new PotionOfInvisibility().quantity(64).identify().collect();
-			new ReclaimTrap().setStoredTrap(FlockTrap.class).collect();
+//            new ReclaimTrap().setStoredTrap(FlockTrap.class).collect();
 //			new ReclaimTrap().setStoredTrap(DistortionTrap.class).collect();
 //			Generator.randomWeapon(0).identify().collect();
 //			Generator.randomWeapon(1).identify().collect();
 //			Generator.randomWeapon(2).identify().collect();
 //			Generator.randomWeapon(3).identify().collect();
 //			Generator.randomWeapon(4).identify().collect();
-			new ForceCube().random().identify().collect();
-			new ForceCube().random().identify().collect();
-			new ForceCube().random().identify().collect();
+            new ForceCube().random().identify().collect();
+            new ForceCube().random().identify().collect();
+            new ForceCube().random().identify().collect();
 //			new WandOfDisintegration().upgrade(5000000).identify().collect();
-			new Shortsword().enchant(new Elastic()).upgrade(0).identify().collect();
+            new Shortsword().enchant(new Elastic()).upgrade(0).identify().collect();
 //			new Blindweed.Seed().collect();
 //			hero.STR = 22;
 
@@ -190,200 +247,143 @@ public enum HeroClass {
 //			hero.earnExp(Hero.maxExp(30),hero.getClass());
 //			new PlateArmor().upgrade(100).collect();
 //			new Longsword().upgrade(10).identify().collect();
-			new PotionOfHealing().quantity(100).collect();
+            new PotionOfHealing().quantity(100).collect();
 
-			Dungeon.gold=1000000;
+            Dungeon.gold = 1000000;
 
 //			Buff.affect(hero, MindVision.class,1000000);
 //			Buff.affect(hero, Invisibility.class,1000000);
-
-			new Amulet().upgrade(13).collect();
 //			new ScrollOfUpgrade().quantity(10).collect();
-		}
+        }
 
-		for (int s = 0; s < QuickSlot.SIZE; s++){
-			Item item = Dungeon.quickslot.getItem(s);
-			if (item == null){
-				Dungeon.quickslot.setSlot(s, waterskin);
-				break;
-			} else if (!hero.belongings.contains(item)){
-				Dungeon.quickslot.clearSlot(s);
-			}
-		}
+        for (int s = 0; s < QuickSlot.SIZE; s++) {
+            Item item = Dungeon.quickslot.getItem(s);
+            if (item == null) {
+                Dungeon.quickslot.setSlot(s, waterskin);
+                break;
+            } else if (!hero.belongings.contains(item)) {
+                Dungeon.quickslot.clearSlot(s);
+            }
+        }
 
-		if (Challenges.CHAOS_WIZARD.enabled() && hero.belongings.weapon != null) {
-			hero.belongings.weapon = null;
-			Generator.random(Generator.Category.WAND).identify().curse().collect();
-		}
-	}
+        if (Challenges.CHAOS_WIZARD.enabled() && hero.belongings.weapon != null) {
+            hero.belongings.weapon = null;
+            Generator.random(Generator.Category.WAND).identify().curse().collect();
+        }
+    }
 
-	public Badges.Badge masteryBadge() {
-		switch (this) {
-			case WARRIOR:
-				return Badges.Badge.MASTERY_WARRIOR;
-			case MAGE:
-				return Badges.Badge.MASTERY_MAGE;
-			case ROGUE:
-				return Badges.Badge.MASTERY_ROGUE;
-			case HUNTRESS:
-				return Badges.Badge.MASTERY_HUNTRESS;
-		}
-		return null;
-	}
+    public Badges.Badge masteryBadge() {
+        switch (this) {
+            case WARRIOR:
+                return Badges.Badge.MASTERY_WARRIOR;
+            case MAGE:
+                return Badges.Badge.MASTERY_MAGE;
+            case ROGUE:
+                return Badges.Badge.MASTERY_ROGUE;
+            case HUNTRESS:
+                return Badges.Badge.MASTERY_HUNTRESS;
+        }
+        return null;
+    }
 
-	private static void initWarrior( Hero hero ) {
-		(hero.belongings.weapon = new WornShortsword()).identify();
-		ThrowingStone stones = new ThrowingStone();
-		stones.quantity(3).collect();
-		Dungeon.quickslot.setSlot(0, stones);
+    public String title() {
+        return Messages.get(HeroClass.class, name());
+    }
 
-		if (hero.belongings.armor != null){
-			hero.belongings.armor.affixSeal(new BrokenSeal());
-		}
+    public String desc() {
+        return Messages.get(HeroClass.class, name() + "_desc");
+    }
 
-		new PotionOfHealing().identify();
-		new ScrollOfRage().identify();
-	}
+    public HeroSubClass[] subClasses() {
+        return subClasses;
+    }
 
-	private static void initMage( Hero hero ) {
-		MagesStaff staff;
+    public ArmorAbility[] armorAbilities() {
+        switch (this) {
+            case WARRIOR:
+            default:
+                return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
+            case MAGE:
+                return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
+            case ROGUE:
+                return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
+            case HUNTRESS:
+                return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
+        }
+    }
 
-		staff = new MagesStaff(new WandOfMagicMissile());
+    public String spritesheet() {
+        switch (this) {
+            case WARRIOR:
+            default:
+                return Assets.Sprites.WARRIOR;
+            case MAGE:
+                return Assets.Sprites.MAGE;
+            case ROGUE:
+                return Assets.Sprites.ROGUE;
+            case HUNTRESS:
+                return Assets.Sprites.HUNTRESS;
+        }
+    }
 
-		(hero.belongings.weapon = staff).identify();
-		hero.belongings.weapon.activate(hero);
+    public String splashArt() {
+        switch (this) {
+            case WARRIOR:
+            default:
+                return Assets.Splashes.WARRIOR;
+            case MAGE:
+                return Assets.Splashes.MAGE;
+            case ROGUE:
+                return Assets.Splashes.ROGUE;
+            case HUNTRESS:
+                return Assets.Splashes.HUNTRESS;
+        }
+    }
 
-		Dungeon.quickslot.setSlot(0, staff);
+    public String[] perks() {
+        switch (this) {
+            case WARRIOR:
+            default:
+                return new String[]{
+                        Messages.get(HeroClass.class, "warrior_perk1"),
+                        Messages.get(HeroClass.class, "warrior_perk2"),
+                        Messages.get(HeroClass.class, "warrior_perk3"),
+                        Messages.get(HeroClass.class, "warrior_perk4"),
+                        Messages.get(HeroClass.class, "warrior_perk5"),
+                };
+            case MAGE:
+                return new String[]{
+                        Messages.get(HeroClass.class, "mage_perk1"),
+                        Messages.get(HeroClass.class, "mage_perk2"),
+                        Messages.get(HeroClass.class, "mage_perk3"),
+                        Messages.get(HeroClass.class, "mage_perk4"),
+                        Messages.get(HeroClass.class, "mage_perk5"),
+                };
+            case ROGUE:
+                return new String[]{
+                        Messages.get(HeroClass.class, "rogue_perk1"),
+                        Messages.get(HeroClass.class, "rogue_perk2"),
+                        Messages.get(HeroClass.class, "rogue_perk3"),
+                        Messages.get(HeroClass.class, "rogue_perk4"),
+                        Messages.get(HeroClass.class, "rogue_perk5"),
+                };
+            case HUNTRESS:
+                return new String[]{
+                        Messages.get(HeroClass.class, "huntress_perk1"),
+                        Messages.get(HeroClass.class, "huntress_perk2"),
+                        Messages.get(HeroClass.class, "huntress_perk3"),
+                        Messages.get(HeroClass.class, "huntress_perk4"),
+                        Messages.get(HeroClass.class, "huntress_perk5"),
+                };
+        }
+    }
 
-		new ScrollOfUpgrade().identify();
-		new PotionOfLiquidFlame().identify();
-	}
+    public boolean isUnlocked() {
+        //always unlock on debug builds
+        if (DeviceCompat.isDebug()) return true;
 
-	private static void initRogue( Hero hero ) {
-		(hero.belongings.weapon = new Dagger()).identify();
-
-		CloakOfShadows cloak = new CloakOfShadows();
-		(hero.belongings.artifact = cloak).identify();
-		hero.belongings.artifact.activate( hero );
-
-		ThrowingKnife knives = new ThrowingKnife();
-		knives.quantity(3).collect();
-
-		Dungeon.quickslot.setSlot(0, cloak);
-		Dungeon.quickslot.setSlot(1, knives);
-
-		new ScrollOfMagicMapping().identify();
-		new PotionOfInvisibility().identify();
-	}
-
-	private static void initHuntress( Hero hero ) {
-
-		(hero.belongings.weapon = new Gloves()).identify();
-		SpiritBow bow = new SpiritBow();
-		bow.identify().collect();
-
-		if (Challenges.CURSE_ENCHANT.enabled()) bow.enchant();
-
-		Dungeon.quickslot.setSlot(0, bow);
-
-		new PotionOfMindVision().identify();
-		new ScrollOfLullaby().identify();
-	}
-
-	public String title() {
-		return Messages.get(HeroClass.class, name());
-	}
-
-	public String desc(){
-		return Messages.get(HeroClass.class, name()+"_desc");
-	}
-
-	public HeroSubClass[] subClasses() {
-		return subClasses;
-	}
-
-	public ArmorAbility[] armorAbilities(){
-		switch (this) {
-			case WARRIOR: default:
-				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
-			case MAGE:
-				return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
-			case ROGUE:
-				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
-			case HUNTRESS:
-				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
-		}
-	}
-
-	public String spritesheet() {
-		switch (this) {
-			case WARRIOR: default:
-				return Assets.Sprites.WARRIOR;
-			case MAGE:
-				return Assets.Sprites.MAGE;
-			case ROGUE:
-				return Assets.Sprites.ROGUE;
-			case HUNTRESS:
-				return Assets.Sprites.HUNTRESS;
-		}
-	}
-
-	public String splashArt(){
-		switch (this) {
-			case WARRIOR: default:
-				return Assets.Splashes.WARRIOR;
-			case MAGE:
-				return Assets.Splashes.MAGE;
-			case ROGUE:
-				return Assets.Splashes.ROGUE;
-			case HUNTRESS:
-				return Assets.Splashes.HUNTRESS;
-		}
-	}
-	
-	public String[] perks() {
-		switch (this) {
-			case WARRIOR: default:
-				return new String[]{
-						Messages.get(HeroClass.class, "warrior_perk1"),
-						Messages.get(HeroClass.class, "warrior_perk2"),
-						Messages.get(HeroClass.class, "warrior_perk3"),
-						Messages.get(HeroClass.class, "warrior_perk4"),
-						Messages.get(HeroClass.class, "warrior_perk5"),
-				};
-			case MAGE:
-				return new String[]{
-						Messages.get(HeroClass.class, "mage_perk1"),
-						Messages.get(HeroClass.class, "mage_perk2"),
-						Messages.get(HeroClass.class, "mage_perk3"),
-						Messages.get(HeroClass.class, "mage_perk4"),
-						Messages.get(HeroClass.class, "mage_perk5"),
-				};
-			case ROGUE:
-				return new String[]{
-						Messages.get(HeroClass.class, "rogue_perk1"),
-						Messages.get(HeroClass.class, "rogue_perk2"),
-						Messages.get(HeroClass.class, "rogue_perk3"),
-						Messages.get(HeroClass.class, "rogue_perk4"),
-						Messages.get(HeroClass.class, "rogue_perk5"),
-				};
-			case HUNTRESS:
-				return new String[]{
-						Messages.get(HeroClass.class, "huntress_perk1"),
-						Messages.get(HeroClass.class, "huntress_perk2"),
-						Messages.get(HeroClass.class, "huntress_perk3"),
-						Messages.get(HeroClass.class, "huntress_perk4"),
-						Messages.get(HeroClass.class, "huntress_perk5"),
-				};
-		}
-	}
-	
-	public boolean isUnlocked(){
-		//always unlock on debug builds
-		if (DeviceCompat.isDebug()) return true;
-		
-		//always unlocked in Too Cruel Pixel Dungeon
-		return true;
+        //always unlocked in Too Cruel Pixel Dungeon
+        return true;
 		
 		/*switch (this){
 			case WARRIOR: default:
@@ -395,19 +395,20 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
 		}*/
-	}
-	
-	public String unlockMsg() {
-		switch (this){
-			case WARRIOR: default:
-				return "";
-			case MAGE:
-				return Messages.get(HeroClass.class, "mage_unlock");
-			case ROGUE:
-				return Messages.get(HeroClass.class, "rogue_unlock");
-			case HUNTRESS:
-				return Messages.get(HeroClass.class, "huntress_unlock");
-		}
-	}
+    }
+
+    public String unlockMsg() {
+        switch (this) {
+            case WARRIOR:
+            default:
+                return "";
+            case MAGE:
+                return Messages.get(HeroClass.class, "mage_unlock");
+            case ROGUE:
+                return Messages.get(HeroClass.class, "rogue_unlock");
+            case HUNTRESS:
+                return Messages.get(HeroClass.class, "huntress_unlock");
+        }
+    }
 
 }

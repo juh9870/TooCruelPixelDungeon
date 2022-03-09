@@ -314,21 +314,26 @@ public class CursedWand {
 		}
 	}
 
+	public static void forestFire(final Char user){
+		//great forest fire!
+		for (int i = 0; i < Dungeon.level.length(); i++){
+			GameScene.add( Blob.seed(i, 15, Regrowth.class));
+		}
+		do {
+			GameScene.add(Blob.seed(Dungeon.level.randomDestination(null), 10, Fire.class));
+		} while (Random.Int(5) != 0);
+		new Flare(8, 32).color(0xFFFF66, true).show(user.sprite, 2f);
+		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		GLog.p(Messages.get(CursedWand.class, "grass"));
+		GLog.w(Messages.get(CursedWand.class, "fire"));
+	}
+
 	private static boolean veryRareEffect(final Item origin, final Char user, final int targetPos){
 		switch(Random.Int(4)){
 
 			//great forest fire!
 			case 0: default:
-				for (int i = 0; i < Dungeon.level.length(); i++){
-					GameScene.add( Blob.seed(i, 15, Regrowth.class));
-				}
-				do {
-					GameScene.add(Blob.seed(Dungeon.level.randomDestination(null), 10, Fire.class));
-				} while (Random.Int(5) != 0);
-				new Flare(8, 32).color(0xFFFF66, true).show(user.sprite, 2f);
-				Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
-				GLog.p(Messages.get(CursedWand.class, "grass"));
-				GLog.w(Messages.get(CursedWand.class, "fire"));
+				forestFire(user);
 				return true;
 
 			//golden mimic

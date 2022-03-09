@@ -200,10 +200,7 @@ public class Bestiary {
 
 	//has a chance to add a rarely spawned mobs to the rotation
 	public static void addRareMobs( Marker marker, ArrayList<Class<?extends Mob>> rotation ){
-
-		Chapter chapter = marker.chapter();
-		int progression = marker.chapterProgression();
-		int depth = chapter.ordinal() * 5 + progression;
+		int depth = marker.legacyLevelgenMapping();
 
 		if(Challenges.INVASION.enabled()){
 			if (depth < 21 && (depth + 2) % 5 == 0) {

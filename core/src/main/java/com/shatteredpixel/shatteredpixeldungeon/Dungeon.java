@@ -64,7 +64,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -219,6 +218,7 @@ public class Dungeon {
 //		}
         SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 		levelPack = new DefaultLevelPack();
+		levelPack.init();
 
 		Actor.clear();
 		Actor.resetNextID();
@@ -242,7 +242,6 @@ public class Dungeon {
 		QuickSlotButton.reset();
 
 
-		levelPack.init();
 		gold = 0;
 		tokens = 0;
 		energy = 0;
@@ -298,18 +297,18 @@ public class Dungeon {
 	}
 
 	public static boolean shopOnLevel() {
-		return levelPack.shopOnCurLevel();
+		return levelPack.curLvl.shop();
 	}
 
 	public static boolean bossLevel() {
-		return levelPack.bossCurLevel();
+		return levelPack.curLvl.boss();
 	}
 	public static boolean bossNextLevel() {
 		return levelPack.bossNextLevel();
 	}
 
 	public static boolean bossLevel( Marker depth ) {
-		return levelPack.bossLevel(depth);
+		return depth.boss();
 	}
 
 	public static int scalingFactor(){
@@ -684,7 +683,7 @@ public class Dungeon {
 
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
 		if(bundle.contains( DEPTH )){
-			info.depth = DefaultLevelPack.markerFromDepth(bundle.getInt( DEPTH ));
+			info.depth = DefaultLevelPack.markerFromLegacyDepth(bundle.getInt( DEPTH ));
 		} else {
 			LevelPack pack = (LevelPack) bundle.get(LEVEL_PACK);
 			info.depth = pack.curLvl;

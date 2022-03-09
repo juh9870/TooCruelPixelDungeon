@@ -1,4 +1,4 @@
-package com.watabou.utils;
+package com.watabou.utils.function;
 
 @FunctionalInterface
 public interface Supplier<T> {

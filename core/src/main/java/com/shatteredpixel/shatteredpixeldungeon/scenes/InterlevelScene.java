@@ -367,9 +367,15 @@ public class InterlevelScene extends PixelScene {
 					s += "\n";
 					s += t.toString();
 				}
+				String depth = "";
+				if (Dungeon.levelPack != null && Dungeon.levelPack.curLvl != null) {
+					depth = Dungeon.depth().debugInfo();
+				} else {
+					depth = "{null}";
+				}
 				ShatteredPixelDungeon.reportException(
 						new RuntimeException("waited more than 10 seconds on levelgen. " +
-								"Seed:" + Dungeon.seed + " depth:" + Dungeon.depth().debugInfo() + " trace:" +
+								"Seed:" + Dungeon.seed + " depth:" + depth + " trace:" +
 								s)
 				);
 			}

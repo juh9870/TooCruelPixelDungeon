@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
+import com.watabou.utils.Misc;
 
 public class ScrollOfPassage extends ExoticScroll {
 	
@@ -55,7 +56,7 @@ public class ScrollOfPassage extends ExoticScroll {
 		if (timeBubble != null) timeBubble.disarmPressedTraps();
 
 		InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-		InterlevelScene.returnDepth = Dungeon.levelPack.previousShopFloor();
+		InterlevelScene.returnDepth = Misc.or(Dungeon.levelPack.previousShopFloor(), Dungeon.levelPack::firstLevel);
 		InterlevelScene.returnPos = -1;
 		Game.switchScene( InterlevelScene.class );
 	}

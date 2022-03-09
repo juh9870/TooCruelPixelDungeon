@@ -182,6 +182,7 @@ public enum Challenges implements Hero.Doom {
     MARATHON(50, 2, 3f),
     ROOM_LOCK(59, 2, 2f),
     SCORCHED_EARTH(61, 2, 2f),
+    TOUCH_THE_GRASS(100, 2, 3f, BARREN_LAND, SCORCHED_EARTH),
     UNTIERED(67, 2, 2f, RETIERED),
     LIMITED_UPGRADES(69, 2, 2f),
     DANCE_FLOOR(70, 2, 4f),
@@ -195,12 +196,8 @@ public enum Challenges implements Hero.Doom {
     },
     MIMICS_2(87, 2, 3f, MIMICS),
     AGNOSIA(89, 2, 2f),
-    SECOND_TRY(95, 2, 4f) {
-        @Override
-        protected float _nLootMult() {
-            return 0;
-        }
-    },
+    WARM_WELCOME(97, 2, 3f),
+    HEADSTART(98, 2, 3f),
     //endregion
 
 
@@ -274,7 +271,13 @@ public enum Challenges implements Hero.Doom {
         }
     },
     MIMICS_GRIND(88, 5, 0, GRINDING, MIMICS_2),
-    SLIDING(91, 5, 0),
+    SLIDING(91, 5, -2f),
+    SECOND_TRY(95, 5, -4f) {
+        @Override
+        protected float _nLootMult() {
+            return 0;
+        }
+    },
     BIG_LEVELS(13, 5, 0) {
         @Override
         protected float _nMobsMult() {
@@ -385,9 +388,11 @@ public enum Challenges implements Hero.Doom {
         }
     },
 
+    DEBUG(99, 5, -9001),
+
     //endregion
 
-    //Last id 96
+    //Last id 100
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;

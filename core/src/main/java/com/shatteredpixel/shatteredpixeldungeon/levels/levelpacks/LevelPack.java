@@ -17,36 +17,29 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Reflection;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 
 import jdk.vm.ci.code.site.Mark;
 
-public abstract class LevelPack<T extends Marker> implements Bundlable {
+public abstract class LevelPack<T extends Marker> implements Bundlable, Iterable<T> {
+    public static final String MARKER = "marker";
     public T curLvl;
 
     public void init() {
 
     }
 
+    public Class<? extends Level> levelClassForMarker(T marker) {
+        if (marker.customLevel() != null) return marker.customLevel();
+        return marker.boss() ? marker.chapter().bossLevel() : marker.chapter().level();
+    }
+
     public Level levelForMarker(T marker) {
-        if (marker.equals(amuletFloor())) return new LastLevel();
-        boolean boss = bossLevel(curLvl);
-        switch (curLvl.chapter()) {
-            case SEWERS:
-                return boss ? new SewerBossLevel() : new SewerLevel();
-            case PRISON:
-                return boss ? new PrisonBossLevel() : new PrisonLevel();
-            case CAVES:
-                return boss ? new CavesBossLevel() : new CavesLevel();
-            case CITY:
-                return boss ? new CityBossLevel() : new CityLevel();
-            case HALLS:
-                return boss ? new HallsBossLevel() : new HallsLevel();
-            default:
-                return new DeadEndLevel();
-        }
+        return Reflection.newInstance(levelClassForMarker(marker));
     }
 
     public abstract T firstLevel();
@@ -73,23 +66,13 @@ public abstract class LevelPack<T extends Marker> implements Bundlable {
 
     public abstract long seedForMarker(T marker);
 
-    public abstract boolean shopOnLevel(T marker);
-
-    public final boolean shopOnCurLevel() {
-        return shopOnLevel(curLvl);
-    }
-
-    public abstract boolean bossLevel(T marker);
-
-    public final boolean bossCurLevel() {
-        return bossLevel(curLvl);
-    }
-
     public boolean bossNextLevel() {
-        return bossLevel(nextLevel());
+        return nextLevel().boss();
     }
 
-    public abstract T pitFallTarget(T marker);
+    public T pitFallTarget(T marker) {
+        return nextLevel();
+    }
 
     public final T curPitFallTarget() {
         return pitFallTarget(curLvl);
@@ -133,7 +116,10 @@ public abstract class LevelPack<T extends Marker> implements Bundlable {
 
     public abstract Iterable<T> levels();
 
-    public static final String MARKER = "marker";
+    @Override
+    public Iterator<T> iterator() {
+        return levels().iterator();
+    }
 
     @Override
     public void storeInBundle(Bundle bundle) {

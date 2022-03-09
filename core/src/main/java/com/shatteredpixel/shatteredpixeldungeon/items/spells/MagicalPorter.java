@@ -36,55 +36,56 @@ import java.util.ArrayList;
 //beacon was removed from drops, here for pre-1.1.0 saves
 public class MagicalPorter extends InventorySpell {
 
-	{
-		image = ItemSpriteSheet.MAGIC_PORTER;
-	}
+    {
+        image = ItemSpriteSheet.MAGIC_PORTER;
+    }
 
-	@Override
-	protected void onCast(Hero hero) {
+    @Override
+    protected void onCast(Hero hero) {
         if (Dungeon.depth().chapter() == Chapter.EMPTY ||
                 (Dungeon.depth().chapter() == Chapter.HALLS && Dungeon.bossLevel())) {
-			GLog.w(Messages.get(this, "nowhere"));
-		} else {
-			super.onCast(hero);
-		}
-	}
+            GLog.w(Messages.get(this, "nowhere"));
+        } else {
+            super.onCast(hero);
+        }
+    }
 
-	@Override
-	protected boolean usableOnItem(Item item) {
-		return !item.isEquipped(Dungeon.hero);
-	}
+    @Override
+    protected boolean usableOnItem(Item item) {
+        return !item.isEquipped(Dungeon.hero);
+    }
 
-	@Override
-	protected void onItemSelected(Item item) {
+    @Override
+    protected void onItemSelected(Item item) {
 
-		Item result = item.detachAll(curUser.belongings.backpack);
-		Marker portDepth = Dungeon.levelPack.nextBossFloor();
-		ArrayList<Item> ported = Dungeon.portedItems.get(portDepth);
-		if (ported == null) {
-			Dungeon.portedItems.put(portDepth, ported = new ArrayList<>());
-		}
-		ported.add(result);
+        Item result = item.detachAll(curUser.belongings.backpack);
+        Marker portDepth = Dungeon.levelPack.nextBossFloor();
+        if (portDepth == null) return;
+        ArrayList<Item> ported = Dungeon.portedItems.get(portDepth);
+        if (ported == null) {
+            Dungeon.portedItems.put(portDepth, ported = new ArrayList<>());
+        }
+        ported.add(result);
 
-	}
+    }
 
-	@Override
-	public int value() {
-		//prices of ingredients, divided by output quantity
-		return Math.round(quantity * ((5 + 40) / 8f));
-	}
+    @Override
+    public int value() {
+        //prices of ingredients, divided by output quantity
+        return Math.round(quantity * ((5 + 40) / 8f));
+    }
 
-	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
+    public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
 
-		{
-			inputs =  new Class[]{MerchantsBeacon.class, ArcaneCatalyst.class};
-			inQuantity = new int[]{1, 1};
+        {
+            inputs = new Class[]{MerchantsBeacon.class, ArcaneCatalyst.class};
+            inQuantity = new int[]{1, 1};
 
-			cost = 4;
+            cost = 4;
 
-			output = MagicalPorter.class;
-			outQuantity = 8;
-		}
+            output = MagicalPorter.class;
+            outQuantity = 8;
+        }
 
-	}
+    }
 }

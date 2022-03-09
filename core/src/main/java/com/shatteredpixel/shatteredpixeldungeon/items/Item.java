@@ -52,7 +52,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
-import com.watabou.utils.Supplier;
+import com.watabou.utils.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.Collections;

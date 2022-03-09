@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package com.watabou.utils;
+package com.watabou.utils.function;
 
 /**
  * Proxy object for a value that is calculated on first access

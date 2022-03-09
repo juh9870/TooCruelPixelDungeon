@@ -6,10 +6,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Desert;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Brimstone;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.CursedWand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -26,9 +30,36 @@ public class ScorchedEarth extends Buff {
         return Challenges.DESERT.enabled() ? WATER_TIME * 1.5f : WATER_TIME;
     }
 
+    public static void explode(Hero hero, Item toCurse) {
+        new Bomb().explode(hero.pos());
+        CursedWand.cursedEffect(null, hero, hero);
+        boolean curse = false;
+        if (toCurse instanceof Armor) {
+            ((Armor) toCurse).inscribe(Armor.Glyph.randomCurse());
+            curse = true;
+        }
+        if (toCurse instanceof MeleeWeapon) {
+            ((MeleeWeapon) toCurse).enchant(Weapon.Enchantment.randomCurse());
+            curse = true;
+        }
+        if (toCurse instanceof Wand) {
+            curse = true;
+        }
+        if (curse) {
+            toCurse.cursed = toCurse.cursedKnown = true;
+        }
+    }
+
+    private boolean validTile(int pos) {
+        if (Challenges.TOUCH_THE_GRASS.enabled()) {
+            return Dungeon.level.flamable[pos];
+        }
+        return Dungeon.level.water[pos];
+    }
+
     @Override
     public boolean act() {
-        if (Dungeon.level.water[target.pos()]) {
+        if (validTile(target.pos())) {
             turnsLeft = maxTime();
         } else {
             if (turnsLeft <= 0) {
@@ -45,8 +76,7 @@ public class ScorchedEarth extends Buff {
                 if (target instanceof Hero) {
                     Hero h = (Hero) target;
                     if (h.belongings.armor != null && h.belongings.armor.glyph instanceof Brimstone) {
-                        new Bomb().explode(h.pos());
-                        CursedWand.cursedEffect(null, h, h);
+                        explode(h, h.belongings.armor);
                         h.belongings.armor.inscribe(Armor.Glyph.randomCurse());
                         h.belongings.armor.cursed = h.belongings.armor.cursedKnown = true;
                     }
