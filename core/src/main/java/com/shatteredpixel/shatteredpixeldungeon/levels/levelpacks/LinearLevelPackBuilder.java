@@ -85,6 +85,12 @@ public class LinearLevelPackBuilder {
         actions.accept(last);
         return this;
     }
+    public LinearLevelPackBuilder forEach(Consumer<Marker.Custom> actions) {
+        for (Marker.Custom marker : markers) {
+            actions.accept(marker);
+        }
+        return this;
+    }
 
     public LinearLevelPackBuilder customLevel(Class<? extends Level> level) {
         last.setCustomLevel(level);

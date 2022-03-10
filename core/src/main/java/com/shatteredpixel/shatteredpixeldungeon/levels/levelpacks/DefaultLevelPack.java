@@ -52,13 +52,19 @@ public class DefaultLevelPack extends LinearLevelPack<Marker.Custom> {
                 .chapterWithLevels(Chapter.HALLS, length)
                 .amuletLevel();
 
+        builder.forEach((m) -> {
+            if (m.chapter() != Chapter.SEWERS && m.chapterProgression() == 1) {
+                m.setShop(true);
+            }
+        });
+
         if (Challenges.WARM_WELCOME.enabled()) {
             builder.shift(Marker.Custom::boss, -4);
         }
         if (Challenges.HEADSTART.enabled()) {
             builder.filter((marker) -> marker.chapter() != Chapter.SEWERS);
         }
-        if(Challenges.AMNESIA.enabled()){
+        if (Challenges.AMNESIA.enabled()) {
             builder.applyNamings((marker, index) -> "??");
         } else {
             builder.applyNamings((marker, index) -> Integer.toString(index));
