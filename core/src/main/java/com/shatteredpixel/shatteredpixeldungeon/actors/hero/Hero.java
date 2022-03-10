@@ -1522,7 +1522,7 @@ public class Hero extends Char {
 					if (Actor.findChar(nextStep) != null) break;
 					if(!Dungeon.level.passable[nextStep] && !Dungeon.level.avoid[nextStep]) break;
 					if (Random.Float() < .20f) {
-						Level.set(nextStep, Terrain.EMPTY);
+						Level.set(step, Terrain.EMPTY);
 					}
 					sprite.parent.add(new Delayer((Dungeon.level.distance(pos(),nextStep)-1) * CharSprite.getMoveInterval()){
 						{
