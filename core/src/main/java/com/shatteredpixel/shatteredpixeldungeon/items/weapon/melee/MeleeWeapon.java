@@ -28,9 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.watabou.utils.function.Lazy;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+import com.watabou.utils.function.Lazy;
 
 public class MeleeWeapon extends Weapon {
 	
@@ -101,7 +101,7 @@ public class MeleeWeapon extends Weapon {
 
 		if (enchantment != null && (cursedKnown || !enchantment.curse())){
 			info += "\n\n" + Messages.get(Weapon.class, "enchanted", enchantment.name());
-			info += " " + Messages.get(enchantment, "desc");
+			info += " " + enchantment.desc();
 		}
 
 		if (cursed && isEquipped( Dungeon.hero )) {
@@ -160,12 +160,17 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public int buffedLvl() {
 		int lvl = super.buffedLvl();
-		if(Challenges.UNTIERED.enabled()) lvl-=tierBonus.get();
+		if (Challenges.UNTIERED.enabled()) lvl -= tierBonus.get();
+		if (enchantment != null) lvl += enchantment.levelBonus();
 		return lvl;
 	}
 
 	public int buffedTier() {
-		return tier() + tierBonus.get();
+		int t = tier() + tierBonus.get();
+		if (enchantment != null) {
+			t += enchantment.tierBonus();
+		}
+		return t;
 	}
 
 	public int tier() {

@@ -104,7 +104,7 @@ public class Stacking extends Buff {
     }
 
     @Override
-    public void onDeathProc(Object src) {
+    public void onDeathProc(Object src, boolean fakeDeath) {
         proc();
     }
 

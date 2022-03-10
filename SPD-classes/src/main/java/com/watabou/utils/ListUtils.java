@@ -4,7 +4,9 @@ import com.watabou.utils.function.Function;
 import com.watabou.utils.function.Predicate;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public final class ListUtils {
@@ -35,6 +37,24 @@ public final class ListUtils {
             names[i] = function.apply(array[i]);
         }
         return names;
+    }
+
+    public static <T, U> List<U> map(List<T> source, Function<T, U> function){
+        List<U> target = new ArrayList<>();
+        for (T t : source) {
+            target.add(function.apply(t));
+        }
+        return target;
+    }
+
+    public static <T> String join(Iterable<T> iterable, String separator, Function<T, String> toString) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = false;
+        for (T t : iterable) {
+            if (sb.length() > 0) sb.append(separator);
+            sb.append(toString.apply(t));
+        }
+        return sb.toString();
     }
 
     private static void checkIndex(int size, int index, String message) {

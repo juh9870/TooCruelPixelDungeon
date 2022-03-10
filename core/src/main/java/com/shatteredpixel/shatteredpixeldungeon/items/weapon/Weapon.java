@@ -40,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Friendly;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Polarized;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Sacrificial;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Wayward;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Universal;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blocking;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blooming;
@@ -58,13 +59,14 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.function.Lazy;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
+import com.watabou.utils.function.Lazy;
 import com.watabou.utils.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 abstract public class Weapon extends KindOfWeapon {
 
@@ -157,7 +159,24 @@ abstract public class Weapon extends KindOfWeapon {
 			return bonus;
 		}));
 	}
-	
+
+	@Override
+	public void activate(Char ch) {
+		super.activate(ch);
+		if (enchantment != null) {
+			enchantment.activate(ch);
+		}
+	}
+
+	@Override
+	public boolean doUnequip(Hero hero, boolean collect, boolean single) {
+		if (super.doUnequip(hero, collect, single)) {
+			if (enchantment != null) enchantment.deactivate(hero);
+			return true;
+		}
+		return false;
+	}
+
 	private static final String USES_LEFT_TO_ID = "uses_left_to_id";
 	private static final String AVAILABLE_USES  = "available_uses";
 	private static final String ENCHANTMENT	    = "enchantment";
@@ -329,7 +348,9 @@ abstract public class Weapon extends KindOfWeapon {
 	public Weapon enchant( Enchantment ench ) {
         if (Challenges.CURSE_ENCHANT.enabled() && (ench == null || !ench.curse())) ench = Enchantment.randomCurse();
 		if (ench == null || !ench.curse()) curseInfusionBonus = false;
+		if (enchantment != null && isEquipped(Dungeon.hero)) enchantment.deactivate(Dungeon.hero);
 		enchantment = ench;
+		if (isEquipped(Dungeon.hero)) enchantment.activate(Dungeon.hero);
 		updateQuickslot();
 		return this;
 	}
@@ -343,6 +364,9 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 
 	public boolean hasEnchant(Class<?extends Enchantment> type, Char owner) {
+		if (enchantment instanceof Universal && type != Universal.class) {
+			return ((Universal) enchantment).hasEnchant(type, owner);
+		}
 		return enchantment != null && enchantment.getClass() == type && owner.buff(MagicImmune.class) == null;
 	}
 	
@@ -382,7 +406,14 @@ abstract public class Weapon extends KindOfWeapon {
 				Annoying.class, Displacing.class, Exhausting.class, Fragile.class,
 				Sacrificial.class, Wayward.class, Polarized.class, Friendly.class
 		};
-		
+
+		public void activate(Char ch){
+
+		}
+
+		public void deactivate(Char ch){
+
+		}
 			
 		public abstract int proc( Weapon weapon, Char attacker, Char defender, int damage );
 
@@ -418,6 +449,14 @@ abstract public class Weapon extends KindOfWeapon {
 
 		public String desc() {
 			return Messages.get(this, "desc");
+		}
+
+		public int levelBonus(){
+			return 0;
+		}
+
+		public int tierBonus(){
+			return 0;
 		}
 
 		public boolean curse() {
@@ -481,8 +520,12 @@ abstract public class Weapon extends KindOfWeapon {
 
 		@SuppressWarnings("unchecked")
 		public static Enchantment randomCurse( Class<? extends Enchantment> ... toIgnore ){
+			return randomCurse(Arrays.asList(toIgnore));
+		}
+		@SuppressWarnings("unchecked")
+		public static Enchantment randomCurse(Collection<Class<? extends Enchantment>> toIgnore) {
 			ArrayList<Class<?>> enchants = new ArrayList<>(Arrays.asList(curses));
-			enchants.removeAll(Arrays.asList(toIgnore));
+			enchants.removeAll(toIgnore);
 			if (enchants.isEmpty()) {
 				return random();
 			} else {
