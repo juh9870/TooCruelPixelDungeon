@@ -842,6 +842,10 @@ public abstract class Mob extends Char {
 			Buff.affect(Dungeon.hero, Arrowhead.class).addStack();
 		}
 
+		for (Buff buff : buffs().toArray(new Buff[0])) {
+			buff.onDeathProc(cause, true);
+		}
+
 		if (cause != Chasm.class &&
 				Challenges.TUMBLER.enabled() &&
 				!Dungeon.bossLevel() &&

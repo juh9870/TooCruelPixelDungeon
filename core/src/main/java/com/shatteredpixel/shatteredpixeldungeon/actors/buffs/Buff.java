@@ -100,7 +100,7 @@ public class Buff extends Actor {
 	public void modifyProperties(HashSet<Char.Property> properties){
 	}
 
-	public void onDeathProc(Object src) {
+	public void onDeathProc(Object src, boolean fakeDeath) {
 	}
 	
 	public int icon() {

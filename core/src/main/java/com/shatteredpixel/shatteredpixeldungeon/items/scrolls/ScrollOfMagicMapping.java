@@ -51,9 +51,9 @@ public class ScrollOfMagicMapping extends Scroll {
 		boolean[] discoverable = Dungeon.level.discoverable;
 
 		boolean debug = DeviceCompat.isDebug();
-		if(DeviceCompat.isDebug()){
-			mapped = Dungeon.level.visited;
-		}
+//		if(DeviceCompat.isDebug()){
+//			mapped = Dungeon.level.visited;
+//		}
 		
 		boolean noticed = false;
 		

@@ -500,13 +500,11 @@ public abstract class Char extends Actor {
 	public int defenseProc( Char enemy, int damage ) {
 		return damage;
 	}
-	
+
+	// Movement speed
 	public float speed() {
 		float speed = baseSpeed;
 
-		for (TimescaleBuff buff : buffs(TimescaleBuff.class)) {
-			speed *= buff.speedFactor();
-		}
 		if ( buff( Cripple.class ) != null ) speed /= 2f;
 		if ( buff( Stamina.class ) != null) speed *= 1.5f;
 		if ( buff( Adrenaline.class ) != null) speed *= 2f;
@@ -761,9 +759,9 @@ public abstract class Char extends Actor {
 	}
 	
 	public void die( Object src ) {
-		
-		for (Buff buff : buffs()) {
-			buff.onDeathProc(src);
+
+		for (Buff buff : buffs().toArray(new Buff[0])) {
+			buff.onDeathProc(src, false);
 		}
 		
 		destroy();
@@ -783,6 +781,11 @@ public abstract class Char extends Actor {
 	protected void spend( float time ) {
 		
 		float timeScale = 1f;
+
+		for (TimescaleBuff buff : buffs(TimescaleBuff.class)) {
+			timeScale *= buff.speedFactor();
+		}
+		
 		super.spend( time / timeScale );
 
 //		if(Math.abs(this.getTime()-Actor.now())>20){

@@ -1771,6 +1771,10 @@ public class Hero extends Char {
 	@Override
 	public void die( Object cause ) {
 
+		for (Buff buff : buffs().toArray(new Buff[0])) {
+			buff.onDeathProc(cause, true);
+		}
+
 		curAction = null;
 
 		Ankh ankh = null;

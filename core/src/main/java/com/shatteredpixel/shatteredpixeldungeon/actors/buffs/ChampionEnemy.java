@@ -679,8 +679,8 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         @Override
-        public void onDeathProc(Object src) {
-            super.onDeathProc(src);
+        public void onDeathProc(Object src, boolean fakeDeath) {
+            if (fakeDeath) return;
 
             HashSet<Class<? extends ChampionEnemy>> buffs = new HashSet<>();
 
@@ -964,8 +964,9 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
         }
 
         @Override
-        public void onDeathProc(Object src) {
-            seed(target.pos(), 20);
+        public void onDeathProc(Object src, boolean fakeDeath) {
+            if (!fakeDeath)
+                seed(target.pos(), 20);
         }
 
         @Override
