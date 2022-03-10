@@ -43,6 +43,17 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SandalsOfNature;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellbook;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ArcaneBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Firebomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Flashbang;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.FrostBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.HolyBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Noisemaker;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.RegrowthBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShockBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShrapnelBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.WoollyBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
@@ -84,6 +95,21 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportat
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.ArcaneCatalyst;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.CurseInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.FeatherFall;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalPorter;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.PhaseShift;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Recycle;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Spell;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.SummonElemental;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.TelekineticGrab;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.WildEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfFear;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
@@ -205,7 +231,11 @@ public class Generator {
 		
 		SCROLL	( 8, 8, Scroll.class ),
 		STONE   ( 1, 1, Runestone.class),
-		
+
+		BOMBS	( 0, 0, Bomb.class),
+		SPELLS	( 0, 0, Spell.class),
+		MISC	( 0, 0, Item.class),
+
 		GOLD	( 10, 10,   Gold.class );
 		
 		public Class<?>[] classes;
@@ -469,6 +499,50 @@ public class Generator {
 			};
 			ARTIFACT.defaultProbs = new float[]{ 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1};
 			ARTIFACT.probs = ARTIFACT.defaultProbs.clone();
+
+			MISC.classes = new Class<?>[]{
+					TengusMask.class,
+					KingsCrown.class,
+					Stylus.class,
+					Torch.class,
+					Ankh.class,
+					MerchantsBeacon.class,
+					Honeypot.class,
+			};
+			MISC.probs = new float[]{ 0, 0, 0, 0, 0, 0, 0, };
+
+			BOMBS.classes = new Class<?>[]{
+					Bomb.class,
+					ArcaneBomb.class,
+					Firebomb.class,
+					Flashbang.class,
+					FrostBomb.class,
+					HolyBomb.class,
+					Noisemaker.class,
+					RegrowthBomb.class,
+					ShockBomb.class,
+					ShrapnelBomb.class,
+					WoollyBomb.class,
+			};
+			BOMBS.probs = new float[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+
+			SPELLS.classes = new Class<?>[]{
+					Alchemize.class,
+					AquaBlast.class,
+					ArcaneCatalyst.class,
+					BeaconOfReturning.class,
+					CurseInfusion.class,
+					FeatherFall.class,
+					MagicalInfusion.class,
+					MagicalPorter.class,
+					PhaseShift.class,
+					ReclaimTrap.class,
+					Recycle.class,
+					SummonElemental.class,
+					TelekineticGrab.class,
+					WildEnergy.class,
+			};
+			SPELLS.probs = new float[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
 		}
 	}
 
