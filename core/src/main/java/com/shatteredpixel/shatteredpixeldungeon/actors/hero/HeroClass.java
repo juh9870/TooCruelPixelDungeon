@@ -77,6 +77,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ForceCube;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Firebloom;
 import com.watabou.utils.DeviceCompat;
 
 public enum HeroClass {
@@ -199,6 +200,10 @@ public enum HeroClass {
             new ScrollOfUpgrade().quantity(2).collect();
             Dungeon.LimitedDrops.UPGRADE_SCROLLS.drop();
             Dungeon.LimitedDrops.UPGRADE_SCROLLS.drop();
+        }
+
+        if(Challenges.WARM_WELCOME.enabled()){
+            new Firebloom.Seed().collect();
         }
 
         if (DeviceCompat.isDebug() || Challenges.DEBUG.enabled()) {
