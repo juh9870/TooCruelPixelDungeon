@@ -118,7 +118,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
                 Buff.prolong(target, DancingStun.class, 1);
                 break;
             case BLACK:
-                int dmg = (Dungeon.depth().chapterId() + 1) * 5;
+                int dmg = (Dungeon.depth().scalingDepth()/5 + 1) * 5;
                 if (target == Dungeon.hero) {
                     dmg = target.HT / (CYCLE_LENGTH - 1);
                     Dungeon.hero.interrupt();

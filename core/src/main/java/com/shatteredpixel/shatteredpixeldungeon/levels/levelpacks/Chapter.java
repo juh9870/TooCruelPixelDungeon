@@ -125,7 +125,7 @@ public enum Chapter {
 
     abstract Class<? extends Level> bossLevel();
 
-    int id() {
+    public int id() {
         return ordinal();
     }
 }
