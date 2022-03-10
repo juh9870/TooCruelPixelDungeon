@@ -49,7 +49,9 @@ public class Timebending extends Weapon.Enchantment {
                 this.stacks += stacks;
                 postpone(DURATION);
             }
-            this.stacks = Math.min(5, this.stacks);
+            if (this.stacks > 5) {
+                spend(-cooldown() - 1);
+            }
         }
 
         @Override
@@ -75,7 +77,7 @@ public class Timebending extends Weapon.Enchantment {
             if (stacks > 0) {
                 stacks = -stacks;
                 postpone(DURATION * 1.5f);
-                SpellSprite.show( target, SpellSprite.CLOCk );
+                SpellSprite.show(target, SpellSprite.CLOCk);
                 Sample.INSTANCE.play(Assets.Sounds.EVOKE);
                 return true;
             }
