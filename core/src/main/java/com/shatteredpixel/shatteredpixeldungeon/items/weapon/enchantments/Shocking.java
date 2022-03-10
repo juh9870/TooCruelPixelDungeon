@@ -64,7 +64,6 @@ public class Shocking extends Weapon.Enchantment {
 
 			attacker.sprite.parent.addToFront( new Lightning( arcs, null ) );
 			Sample.INSTANCE.play( Assets.Sounds.LIGHTNING );
-			
 		}
 
 		return damage;
