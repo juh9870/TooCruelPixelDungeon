@@ -39,11 +39,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.Smok
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
+import com.shatteredpixel.shatteredpixeldungeon.debug.PotionOfDebug;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.ScrollOfDebug;
+import com.shatteredpixel.shatteredpixeldungeon.debug.ScrollOfDebug;
 import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
@@ -202,6 +203,7 @@ public enum HeroClass {
 
         if (DeviceCompat.isDebug() || Challenges.DEBUG.enabled()) {
 			new ScrollOfDebug().identify().collect();
+			new PotionOfDebug().identify().collect();
 			new PotionOfMindVision().quantity(64).identify().collect();
 			new PotionOfInvisibility().quantity(64).identify().collect();
             new ScrollOfMagicMapping().quantity(64).identify().collect();

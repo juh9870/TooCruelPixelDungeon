@@ -66,13 +66,13 @@ public class WndUseItem extends WndInfoItem {
 				}
 				
 			}
-			y = layoutButtons(buttons, width, y);
+			y = layoutButtons(buttons, width, y, BUTTON_HEIGHT);
 		}
 		
 		resize( width, (int)(y) );
 	}
 
-	private static float layoutButtons(ArrayList<RedButton> buttons, float width, float y){
+	public static float layoutButtons(ArrayList<RedButton> buttons, float width, float y, float btnHeight){
 		ArrayList<RedButton> curRow = new ArrayList<>();
 		float widthLeftThisRow = width;
 		
@@ -150,7 +150,7 @@ public class WndUseItem extends WndInfoItem {
 				}
 				
 				//move to next line and reset variables
-				y += BUTTON_HEIGHT+1;
+				y += btnHeight+1;
 				widthLeftThisRow = width;
 				curRow.clear();
 				

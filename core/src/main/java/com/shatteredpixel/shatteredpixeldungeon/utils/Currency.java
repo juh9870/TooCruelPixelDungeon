@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.utils;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
+import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -49,6 +50,11 @@ public enum Currency {
         public Image icon() {
             return new ItemSprite(ItemSpriteSheet.GOLD);
         }
+
+        @Override
+        public Item item() {
+            return new Gold();
+        }
     },
     TOKENS {
         @Override
@@ -69,6 +75,37 @@ public enum Currency {
         @Override
         public Image icon() {
             return new ItemSprite(ItemSpriteSheet.POKER_TOKEN);
+        }
+
+        @Override
+        public Item item() {
+            return new PokerToken();
+        }
+    },
+    ENERGY {
+        @Override
+        public void receive(int amount, Hero hero) {
+            Dungeon.energy += amount;
+        }
+
+        @Override
+        public int get() {
+            return Dungeon.energy;
+        }
+
+        @Override
+        public void set(int amount) {
+            Dungeon.energy = amount;
+        }
+
+        @Override
+        public Image icon() {
+            return new ItemSprite(ItemSpriteSheet.ENERGY);
+        }
+
+        @Override
+        public Item item() {
+            return new EnergyCrystal();
         }
     };
 
@@ -111,4 +148,6 @@ public enum Currency {
     }
 
     public abstract Image icon();
+
+    public abstract Item item();
 }

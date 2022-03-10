@@ -1,4 +1,4 @@
-package com.shatteredpixel.shatteredpixeldungeon.items;
+package com.shatteredpixel.shatteredpixeldungeon.debug;
 
 import static java.util.Arrays.copyOfRange;
 
@@ -54,7 +54,6 @@ import java.net.URLDecoder;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.regex.Matcher;
 
 import sun.net.www.protocol.file.FileURLConnection;
 

@@ -1,7 +1,9 @@
 package com.watabou.utils;
 
+import com.watabou.utils.function.Function;
 import com.watabou.utils.function.Predicate;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -25,6 +27,14 @@ public final class ListUtils {
             if (tempArray[i] == null) offset--;
             else elements[i + offset] = tempArray[i];
         }
+    }
+
+    public static <T, U> U[] map(T[] array, Class<U> targetClass, Function<T, U> function) {
+        U[] names = (U[]) Array.newInstance(targetClass, array.length);
+        for (int i = 0; i < array.length; i++) {
+            names[i] = function.apply(array[i]);
+        }
+        return names;
     }
 
     private static void checkIndex(int size, int index, String message) {

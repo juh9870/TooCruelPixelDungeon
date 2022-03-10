@@ -30,18 +30,18 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArm
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class Gold extends Item {
+public class Gold extends CurrencyItem {
 
 	private static final String TXT_VALUE	= "%+d";
 	
 	{
 		image = ItemSpriteSheet.GOLD;
-		stackable = true;
 	}
 	
 	public Gold() {
@@ -53,14 +53,9 @@ public class Gold extends Item {
 	}
 	
 	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		return new ArrayList<>();
-	}
-	
-	@Override
 	public boolean doPickUp(Hero hero, int pos) {
-		
-		Dungeon.gold += quantity;
+
+		currency().add(quantity);
 		Statistics.goldCollected += quantity;
 		Badges.validateGoldCollected();
 
@@ -78,19 +73,13 @@ public class Gold extends Item {
 	}
 	
 	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
-	
-	@Override
-	public boolean isIdentified() {
-		return true;
-	}
-	
-	@Override
 	public Item random() {
 		quantity = Random.Int( 30 + Dungeon.scalingFactor() * 10, 60 + Dungeon.scalingFactor() * 20 );
 		return this;
 	}
 
+	@Override
+	public Currency currency() {
+		return Currency.GOLD;
+	}
 }

@@ -26,18 +26,18 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class PokerToken extends Item {
+public class PokerToken extends CurrencyItem {
 
 	private static final String TXT_VALUE	= "%+d";
 
 	{
 		image = ItemSpriteSheet.POKER_TOKEN;
-		stackable = true;
 	}
 
 	public PokerToken() {
@@ -47,16 +47,11 @@ public class PokerToken extends Item {
 	public PokerToken(int value ) {
 		this.quantity = value;
 	}
-	
-	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		return new ArrayList<>();
-	}
 
 	@Override
 	public boolean doPickUp( Hero hero, int pos ) {
 
-		Dungeon.tokens += quantity;
+		currency().add(quantity);
 
 		GameScene.pickUp( this, hero.pos());
 		hero.sprite.showStatus( 0xb33636, TXT_VALUE, quantity );
@@ -68,12 +63,7 @@ public class PokerToken extends Item {
 	}
 
 	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
-	
-	@Override
-	public boolean isIdentified() {
-		return true;
+	public Currency currency() {
+		return Currency.TOKENS;
 	}
 }
