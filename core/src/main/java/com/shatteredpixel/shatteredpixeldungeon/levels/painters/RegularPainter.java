@@ -384,15 +384,13 @@ public abstract class RegularPainter extends Painter {
 			l.map[i] = (Random.Float() < count / 12f) ? Terrain.HIGH_GRASS : Terrain.GRASS;
 		}
 	}
-	
-    private boolean canPlaceTrapAtPos(Level l, int pos){
-        int terr = l.map[pos];
-        if(!Challenges.EXTREME_DANGER.enabled()) return terr == Terrain.EMPTY;
-        return terr == Terrain.EMPTY || terr == Terrain.GRASS ||
-                terr == Terrain.EMBERS || terr == Terrain.EMPTY_DECO ||
-                terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS ||
-                terr == Terrain.WATER;
-    }
+
+	private boolean canPlaceTrapAtPos( Level l, int pos ) {
+		int terr = l.map[pos];
+		if ( !Challenges.EXTREME_DANGER.enabled() ) return terr == Terrain.EMPTY;
+		return l.canPlaceTrap( pos ) && l.getTrap( pos ) == null;
+	}
+
 	protected void paintTraps( Level l, ArrayList<Room> rooms ) {
 		ArrayList<Integer> validCells = new ArrayList<>();
 		

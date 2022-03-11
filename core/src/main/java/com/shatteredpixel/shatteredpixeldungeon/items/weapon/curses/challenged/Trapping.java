@@ -24,7 +24,7 @@ public class Trapping extends Weapon.Enchantment {
 
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		if ( Random.Float() < CHANCE ) {
+		if ( Random.Float() < CHANCE * procChanceMultiplier( attacker ) ) {
 			Set<Integer> validCells = new HashSet<>();
 			for (int i : PathFinder.NEIGHBOURS8) {
 				int pos = defender.pos() + i;

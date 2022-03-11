@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Combo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Disabled;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Foresight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GrowingRage;
@@ -1742,7 +1743,7 @@ public class Hero extends Char {
 				GLog.w(msg);
 			}
 
-			if (buff instanceof Paralysis || buff instanceof Vertigo) {
+			if (buff instanceof Paralysis || buff instanceof Vertigo || buff instanceof Disabled ) {
 				interrupt();
 			}
 

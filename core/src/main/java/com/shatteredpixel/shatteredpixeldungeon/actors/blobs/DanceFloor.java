@@ -7,6 +7,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.DamageAmplificationBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Disabled;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Godspeed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
@@ -246,11 +247,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
         GLog.i(Messages.get(this, "ondeath"));
     }
 
-    public static class DancingStun extends Paralysis {
-        @Override
-        public void processDamage(int damage) {
-        }
-
+    public static class DancingStun extends Disabled {
         @Override
         public float iconFadePercent() {
             return 0;

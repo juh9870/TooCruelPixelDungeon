@@ -13,6 +13,7 @@ import com.watabou.utils.Random;
 
 public class Abyssal extends Weapon.Enchantment {
 	private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
+	private static final float CHANCE = 0.2f;
 
 	@Override
 	public boolean curse() {
@@ -22,7 +23,7 @@ public class Abyssal extends Weapon.Enchantment {
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
 		if ( defender.HP <= damage ) return damage;
-		if ( Random.Int( 5 ) == 0 ) {
+		if ( Random.Float() < CHANCE * procChanceMultiplier( attacker ) ) {
 			int dmg = defender.isImmune( Grim.class ) ? (attacker.damageRoll() + attacker.damageRoll()) : defender.HP;
 
 			defender.damage( dmg, this );
