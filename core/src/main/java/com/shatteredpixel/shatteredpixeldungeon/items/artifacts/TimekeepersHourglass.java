@@ -350,7 +350,7 @@ public class TimekeepersHourglass extends Artifact {
 
 		public void disarmPressedTraps(){
 			for (int cell : presses){
-				Trap t = Dungeon.level.traps.get(cell);
+				Trap t = Dungeon.level.getTrap(cell);
 				if (t != null && t.disarmedByActivation) t.disarm();
 			}
 

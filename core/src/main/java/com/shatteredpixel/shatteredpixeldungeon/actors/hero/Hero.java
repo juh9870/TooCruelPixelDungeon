@@ -1465,8 +1465,8 @@ public class Hero extends Char {
 					step = target;
 				}
 				if (walkingToVisibleTrapInFog
-						&& Dungeon.level.traps.get(target) != null
-						&& Dungeon.level.traps.get(target).visible) {
+						&& Dungeon.level.getTrap(target) != null
+						&& Dungeon.level.getTrap(target).visible) {
 					return false;
 				}
 			}
@@ -1626,7 +1626,7 @@ public class Hero extends Char {
 		} else {
 
 			if (!Dungeon.level.visited[cell] && !Dungeon.level.mapped[cell]
-					&& Dungeon.level.traps.get(cell) != null && Dungeon.level.traps.get(cell).visible) {
+					&& Dungeon.level.getTrap(cell) != null && Dungeon.level.getTrap(cell).visible) {
 				walkingToVisibleTrapInFog = true;
 			} else {
 				walkingToVisibleTrapInFog = false;
@@ -2086,7 +2086,7 @@ public class Hero extends Char {
 					
 					if (Dungeon.level.secret[curr]){
 						
-						Trap trap = Dungeon.level.traps.get( curr );
+						Trap trap = Dungeon.level.getTrap( curr );
 						float chance;
 
 						//searches aided by foresight always succeed, even if trap isn't searchable
@@ -2106,7 +2106,7 @@ public class Hero extends Char {
 							chance = 0f;
 							
 						//unintentional trap detection scales from 40% at floor 0 to 30% at floor 25
-						} else if (Dungeon.level.map[curr] == Terrain.SECRET_TRAP) {
+						} else if (Dungeon.level.hasSecretTrap(curr)) {
 							chance = 0.4f - (Dungeon.scalingFactor() / 250f);
 
 							//unintentional door detection scales from 20% at floor 0 to 0% at floor 20
@@ -2115,6 +2115,7 @@ public class Hero extends Char {
 						}
 
 						if (Random.Float() < chance) {
+							boolean hasSecretTrap = Dungeon.level.hasSecretTrap(curr);
 							int oldValue = Dungeon.level.map[curr];
 							
 							GameScene.discoverTile( curr, oldValue );
@@ -2126,7 +2127,7 @@ public class Hero extends Char {
 							if (fieldOfView[curr]) smthFound = true;
 	
 							if (talisman != null){
-								if (oldValue == Terrain.SECRET_TRAP){
+								if (hasSecretTrap != Dungeon.level.hasSecretTrap(curr)){
 									talisman.charge(2);
 								} else if (oldValue == Terrain.SECRET_DOOR) {
 									talisman.charge(10);

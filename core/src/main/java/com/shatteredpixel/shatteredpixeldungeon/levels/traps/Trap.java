@@ -24,8 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.traps;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.actors.LevelObject;
+import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Chapter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.levelpacks.Marker;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -35,29 +35,30 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
+import com.watabou.utils.Rect;
 import com.watabou.utils.Reflection;
 
 public abstract class Trap implements Bundlable {
 
 	//trap colors
-	public static final int RED     = 0;
-	public static final int ORANGE  = 1;
-	public static final int YELLOW  = 2;
-	public static final int GREEN   = 3;
-	public static final int TEAL    = 4;
-	public static final int VIOLET  = 5;
-	public static final int WHITE   = 6;
-	public static final int GREY    = 7;
-	public static final int BLACK   = 8;
+	public static final int RED = 0;
+	public static final int ORANGE = 1;
+	public static final int YELLOW = 2;
+	public static final int GREEN = 3;
+	public static final int TEAL = 4;
+	public static final int VIOLET = 5;
+	public static final int WHITE = 6;
+	public static final int GREY = 7;
+	public static final int BLACK = 8;
 
 	//trap shapes
-	public static final int DOTS        = 0;
-	public static final int WAVES       = 1;
-	public static final int GRILL       = 2;
-	public static final int STARS       = 3;
-	public static final int DIAMOND     = 4;
-	public static final int CROSSHAIR   = 5;
-	public static final int LARGE_DOT   = 6;
+	public static final int DOTS = 0;
+	public static final int WAVES = 1;
+	public static final int GRILL = 2;
+	public static final int STARS = 3;
+	public static final int DIAMOND = 4;
+	public static final int CROSSHAIR = 5;
+	public static final int LARGE_DOT = 6;
 
 	public static Class<? extends Trap>[] trapClasses = new Class[]{
 			AlarmTrap.class,
@@ -98,6 +99,25 @@ public abstract class Trap implements Bundlable {
 			WornDartTrap.class,
 	};
 
+	public static Trap randomTrap() {
+		return Reflection.newInstance( Random.element( trapClasses ) );
+	}
+
+	public static Trap adjustTrap( Trap t ) {
+		Marker m = Dungeon.depth();
+		// No grim trap before halls
+		if ( m.chapter() != Chapter.HALLS && t instanceof GrimTrap ) t = new DisintegrationTrap();
+		// No disintegration and distortion before city
+		if ( m.chapterId() < Chapter.CITY.id() && t instanceof DisintegrationTrap ) t = new CursedWandTrap();
+		if ( m.chapterId() < Chapter.CITY.id() && t instanceof DistortionTrap ) t = new SummoningTrap();
+		// No tengu traps before caves
+		if ( m.chapterId() < Chapter.CAVES.id() && t instanceof TenguDartTrap ) t = new CursedWandTrap();
+
+		// Gateway doesn't work with randomization
+		if ( t instanceof GatewayTrap ) t = new TeleportationTrap();
+		return t;
+	}
+
 	public int color;
 	public int shape;
 
@@ -106,22 +126,23 @@ public abstract class Trap implements Bundlable {
 	public boolean visible;
 	public boolean active = true;
 	public boolean disarmedByActivation = !Challenges.REPEATER.enabled();
-	
+
 	public boolean canBeHidden = true;
 	public boolean canBeSearched = true;
 
-	private void applyChallengedSprite(){
-		if (Challenges.INDIFFERENT_DESIGN.enabled()) {
-			Random.pushGenerator(Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode());
-			color = Random.Int(8);
-			shape = Random.Int(7);
+	private void applyChallengedSprite() {
+		if ( Challenges.INDIFFERENT_DESIGN.enabled() ) {
+			Random.pushGenerator( Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode() );
+			color = Random.Int( 8 );
+			shape = Random.Int( 7 );
 			Random.popGenerator();
 		}
 
 	}
+
 	public boolean avoidsHallways = false; //whether this trap should avoid being placed in hallways
 
-	public Trap set(int pos){
+	public Trap set( int pos ) {
 		this.pos = pos;
 		applyChallengedSprite();
 		return this;
@@ -130,14 +151,16 @@ public abstract class Trap implements Bundlable {
 	public Trap reveal() {
 		visible = true;
 		applyChallengedSprite();
-		GameScene.updateMap(pos);
+		if ( Dungeon.level != null ) Dungeon.level.fullFlagsUpdate( pos );
+		GameScene.updateMap( pos );
 		return this;
 	}
 
 	public Trap hide() {
-		if (canBeHidden) {
+		if ( canBeHidden ) {
 			visible = false;
-			GameScene.updateMap(pos);
+			if ( Dungeon.level != null ) Dungeon.level.fullFlagsUpdate( pos );
+			GameScene.updateMap( pos );
 			return this;
 		} else {
 			return reveal();
@@ -145,62 +168,52 @@ public abstract class Trap implements Bundlable {
 	}
 
 	public void trigger() {
-		if (active) {
-			if (Dungeon.level.heroFOV[pos]) {
-				Sample.INSTANCE.play(Assets.Sounds.TRAP);
+		if ( active ) {
+			if ( Dungeon.level.heroFOV[pos] ) {
+				Sample.INSTANCE.play( Assets.Sounds.TRAP );
 			}
-			if ((disarmedByActivation || Challenges.CHAOTIC_CONSTRUCTION.enabled()) && !Challenges.REPEATER.enabled()){
+			if ( (disarmedByActivation || Challenges.CHAOTIC_CONSTRUCTION.enabled()) && !Challenges.REPEATER.enabled() ) {
 				disarm();
-				Dungeon.level.discover(pos);
+				Dungeon.level.discover( pos );
 			}
-			if (Challenges.DUPLICATOR.enabled()) {
-				if (!getClass().isAnonymousClass()) {
+			if ( Challenges.DUPLICATOR.enabled() ) {
+				if ( !getClass().isAnonymousClass() ) {
 					int nTraps = 2;
 					for (int i = 0; i < nTraps; i++) {
 						int cell = Dungeon.level.randomTrapCell();
-						if (cell == -1) break;
-						Trap t = Dungeon.level.setTrap(clone(), cell);
-						Level.set(cell, Terrain.TRAP);
+						if ( cell == -1 ) break;
+						Trap t = Dungeon.level.setTrap( clone(), cell );
+//						Level.set(cell, Terrain.TRAP);
 						t.reveal();
 					}
 				}
 			}
-			if(!Challenges.CHAOTIC_CONSTRUCTION.enabled()){
+			if ( !Challenges.CHAOTIC_CONSTRUCTION.enabled() ) {
 				activate();
 				return;
 			}
 
-			Random.pushGenerator(Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode());
-			int repeats = Challenges.TRAP_TESTING_FACILITY.enabled() ? Random.NormalIntRange(2, 5) : 1;
+			Random.pushGenerator( Dungeon.seed + Dungeon.levelPack.curLevelFileName().hashCode() );
+			int repeats = Challenges.TRAP_TESTING_FACILITY.enabled() ? Random.NormalIntRange( 2, 5 ) : 1;
 			Class<? extends Trap>[] traps = new Class[repeats];
 			for (int i = 0; i < repeats; i++) {
-				traps[i] = Random.element(trapClasses);
+				traps[i] = Random.element( trapClasses );
 			}
 			Random.popGenerator();
 			for (Class<? extends Trap> trap : traps) {
-				Trap t = Reflection.newInstance(trap);
+				Trap t = Reflection.newInstance( trap );
 
-				Marker m = Dungeon.depth();
-				// No grim trap before halls
-				if(m.chapter() != Chapter.HALLS && t instanceof GrimTrap) t = new DisintegrationTrap();
-				// No disintegration and distortion before city
-				if(m.chapterId() < Chapter.CITY.id() && t instanceof DisintegrationTrap) t = new CursedWandTrap();
-				if(m.chapterId() < Chapter.CITY.id() && t instanceof DistortionTrap) t = new SummoningTrap();
-				// No tengu traps before caves
-				if(m.chapterId() < Chapter.CAVES.id() && t instanceof TenguDartTrap) t = new CursedWandTrap();
+				t = adjustTrap( t );
 
-				// Gateway doesn't work with randomization
-				if (t instanceof GatewayTrap) t = new TeleportationTrap();
-
-				if(DeviceCompat.isDebug()){
+				if ( DeviceCompat.isDebug() ) {
 					t = new FlockTrap();
 				}
 
-				if(t==null){
+				if ( t == null ) {
 					activate();
 					return;
 				}
-				t.pos=pos;
+				t.pos = pos;
 				t.activate();
 			}
 		}
@@ -210,39 +223,39 @@ public abstract class Trap implements Bundlable {
 
 	@Override
 	protected Trap clone() {
-		if(getClass().isAnonymousClass())return null;
-		Trap t = Reflection.newInstance(getClass());
+		if ( getClass().isAnonymousClass() ) return null;
+		Trap t = Reflection.newInstance( getClass() );
 		Bundle b = new Bundle();
-		storeInBundle(b);
-		t.restoreFromBundle(b);
+		storeInBundle( b );
+		t.restoreFromBundle( b );
 		return t;
 	}
 
-	public void disarm(){
+	public void disarm() {
 		active = false;
-		Dungeon.level.disarmTrap(pos);
+		Dungeon.level.disarmTrap( pos );
 	}
 
-	public String name(){
-		if (Challenges.INDIFFERENT_DESIGN.enabled()) return Messages.get(this, "name_unknown");
-		return Messages.get(this, "name");
+	public String name() {
+		if ( Challenges.INDIFFERENT_DESIGN.enabled() ) return Messages.get( this, "name_unknown" );
+		return Messages.get( this, "name" );
 	}
 
 	public String desc() {
-		if (Challenges.INDIFFERENT_DESIGN.enabled()) return Messages.get(this, "desc_unknown");
-		return Messages.get(this, "desc");
+		if ( Challenges.INDIFFERENT_DESIGN.enabled() ) return Messages.get( this, "desc_unknown" );
+		return Messages.get( this, "desc" );
 	}
 
-	private static final String POS	= "pos";
-	private static final String VISIBLE	= "visible";
+	private static final String POS = "pos";
+	private static final String VISIBLE = "visible";
 	private static final String ACTIVE = "active";
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		pos = bundle.getInt( POS );
 		visible = bundle.getBoolean( VISIBLE );
-		if (bundle.contains(ACTIVE)){
-			active = bundle.getBoolean(ACTIVE);
+		if ( bundle.contains( ACTIVE ) ) {
+			active = bundle.getBoolean( ACTIVE );
 		}
 		applyChallengedSprite();
 	}
@@ -252,5 +265,34 @@ public abstract class Trap implements Bundlable {
 		bundle.put( POS, pos );
 		bundle.put( VISIBLE, visible );
 		bundle.put( ACTIVE, active );
+	}
+
+	public static class TrapTrigger extends LevelObject {
+		public static void plant( int pos, Trap trap, float delay, boolean show ) {
+			TrapTrigger trapTrigger = new TrapTrigger();
+			Dungeon.level.setObject( trapTrigger, pos );
+			trapTrigger.postpone( delay );
+			Dungeon.level.setTrap( trap, pos );
+			GameScene.updateMap( pos );
+
+			if ( show && !trap.visible ) {
+				PrisonBossLevel.FadingTraps fading = new PrisonBossLevel.FadingTraps();
+				fading.setFadeDelay( delay );
+				fading.setCoveringArea( new Rect( Dungeon.level.cellToPoint( pos ) ) );
+				GameScene.add( fading, false );
+				Dungeon.level.customTiles.add( fading );
+			}
+		}
+
+		@Override
+		protected boolean act() {
+			Trap t = Dungeon.level.getTrap( pos );
+			if ( t != null ) {
+				t.reveal();
+				t.trigger();
+			}
+			Dungeon.level.removeObject( this );
+			return true;
+		}
 	}
 }

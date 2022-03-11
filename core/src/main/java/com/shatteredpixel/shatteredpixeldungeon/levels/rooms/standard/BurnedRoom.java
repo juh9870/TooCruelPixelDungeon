@@ -68,15 +68,15 @@ public class BurnedRoom extends PatchRoom {
 						t = Terrain.EMBERS;
 						break;
 					case 2:
-						t = Terrain.TRAP;
+						t = Terrain.EMPTY;
 						level.setTrap(new BurningTrap().reveal(), cell);
 						break;
 					case 3:
-						t = Terrain.SECRET_TRAP;
+						t = Terrain.EMPTY;
 						level.setTrap(new BurningTrap().hide(), cell);
 						break;
 					case 4:
-						t = Terrain.INACTIVE_TRAP;
+						t = Terrain.EMPTY;
 						BurningTrap trap = new BurningTrap();
 						trap.reveal().active = false;
 						level.setTrap(trap, cell);

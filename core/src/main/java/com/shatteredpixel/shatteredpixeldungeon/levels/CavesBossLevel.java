@@ -104,7 +104,7 @@ public class CavesBossLevel extends Level {
 				if (patch[i - 14*width()]){
 					map[i] = Terrain.WATER;
 				} else if (Random.Int(Challenges.STRONGER_BOSSES.enabled() ? 4 : 8) == 0){
-					map[i] = Terrain.INACTIVE_TRAP;
+					map[i] = Terrain.TECHNICAL;
 				}
 			}
 		}
@@ -312,7 +312,7 @@ public class CavesBossLevel extends Level {
 		}
 
 		for( int i = (mainArena.top-1)*width; i <length; i++){
-			if (map[i] == Terrain.INACTIVE_TRAP || map[i] == Terrain.WATER || map[i] == Terrain.SIGN){
+			if (map[i] == Terrain.TECHNICAL || map[i] == Terrain.WATER || map[i] == Terrain.SIGN){
 				GameScene.add(Blob.seed(i, 1, PylonEnergy.class));
 			}
 		}
@@ -678,7 +678,7 @@ public class CavesBossLevel extends Level {
 								data[i] = 54 + (j % w + 8 * (j / w)) - (k % w + 8 * (k / w));
 							}
 						}
-					} else if (Dungeon.level.map[j] == Terrain.INACTIVE_TRAP){
+					} else if (Dungeon.level.map[j] == Terrain.TECHNICAL){
 						data[i] = 37;
 					} else if (gate.inside(Dungeon.level.cellToPoint(j))){
 						int idx = Dungeon.level.solid[j] ? 40 : 32;
@@ -701,7 +701,7 @@ public class CavesBossLevel extends Level {
 		@Override
 		public String name(int tileX, int tileY) {
 			int i = tileX + tileW*(tileY + this.tileY);
-			if (Dungeon.level.map[i] == Terrain.INACTIVE_TRAP){
+			if (Dungeon.level.map[i] == Terrain.TECHNICAL){
 				return Messages.get(CavesBossLevel.class, "wires_name");
 			} else if (gate.inside(Dungeon.level.cellToPoint(i))){
 				return Messages.get(CavesBossLevel.class, "gate_name");
@@ -713,7 +713,7 @@ public class CavesBossLevel extends Level {
 		@Override
 		public String desc(int tileX, int tileY) {
 			int i = tileX + tileW*(tileY + this.tileY);
-			if (Dungeon.level.map[i] == Terrain.INACTIVE_TRAP){
+			if (Dungeon.level.map[i] == Terrain.TECHNICAL){
 				return Messages.get(CavesBossLevel.class, "wires_desc");
 			} else if (gate.inside(Dungeon.level.cellToPoint(i))){
 				if (Dungeon.level.solid[i]){

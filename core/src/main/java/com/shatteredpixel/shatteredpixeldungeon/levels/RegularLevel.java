@@ -736,7 +736,7 @@ public abstract class RegularLevel extends Level {
 						&& heaps.get(pos) == null
                         && (allowMobs || findMob(pos) == null)) {
 					
-					Trap t = traps.get(pos);
+					Trap t = getTrap(pos);
 					
 					//items cannot spawn on traps which destroy items
 					if (t == null ||
@@ -760,7 +760,7 @@ public abstract class RegularLevel extends Level {
 					int result;
 					do {
 						result = pointToCell(room.random());
-					} while (traps.get(result) != null
+					} while (hasActiveTrap(result)
 							|| findMob(result) != null
 							|| heaps.get(result) != null);
 					return result;

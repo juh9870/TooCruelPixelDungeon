@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
@@ -66,6 +67,12 @@ public class WndInfoCell extends Window {
 			}
 		}
 
+		String tileName = Dungeon.level.tileName(tile);
+		String tileDesc = Dungeon.level.tileDesc(tile);
+		if (Dungeon.level.hasInactiveTrap(cell)) {
+			tileName = Messages.get(Level.class, "inactive_trap_name");
+			tileDesc = Messages.get(Level.class, "inactive_trap_desc");
+		}
 
 		String desc = "";
 
@@ -77,14 +84,14 @@ public class WndInfoCell extends Window {
 			if (customName != null) {
 				titlebar.label(customName);
 			} else {
-				titlebar.label(Dungeon.level.tileName(tile));
+				titlebar.label(tileName);
 			}
 
 			String customDesc = customTile.desc(x, y);
 			if (customDesc != null) {
 				desc += customDesc;
 			} else {
-				desc += Dungeon.level.tileDesc(tile);
+				desc += tileDesc;
 			}
 
 		} else {
@@ -96,8 +103,8 @@ public class WndInfoCell extends Window {
 			} else {
 				titlebar.icon(DungeonTerrainTilemap.tile( cell, tile ));
 			}
-			titlebar.label(Dungeon.level.tileName(tile));
-			desc += Dungeon.level.tileDesc(tile);
+			titlebar.label(tileName);
+			desc += tileDesc;
 
 		}
 		titlebar.setRect(0, 0, WIDTH, 0);

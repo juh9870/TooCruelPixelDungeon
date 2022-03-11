@@ -45,6 +45,10 @@ public abstract class Deck<T> implements Bundlable {
         return new Filler();
     }
 
+    public static Deck<Boolean> randomPicker(int hits, int total) {
+        return new RandomFillerDeck(hits, total);
+    }
+
     @Override
     public void restoreFromBundle(Bundle bundle) {
         probs = bundle.getFloatArray(PROBS);
@@ -55,11 +59,19 @@ public abstract class Deck<T> implements Bundlable {
         bundle.put(PROBS, probs);
     }
 
+    public static class RandomFillerDeck extends Deck<Boolean> {
+        public RandomFillerDeck(int hits, int total) {
+            filler().add(true, hits);
+            filler().add(false, total - hits);
+        }
+    }
+
     public class Filler {
         private final Map<T, Float> valuesMap = new LinkedHashMap<>();
         private float defaultWeight = 1f;
 
         public Filler defaultWeight(float value) {
+            if (defaultWeight < 0) throw new IllegalArgumentException("Weight must non-negative");
             defaultWeight = value;
             return this;
         }
@@ -70,6 +82,7 @@ public abstract class Deck<T> implements Bundlable {
         }
 
         public Filler add(T value, float weight) {
+            if (weight < 0) throw new IllegalArgumentException("Weight must non-negative");
             valuesMap.put(value, weight);
             return this;
         }

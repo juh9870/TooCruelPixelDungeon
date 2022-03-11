@@ -16,7 +16,7 @@ public abstract class MobSummonTrap extends Trap {
         Trap t;
         for (Mob mob : mobs) {
             //manually trigger traps first to avoid sfx spam
-            if ((t = Dungeon.level.traps.get(mob.pos())) != null && t.active) {
+            if ((t = Dungeon.level.getTrap(mob.pos())) != null && t.active) {
                 if(t.disarmedByActivation) t.disarm();
                 t.reveal();
                 t.activate();

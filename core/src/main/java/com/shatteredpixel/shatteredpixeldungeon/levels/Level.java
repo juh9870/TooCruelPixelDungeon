@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
+import com.badlogic.gdx.utils.IntMap;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -172,7 +173,7 @@ public abstract class Level implements Bundlable {
 	public SparseArray<Heap> heaps;
 	public HashMap<Class<? extends Blob>,Blob> blobs;
 	public SparseArray<Plant> plants;
-	public SparseArray<Trap> traps;
+	private SparseArray<Trap> traps;
 	public HashSet<CustomTilemap> customTiles;
 	public HashSet<CustomTilemap> customWalls;
 
@@ -412,7 +413,7 @@ public abstract class Level implements Bundlable {
 	public void restoreFromBundle( Bundle bundle ) {
 
 		version = bundle.getInt( VERSION );
-		
+
 		//saves from before v0.9.0b are not supported
 		if (version < ShatteredPixelDungeon.v0_9_0b){
 			throw new RuntimeException("old save");
@@ -506,6 +507,14 @@ public abstract class Level implements Bundlable {
 
 		if (bundle.contains( "respawner" )){
 			respawner = (Respawner) bundle.get("respawner");
+		}
+
+		if ( version < ShatteredPixelDungeon.TCPD_v1_1_0 && !(this instanceof CavesBossLevel) ) {
+			for (int i = 0; i < map.length; i++) {
+				if ( map[i] == Terrain.TECHNICAL || map[i] == Terrain.TECHNICAL_2 || map[i] == Terrain.TECHNICAL_3 ) {
+					map[i] = Terrain.EMPTY;
+				}
+			}
 		}
 
 		buildFlagMaps();
@@ -941,8 +950,18 @@ public abstract class Level implements Bundlable {
 		int cell;
 		do {
 			cell = Random.Int( length() );
-		} while (solid[cell] || pit[cell] || cell == entrance || cell == exit || hasCustomTerrain(cell));
+		} while (!canPlaceTrap(cell));
 		return cell;
+	}
+
+	public boolean canPlaceTrap(int cell) {
+		return !solid[cell] &&
+				!pit[cell] &&
+				map[cell] != Terrain.DOOR &&
+				map[cell] != Terrain.OPEN_DOOR &&
+				cell != entrance &&
+				cell != exit &&
+				!hasCustomTerrain( cell );
 	}
 
 	public void addItemToSpawn( Item item ) {
@@ -974,18 +993,45 @@ public abstract class Level implements Bundlable {
 		return null;
 	}
 
+	public void updateTerrainFlags(int cell){
+		int flags = Terrain.flags[map[cell]];
+		passable[cell]		= (flags & Terrain.PASSABLE) != 0;
+		losBlocking[cell]	= (flags & Terrain.LOS_BLOCKING) != 0;
+		flamable[cell]		= (flags & Terrain.FLAMABLE) != 0;
+		secret[cell]		= (flags & Terrain.SECRET) != 0;
+		solid[cell]			= (flags & Terrain.SOLID) != 0;
+		avoid[cell]			= (flags & Terrain.AVOID) != 0;
+		water[cell]			= (flags & Terrain.LIQUID) != 0;
+		pit[cell]			= (flags & Terrain.PIT) != 0;
+	}
+
+	public void updateAdditionalFlags(int cell) {
+		Web w = (Web) blobs.get(Web.class);
+		if (w != null && w.volume > 0) {
+			solid[cell] = solid[cell] || w.cur[cell] > 0;
+			flamable[cell] = flamable[cell] || w.cur[cell] > 0;
+		}
+		Trap t = getTrap(cell);
+		if (t != null) {
+			avoid[cell] = avoid[cell] || (t.visible && t.active);
+			secret[cell] = secret[cell] || (!t.visible && t.active);
+		}
+
+		if (cell < width() || cell > length - width() || cell % width() == 0 || (cell + 1) % width() == 0) {
+			passable[cell] = avoid[cell] = false;
+			losBlocking[cell] = solid[cell] = true;
+		}
+	}
+
+	public void fullFlagsUpdate(int cell){
+		updateTerrainFlags(cell);
+		updateAdditionalFlags(cell);
+	}
+
 	public void buildFlagMaps() {
 
 		for (int i=0; i < length(); i++) {
-			int flags = Terrain.flags[map[i]];
-			passable[i]		= (flags & Terrain.PASSABLE) != 0;
-			losBlocking[i]	= (flags & Terrain.LOS_BLOCKING) != 0;
-			flamable[i]		= (flags & Terrain.FLAMABLE) != 0;
-			secret[i]		= (flags & Terrain.SECRET) != 0;
-			solid[i]		= (flags & Terrain.SOLID) != 0;
-			avoid[i]		= (flags & Terrain.AVOID) != 0;
-			water[i]		= (flags & Terrain.LIQUID) != 0;
-			pit[i]			= (flags & Terrain.PIT) != 0;
+			updateTerrainFlags(i);
 		}
 
 		Web w = (Web) blobs.get(Web.class);
@@ -994,6 +1040,12 @@ public abstract class Level implements Bundlable {
 				solid[i] = solid[i] || w.cur[i] > 0;
 				flamable[i] = flamable[i] || w.cur[i] > 0;
 			}
+		}
+
+		for (IntMap.Entry<Trap> trap : traps) {
+			int cell = trap.key;
+			avoid[cell] = avoid[cell] || (trap.value.visible && trap.value.active);
+			secret[cell] = secret[cell] || (!trap.value.visible && trap.value.active);
 		}
 
 		int lastRow = length() - width();
@@ -1071,19 +1123,11 @@ public abstract class Level implements Bundlable {
 	public static void set( int cell, int terrain, Level level ) {
 		Painter.set( level, cell, terrain );
 
-		if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP){
-			level.traps.remove( cell );
-		}
+//		if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP){
+//			level.traps.remove( cell );
+//		}
 
-		int flags = Terrain.flags[terrain];
-		level.passable[cell]		= (flags & Terrain.PASSABLE) != 0;
-		level.losBlocking[cell]	    = (flags & Terrain.LOS_BLOCKING) != 0;
-		level.flamable[cell]		= (flags & Terrain.FLAMABLE) != 0;
-		level.secret[cell]		    = (flags & Terrain.SECRET) != 0;
-		level.solid[cell]			= (flags & Terrain.SOLID) != 0;
-		level.avoid[cell]			= (flags & Terrain.AVOID) != 0;
-		level.pit[cell]			    = (flags & Terrain.PIT) != 0;
-		level.water[cell]			= terrain == Terrain.WATER;
+		level.fullFlagsUpdate( cell );
 
 		for (int i : PathFinder.NEIGHBOURS9){
 			i = cell + i;
@@ -1188,64 +1232,111 @@ public abstract class Level implements Bundlable {
 	}
 
 	public void uproot( int pos ) {
-		plants.remove(pos);
+		plants.remove( pos );
 		GameScene.updateMap( pos );
 	}
 
-	public <T extends LevelObject> T setObject(T obj, int pos) {
+	public <T extends LevelObject> T setObject( T obj, int pos ) {
 		obj.pos = pos;
-		Actor.add(obj);
-		objects.add(obj);
+		Actor.add( obj );
+		objects.add( obj );
 		return obj;
 	}
 
-	public void removeObject(LevelObject obj) {
-		objects.remove(obj);
-		Actor.remove(obj);
+	public void removeObject( LevelObject obj ) {
+		objects.remove( obj );
+		Actor.remove( obj );
 	}
 
-	public Trap setTrap( Trap trap, int pos ){
-		Trap existingTrap = traps.get(pos);
-		if (existingTrap != null){
+	public Trap setTrap( Trap trap, int pos ) {
+		Trap existingTrap = getTrap( pos );
+		if ( existingTrap != null ) {
 			traps.remove( pos );
 		}
 		trap.set( pos );
 		traps.put( pos, trap );
+		fullFlagsUpdate( pos );
 		GameScene.updateMap( pos );
 		return trap;
 	}
 
 	public void disarmTrap( int pos ) {
-		set(pos, Terrain.INACTIVE_TRAP);
-		GameScene.updateMap(pos);
+		Trap t = getTrap( pos );
+		if ( t != null ) {
+			t.active = false;
+			fullFlagsUpdate( pos );
+			GameScene.updateMap( pos );
+		}
+	}
+
+	public void removeTrap(int pos){
+		Trap t = getTrap( pos );
+		if ( t != null ) {
+			traps.remove( t.pos );
+			fullFlagsUpdate( pos );
+			GameScene.updateMap( pos );
+		}
+	}
+
+	public void clearTraps( boolean update ) {
+		if ( !update ) this.traps.clear();
+		else {
+			SparseArray<Trap> traps = new SparseArray<>( this.traps );
+			this.traps.clear();
+			for (IntMap.Entry<Trap> trap : traps) {
+				fullFlagsUpdate( trap.key );
+			}
+		}
+	}
+
+	public SparseArray<Trap> traps(){
+		return traps;
+	}
+
+	public Trap getTrap( int pos ) {
+		return traps.get( pos );
+	}
+
+	public boolean hasActiveTrap( int pos ) {
+		Trap t = getTrap( pos );
+		return t != null && t.active;
+	}
+	public boolean hasSecretTrap( int pos ) {
+		Trap t = getTrap( pos );
+		return t != null && !t.visible && t.active;
+	}
+
+	public boolean hasInactiveTrap( int pos ) {
+		Trap t = getTrap( pos );
+		return t != null && !t.active && t.visible;
 	}
 
 	public void discover( int cell ) {
 		set( cell, Terrain.discover( map[cell] ) );
-		Trap trap = traps.get( cell );
+		Trap trap = getTrap( cell );
 		if (trap != null)
 			trap.reveal();
 		GameScene.updateMap( cell );
 	}
 
-	public boolean setCellToWater( boolean includeTraps, int cell ){
+	public boolean setCellToWater(boolean includeTraps, int cell) {
 		//if a custom tilemap is over that cell, don't put water there
-		if(hasCustomTerrain(cell)) return false;
+		if (hasCustomTerrain(cell)) return false;
+		boolean trap = getTrap(cell) != null;
 
 		int terr = map[cell];
 		Blob droughtBlob = blobs.get(Desert.class);
-		if (terr == Terrain.EMPTY || terr == Terrain.GRASS ||
+		if (!trap && (terr == Terrain.EMPTY || terr == Terrain.GRASS ||
 				terr == Terrain.EMBERS || terr == Terrain.EMPTY_SP ||
 				terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS
-				|| terr == Terrain.EMPTY_DECO){
+				|| terr == Terrain.EMPTY_DECO)) {
 			set(cell, Terrain.WATER);
-			if(droughtBlob!=null) droughtBlob.clear(cell);
+			if (droughtBlob != null) droughtBlob.clear(cell);
 			GameScene.updateMap(cell);
 			return true;
-		} else if (includeTraps && (terr == Terrain.SECRET_TRAP ||
-				terr == Terrain.TRAP || terr == Terrain.INACTIVE_TRAP)){
+		} else if (includeTraps && trap) {
 			set(cell, Terrain.WATER);
-			Dungeon.level.traps.remove(cell);
+			Dungeon.level.removeTrap(cell);
 			if (droughtBlob != null) droughtBlob.clear(cell);
 			GameScene.updateMap(cell);
 			return true;
@@ -1284,7 +1375,7 @@ public abstract class Level implements Bundlable {
 		int result;
 		do {
 			result = randomRespawnCell( null);
-		} while (traps.get(result) != null
+		} while (getTrap(result) != null
 				|| findMob(result) != null);
 		return result;
 	}
@@ -1340,24 +1431,30 @@ public abstract class Level implements Bundlable {
 	//a 'hard' press triggers all things
 	private void pressCell( int cell, boolean hard ) {
 
-		Trap trap = null;
+		Trap trap = getTrap( cell );
+		if ( trap != null && !trap.visible ) {
+			if ( hard )
+				GLog.i( Messages.get( Level.class, "hidden_trap", trap.name() ) );
+			else
+				trap = null;
+		}
 
 		switch (map[cell]) {
 
-		case Terrain.SECRET_TRAP:
-			if (hard) {
-				trap = traps.get( cell );
-				if(trap == null){
-					set(cell,Terrain.EMPTY);
-				} else {
-					GLog.i(Messages.get(Level.class, "hidden_trap", trap.name()));
-				}
-			}
-			break;
-
-		case Terrain.TRAP:
-			trap = traps.get( cell );
-			break;
+//		case Terrain.SECRET_TRAP:
+//			if (hard) {
+//				trap = traps.get( cell );
+//				if(trap == null){
+//					set(cell,Terrain.EMPTY);
+//				} else {
+//					GLog.i(Messages.get(Level.class, "hidden_trap", trap.name()));
+//				}
+//			}
+//			break;
+//
+//		case Terrain.TRAP:
+//			trap = traps.get( cell );
+//			break;
 
 		case Terrain.HIGH_GRASS:
 		case Terrain.FURROWED_GRASS:
@@ -1437,7 +1534,7 @@ public abstract class Level implements Bundlable {
 						&& c.buff( TimekeepersHourglass.timeStasis.class ) == null && c.isAlive();
 		if (sighted) {
 			boolean[] blocking;
-			
+
 			if (modifiableBlocking == null || modifiableBlocking.length != Dungeon.level.losBlocking.length){
 				modifiableBlocking = new boolean[Dungeon.level.losBlocking.length];
 			}
@@ -1662,7 +1759,7 @@ public abstract class Level implements Bundlable {
 			case Terrain.EMPTY:
 			case Terrain.EMPTY_SP:
 			case Terrain.EMPTY_DECO:
-			case Terrain.SECRET_TRAP:
+//			case Terrain.SECRET_TRAP:
 				return Messages.get(Level.class, "floor_name");
 			case Terrain.GRASS:
 				return Messages.get(Level.class, "grass_name");
@@ -1705,8 +1802,6 @@ public abstract class Level implements Bundlable {
 			case Terrain.STATUE:
 			case Terrain.STATUE_SP:
 				return Messages.get(Level.class, "statue_name");
-			case Terrain.INACTIVE_TRAP:
-				return Messages.get(Level.class, "inactive_trap_name");
 			case Terrain.BOOKSHELF:
 				return Messages.get(Level.class, "bookshelf_name");
 			case Terrain.ALCHEMY:
@@ -1741,8 +1836,6 @@ public abstract class Level implements Bundlable {
 				return Messages.get(Level.class, "barricade_desc");
 			case Terrain.SIGN:
 				return Messages.get(Level.class, "sign_desc");
-			case Terrain.INACTIVE_TRAP:
-				return Messages.get(Level.class, "inactive_trap_desc");
 			case Terrain.STATUE:
 			case Terrain.STATUE_SP:
 				return Messages.get(Level.class, "statue_desc");

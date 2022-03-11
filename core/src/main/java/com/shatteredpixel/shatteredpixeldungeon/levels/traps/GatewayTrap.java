@@ -102,7 +102,7 @@ public class GatewayTrap extends Trap {
 						largeCharPositions.remove((Integer)newPos);
 
 						if (Challenges.DUPLICATOR.enabled()) {
-							Trap target = Dungeon.level.traps.get(newPos);
+							Trap target = Dungeon.level.getTrap(newPos);
 							if (target instanceof GatewayTrap) {
 								if (Random.Float() < 0.1f) {
 									Level.set(newPos, Terrain.PIT);

@@ -48,6 +48,10 @@ public class Rect implements Bundlable {
 		this.right	= right;
 		this.bottom	= bottom;
 	}
+
+	public Rect( Point p ){
+		this( p.x, p.y, p.x + 1, p.y + 1 );
+	}
 	
 	public int width() {
 		return right - left;
@@ -75,6 +79,9 @@ public class Rect implements Bundlable {
 	
 	public Rect setPos( int x, int y ) {
 		return set( x, y, x + (right - left), y + (bottom - top));
+	}
+	public Rect setPos( Point p ) {
+		return setPos(p.x, p.y);
 	}
 	
 	public Rect shift( int x, int y ) {

@@ -5,32 +5,32 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 
 public abstract class BuffEnchantment extends Weapon.Enchantment {
-    protected EnchantmentBuff buff = null;
+	protected EnchantmentBuff buff = null;
 
-    @Override
-    public void activate(Char ch) {
-        super.activate(ch);
-        buff = buff();
-        buff.attachTo(ch);
-    }
+	@Override
+	public void activate( Char ch ) {
+		super.activate( ch );
+		buff = buff();
+		buff.attachTo( ch );
+	}
 
-    @Override
-    public void deactivate(Char ch) {
-        super.deactivate(ch);
-        ch.remove(buff);
-        buff = null;
-    }
+	@Override
+	public void deactivate( Char ch ) {
+		super.deactivate( ch );
+		ch.remove( buff );
+		buff = null;
+	}
 
-    protected abstract EnchantmentBuff buff();
+	protected abstract EnchantmentBuff buff();
 
 
-    public class EnchantmentBuff extends Buff {
-        @Override
-        public boolean act() {
+	public class EnchantmentBuff extends Buff {
+		@Override
+		public boolean act() {
 
-            spend(TICK);
+			spend( TICK );
 
-            return true;
-        }
-    }
+			return true;
+		}
+	}
 }

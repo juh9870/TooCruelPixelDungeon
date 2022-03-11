@@ -294,7 +294,7 @@ public class Wandmaker extends NPC {
 							validPos = false;
 						}
 					}
-					if (level.traps.get(npc.pos()) != null){
+					if (level.hasActiveTrap(npc.pos())){
 						validPos = false;
 					}
 				} while (!validPos);

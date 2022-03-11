@@ -229,7 +229,7 @@ public class ScrollOfDebug extends Scroll {
                                     if(cell ==  null || cell == -1) return;
                                     // currently manually set traps are always revealed.
                                     Dungeon.level.setTrap(t.set(cell).reveal(), cell);
-                                    Level.set(cell, Terrain.TRAP);
+//                                    Level.set(cell, Terrain.TRAP);
                                 }
                                 @Override public String prompt() {
                                     return "Select location of trap:";

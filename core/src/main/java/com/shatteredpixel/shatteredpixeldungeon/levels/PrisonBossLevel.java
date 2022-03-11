@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Bones;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -328,6 +327,7 @@ public class PrisonBossLevel extends Level {
 	}
 	
 	private void cleanMapState(){
+		clearTraps( false );
 		buildFlagMaps();
 		cleanWalls();
 		
@@ -338,7 +338,6 @@ public class PrisonBossLevel extends Level {
 			blob.fullyClear();
 		}
 		addVisuals(); //this also resets existing visuals
-		traps.clear();
 
 		for (CustomTilemap t : customTiles){
 			if (t instanceof FadingTraps){
@@ -558,8 +557,8 @@ public class PrisonBossLevel extends Level {
 	}
 	
 	public void cleanTenguCell(){
-		
-		traps.clear();
+
+		clearTraps( false );
 		Painter.fill(this, tenguCell, 1, Terrain.EMPTY);
 		buildFlagMaps();
 
@@ -617,7 +616,7 @@ public class PrisonBossLevel extends Level {
 						&& Blob.volumeAt(cell, Regrowth.class) <= 9
 						&& Dungeon.level.plants.get(cell) == null
 						&& Actor.findChar(cell) == null) {
-					Level.set(cell, Terrain.SECRET_TRAP);
+//					Level.set(cell, Terrain.SECRET_TRAP);
 					setTrap(new TenguDartTrap().hide(), cell);
 					CellEmitter.get(cell).burst(Speck.factory(Speck.LIGHT), 2);
 				}
@@ -679,7 +678,7 @@ public class PrisonBossLevel extends Level {
 		private float fadeDuration = 1f;
 		private float initialAlpha = .4f;
 		private float fadeDelay = 1f;
-		
+
 		public void setCoveringArea(Rect area){
 			tileX = area.left;
 			tileY = area.top;
@@ -687,6 +686,10 @@ public class PrisonBossLevel extends Level {
 			tileW = area.right - area.left;
 			
 			this.area = area;
+		}
+
+		public void setFadeDelay(float fadeDelay) {
+			this.fadeDelay = fadeDelay;
 		}
 		
 		@Override
@@ -699,7 +702,7 @@ public class PrisonBossLevel extends Level {
 			for (int y = tileY; y < tileY + tileH; y++){
 				cell = tileX + y*Dungeon.level.width();
 				for (int x = tileX; x < tileX + tileW; x++){
-					t = Dungeon.level.traps.get(cell);
+					t = Dungeon.level.getTrap(cell);
 					if (t != null){
 						data[i] = t.color + t.shape*16;
 					} else {
@@ -718,8 +721,8 @@ public class PrisonBossLevel extends Level {
 		@Override
 		public String name(int tileX, int tileY) {
 			int cell = (this.tileX+tileX) + Dungeon.level.width()*(this.tileY+tileY);
-			if (Dungeon.level.traps.get(cell) != null){
-				return Messages.titleCase(Dungeon.level.traps.get(cell).name());
+			if (Dungeon.level.getTrap(cell) != null){
+				return Messages.titleCase(Dungeon.level.getTrap(cell).name());
 			}
 			return super.name(tileX, tileY);
 		}
@@ -727,8 +730,8 @@ public class PrisonBossLevel extends Level {
 		@Override
 		public String desc(int tileX, int tileY) {
 			int cell = (this.tileX+tileX) + Dungeon.level.width()*(this.tileY+tileY);
-			if (Dungeon.level.traps.get(cell) != null){
-				return Dungeon.level.traps.get(cell).desc();
+			if (Dungeon.level.getTrap(cell) != null){
+				return Dungeon.level.getTrap(cell).desc();
 			}
 			return super.desc(tileX, tileY);
 		}

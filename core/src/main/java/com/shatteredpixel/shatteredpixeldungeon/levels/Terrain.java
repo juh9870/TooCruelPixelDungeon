@@ -42,9 +42,9 @@ public class Terrain {
 	public static final int FURROWED_GRASS	= 30;
 
 	public static final int SECRET_DOOR	    = 16;
-	public static final int SECRET_TRAP     = 17;
-	public static final int TRAP            = 18;
-	public static final int INACTIVE_TRAP   = 19;
+	public static final int TECHNICAL_3     = 17;
+	public static final int TECHNICAL_2     = 18;
+	public static final int TECHNICAL   	= 19;
 
 	public static final int EMPTY_DECO		= 20;
 	public static final int LOCKED_EXIT		= 21;
@@ -89,9 +89,9 @@ public class Terrain {
 		flags[FURROWED_GRASS]= flags[HIGH_GRASS];
 
 		flags[SECRET_DOOR]  = flags[WALL]  | SECRET;
-		flags[SECRET_TRAP]  = flags[EMPTY] | SECRET;
-		flags[TRAP]         = AVOID;
-		flags[INACTIVE_TRAP]= flags[EMPTY];
+		flags[TECHNICAL]	= flags[EMPTY];
+		flags[TECHNICAL_2]	= flags[EMPTY];
+		flags[TECHNICAL_3]	= flags[EMPTY];
 
 		flags[EMPTY_DECO]	= flags[EMPTY];
 		flags[LOCKED_EXIT]	= SOLID;
@@ -109,8 +109,8 @@ public class Terrain {
 		switch (terr) {
 		case SECRET_DOOR:
 			return DOOR;
-		case SECRET_TRAP:
-			return TRAP;
+//		case SECRET_TRAP:
+//			return TRAP;
 		default:
 			return terr;
 		}

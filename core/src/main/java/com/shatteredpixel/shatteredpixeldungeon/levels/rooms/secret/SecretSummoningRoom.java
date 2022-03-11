@@ -46,14 +46,14 @@ public class SecretSummoningRoom extends SecretRoom {
 	@Override
 	public void paint(Level level) {
 		Painter.fill(level, this, Terrain.WALL);
-		Painter.fill(level, this, 1, Terrain.SECRET_TRAP);
+		Painter.fill(level, this, 1, Terrain.EMPTY);
 		
 		Point center = center();
 		level.drop(Generator.random(), level.pointToCell(center)).setHauntedIfCursed().type = Heap.Type.SKELETON;
 		
 		for (Point p : getPoints()){
 			int cell = level.pointToCell(p);
-			if (level.map[cell] == Terrain.SECRET_TRAP){
+			if (level.map[cell] == Terrain.EMPTY){
 				level.setTrap(new SummoningTrap().hide(), cell);
 			}
 		}

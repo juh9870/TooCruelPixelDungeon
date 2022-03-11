@@ -27,7 +27,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SparseArray<T> extends IntMap<T> {
-	
+
+	public SparseArray() {
+	}
+
+	public SparseArray( IntMap<? extends T> map ) {
+		super( map );
+	}
+
 	@Override
 	public synchronized T put(int key, T value) {
 		return super.put(key, value);

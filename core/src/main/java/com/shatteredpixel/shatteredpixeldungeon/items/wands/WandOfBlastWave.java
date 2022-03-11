@@ -69,7 +69,7 @@ public class WandOfBlastWave extends DamageWand {
 
 		//presses all tiles in the AOE first, with the exception of tengu dart traps
 		for (int i : PathFinder.NEIGHBOURS9){
-			if (!(Dungeon.level.traps.get(bolt.collisionPos+i) instanceof TenguDartTrap)) {
+			if (!(Dungeon.level.getTrap(bolt.collisionPos+i) instanceof TenguDartTrap)) {
 				Dungeon.level.pressCell(bolt.collisionPos + i);
 			}
 		}

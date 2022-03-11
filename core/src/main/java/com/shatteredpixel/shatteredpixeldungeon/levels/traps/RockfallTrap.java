@@ -58,7 +58,7 @@ public class RockfallTrap extends Trap {
 		ArrayList<Integer> rockCells = new ArrayList<>();
 		
 		//determines if the trap is actually in the world, or if it is being spawned for its effect
-		boolean onGround = Dungeon.level.traps.get(pos) == this;
+		boolean onGround = Dungeon.level.getTrap(pos) == this;
 		Room r = null;
 		if (Dungeon.level instanceof RegularLevel){
 			r = ((RegularLevel) Dungeon.level).room(pos);

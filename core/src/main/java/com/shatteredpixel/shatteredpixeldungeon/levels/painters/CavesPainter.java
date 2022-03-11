@@ -62,7 +62,7 @@ public class CavesPainter extends RegularPainter {
 				int corner = (room.left + 1) + (room.top + 1) * w;
 				if (map[corner - 1] == Terrain.WALL && map[corner - w] == Terrain.WALL) {
 					map[corner] = Terrain.WALL;
-					level.traps.remove(corner);
+					level.removeTrap(corner);
 				}
 			}
 			
@@ -70,7 +70,7 @@ public class CavesPainter extends RegularPainter {
 				int corner = (room.right - 1) + (room.top + 1) * w;
 				if (map[corner + 1] == Terrain.WALL && map[corner - w] == Terrain.WALL) {
 					map[corner] = Terrain.WALL;
-					level.traps.remove(corner);
+					level.removeTrap(corner);
 				}
 			}
 			
@@ -78,7 +78,7 @@ public class CavesPainter extends RegularPainter {
 				int corner = (room.left + 1) + (room.bottom - 1) * w;
 				if (map[corner - 1] == Terrain.WALL && map[corner + w] == Terrain.WALL) {
 					map[corner] = Terrain.WALL;
-					level.traps.remove(corner);
+					level.removeTrap(corner);
 				}
 			}
 			
@@ -86,7 +86,7 @@ public class CavesPainter extends RegularPainter {
 				int corner = (room.right - 1) + (room.bottom - 1) * w;
 				if (map[corner + 1] == Terrain.WALL && map[corner + w] == Terrain.WALL) {
 					map[corner] = Terrain.WALL;
-					level.traps.remove(corner);
+					level.removeTrap(corner);
 				}
 			}
 

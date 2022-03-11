@@ -65,7 +65,7 @@ public class ForceCube extends MissileWeapon {
 		if (Actor.findChar(cell) != null) targets.add(Actor.findChar(cell));
 		
 		for (int i : PathFinder.NEIGHBOURS8){
-			if (!(Dungeon.level.traps.get(cell+i) instanceof TenguDartTrap)) Dungeon.level.pressCell(cell+i);
+			if (!(Dungeon.level.getTrap(cell+i) instanceof TenguDartTrap)) Dungeon.level.pressCell(cell+i);
 			if (Actor.findChar(cell + i) != null) targets.add(Actor.findChar(cell + i));
 		}
 		

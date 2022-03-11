@@ -68,7 +68,7 @@ public class StoneOfDisarming extends Runestone {
 				
 				if (FOV[curr]){
 					
-					Trap t = Dungeon.level.traps.get(curr);
+					Trap t = Dungeon.level.getTrap(curr);
 					if (t != null && t.active){
 						disarmCandidates.add(t);
 					}
