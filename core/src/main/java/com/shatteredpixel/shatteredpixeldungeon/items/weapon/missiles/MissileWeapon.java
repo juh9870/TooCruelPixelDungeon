@@ -37,16 +37,19 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Projecting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.function.Lazy;
 import com.watabou.utils.Random;
+import com.watabou.utils.function.Lazy;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 abstract public class MissileWeapon extends Weapon {
 
@@ -152,15 +155,12 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	public int throwPos(Hero user, int dst) {
 
-		boolean projecting = hasEnchant(Projecting.class, user);
-		if (!projecting && Random.Int(3) < user.pointsInTalent(Talent.SHARED_ENCHANTMENT)){
-			if (this instanceof Dart && ((Dart) this).crossbowHasEnchant(Dungeon.hero)){
-				//do nothing
-			} else {
-				SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);
-				if (bow != null && bow.hasEnchant(Projecting.class, user)) {
-					projecting = true;
-				}
+		boolean projecting = hasEffectiveEnchant(Projecting.class, user);
+
+		if (hasEnchant(Erratic.class, user)) {
+			Set<Char> targets = Enchantment.getValidTargetsInFov(user, (ch) -> targetValid(user, ch.pos(), projecting));
+			if (targets.size() > 0) {
+				dst = Random.element(targets).pos();
 			}
 		}
 
@@ -169,6 +169,28 @@ abstract public class MissileWeapon extends Weapon {
 		} else {
 			return super.throwPos(user, dst);
 		}
+	}
+
+	public boolean hasEffectiveEnchant(Class<? extends Enchantment> enchantment, Char user){
+		boolean enchanted = hasEnchant(enchantment, user);
+		if (!enchanted && user instanceof Hero && Random.Int(3) < ((Hero) user).pointsInTalent(Talent.SHARED_ENCHANTMENT)){
+			if (this instanceof Dart && ((Dart) this).crossbowHasEnchant(Dungeon.hero)){
+				//do nothing
+			} else {
+				SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);
+				if (bow != null && bow.hasEnchant(enchantment, user)) {
+					enchanted = true;
+				}
+			}
+		}
+		return enchanted;
+	}
+
+	public boolean targetValid(Char user, int target, boolean projecting){
+		if (projecting && !Dungeon.level.solid[target] && Dungeon.level.distance(user.pos(), target) <= 4) {
+			return true;
+		}
+		return new Ballistica(user.pos(), target, Ballistica.PROJECTILE ).collisionPos == target;
 	}
 
 	@Override
@@ -240,8 +262,15 @@ abstract public class MissileWeapon extends Weapon {
 	public float castDelay(Char user, int dst) {
 		return delayFactor( user );
 	}
-	
-	protected void rangedHit( Char enemy, int cell ){
+
+	@Override
+	protected float baseDelay(Char owner) {
+		float delay = super.baseDelay(owner);
+		delay *= Erratic.missileDelayMultiplier(owner, this);
+		return delay;
+	}
+
+	protected void rangedHit(Char enemy, int cell ){
 		decrementDurability();
 		if (durability > 0){
 			//attempt to stick the missile weapon to the enemy, just drop it if we can't.

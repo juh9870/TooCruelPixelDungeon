@@ -117,6 +117,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Legendary;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
@@ -1179,6 +1180,7 @@ public class Hero extends Char {
 		enemy = action.target;
 
 		if (enemy.isAlive() && canAttack(enemy) && !isCharmedBy(enemy)) {
+			enemy = Erratic.switchEnemy(this, enemy);
 
 			sprite.attack(enemy.pos());
 

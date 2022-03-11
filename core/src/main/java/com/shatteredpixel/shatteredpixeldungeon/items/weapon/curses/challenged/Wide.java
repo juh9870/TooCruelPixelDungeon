@@ -9,6 +9,7 @@ import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class Wide extends Weapon.Enchantment {
     private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing(0x000000);
@@ -28,16 +29,7 @@ public class Wide extends Weapon.Enchantment {
         if (processing) return damage;
         processing = true;
 
-        HashSet<Char> validTargets = new HashSet<>();
-
-        int pos = attacker.pos();
-        for (int i : PathFinder.NEIGHBOURS8) {
-            int cell = pos + i;
-            if (!Dungeon.level.insideMap(cell)) continue;
-            Char ch = Actor.findChar(cell);
-            if (ch == null || ch == defender) continue;
-            validTargets.add(ch);
-        }
+        Set<Char> validTargets = getValidTargetsInFov(attacker, weapon);
 
         int hits = TARGETS;
 

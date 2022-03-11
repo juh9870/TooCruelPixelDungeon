@@ -62,11 +62,14 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 import com.watabou.utils.function.Lazy;
+import com.watabou.utils.function.Predicate;
 import com.watabou.utils.function.Supplier;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 abstract public class Weapon extends KindOfWeapon {
 
@@ -434,6 +437,21 @@ abstract public class Weapon extends KindOfWeapon {
 				multi += 0.2f;
 			}
 			return multi;
+		}
+
+		public static Set<Char> getValidTargetsInFov(Char attacker, Weapon wep) {
+			return getValidTargetsInFov(attacker, (c) -> wep.canReach(attacker, c.pos()));
+		}
+		public static Set<Char> getValidTargetsInFov(Char attacker, Predicate<Char> validator) {
+			HashSet<Char> chars = new HashSet<>();
+			// Assume we can only attack targets in Fov
+			for (Char ch : attacker.fastGetCharsInFov()) {
+				if (ch == attacker) continue;
+				if (validator.test(ch)) {
+					chars.add(ch);
+				}
+			}
+			return chars;
 		}
 
 		public String name() {

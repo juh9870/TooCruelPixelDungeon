@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -65,6 +66,13 @@ public class MeleeWeapon extends Weapon {
 		}
 		
 		return damage;
+	}
+
+	@Override
+	protected float baseDelay(Char owner) {
+		float delay = super.baseDelay(owner);
+		delay *= Erratic.delayMultiplier(owner, this);
+		return delay;
 	}
 
 	@Override

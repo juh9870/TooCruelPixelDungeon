@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfFuror;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
@@ -252,7 +253,9 @@ public class SpiritBow extends Weapon {
 					return 2f * RingOfFuror.attackSpeedMultiplier(owner);
 			}
 		} else{
-			return super.baseDelay(owner);
+			float delay = super.baseDelay(owner);
+			delay *= Erratic.missileDelayMultiplier(owner, new SpiritArrow());
+			return delay;
 		}
 	}
 
