@@ -25,7 +25,7 @@ public class Possessed extends Weapon.Enchantment {
 		return true;
 	}
 
-	private static float delay( Weapon wep, Hero user ) {
+	private static float delay( Weapon wep, Char user ) {
 		float delay = wep.delayFactor( user );
 		// Buff disappears slightly before the next attack is ready
 		return delay * Random.oneOf( 1, 2, 3 ) - 0.01f;
@@ -83,15 +83,22 @@ public class Possessed extends Weapon.Enchantment {
 
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		if ( strongHit || !(attacker instanceof Hero) ) {
-			strongHit = false;
-			return damage * 2;
-		} else {
-			if(weapon instanceof SpiritBow){
-				Buff.prolong( attacker, BowDelay.class, BAN_DURATION );
+		if ( attacker instanceof Hero ) {
+			if ( strongHit ) {
+				strongHit = false;
+				return damage * 2;
 			} else {
-				Buff.prolong( attacker, Delay.class, BAN_DURATION );
+				if ( weapon instanceof SpiritBow ) {
+					Buff.prolong( attacker, BowDelay.class, BAN_DURATION );
+				} else {
+					Buff.prolong( attacker, Delay.class, BAN_DURATION );
+				}
+				return 0;
 			}
+		} else {
+			if ( attacker.buff( Ready.class ) != null ) return damage * 2;
+			if ( attacker.buff( Delay.class ) == null )
+				Buff.prolong( attacker, Delay.class, delay( weapon, attacker ) );
 			return 0;
 		}
 	}
@@ -106,6 +113,7 @@ public class Possessed extends Weapon.Enchantment {
 			// Act before hero
 			actPriority = HERO_PRIO + 1;
 		}
+
 		@Override
 		public boolean act() {
 			Buff.prolong( target, Ready.class, 3f );
@@ -118,6 +126,7 @@ public class Possessed extends Weapon.Enchantment {
 			// Act before hero
 			actPriority = HERO_PRIO + 1;
 		}
+
 		@Override
 		public boolean act() {
 			Buff.prolong( target, BowReady.class, 3f );
