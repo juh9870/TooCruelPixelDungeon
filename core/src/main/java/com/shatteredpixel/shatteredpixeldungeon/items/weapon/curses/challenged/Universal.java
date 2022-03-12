@@ -35,6 +35,13 @@ public class Universal extends Weapon.Enchantment {
 		}
 		return false;
 	}
+	@SuppressWarnings("unchecked")
+	public <T extends Weapon.Enchantment> T getEnchant( Class<? extends T> type ) {
+		for (Weapon.Enchantment enchantment : additional) {
+			if ( enchantment.getClass() == type ) return (T) enchantment;
+		}
+		return null;
+	}
 
 	@Override
 	public int levelBonus() {

@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfFuror;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
@@ -134,6 +135,21 @@ public class SpiritBow extends Weapon {
 		}
 
 		return super.proc(attacker, defender, damage);
+	}
+
+	@Override
+	public boolean collect( Bag container ) {
+		if(super.collect( container )){
+			activate( container.owner );
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		deactivate( Dungeon.hero );
 	}
 
 	@Override

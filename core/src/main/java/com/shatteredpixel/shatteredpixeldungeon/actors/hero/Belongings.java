@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -166,6 +167,9 @@ public class Belongings implements Iterable<Item> {
 
 		ring = (Ring) bundle.get(RING);
 		if (ring() != null)         ring().activate( owner );
+
+		SpiritBow bow = getItem( SpiritBow.class );
+		if ( bow != null ) bow.activate( owner );
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {

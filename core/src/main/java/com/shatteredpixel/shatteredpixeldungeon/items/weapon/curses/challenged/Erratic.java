@@ -43,10 +43,10 @@ public class Erratic extends Weapon.Enchantment {
 	}
 
 	public static Char switchEnemy( Hero owner, Char curTarget ) {
-		if ( !(owner.belongings.weapon instanceof Weapon) ||
-				!((Weapon) owner.belongings.weapon).hasEnchant( Erratic.class, owner ) )
+		if ( !(owner.belongings.weapon() instanceof Weapon) ||
+				!((Weapon) owner.belongings.weapon()).hasEnchant( Erratic.class, owner ) )
 			return curTarget;
-		Weapon wep = (Weapon) owner.belongings.weapon;
+		Weapon wep = (Weapon) owner.belongings.weapon();
 		return Misc.or( Random.element( getValidTargetsInFov( owner, wep ) ), curTarget );
 	}
 

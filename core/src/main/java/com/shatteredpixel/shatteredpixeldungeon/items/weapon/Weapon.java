@@ -172,9 +172,15 @@ abstract public class Weapon extends KindOfWeapon {
 	}
 
 	@Override
+	public void deactivate( Char ch ) {
+		super.deactivate( ch );
+		if (enchantment != null) enchantment.deactivate(ch);
+	}
+
+	@Override
 	public boolean doUnequip(Hero hero, boolean collect, boolean single) {
 		if (super.doUnequip(hero, collect, single)) {
-			if (enchantment != null) enchantment.deactivate(hero);
+			deactivate( hero );
 			return true;
 		}
 		return false;
@@ -371,6 +377,17 @@ abstract public class Weapon extends KindOfWeapon {
 			return ((Universal) enchantment).hasEnchant(type, owner);
 		}
 		return enchantment != null && enchantment.getClass() == type && owner.buff(MagicImmune.class) == null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends Enchantment> T getEnchant( Class<?extends T> type) {
+		if (enchantment instanceof Universal && type != Universal.class) {
+			return ((Universal) enchantment).getEnchant(type);
+		}
+		if(enchantment.getClass() == type){
+			return (T) enchantment;
+		}
+		return null;
 	}
 	
 	//these are not used to process specific enchant effects, so magic immune doesn't affect them

@@ -146,4 +146,5 @@ public abstract class EquipableItem extends Item {
 	}
 
 	public void activate( Char ch ){}
+	public void deactivate( Char ch ){}
 }

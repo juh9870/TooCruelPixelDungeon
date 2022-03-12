@@ -66,7 +66,6 @@ public class Item implements Bundlable {
 	protected static final float TIME_TO_THROW		= 1.0f;
 	public static final float TIME_TO_PICK_UP	= 1.0f;
 	protected static final float TIME_TO_DROP		= 1.0f;
-	protected static final float TIME_TO_UPGRADIFY		= 1.0f;
 
 	public static final String AC_DROP		= "DROP";
 	public static final String AC_THROW		= "THROW";
@@ -270,7 +269,7 @@ public class Item implements Bundlable {
 
 	}
 	
-	public boolean collect() {
+	public final boolean collect() {
 		return collect( Dungeon.hero.belongings.backpack );
 	}
 	
@@ -666,7 +665,12 @@ public class Item implements Bundlable {
 	public float castDelay( Char user, int dst ){
 		return TIME_TO_THROW;
 	}
-	
+
+	public static void use( Hero user, Item item ) {
+		curItem = item;
+		curUser = user;
+	}
+
 	protected static Hero curUser = null;
 	protected static Item curItem = null;
 	protected static CellSelector.Listener thrower = new CellSelector.Listener() {

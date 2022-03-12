@@ -88,4 +88,9 @@ public class HeroAction {
 			this.target = target;
 		}
 	}
+
+	public static class Nothing extends HeroAction {
+		public Nothing() {
+		}
+	}
 }

@@ -120,6 +120,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Legendary;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Possessed;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -715,6 +716,10 @@ public class Hero extends Char {
 			return false;
 		}
 
+		HeroAction newAction = Possessed.heroAct( this );
+		if ( newAction != null )
+			curAction = newAction;
+
 		boolean actResult;
 		if (curAction == null) {
 
@@ -762,6 +767,10 @@ public class Hero extends Char {
 
 			} else if (curAction instanceof HeroAction.Alchemy) {
 				actResult = actAlchemy((HeroAction.Alchemy) curAction);
+
+			} else if (curAction instanceof HeroAction.Nothing) {
+				actResult = true;
+				curAction = null;
 
 			} else {
 				actResult = false;
@@ -2194,6 +2203,8 @@ public class Hero extends Char {
 				}
 			} else if (i instanceof MagesStaff && i.keptThoughLostInvent){
 				((MagesStaff) i).applyWandChargeBuff(this);
+			} else if (i instanceof SpiritBow && i.keptThoughLostInvent){
+				((SpiritBow) i).activate( this );
 			}
 		}
 	}

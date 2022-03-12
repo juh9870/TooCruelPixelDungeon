@@ -26,10 +26,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3FileHandle;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3NativesLoader;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Preferences;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.GdxNativesLoader;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -45,6 +43,7 @@ import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Locale;
 
 public class DesktopLauncher {
 
@@ -139,6 +138,8 @@ public class DesktopLauncher {
 		} else if (SharedLibraryLoader.isLinux) {
 			basePath = ".shatteredpixel/too-cruel-pixel-dungeon/";
 		}
+		if (Game.version.toLowerCase(Locale.ROOT).endsWith("dev"))
+			basePath += "dev/";
 
 		//copy over prefs from old file location from legacy desktop codebase
 		FileHandle oldPrefs = new Lwjgl3FileHandle(basePath + "pd-prefs", Files.FileType.External);
