@@ -80,8 +80,8 @@ public class DungeonTileSheet {
 	public static HashSet<Integer> waterStitcheable = new HashSet<>(Arrays.asList(
 			Terrain.EMPTY, Terrain.GRASS, Terrain.EMPTY_WELL,
 			Terrain.ENTRANCE, Terrain.EXIT, Terrain.EMBERS,
-			Terrain.BARRICADE, Terrain.HIGH_GRASS, Terrain.FURROWED_GRASS, Terrain.TECHNICAL_3,
-			Terrain.TECHNICAL_2, Terrain.TECHNICAL, Terrain.EMPTY_DECO,
+			Terrain.BARRICADE, Terrain.HIGH_GRASS, Terrain.FURROWED_GRASS, Terrain.TECHNICAL_2,
+			Terrain.ALWAYS_EMPTY, Terrain.TECHNICAL, Terrain.EMPTY_DECO,
 			Terrain.SIGN, Terrain.WELL, Terrain.STATUE, Terrain.ALCHEMY,
 			Terrain.DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR
 	));
@@ -128,9 +128,9 @@ public class DungeonTileSheet {
 		chasmStitcheable.put( Terrain.EMPTY_WELL,   CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.WELL,         CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.STATUE,       CHASM_FLOOR );
-		chasmStitcheable.put( Terrain.TECHNICAL_3,  CHASM_FLOOR );
-		chasmStitcheable.put( Terrain.TECHNICAL,	CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.TECHNICAL_2,  CHASM_FLOOR );
+		chasmStitcheable.put( Terrain.TECHNICAL,	CHASM_FLOOR );
+		chasmStitcheable.put( Terrain.ALWAYS_EMPTY,  CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.BOOKSHELF,    CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.BARRICADE,    CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.PEDESTAL,     CHASM_FLOOR );
@@ -353,8 +353,8 @@ public class DungeonTileSheet {
 		directVisuals.put(Terrain.PEDESTAL,         PEDESTAL);
 		directVisuals.put(Terrain.EMPTY_SP,         FLOOR_SP);
 
-		directVisuals.put(Terrain.TECHNICAL_3,      directVisuals.get(Terrain.EMPTY));
-		directVisuals.put(Terrain.TECHNICAL_2,             directVisuals.get(Terrain.EMPTY));
+		directVisuals.put(Terrain.TECHNICAL_2,      directVisuals.get(Terrain.EMPTY));
+		directVisuals.put(Terrain.ALWAYS_EMPTY,             directVisuals.get(Terrain.EMPTY));
 		directVisuals.put(Terrain.TECHNICAL,    directVisuals.get(Terrain.EMPTY));
 
 		directVisuals.put(Terrain.EMPTY_DECO,       FLOOR_DECO);

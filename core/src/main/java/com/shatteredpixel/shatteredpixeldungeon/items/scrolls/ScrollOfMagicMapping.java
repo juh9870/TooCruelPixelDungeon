@@ -68,7 +68,7 @@ public class ScrollOfMagicMapping extends Scroll {
 					Heap h = Dungeon.level.heaps.get(i);
 					if (h != null) h.seen = true;
 				}
-				if ((Terrain.flags[terr] & Terrain.SECRET) != 0) {
+				if (Dungeon.level.secret[i]) {
 					
 					Dungeon.level.discover( i );
 					

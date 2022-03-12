@@ -224,6 +224,10 @@ public abstract class Level implements Bundlable {
 
 		} while (!build());
 
+		for (int i = 0; i < map.length; i++) {
+			if ( map[i] == Terrain.ALWAYS_EMPTY ) map[i] = Terrain.EMPTY;
+		}
+
 		if (!(Dungeon.bossLevel())) {
 			int bonusNum = (int) Math.round(Math.sqrt(Challenges.nRoomsMult() * Challenges.roomSizeMult() - 1)) + 1;
 
@@ -511,7 +515,7 @@ public abstract class Level implements Bundlable {
 
 		if ( version < ShatteredPixelDungeon.TCPD_v1_1_0 && !(this instanceof CavesBossLevel) ) {
 			for (int i = 0; i < map.length; i++) {
-				if ( map[i] == Terrain.TECHNICAL || map[i] == Terrain.TECHNICAL_2 || map[i] == Terrain.TECHNICAL_3 ) {
+				if ( map[i] == Terrain.TECHNICAL || map[i] == Terrain.ALWAYS_EMPTY || map[i] == Terrain.TECHNICAL_2 ) {
 					map[i] = Terrain.EMPTY;
 				}
 			}

@@ -110,7 +110,7 @@ public class TrapsRoom extends SpecialRoom {
 		if (trapClass == null) {
 			Painter.fill(level, this, 1, Terrain.CHASM);
 		} else {
-			Painter.fill(level, this, 1, Terrain.TECHNICAL);
+			Painter.fill(level, this, 1, Terrain.ALWAYS_EMPTY);
 		}
 
 		Door door = entrance();
@@ -140,9 +140,8 @@ public class TrapsRoom extends SpecialRoom {
 
 		for (Point p : getPoints()) {
 			int cell = level.pointToCell(p);
-			if (level.map[cell] == Terrain.TECHNICAL) {
+			if (level.map[cell] == Terrain.ALWAYS_EMPTY) {
 				level.setTrap(Reflection.newInstance(trapClass).reveal(), cell);
-				level.map[cell] = Terrain.EMPTY;
 			}
 		}
 
