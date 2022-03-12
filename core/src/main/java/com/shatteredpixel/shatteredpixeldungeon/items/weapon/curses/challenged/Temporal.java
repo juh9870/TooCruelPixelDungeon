@@ -15,7 +15,7 @@ import com.watabou.utils.Bundle;
 public class Temporal extends Weapon.Enchantment {
 	private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
 
-	private static final int DAMAGE_COLOR = 0x79e3d2;
+	public static final int DAMAGE_COLOR = 0x79e3d2;
 
 	@Override
 	public boolean curse() {
