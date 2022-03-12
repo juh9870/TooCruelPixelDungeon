@@ -40,7 +40,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Friendly;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Polarized;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Sacrificial;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Wayward;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterWayward;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Universal;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Zealot;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blocking;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blooming;
@@ -129,7 +131,15 @@ abstract public class Weapon extends KindOfWeapon {
 
 		return damage;
 	}
-	
+
+	@Override
+	public int damageRoll( Char owner ) {
+		if ( hasEnchant( Zealot.class, owner ) ) {
+			return max();
+		}
+		return super.damageRoll( owner );
+	}
+
 	public void onHeroGainExp( float levelPercent, Hero hero ){
 		levelPercent *= Talent.itemIDSpeedFactor(hero, this);
 		if (!levelKnown && isEquipped(hero) && availableUsesToID <= USES_TO_ID/2f) {

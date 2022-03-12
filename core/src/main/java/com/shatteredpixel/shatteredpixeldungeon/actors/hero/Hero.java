@@ -121,6 +121,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Legendary;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Possessed;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Zealot;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -212,6 +213,9 @@ public class Hero extends Char {
 	public int HTBoost = 0;
 
 	private ArrayList<Mob> visibleEnemies;
+
+	// Out of control hero have control intercepted by some external logic
+	public int outOfControl = 0;
 
 	//This list is maintained so that some logic checks can be skipped
 	// for enemies we know we aren't seeing normally, resultign in better performance
@@ -716,9 +720,15 @@ public class Hero extends Char {
 			return false;
 		}
 
+		// Possessed over Zealot
+
 		HeroAction newAction = Possessed.heroAct( this );
 		if ( newAction != null )
 			curAction = newAction;
+
+		if ( curAction == null ) {
+			Zealot.randomAction( this );
+		}
 
 		boolean actResult;
 		if (curAction == null) {
@@ -796,6 +806,11 @@ public class Hero extends Char {
 		ready = true;
 
 		AttackIndicator.updateState();
+
+		if ( outOfControl > 0 ){
+			next();
+			return;
+		}
 
 		GameScene.ready();
 	}
@@ -1505,7 +1520,7 @@ public class Hero extends Char {
 					passable[i] = p[i] && (v[i] || m[i]);
 				}
 
-				PathFinder.Path newpath = Dungeon.findPath(this, target, passable, fieldOfView, true);
+ 				PathFinder.Path newpath = Dungeon.findPath(this, target, passable, fieldOfView, true);
 				if (newpath != null && path != null && newpath.size() > 2 * path.size()) {
 					path = null;
 				} else {
