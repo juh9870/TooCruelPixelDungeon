@@ -86,6 +86,7 @@ public class CloakOfShadows extends Artifact {
 				if (!isEquipped(hero) && !hero.hasTalent(Talent.LIGHT_CLOAK)) GLog.i( Messages.get(Artifact.class, "need_to_equip") );
 				else if (cursed)       GLog.i( Messages.get(this, "cursed") );
 				else if (charge <= 0)  GLog.i( Messages.get(this, "no_charge") );
+				else if (hero.isImmune( cloakStealth.class )) GLog.i( Messages.get(this, "immune") );
 				else {
 					hero.spend( 1f );
 					hero.busy();
