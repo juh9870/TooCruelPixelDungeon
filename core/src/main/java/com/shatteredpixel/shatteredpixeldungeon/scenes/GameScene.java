@@ -1048,6 +1048,9 @@ public class GameScene extends PixelScene {
 	public static void pickUp( Item item, int pos ) {
 		if (scene != null) scene.toolbar.pickup( item, pos );
 	}
+	public static void showItem( Item item ) {
+		if (scene != null) scene.toolbar.showItem( item );
+	}
 
 	public static void pickUpJournal( Item item, int pos ) {
 		if (scene != null) scene.pane.pickup( item, pos );

@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -36,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuickBag;
 import com.watabou.input.GameAction;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Image;
@@ -301,6 +303,11 @@ public class Toolbar extends Component {
 			btnInventory.centerX(),
 			btnInventory.centerY());
 	}
+
+	public void showItem( Item item ) {
+		btnInventory.showFading( new ItemSprite( item ) );
+//		btnInventory.showFading(  );
+	}
 	
 	private static CellSelector.Listener informer = new CellSelector.Listener() {
 		@Override
@@ -319,6 +326,7 @@ public class Toolbar extends Component {
 		private static final int BGCOLOR = 0x7B8073;
 		
 		private Image base;
+		private FadingImage overlay;
 		
 		public Tool( int x, int y, int width, int height ) {
 			super();
@@ -339,7 +347,9 @@ public class Toolbar extends Component {
 			super.createChildren();
 			
 			base = new Image( Assets.Interfaces.TOOLBAR );
+			overlay = new FadingImage();
 			add( base );
+			add( overlay );
 		}
 		
 		@Override
@@ -373,6 +383,12 @@ public class Toolbar extends Component {
 				}
 				active = value;
 			}
+		}
+
+		public void showFading(Image image){
+			overlay.show( image, 0.1f, FadingImage.STATIC_TIME, FadingImage.FADE_OUT_TIME );
+			overlay.x = (width() - overlay.width()) / 2 + x;
+			overlay.y = (height() - overlay.height()) / 2 + y;
 		}
 	}
 	

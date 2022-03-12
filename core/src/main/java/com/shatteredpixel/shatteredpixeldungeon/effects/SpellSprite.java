@@ -70,11 +70,22 @@ public class SpellSprite extends Image {
 	}
 	
 	public void reset( int index ) {
+		texture( Assets.Effects.SPELL_ICONS );
 		frame( film.get( index ) );
 		origin.set( width / 2, height / 2 );
 		
 		phase = Phase.FADE_IN;
 		
+		duration = FADE_IN_TIME;
+		passed = 0;
+	}
+
+	public void reset( Image image ) {
+		copy(image);
+		origin.set( width / 2, height / 2 );
+
+		phase = Phase.FADE_IN;
+
 		duration = FADE_IN_TIME;
 		passed = 0;
 	}
@@ -143,6 +154,24 @@ public class SpellSprite extends Image {
 		SpellSprite sprite = GameScene.spellSprite();
 		sprite.target = ch;
 		sprite.reset( index );
+		sprite.revive();
+		all.put( ch, sprite );
+	}
+
+	public static void show( Char ch, Image image ) {
+
+		if (!ch.sprite.visible) {
+			return;
+		}
+
+		SpellSprite old = all.get( ch );
+		if (old != null) {
+			old.kill();
+		}
+
+		SpellSprite sprite = GameScene.spellSprite();
+		sprite.target = ch;
+		sprite.reset( image );
 		sprite.revive();
 		all.put( ch, sprite );
 	}
