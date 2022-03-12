@@ -1014,6 +1014,7 @@ public abstract class Level implements Bundlable {
 		Trap t = getTrap(cell);
 		if (t != null) {
 			avoid[cell] = avoid[cell] || (t.visible && t.active);
+			passable[cell] = passable[cell] && !(t.visible && t.active);
 			secret[cell] = secret[cell] || (!t.visible && t.active);
 		}
 
@@ -1045,6 +1046,7 @@ public abstract class Level implements Bundlable {
 		for (IntMap.Entry<Trap> trap : traps) {
 			int cell = trap.key;
 			avoid[cell] = avoid[cell] || (trap.value.visible && trap.value.active);
+			passable[cell] = passable[cell] && !(trap.value.visible && trap.value.active);
 			secret[cell] = secret[cell] || (!trap.value.visible && trap.value.active);
 		}
 
