@@ -44,10 +44,10 @@ public class Terrain {
 	public static final int SECRET_DOOR	    = 16;
 	public static final int TECHNICAL_2     = 17;
 	/**
-	 * Always empty is used during room painting, to ensure that cells will remain empty
+	 * NO_PAINT is used during room painting, to ensure that cells will remain empty
 	 * and won't be replaced with grass/water
 	 */
-	public static final int ALWAYS_EMPTY    = 18;
+	public static final int NO_PAINT        = 18;
 	public static final int TECHNICAL   	= 19;
 
 	public static final int EMPTY_DECO		= 20;
@@ -94,7 +94,7 @@ public class Terrain {
 
 		flags[SECRET_DOOR]  = flags[WALL]  | SECRET;
 		flags[TECHNICAL]	= flags[EMPTY];
-		flags[ALWAYS_EMPTY]	= flags[EMPTY];
+		flags[NO_PAINT]	= flags[EMPTY];
 		flags[TECHNICAL_2]	= flags[EMPTY];
 
 		flags[EMPTY_DECO]	= flags[EMPTY];

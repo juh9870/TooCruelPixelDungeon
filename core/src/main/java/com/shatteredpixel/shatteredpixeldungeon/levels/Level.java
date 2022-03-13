@@ -225,7 +225,7 @@ public abstract class Level implements Bundlable {
 		} while (!build());
 
 		for (int i = 0; i < map.length; i++) {
-			if ( map[i] == Terrain.ALWAYS_EMPTY ) map[i] = Terrain.EMPTY;
+			if ( map[i] == Terrain.NO_PAINT ) map[i] = Terrain.EMPTY;
 		}
 
 		if (!(Dungeon.bossLevel())) {
@@ -515,7 +515,7 @@ public abstract class Level implements Bundlable {
 
 		if ( version < ShatteredPixelDungeon.TCPD_v1_1_0 && !(this instanceof CavesBossLevel) ) {
 			for (int i = 0; i < map.length; i++) {
-				if ( map[i] == Terrain.TECHNICAL || map[i] == Terrain.ALWAYS_EMPTY || map[i] == Terrain.TECHNICAL_2 ) {
+				if ( map[i] == Terrain.TECHNICAL || map[i] == Terrain.NO_PAINT || map[i] == Terrain.TECHNICAL_2 ) {
 					map[i] = Terrain.EMPTY;
 				}
 			}
@@ -959,8 +959,8 @@ public abstract class Level implements Bundlable {
 	}
 
 	public boolean canPlaceTrap(int cell) {
-		return !solid[cell] &&
-				!pit[cell] &&
+		return (Terrain.flags[map[cell]] & Terrain.SOLID) == 0 &&
+				(Terrain.flags[map[cell]] & Terrain.PIT) == 0 &&
 				map[cell] != Terrain.DOOR &&
 				map[cell] != Terrain.OPEN_DOOR &&
 				cell != entrance &&

@@ -122,6 +122,7 @@ public enum Challenges implements Hero.Doom {
     INDIFFERENT_DESIGN(63, 1, 1f, EXTREME_CAUTION),
     REPEATER(75, 1, 1f, EXTREME_CAUTION),
     DUPLICATOR(96, 1, 2f, REPEATER),
+    CONCEALMENT(101, 1, 1f, EXTREME_CAUTION),
     EXTERMINATION(17, 1, 1),
     STACKING(18, 1, 1.5f) {
         @Override
@@ -392,7 +393,7 @@ public enum Challenges implements Hero.Doom {
 
     //endregion
 
-    //Last id 100
+    //Last id 101
     ;
     private static final Challenges[] mappings;
     public static int LEVEL_LIMIT = 3;

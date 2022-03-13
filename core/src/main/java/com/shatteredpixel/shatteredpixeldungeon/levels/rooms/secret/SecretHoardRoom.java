@@ -69,13 +69,13 @@ public class SecretHoardRoom extends SecretRoom {
 		for (Point p : getPoints()){
 			if (Random.Int(2) == 0 && level.map[level.pointToCell(p)] == Terrain.EMPTY){
 				level.setTrap(Reflection.newInstance(trapClass).reveal(), level.pointToCell(p));
-				Painter.set(level, p, Terrain.ALWAYS_EMPTY);
+				Painter.set(level, p, Terrain.NO_PAINT );
 			}
 		}
 		
 		entrance().set(Door.Type.HIDDEN);
 	}
-	
+
 	@Override
 	public boolean canPlaceTrap(Point p) {
 		return false;
