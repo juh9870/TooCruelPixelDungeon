@@ -21,6 +21,9 @@
 
 package com.watabou.utils;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class PointF {
 	
 	public static final float PI	= 3.1415926f;
@@ -55,6 +58,11 @@ public class PointF {
 	public PointF scale( float f ) {
 		this.x *= f;
 		this.y *= f;
+		return this;
+	}
+	public PointF scale( PointF f ) {
+		this.x *= f.x;
+		this.y *= f.y;
 		return this;
 	}
 	
@@ -112,6 +120,10 @@ public class PointF {
 		y /= l;
 		return this;
 	}
+
+	public static PointF interpolate(PointF from, PointF to, float progress) {
+		return new PointF( from.x + (to.x - from.x) * progress, from.y + (to.y - from.y) * progress );
+	}
 	
 	public Point floor() {
 		return new Point( (int)x, (int)y );
@@ -153,5 +165,10 @@ public class PointF {
 		if (super.equals(o))
 			return true;
 		return o instanceof PointF && (((PointF)o).x == x && ((PointF)o).y == y);
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode( new float[]{x, y} );
 	}
 }

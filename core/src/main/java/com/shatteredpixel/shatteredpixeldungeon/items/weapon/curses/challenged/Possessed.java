@@ -39,7 +39,7 @@ public class Possessed extends Weapon.Enchantment {
 
 		// Use raw access
 		Weapon wep = (Weapon) user.belongings.weapon;
-		if ( !wep.hasEnchant( Possessed.class, user ) ) return null;
+		if ( wep == null || !wep.hasEnchant( Possessed.class, user ) ) return null;
 
 		if ( user.buff( Delay.class ) != null ) return null;
 		if ( user.buff( Ready.class ) == null ) {

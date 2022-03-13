@@ -26,7 +26,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.Modifiers;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -46,6 +45,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CircleArc;
 import com.shatteredpixel.shatteredpixeldungeon.effects.EmoIcon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
+import com.shatteredpixel.shatteredpixeldungeon.effects.MovingVisual;
+import com.shatteredpixel.shatteredpixeldungeon.effects.TilesOutlines;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Ripple;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
@@ -998,6 +999,9 @@ public class GameScene extends PixelScene {
 		}
 		return false;
 	}
+	public static TilesOutlines tilesOutlines() {
+		return (TilesOutlines)scene.lowEffects.recycle( TilesOutlines.class );
+	}
 
 	public static void effect( Visual effect ) {
 		if (scene != null) scene.effects.add( effect );
@@ -1019,6 +1023,10 @@ public class GameScene extends PixelScene {
 	
 	public static SpellSprite spellSprite() {
 		return (SpellSprite)scene.spells.recycle( SpellSprite.class );
+	}
+
+	public static MovingVisual movingVisual() {
+		return (MovingVisual)scene.spells.recycle( MovingVisual.class );
 	}
 	
 	public static Emitter emitter() {

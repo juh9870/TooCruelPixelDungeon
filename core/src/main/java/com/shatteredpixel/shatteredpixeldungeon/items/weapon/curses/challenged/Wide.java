@@ -30,7 +30,7 @@ public class Wide extends Weapon.Enchantment {
 		int hits = TARGETS;
 
 		while (!validTargets.isEmpty() && hits > 0) {
-			attacker.attack( Random.element( validTargets ), 1f, 0f, 1f );
+			attacker.attack( Random.element( validTargets ) );
 			hits--;
 		}
 

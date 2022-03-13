@@ -23,6 +23,10 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.watabou.noosa.TextureFilm;
+import com.watabou.utils.Misc;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ItemSpriteSheet {
 
@@ -40,6 +44,16 @@ public class ItemSpriteSheet {
 		int x = (item % WIDTH) * SIZE;
 		int y = (item / WIDTH) * SIZE;
 		film.add( item, x, y, x+width, y+height);
+	}
+	private static void assignItemRect( int item, int width, int height, float angle ){
+		assignItemRect( item, width, height );
+		angles.put( item, angle );
+	}
+
+	private static final Map<Integer, Float> angles = new HashMap<>();
+
+	public static float weaponAngle( int sprite ) {
+		return Misc.or( angles.get( sprite ), 45f );
 	}
 
 	private static final int PLACEHOLDERS   =                               xy(1, 1);   //16 slots
@@ -208,7 +222,7 @@ public class ItemSpriteSheet {
 	public static final int MAGES_STAFF     = WEP_TIER1+5;
 	static{
 		assignItemRect(WORN_SHORTSWORD, 13, 13);
-		assignItemRect(GLOVES,          12, 16);
+		assignItemRect(GLOVES,          12, 16, 0);
 		assignItemRect(DAGGER,          12, 13);
 		assignItemRect(MAGES_STAFF,     15, 16);
 	}
@@ -238,7 +252,7 @@ public class ItemSpriteSheet {
 		assignItemRect(SWORD,           14, 14);
 		assignItemRect(MACE,            15, 15);
 		assignItemRect(SCIMITAR,        13, 16);
-		assignItemRect(ROUND_SHIELD,    16, 16);
+		assignItemRect(ROUND_SHIELD,    16, 16, 0);
 		assignItemRect(SAI,             16, 16);
 		assignItemRect(WHIP,            14, 14);
 	}
@@ -271,8 +285,8 @@ public class ItemSpriteSheet {
 		assignItemRect(WAR_HAMMER,  16, 16);
 		assignItemRect(GLAIVE,      16, 16);
 		assignItemRect(GREATAXE,    12, 16);
-		assignItemRect(GREATSHIELD, 12, 16);
-		assignItemRect(GAUNTLETS,   13, 15);
+		assignItemRect(GREATSHIELD, 12, 16, 0);
+		assignItemRect(GAUNTLETS,   13, 15, 0);
 	}
 
 	                                                                                    //8 free slots

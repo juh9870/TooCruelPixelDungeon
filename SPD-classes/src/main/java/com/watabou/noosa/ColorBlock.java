@@ -24,7 +24,11 @@ package com.watabou.noosa;
 import com.watabou.gltextures.TextureCache;
 
 public class ColorBlock extends Image implements Resizable {
-	
+
+	public ColorBlock() {
+		this( 1, 1, 0xFFFFFFFF );
+	}
+
 	public ColorBlock( float width, float height, int color ) {
 		super( TextureCache.createSolid( color ) );
 		scale.set( width, height );
