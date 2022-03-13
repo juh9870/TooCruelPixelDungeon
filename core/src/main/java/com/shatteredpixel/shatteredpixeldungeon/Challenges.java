@@ -237,7 +237,7 @@ public enum Challenges implements Hero.Doom {
     },
 
     THE_LAST_WALTZ(73, 4, 11f, DANCE_FLOOR, MARATHON),
-    CRAB_RAVE(92, 4, 69f, THE_LAST_WALTZ, AGNOSIA, HUMPPA, ON_A_BEAT),
+    CRAB_RAVE(92, 4, 0f, THE_LAST_WALTZ, AGNOSIA, HUMPPA, ON_A_BEAT),
     //endregion
 
 
