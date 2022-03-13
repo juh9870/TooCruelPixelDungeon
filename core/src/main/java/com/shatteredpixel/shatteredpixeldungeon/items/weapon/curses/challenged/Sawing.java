@@ -34,19 +34,16 @@ public class Sawing extends Weapon.Enchantment {
 
 
 	boolean processing = false;
-	boolean hit = false;
 
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
-		if ( processing ) {
-			hit = true;
-		} else {
+		if ( !processing ) {
 			processing = true;
 
 			float duration = 0;
+			boolean hit = false;
 			do {
-				hit = false;
-				attacker.attack( defender );
+				hit = attacker.attack( defender );
 				duration += weapon.delayFactor( attacker );
 			} while (hit && defender.isAlive());
 
