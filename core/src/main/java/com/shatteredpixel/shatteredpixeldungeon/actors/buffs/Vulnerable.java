@@ -59,7 +59,7 @@ public class Vulnerable extends FlavourBuff implements DamageAmplificationBuff {
 	}
 
 	@Override
-	public float damageMultiplier() {
+	public float damageMultiplier( Object source ) {
 		return 1.33f;
 	}
 }

@@ -10,7 +10,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.DamageAmplification
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Disabled;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Godspeed;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
@@ -281,7 +280,7 @@ public class DanceFloor extends Blob implements Hero.Doom {
         }
 
         @Override
-        public float damageMultiplier() {
+        public float damageMultiplier( Object source ) {
             return 2f;
         }
     }

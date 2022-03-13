@@ -204,7 +204,7 @@ public class ScrollOfChallenge extends ExoticScroll {
 		}
 
 		@Override
-		public float damageMultiplier() {
+		public float damageMultiplier( Object source ) {
 			return 0.67f;
 		}
 	}

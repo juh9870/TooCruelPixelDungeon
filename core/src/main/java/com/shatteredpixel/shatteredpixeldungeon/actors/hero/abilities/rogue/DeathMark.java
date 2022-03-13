@@ -212,7 +212,7 @@ public class DeathMark extends ArmorAbility {
 		}
 
 		@Override
-		public float damageMultiplier() {
+		public float damageMultiplier( Object source ) {
 			if (target.alignment != Char.Alignment.ALLY) return 1.25f;
 			return 1f;
 		}

@@ -27,7 +27,7 @@ public class RevengeFury extends FlavourBuff implements AttackAmplificationBuff,
     }
 
     @Override
-    public float damageMultiplier() {
+    public float damageMultiplier( Object source ) {
         if (target.properties().contains(Char.Property.BOSS)) return 1f;
         return 1.2f;
     }

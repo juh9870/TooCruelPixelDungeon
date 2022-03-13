@@ -26,6 +26,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Arrowhead;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
@@ -276,6 +278,10 @@ public enum HeroClass {
         if (Challenges.CHAOS_WIZARD.enabled() && hero.belongings.weapon != null) {
             hero.belongings.weapon = null;
             Generator.random(Generator.Category.WAND).identify().curse().collect();
+        }
+
+        if ( Challenges.THUNDERSTRUCK.enabled() ) {
+            Buff.affect(hero, Arrowhead.class ).set(9001);
         }
     }
 

@@ -619,7 +619,7 @@ public abstract class Char extends Actor {
 		boolean capAtOne = dmg > 0 && src instanceof Hero;
 		for (Buff buff : this.buffs()) {
 			if(buff instanceof DamageAmplificationBuff && !isImmune(buff.getClass())){
-				dmg *= ((DamageAmplificationBuff) buff).damageMultiplier();
+				dmg *= ((DamageAmplificationBuff) buff).damageMultiplier( src );
 			}
 		}
 

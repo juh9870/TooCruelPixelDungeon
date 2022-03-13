@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic;
 
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -41,6 +42,9 @@ public class PotionOfShielding extends ExoticPotion {
 
         if (Challenges.PHARMACOPHOBIA.enabled()) {
             PotionOfHealing.pharmacophobiaProc(hero);
+        }
+        if ( Challenges.THUNDERSTRUCK.enabled() ) {
+            Buff.prolong( hero, AnkhInvulnerability.class, 3f );
         }
         //~75% of a potion of healing
         Buff.affect(hero, Barrier.class).setShield((int) (0.6f * hero.HT + 10));

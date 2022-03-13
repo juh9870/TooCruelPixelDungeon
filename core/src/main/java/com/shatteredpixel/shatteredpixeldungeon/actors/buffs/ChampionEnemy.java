@@ -214,7 +214,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
 
     @Override
-    public float damageMultiplier() {
+    public float damageMultiplier( Object source ) {
         return damageTakenFactor();
     }
 

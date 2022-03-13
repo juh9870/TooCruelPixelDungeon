@@ -48,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Dread;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Extermination;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.InsomniaSlowdown;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.KothBanned;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Legion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.NoReward;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
@@ -319,7 +320,7 @@ public abstract class Mob extends Char {
 				newEnemy = true;
 			}
 		}
-        //additionally, if we are an enemy, not amoked, attacking another enemy of the same alignment but see hero
+        //additionally, if we are an enemy, not amoked, or attacking another enemy of the same alignment but see hero
         if (!newEnemy &&
                 fieldOfView[Dungeon.hero.pos()] && Dungeon.hero.invisible <= 0 &&
                 Challenges.KING_OF_A_HILL.enabled() &&
@@ -380,9 +381,9 @@ public abstract class Mob extends Char {
 				}
 				
                 //if no better enemies are found, start infighting
-                if (enemies.isEmpty() && Challenges.KING_OF_A_HILL.enabled()) {
+                if (enemies.isEmpty() && Challenges.KING_OF_A_HILL.enabled() && buff( KothBanned.class ) == null) {
                     for (Mob mob : mobsInFov)
-                        if (mob.alignment == Alignment.ENEMY && mob != this)
+                        if (mob.alignment == Alignment.ENEMY && mob != this && mob.buff( KothBanned.class ) == null)
                             enemies.add(mob);
                 }
 			}
@@ -642,7 +643,10 @@ public abstract class Mob extends Char {
         HashSet<ChampionEnemy> buffs = enemy.buffs(ChampionEnemy.class);
         if (super.attack(enemy, dmgMulti, dmgBonus, accMulti)) {
             if (!enemy.isAlive()) {
-                if (Challenges.KING_OF_A_HILL.enabled() && enemy instanceof Mob) {
+	            if ( Challenges.KING_OF_A_HILL.enabled() &&
+			            enemy instanceof Mob &&
+			            enemy.buff( KothBanned.class ) == null &&
+			            buff( KothBanned.class ) == null ) {
                     if (alignment == Alignment.ENEMY && buff(Corruption.class) == null) {
                         Mob loser = (Mob) enemy;
                         kills++;
@@ -1085,7 +1089,7 @@ public abstract class Mob extends Char {
             float dmgMult = 1f;
             for (Buff buff : buffs()) {
                 if (buff instanceof DamageAmplificationBuff) {
-                    dmgMult *= ((DamageAmplificationBuff) buff).damageMultiplier();
+	                dmgMult *= ((DamageAmplificationBuff) buff).damageMultiplier( null );
                 }
             }
 
@@ -1114,14 +1118,17 @@ public abstract class Mob extends Char {
 
 		return desc.toString();
 	}
-	
-    public void applyChallenges() {
-        if (adjusted) return;
-        adjusted = true;
-        if (Challenges.AGNOSIA.enabled()) {
-            Buff.affect(this, Agnosia.class);
-        }
-    }
+
+	public void applyChallenges() {
+		if ( adjusted ) return;
+		adjusted = true;
+		if ( Challenges.AGNOSIA.enabled() ) {
+			Buff.affect( this, Agnosia.class );
+		}
+		if ( Challenges.ARROWHEAD.enabled() ) {
+			Buff.affect( this, Arrowhead.MobArrowhead.class );
+		}
+	}
 
     @Override
     public float speed() {

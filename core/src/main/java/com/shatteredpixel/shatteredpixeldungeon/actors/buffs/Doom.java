@@ -54,7 +54,7 @@ public class Doom extends Buff implements DamageAmplificationBuff {
 	}
 
 	@Override
-	public float damageMultiplier() {
+	public float damageMultiplier( Object source ) {
 		return 2f;
 	}
 }
