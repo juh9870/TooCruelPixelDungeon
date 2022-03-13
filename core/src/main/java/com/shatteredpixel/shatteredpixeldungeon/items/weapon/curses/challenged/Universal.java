@@ -7,21 +7,51 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.ListUtils;
+import com.watabou.utils.UnorderedPair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Universal extends Weapon.Enchantment {
 	private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
+
+	@SuppressWarnings("unchecked")
+	private static final UnorderedPair<Class<? extends Weapon.Enchantment>>[] incompatibles = new UnorderedPair[]{
+			new UnorderedPair<>( Temporal.class, Sapping.class )
+	};
+
 	private final List<Weapon.Enchantment> additional;
 
 	public Universal() {
 		additional = new ArrayList<>();
+		generateEnchantments();
+	}
+
+	private void generateEnchantments() {
+		additional.clear();
 		for (int i = 0; i < 3; i++) {
 			additional.add( Weapon.Enchantment.randomCurse(
-					ListUtils.map( additional, Weapon.Enchantment::getClass )
+					incompatibles( false )
 			) );
 		}
+	}
+
+	@SuppressWarnings("SameParameterValue")
+	private List<Class<? extends Weapon.Enchantment>> incompatibles( boolean allowDuplicates ) {
+
+		List<Class<? extends Weapon.Enchantment>> classes = ListUtils.map( additional, Weapon.Enchantment::getClass );
+		List<Class<? extends Weapon.Enchantment>> banned = new ArrayList<>();
+		if ( !allowDuplicates ) banned.addAll( classes );
+
+		for (UnorderedPair<Class<? extends Weapon.Enchantment>> conflict : incompatibles) {
+			if ( classes.contains( conflict.first ) ) {
+				banned.add( conflict.second );
+			}
+			if ( classes.contains( conflict.second ) ) {
+				banned.add( conflict.first );
+			}
+		}
+		return banned;
 	}
 
 	@Override
@@ -35,6 +65,7 @@ public class Universal extends Weapon.Enchantment {
 		}
 		return false;
 	}
+
 	@SuppressWarnings("unchecked")
 	public <T extends Weapon.Enchantment> T getEnchant( Class<? extends T> type ) {
 		for (Weapon.Enchantment enchantment : additional) {

@@ -40,8 +40,23 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Friendly;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Polarized;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Sacrificial;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Wayward;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Abyssal;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterDisplacing;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterFriendly;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterWayward;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Catastrophic;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Destabilizing;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Erratic;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Legendary;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Possessed;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Reborn;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Sapping;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Sawing;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Temporal;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Timebending;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Trapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Universal;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Wide;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Zealot;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blocking;
@@ -441,6 +456,15 @@ abstract public class Weapon extends KindOfWeapon {
 				Sacrificial.class, Wayward.class, Polarized.class, Friendly.class
 		};
 
+		private static final Class<?>[] betterCurses = new Class<?>[]{
+				Abyssal.class, BetterDisplacing.class, BetterFriendly.class,
+				BetterWayward.class, Catastrophic.class, Destabilizing.class,
+				Erratic.class, Legendary.class, Possessed.class,
+				Reborn.class, Sapping.class, Sawing.class,
+				Temporal.class, Timebending.class, Trapping.class,
+				Universal.class, Wide.class, Zealot.class,
+		};
+
 		public void activate(Char ch){
 
 		}
@@ -573,7 +597,8 @@ abstract public class Weapon extends KindOfWeapon {
 		}
 		@SuppressWarnings("unchecked")
 		public static Enchantment randomCurse(Collection<Class<? extends Enchantment>> toIgnore) {
-			ArrayList<Class<?>> enchants = new ArrayList<>(Arrays.asList(curses));
+			Class<?>[] arr = Challenges.CURSE_ENCHANT.enabled() ? betterCurses : curses;
+			ArrayList<Class<?>> enchants = new ArrayList<>(Arrays.asList(arr));
 			enchants.removeAll(toIgnore);
 			if (enchants.isEmpty()) {
 				return random();
