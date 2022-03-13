@@ -2,6 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AttackAmplificationBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
@@ -25,6 +26,7 @@ public class Temporal extends Weapon.Enchantment {
 	@Override
 	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
 		int dmg = attacker.damageRoll();
+		dmg = AttackAmplificationBuff.damageFactor( dmg, attacker.buffs() );
 		Buff.append( defender, Wound.class, Wound.DURATION ).set( dmg );
 		defender.sprite.showStatus( DAMAGE_COLOR, Integer.toString( dmg ) );
 		return 0;

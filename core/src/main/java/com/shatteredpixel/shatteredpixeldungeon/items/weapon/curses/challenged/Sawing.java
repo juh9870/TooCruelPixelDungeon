@@ -46,7 +46,7 @@ public class Sawing extends Weapon.Enchantment {
 			float duration = 0;
 			do {
 				hit = false;
-				attacker.attack( defender, 1, 0, 1 );
+				attacker.attack( defender );
 				duration += weapon.delayFactor( attacker );
 			} while (hit && defender.isAlive());
 
