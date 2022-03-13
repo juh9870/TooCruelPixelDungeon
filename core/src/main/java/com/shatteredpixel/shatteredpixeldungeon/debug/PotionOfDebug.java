@@ -8,6 +8,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotio
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -21,6 +22,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.noosa.Image;
+import com.watabou.utils.Callback;
 import com.watabou.utils.ListUtils;
 import com.watabou.utils.Reflection;
 import com.watabou.utils.function.Consumer;
@@ -31,359 +33,383 @@ import java.util.Arrays;
 import java.util.Locale;
 
 public class PotionOfDebug extends Potion {
-    private ItemsCategory[] categories;
+	private ItemsCategory[] categories;
 
-    {
-        image = ItemSpriteSheet.POTION_HOLDER;
-    }
+	{
+		image = ItemSpriteSheet.POTION_HOLDER;
+	}
 
-    @Override
-    public String name() {
-        return "Potion of Debug";
-    }
+	@Override
+	public String name() {
+		return "Potion of Debug";
+	}
 
-    @Override
-    public String desc() {
-        return "Gulp this down to get so high, that you can imagine any item you want, and it will appear in your hands!";
-    }
+	@Override
+	public String desc() {
+		return "Gulp this down to get so high, that you can imagine any item you want, and it will appear in your hands!";
+	}
 
-    @Override
-    public boolean isIdentified() {
-        return true;
-    }
+	@Override
+	public boolean isIdentified() {
+		return true;
+	}
 
-    @Override
-    public boolean isKnown() {
-        return true;
-    }
+	@Override
+	public boolean isKnown() {
+		return true;
+	}
 
-    @Override
-    protected void drink(Hero hero) {
-        init();
-        GameScene.show(new WndBetterOptions("Pick category", "Pick item category", categoryNames()) {
-            @Override
-            protected void onSelect(int index) {
-                ItemsCategory category = categories[index];
-                GameScene.show(new WndBetterOptions("Pick item", "Pick item to get", category.listItems()) {
-                    @Override
-                    protected void onSelect(int index) {
-                        Item item = category.items[index].copy();
-                        itemPicked(item);
-                    }
+	@Override
+	protected void drink( Hero hero ) {
+		init();
+		GameScene.show( new WndBetterOptions( "Pick category", "Pick item category", categoryNames() ) {
+			@Override
+			protected void onSelect( int index ) {
+				ItemsCategory category = categories[index];
+				GameScene.show( new WndBetterOptions( "Pick item", "Pick item to get", category.listItems() ) {
+					@Override
+					protected void onSelect( int index ) {
+						Item item = category.items[index].copy();
+						itemPicked( item );
+					}
 
-                    @Override
-                    protected boolean hasIcon(int index) {
-                        return true;
-                    }
+					@Override
+					protected boolean hasIcon( int index ) {
+						return true;
+					}
 
-                    @Override
-                    protected Image getIcon(int index) {
-                        return new ItemSprite(category.items[index].item().image());
-                    }
-                });
-            }
-        });
-    }
+					@Override
+					protected Image getIcon( int index ) {
+						return new ItemSprite( category.items[index].item().image() );
+					}
+				} );
+			}
+		} );
+	}
 
-    private void itemPicked(Item item) {
-        if (item.isUpgradable()) {
-            askUpgradeLevel((level) -> {
-                if (item.stackable) {
-                    askAmount((amount) -> giveItem(item.quantity(amount), level));
-                } else {
-                    giveItem(item, level);
-                }
-            });
-        } else {
-            if (item.stackable) {
-                askAmount((amount) -> giveItem(item.quantity(amount), 0));
-            } else {
-                giveItem(item, 0);
-            }
-        }
-    }
+	private void itemPicked( Item item ) {
+		askAmount( item, ( i2 ) -> askUpgradeLevel( i2, ( i3 ) -> askEnchant( i3, this::giveItem ) ) );
+	}
 
-    private void askAmount(Consumer<Integer> callback) {
-        GameScene.show(new WndTextInput("Input amount", "", 9, false, "Done", "Cancel") {
-            @Override
-            public void onSelect(boolean positive, String text) {
-                int amount = 1;
-                try {
-                    amount = Integer.parseInt(text);
-                } catch (NumberFormatException e) {
-                    GLog.w("Invalid number");
-                }
-                callback.accept(amount);
-            }
-        });
-    }
+	private void askAmount( Item item, Consumer<Item> next ) {
+		if ( !item.stackable ) {
+			next.accept( item );
+			return;
+		}
+		GameScene.show( new WndTextInput( "Input amount", "", 9, false, "Done", "Cancel" ) {
+			@Override
+			public void onSelect( boolean positive, String text ) {
+				int amount = 1;
+				try {
+					amount = Integer.parseInt( text );
+				} catch ( NumberFormatException e ) {
+					GLog.w( "Invalid number" );
+				}
+				item.quantity( amount );
+				next.accept( item );
+			}
+		} );
+	}
 
-    private void askUpgradeLevel(Consumer<Integer> callback) {
-        GameScene.show(new WndTextInput("Input upgrade level", "", 6, false, "Done", "Cancel") {
-            @Override
-            public void onSelect(boolean positive, String text) {
-                int level = 0;
-                try {
-                    if (positive) {
-                        level = Integer.parseInt(text);
-                    }
-                } catch (NumberFormatException e) {
-                    GLog.w("Invalid number");
-                }
-                callback.accept(level);
-            }
-        });
-    }
+	private void askUpgradeLevel( Item item, Consumer<Item> next ) {
+		if ( !item.isUpgradable() ) {
+			next.accept( item );
+			return;
+		}
+		GameScene.show( new WndTextInput( "Input upgrade level", "", 6, false, "Done", "Cancel" ) {
+			@Override
+			public void onSelect( boolean positive, String text ) {
+				int level = 0;
+				try {
+					if ( positive ) {
+						level = Integer.parseInt( text );
+					}
+				} catch ( NumberFormatException e ) {
+					GLog.w( "Invalid number" );
+				}
+				item.upgrade( level );
+				next.accept( item );
+			}
+		} );
+	}
 
-    private void giveItem(Item item, int level) {
-        item.upgrade(level).identify().doPickUp(curUser);
-    }
+	private void askEnchant( Item item, Consumer<Item> next ) {
+		if ( !(item instanceof Weapon) ) {
+			next.accept( item );
+			return;
+		}
+		GameScene.show( new WndBetterOptions( "Choose enchant", "Pick category", "Normal", "Curses", "Better curses", "None" ) {
+			@Override
+			protected void onSelect( int index ) {
+				Class<?>[] enchants;
+				if ( index == 0 ) enchants = Weapon.Enchantment.allEnchants();
+				else if ( index == 1 ) enchants = Weapon.Enchantment.getCurses();
+				else if ( index == 2 ) enchants = Weapon.Enchantment.getBetterCurses();
+				else {
+					next.accept( item );
+					return;
+				}
+				GameScene.show( new WndBetterOptions( "Choose enchant", "Pick an enchantment",
+						ListUtils.map( enchants, String.class, Class::getSimpleName ) ) {
+					@Override
+					protected void onSelect( int index ) {
+						((Weapon) item).enchant( (Weapon.Enchantment) Reflection.newInstance( enchants[index] ) );
+						next.accept( item );
+					}
+				} );
+			}
+		} );
+	}
 
-    private String[] categoryNames() {
-        return ListUtils.map(categories, String.class, (c) -> c.name);
-    }
+	private void giveItem( Item item ) {
+		item.identify().doPickUp( curUser );
+	}
 
-    //region data handling
+	private String[] categoryNames() {
+		return ListUtils.map( categories, String.class, ( c ) -> c.name );
+	}
 
-    private void init() {
-        if (categories != null) return;
-        ArrayList<ItemsCategory> cats = new ArrayList<>();
-        for (Generator.Category generatorCategory : Generator.Category.values()) {
-            if (generatorCategory.classes.length == 0) continue;
-            ItemsCategory category = new ItemsCategory(generatorCategory);
-            cats.add(category);
-            if (generatorCategory == Generator.Category.POTION) {
-                cats.add(ItemsCategory.exoticPotions(category));
-            } else if (generatorCategory == Generator.Category.SCROLL) {
-                cats.add(ItemsCategory.exoticScrolls(category));
-            }
-        }
+	//region data handling
 
-        categories = cats.toArray(new ItemsCategory[0]);
-    }
+	private void init() {
+		if ( categories != null ) return;
+		ArrayList<ItemsCategory> cats = new ArrayList<>();
+		for (Generator.Category generatorCategory : Generator.Category.values()) {
+			if ( generatorCategory.classes.length == 0 ) continue;
+			ItemsCategory category = new ItemsCategory( generatorCategory );
+			cats.add( category );
+			if ( generatorCategory == Generator.Category.POTION ) {
+				cats.add( ItemsCategory.exoticPotions( category ) );
+			} else if ( generatorCategory == Generator.Category.SCROLL ) {
+				cats.add( ItemsCategory.exoticScrolls( category ) );
+			}
+		}
 
-
-    public static class ItemsCategory {
-        public final ItemClass[] items;
-        public final String name;
-
-        public ItemsCategory(Generator.Category category) {
-            if (category == Generator.Category.GOLD) {
-                name = "currency";
-                items = new ItemClass[Currency.values().length];
-                Currency[] values = Currency.values();
-                for (int i = 0; i < values.length; i++) {
-                    items[i] = new ItemClass(values[i].item());
-                }
-
-            } else {
-                items = new ItemClass[category.classes.length];
-                for (int i = 0; i < category.classes.length; i++) {
-                    items[i] = new ItemClass((Class<? extends Item>) category.classes[i]);
-                }
-                name = category.name().toLowerCase(Locale.ROOT);
-            }
-        }
-
-        public ItemsCategory(ItemClass[] items, String name) {
-            this.items = Arrays.copyOf(items, items.length);
-            this.name = name;
-        }
-
-        public static ItemsCategory exoticPotions(ItemsCategory potions) {
-            ArrayList<ItemClass> items = new ArrayList<>();
-            for (ItemClass item : potions.items) {
-                if (item.item() instanceof Potion) {
-                    Class<? extends ExoticPotion> potion = ExoticPotion.regToExo.get(item.item().getClass());
-                    items.add(new ItemClass(potion));
-                }
-            }
-            return new ItemsCategory(items.toArray(new ItemClass[0]), "exotic potion");
-        }
-
-        public static ItemsCategory exoticScrolls(ItemsCategory scrolld) {
-            ArrayList<ItemClass> items = new ArrayList<>();
-            for (ItemClass item : scrolld.items) {
-                if (item.item() instanceof Scroll) {
-                    Class<? extends ExoticScroll> potion = ExoticScroll.regToExo.get(item.item().getClass());
-                    items.add(new ItemClass(potion));
-                }
-            }
-            return new ItemsCategory(items.toArray(new ItemClass[0]), "exotic scrolls");
-        }
-
-        public String[] listItems() {
-            return ListUtils.map(items, String.class, (c) -> c.item().name());
-        }
-    }
+		categories = cats.toArray( new ItemsCategory[0] );
+	}
 
 
-    public static class ItemClass {
-        private final Lazy<Item> item;
+	public static class ItemsCategory {
+		public final ItemClass[] items;
+		public final String name;
 
-        public ItemClass(Class<? extends Item> item) {
-            this.item = Lazy.of(() -> processItem(Reflection.newInstance(item)));
-        }
+		public ItemsCategory( Generator.Category category ) {
+			if ( category == Generator.Category.GOLD ) {
+				name = "currency";
+				items = new ItemClass[Currency.values().length];
+				Currency[] values = Currency.values();
+				for (int i = 0; i < values.length; i++) {
+					items[i] = new ItemClass( values[i].item() );
+				}
 
-        public ItemClass(Item item) {
-            this.item = Lazy.of(() -> processItem(item));
-        }
+			} else {
+				items = new ItemClass[category.classes.length];
+				for (int i = 0; i < category.classes.length; i++) {
+					items[i] = new ItemClass( (Class<? extends Item>) category.classes[i] );
+				}
+				name = category.name().toLowerCase( Locale.ROOT );
+			}
+		}
 
-        private static Item processItem(Item item) {
-            if (item instanceof Potion) {
-                ((Potion) item).anonymize();
-            } else if (item instanceof Scroll) {
-                ((Scroll) item).anonymize();
-            } else if (item instanceof Ring) {
-                ((Ring) item).anonymize();
-            }
-            return item;
-        }
+		public ItemsCategory( ItemClass[] items, String name ) {
+			this.items = Arrays.copyOf( items, items.length );
+			this.name = name;
+		}
 
-        public Item item() {
-            return item.get();
-        }
+		public static ItemsCategory exoticPotions( ItemsCategory potions ) {
+			ArrayList<ItemClass> items = new ArrayList<>();
+			for (ItemClass item : potions.items) {
+				if ( item.item() instanceof Potion ) {
+					Class<? extends ExoticPotion> potion = ExoticPotion.regToExo.get( item.item().getClass() );
+					items.add( new ItemClass( potion ) );
+				}
+			}
+			return new ItemsCategory( items.toArray( new ItemClass[0] ), "exotic potion" );
+		}
 
-        public Item copy() {
-            return Reflection.newInstance(item.get().getClass());
-        }
-    }
-    //endregion
+		public static ItemsCategory exoticScrolls( ItemsCategory scrolld ) {
+			ArrayList<ItemClass> items = new ArrayList<>();
+			for (ItemClass item : scrolld.items) {
+				if ( item.item() instanceof Scroll ) {
+					Class<? extends ExoticScroll> potion = ExoticScroll.regToExo.get( item.item().getClass() );
+					items.add( new ItemClass( potion ) );
+				}
+			}
+			return new ItemsCategory( items.toArray( new ItemClass[0] ), "exotic scrolls" );
+		}
+
+		public String[] listItems() {
+			return ListUtils.map( items, String.class, ( c ) -> c.item().name() );
+		}
+	}
 
 
-    public static class WndBetterOptions extends Window {
+	public static class ItemClass {
+		private final Lazy<Item> item;
 
-        private static final int WIDTH_P = 120;
-        private static final int WIDTH_L = 144;
+		public ItemClass( Class<? extends Item> item ) {
+			this.item = Lazy.of( () -> processItem( Reflection.newInstance( item ) ) );
+		}
 
-        private static float maxWidth() {
-            return PixelScene.uiCamera.width * 0.9f;
-        }
+		public ItemClass( Item item ) {
+			this.item = Lazy.of( () -> processItem( item ) );
+		}
 
-        private static final int MARGIN = 2;
-        private static final int BUTTON_HEIGHT = 16;
-        private static final int FONT_SIZE = 9;
-        private static final int BUTTON_HEIGHT_SM = 10;
-        private static final int FONT_SIZE_SM = 6;
+		private static Item processItem( Item item ) {
+			if ( item instanceof Potion ) {
+				((Potion) item).anonymize();
+			} else if ( item instanceof Scroll ) {
+				((Scroll) item).anonymize();
+			} else if ( item instanceof Ring ) {
+				((Ring) item).anonymize();
+			}
+			return item;
+		}
 
-        private float maxHeight() {
-            return PixelScene.uiCamera.height * 0.9f;
-        }
+		public Item item() {
+			return item.get();
+		}
 
-        public WndBetterOptions(Image icon, String title, String message, String... options) {
-            super();
+		public Item copy() {
+			return Reflection.newInstance( item.get().getClass() );
+		}
+	}
+	//endregion
 
-            int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
 
-            float pos = 0;
-            if (title != null) {
-                IconTitle tfTitle = new IconTitle(icon, title);
-                tfTitle.setRect(0, pos, width, 0);
-                add(tfTitle);
+	public static class WndBetterOptions extends Window {
 
-                pos = tfTitle.bottom() + 2 * MARGIN;
-            }
+		private static final int WIDTH_P = 120;
+		private static final int WIDTH_L = 144;
 
-            layoutBody(pos, message, options);
-        }
+		private static float maxWidth() {
+			return PixelScene.uiCamera.width * 0.9f;
+		}
 
-        public WndBetterOptions(String title, String message, String... options) {
-            super();
+		private static final int MARGIN = 2;
+		private static final int BUTTON_HEIGHT = 16;
+		private static final int FONT_SIZE = 9;
+		private static final int BUTTON_HEIGHT_SM = 10;
+		private static final int FONT_SIZE_SM = 6;
 
-            int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
+		private float maxHeight() {
+			return PixelScene.uiCamera.height * 0.9f;
+		}
 
-            float pos = MARGIN;
-            if (title != null) {
-                RenderedTextBlock tfTitle = PixelScene.renderTextBlock(title, 9);
-                tfTitle.hardlight(TITLE_COLOR);
-                tfTitle.setPos(MARGIN, pos);
-                tfTitle.maxWidth(width - MARGIN * 2);
-                add(tfTitle);
+		public WndBetterOptions( Image icon, String title, String message, String... options ) {
+			super();
 
-                pos = tfTitle.bottom() + 2 * MARGIN;
-            }
+			int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
 
-            layoutBody(pos, message, options);
-        }
+			float pos = 0;
+			if ( title != null ) {
+				IconTitle tfTitle = new IconTitle( icon, title );
+				tfTitle.setRect( 0, pos, width, 0 );
+				add( tfTitle );
 
-        private void layoutBody(float pos, String message, String... options) {
-            int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
+				pos = tfTitle.bottom() + 2 * MARGIN;
+			}
 
-            RenderedTextBlock tfMesage = PixelScene.renderTextBlock(6);
-            tfMesage.text(message, width);
-            tfMesage.setPos(0, pos);
-            add(tfMesage);
+			layoutBody( pos, message, options );
+		}
 
-            pos = tfMesage.bottom() + 2 * MARGIN;
+		public WndBetterOptions( String title, String message, String... options ) {
+			super();
 
-            ArrayList<RedButton> buttons = createButtons(options, BUTTON_HEIGHT, 9);
+			int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
 
-            float newPos = tryLayout(buttons, pos, width, BUTTON_HEIGHT);
+			float pos = MARGIN;
+			if ( title != null ) {
+				RenderedTextBlock tfTitle = PixelScene.renderTextBlock( title, 9 );
+				tfTitle.hardlight( TITLE_COLOR );
+				tfTitle.setPos( MARGIN, pos );
+				tfTitle.maxWidth( width - MARGIN * 2 );
+				add( tfTitle );
 
-            if (newPos < 0) {
-                killAll(buttons);
-                buttons = createButtons(options, BUTTON_HEIGHT_SM, FONT_SIZE_SM);
-                newPos = tryLayout(buttons, pos, width, BUTTON_HEIGHT_SM);
-            }
-            pos = newPos;
+				pos = tfTitle.bottom() + 2 * MARGIN;
+			}
 
-            resize(width, (int) pos);
-        }
+			layoutBody( pos, message, options );
+		}
 
-        private float tryLayout(ArrayList<RedButton> buttons, float pos, int initialWidth, int btnHeight) {
-            int width = initialWidth;
-            float newPos = pos;
-            do {
-                newPos = WndUseItem.layoutButtons((ArrayList<RedButton>) buttons.clone(), width, pos, btnHeight);
-                width += initialWidth / 2;
-                width = Math.min(width, (int) maxWidth());
-            } while (newPos > maxHeight() && width < (int) maxWidth());
-            if (newPos < maxHeight()) {
-                return newPos;
-            }
-            return -1;
-        }
+		private void layoutBody( float pos, String message, String... options ) {
+			int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
 
-        private ArrayList<RedButton> createButtons(String[] options, float btnHeight, int fontSize) {
-            ArrayList<RedButton> buttons = new ArrayList<>();
-            for (int i = 0; i < options.length; i++) {
-                final int index = i;
-                RedButton btn = new RedButton(options[i], fontSize) {
-                    @Override
-                    protected void onClick() {
-                        hide();
-                        onSelect(index);
-                    }
-                };
-                if (hasIcon(i)) btn.icon(getIcon(i));
-                btn.enable(enabled(i));
-                add(btn);
-                btn.setSize(btn.reqWidth(), btnHeight);
-                buttons.add(btn);
-            }
-            return buttons;
-        }
+			RenderedTextBlock tfMesage = PixelScene.renderTextBlock( 6 );
+			tfMesage.text( message, width );
+			tfMesage.setPos( 0, pos );
+			add( tfMesage );
 
-        private void killAll(ArrayList<RedButton> buttons) {
-            for (RedButton button : buttons) {
-                button.killAndErase();
-            }
-        }
+			pos = tfMesage.bottom() + 2 * MARGIN;
 
-        protected boolean enabled(int index) {
-            return true;
-        }
+			ArrayList<RedButton> buttons = createButtons( options, BUTTON_HEIGHT, 9 );
 
-        protected void onSelect(int index) {
-        }
+			float newPos = tryLayout( buttons, pos, width, BUTTON_HEIGHT );
 
-        protected boolean hasIcon(int index) {
-            return false;
-        }
+			if ( newPos < 0 ) {
+				killAll( buttons );
+				buttons = createButtons( options, BUTTON_HEIGHT_SM, FONT_SIZE_SM );
+				newPos = tryLayout( buttons, pos, width, BUTTON_HEIGHT_SM );
+			}
+			pos = newPos;
 
-        protected Image getIcon(int index) {
-            return null;
-        }
-    }
+			resize( width, (int) pos );
+		}
+
+		private float tryLayout( ArrayList<RedButton> buttons, float pos, int initialWidth, int btnHeight ) {
+			int width = initialWidth;
+			float newPos = pos;
+			do {
+				newPos = WndUseItem.layoutButtons( (ArrayList<RedButton>) buttons.clone(), width, pos, btnHeight );
+				width += initialWidth / 2;
+				width = Math.min( width, (int) maxWidth() );
+			} while (newPos > maxHeight() && width < (int) maxWidth());
+			if ( newPos < maxHeight() ) {
+				return newPos;
+			}
+			return -1;
+		}
+
+		private ArrayList<RedButton> createButtons( String[] options, float btnHeight, int fontSize ) {
+			ArrayList<RedButton> buttons = new ArrayList<>();
+			for (int i = 0; i < options.length; i++) {
+				final int index = i;
+				RedButton btn = new RedButton( options[i], fontSize ) {
+					@Override
+					protected void onClick() {
+						hide();
+						onSelect( index );
+					}
+				};
+				if ( hasIcon( i ) ) btn.icon( getIcon( i ) );
+				btn.enable( enabled( i ) );
+				add( btn );
+				btn.setSize( btn.reqWidth(), btnHeight );
+				buttons.add( btn );
+			}
+			return buttons;
+		}
+
+		private void killAll( ArrayList<RedButton> buttons ) {
+			for (RedButton button : buttons) {
+				button.killAndErase();
+			}
+		}
+
+		protected boolean enabled( int index ) {
+			return true;
+		}
+
+		protected void onSelect( int index ) {
+		}
+
+		protected boolean hasIcon( int index ) {
+			return false;
+		}
+
+		protected Image getIcon( int index ) {
+			return null;
+		}
+	}
 
 }

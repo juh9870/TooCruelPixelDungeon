@@ -87,6 +87,21 @@ public final class ListUtils {
 		return list;
 	}
 
+	public static <T> T[] combine( T[]... arrays ) {
+		int length = 0;
+		for (T[] array : arrays) {
+			length += array.length;
+		}
+		T[] combination = Arrays.copyOf( arrays[0], length );
+		int cur = arrays[0].length;
+		for (int i = 1; i < arrays.length; i++) {
+			System.arraycopy( arrays[i], 0, combination, cur, arrays[i].length );
+			cur += arrays[i].length;
+		}
+
+		return combination;
+	}
+
 	private static void checkIndex( int size, int index, String message ) {
 		if ( index < 0 || index >= size ) {
 			throw new IndexOutOfBoundsException( message );

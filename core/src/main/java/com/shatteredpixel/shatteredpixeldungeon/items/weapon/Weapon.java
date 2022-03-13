@@ -76,6 +76,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.ListUtils;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 import com.watabou.utils.function.Lazy;
@@ -464,6 +465,18 @@ abstract public class Weapon extends KindOfWeapon {
 				Temporal.class, Timebending.class, Trapping.class,
 				Universal.class, Wide.class, Zealot.class,
 		};
+
+		public static Class<?>[] allEnchants(){
+			return ListUtils.combine( common, uncommon, rare );
+		}
+
+		public static Class<?>[] getCurses(){
+			return curses;
+		}
+
+		public static Class<?>[] getBetterCurses(){
+			return betterCurses;
+		}
 
 		public void activate(Char ch){
 
