@@ -64,7 +64,7 @@ public interface ISwarm {
 		}
 
 		if ( Challenges.KING_OF_A_HILL.enabled() ) {
-			Buff.affect( clone, KothBanned.class );
+			Buff.prolong( clone, KothBanned.class, KothBanned.BAN_DURATION );
 		}
 
 		Buff.affect( clone, Ascension.BannedAscension.class );
