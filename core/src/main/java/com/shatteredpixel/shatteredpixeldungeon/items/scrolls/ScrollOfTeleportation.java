@@ -210,6 +210,16 @@ public class ScrollOfTeleportation extends Scroll {
 		
 	}
 
+	public static void swap( Char ch, Char other ) {
+		int oldPos = ch.pos();
+		ch.pos( other.pos() );
+		other.pos( oldPos );
+		if ( Dungeon.level.heroFOV[ch.pos()] )
+			appear( ch, ch.pos() );
+		if ( Dungeon.level.heroFOV[other.pos()] )
+			appear( other, other.pos() );
+	}
+
 	//teleports to a random pathable location on the floor
 	//prefers not seen(optional) > not visible > visible
 	public static boolean teleportInNonRegularLevel(Char ch, boolean preferNotSeen ){

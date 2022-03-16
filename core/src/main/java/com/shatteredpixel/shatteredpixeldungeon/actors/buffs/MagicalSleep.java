@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 public class MagicalSleep extends Buff {
 
 	private static final float STEP = 1f;
+	public boolean ignoreNextHit = false;
 
 	@Override
 	public boolean attachTo( Char target ) {

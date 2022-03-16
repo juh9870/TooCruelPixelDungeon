@@ -22,35 +22,54 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Disabled;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.watabou.utils.ListUtils;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.text.TabableView;
 
 public class BetterDisplacing extends Weapon.Enchantment {
 
-	private static ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
+	private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
+	private static final float STUN_DURATION = 2f;
 
 	@Override
-	public int proc(Weapon weapon, Char attacker, Char defender, int damage ) {
+	public int proc( Weapon weapon, Char attacker, Char defender, int damage ) {
+		if ( damage > defender.HP ) return damage;
 
-		float procChance = 1/12f * procChanceMultiplier(attacker);
-		if (Random.Float() < procChance && !defender.properties().contains(Char.Property.IMMOVABLE)){
+		// Up to 6x chance with HP loss
+		float hp = 1 + (1 - (1f * defender.HP / defender.HT)) * 5;
 
-			int oldpos = defender.pos();
-			if (ScrollOfTeleportation.teleportChar(defender)){
-				if (Dungeon.level.heroFOV[oldpos]) {
-					CellEmitter.get( oldpos ).start( Speck.factory( Speck.LIGHT ), 0.2f, 3 );
-				}
+		float procChance = 1 / 12f * procChanceMultiplier( attacker ) * hp;
+		if ( Random.Float() < procChance && !defender.properties().contains( Char.Property.IMMOVABLE ) ) {
 
-				Buff.affect( defender, MagicalSleep.class );
-			}
+			List<Char> chars = new ArrayList<>( Actor.chars() );
+			Random.shuffle( chars );
+			ListUtils.filter( chars, ( c ) -> c != attacker &&
+					c != defender &&
+					!c.properties().contains( Char.Property.IMMOVABLE ) );
+			ListUtils.sortF( chars, ( c ) -> 1f * c.HP / c.HT );
+
+			if ( chars.isEmpty() ) return damage;
+
+			Char target = chars.get( 0 );
+			ScrollOfTeleportation.swap( defender, target );
+			Buff.prolong( target, Disabled.class, STUN_DURATION );
+			Buff.affect( defender, MagicalSleep.class ).ignoreNextHit = true;
 		}
 
 		return damage;

@@ -665,8 +665,10 @@ public abstract class Char extends Actor {
 		if (this.buff(Frost.class) != null){
 			Buff.detach( this, Frost.class );
 		}
-		if (this.buff(MagicalSleep.class) != null){
-			Buff.detach(this, MagicalSleep.class);
+		MagicalSleep sleep = buff( MagicalSleep.class );
+		if ( sleep != null ) {
+			if ( sleep.ignoreNextHit ) sleep.ignoreNextHit = false;
+			else Buff.detach( this, MagicalSleep.class );
 		}
 		
 		Class<?> srcClass = src.getClass();
