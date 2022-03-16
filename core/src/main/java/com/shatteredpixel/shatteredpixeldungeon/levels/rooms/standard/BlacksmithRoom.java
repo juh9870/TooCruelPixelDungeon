@@ -79,7 +79,7 @@ public class BlacksmithRoom extends StandardRoom {
 			int cell = level.pointToCell(p);
 			if (level.map[cell] == Terrain.TECHNICAL){
 				level.setTrap(new BurningTrap().reveal(), cell);
-				level.map[cell] = Terrain.EMPTY;
+				level.map[cell] = Terrain.NO_PAINT;
 			}
 		}
 	}
