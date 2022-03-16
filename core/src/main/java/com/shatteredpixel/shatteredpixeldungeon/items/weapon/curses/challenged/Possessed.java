@@ -21,15 +21,12 @@ public class Possessed extends Weapon.Enchantment {
 
 	private boolean strongHit = false;
 
-	@Override
-	public boolean curse() {
-		return true;
-	}
-
 	private static float delay( Weapon wep, Char user ) {
 		float delay = wep.delayFactor( user );
-		// Buff disappears slightly before the next attack is ready
-		return delay * Random.oneOf( 1, 2, 3 ) - 0.01f;
+		if ( wep instanceof SpiritBow ) {
+			return delay * Random.chances( 0, 1, 2, 2, 1 ) - 0.01f;
+		}
+		return delay * Random.chances( 0, 1, 1, 1 ) - 0.01f;
 	}
 
 	public synchronized static HeroAction heroAct( Hero user ) {
@@ -81,6 +78,11 @@ public class Possessed extends Weapon.Enchantment {
 		user.waitUntilNext = true;
 		arrow.cast( user, Random.element( targets ).pos() );
 		return new HeroAction.Nothing();
+	}
+
+	@Override
+	public boolean curse() {
+		return true;
 	}
 
 	@Override

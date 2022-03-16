@@ -119,7 +119,7 @@ public class Random {
 	}
 
 	//returns an index from chances, the probability of each index is the weight values in changes
-	public static int chances( float[] chances ) {
+	public static int chances( float... chances ) {
 		
 		int length = chances.length;
 		
