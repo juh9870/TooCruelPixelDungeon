@@ -43,7 +43,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Sacrificial;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Wayward;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Abyssal;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterDisplacing;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterFriendly;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.BetterWayward;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Catastrophic;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged.Destabilizing;
@@ -459,7 +458,7 @@ abstract public class Weapon extends KindOfWeapon {
 		};
 
 		private static final Class<?>[] betterCurses = new Class<?>[]{
-				Abyssal.class, BetterDisplacing.class, BetterFriendly.class,
+				Abyssal.class, BetterDisplacing.class,
 				BetterWayward.class, Catastrophic.class, Destabilizing.class,
 				Erratic.class, Legendary.class, Possessed.class,
 				Reborn.class, Sapping.class, Sawing.class,
