@@ -1,5 +1,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.challenged;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
@@ -31,7 +32,7 @@ public class Possessed extends Weapon.Enchantment {
 		return delay * Random.oneOf( 1, 2, 3 ) - 0.01f;
 	}
 
-	public static HeroAction heroAct( Hero user ) {
+	public synchronized static HeroAction heroAct( Hero user ) {
 		if ( user.heroClass == HeroClass.HUNTRESS ) {
 			HeroAction action = bowAct( user );
 			if ( action != null ) return action;
@@ -53,7 +54,7 @@ public class Possessed extends Weapon.Enchantment {
 
 		Possessed possessed = wep.getEnchant( Possessed.class );
 		possessed.strongHit = true;
-		user.buff( Ready.class ).detach();
+		Buff.detach( user, Ready.class );
 
 		return new HeroAction.Attack( Random.element( targets ) );
 	}
@@ -75,8 +76,9 @@ public class Possessed extends Weapon.Enchantment {
 
 		Possessed possessed = bow.getEnchant( Possessed.class );
 		possessed.strongHit = true;
-		user.buff( BowReady.class ).detach();
+		Buff.detach( user, BowDelay.class );
 
+		user.waitUntilNext = true;
 		arrow.cast( user, Random.element( targets ).pos() );
 		return new HeroAction.Nothing();
 	}

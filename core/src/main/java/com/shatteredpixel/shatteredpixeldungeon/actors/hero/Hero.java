@@ -221,6 +221,8 @@ public class Hero extends Char {
 	// for enemies we know we aren't seeing normally, resultign in better performance
 	public ArrayList<Mob> mindVisionEnemies = new ArrayList<>();
 
+	public boolean waitUntilNext = false;
+
 	public Hero() {
 		super();
 
@@ -691,6 +693,7 @@ public class Hero extends Char {
 
 	@Override
 	public boolean act() {
+		if ( waitUntilNext ) return false;
 
 		//calls to dungeon.observe will also update hero's local FOV.
 		fieldOfView = Dungeon.level.heroFOV;
@@ -715,13 +718,12 @@ public class Hero extends Char {
 		if (paralysed > 0) {
 
 			curAction = null;
-
 			spendAndNext(TICK);
 			return false;
 		}
 
-		// Possessed over Zealot
 
+		// Possessed over Zealot
 		HeroAction newAction = Possessed.heroAct( this );
 		if ( newAction != null )
 			curAction = newAction;
@@ -1213,7 +1215,7 @@ public class Hero extends Char {
 
 		} else {
 
-			if (fieldOfView[enemy.pos()] && getCloser(enemy.pos())) {
+ 			if (fieldOfView[enemy.pos()] && getCloser(enemy.pos())) {
 
 				return true;
 
@@ -1594,6 +1596,9 @@ public class Hero extends Char {
 	public boolean handle(int cell) {
 
 		if (cell == -1) {
+			return false;
+		}
+		if ( outOfControl > 0 ) {
 			return false;
 		}
 
@@ -2226,6 +2231,7 @@ public class Hero extends Char {
 
 	@Override
 	public void next() {
+		waitUntilNext = false;
 		if (isAlive()) {
 			super.next();
 		}

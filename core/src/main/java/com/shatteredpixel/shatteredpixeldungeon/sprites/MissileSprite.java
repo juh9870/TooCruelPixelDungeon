@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
@@ -156,6 +157,9 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 				|| item instanceof ScorpioSprite.ScorpioShot
 				|| item instanceof TenguSprite.TenguShuriken){
 			speed *= 1.5f;
+		}
+		if( SPDSettings.fastAnimations() ){
+			speed *= 5f;
 		}
 		
 		PosTweener tweener = new PosTweener( this, to, d.length() / speed );

@@ -43,6 +43,11 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.SandalsOfNature;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.UnstableSpellbook;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ArcaneBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Firebomb;
@@ -70,6 +75,19 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticG
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.BlizzardBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.Brew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.CausticBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.InfernalBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.ShockingBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfAquaticRejuvenation;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfArcaneArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfDragonsBlood;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfHoneyedHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfIcyTouch;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfMight;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfToxicEssence;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfElements;
@@ -137,6 +155,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AssassinsBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BattleAxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
@@ -198,6 +217,7 @@ import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -235,6 +255,10 @@ public class Generator {
 		BOMBS	( 0, 0, Bomb.class),
 		SPELLS	( 0, 0, Spell.class),
 		MISC	( 0, 0, Item.class),
+		BAGS	( 0, 0, Bag.class),
+
+		BREW	( 0, 0, Brew.class ),
+		ELIXIR	( 0, 0, Elixir.class ),
 
 		GOLD	( 10, 10,   Gold.class );
 		
@@ -508,8 +532,10 @@ public class Generator {
 					Ankh.class,
 					MerchantsBeacon.class,
 					Honeypot.class,
+					SpiritBow.class
 			};
-			MISC.probs = new float[]{ 0, 0, 0, 0, 0, 0, 0, };
+			MISC.probs = new float[MISC.classes.length];
+			Arrays.fill( MISC.probs, 0 );
 
 			BOMBS.classes = new Class<?>[]{
 					Bomb.class,
@@ -524,7 +550,8 @@ public class Generator {
 					ShrapnelBomb.class,
 					WoollyBomb.class,
 			};
-			BOMBS.probs = new float[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+			BOMBS.probs = new float[BOMBS.classes.length];
+			Arrays.fill( BOMBS.probs, 0 );
 
 			SPELLS.classes = new Class<?>[]{
 					Alchemize.class,
@@ -542,7 +569,38 @@ public class Generator {
 					TelekineticGrab.class,
 					WildEnergy.class,
 			};
-			SPELLS.probs = new float[]{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, };
+			SPELLS.probs = new float[SPELLS.classes.length];
+			Arrays.fill( SPELLS.probs, 0 );
+
+			BREW.classes = new Class<?>[]{
+					BlizzardBrew.class,
+					CausticBrew.class,
+					InfernalBrew.class,
+					ShockingBrew.class
+			};
+			BREW.probs = new float[BREW.classes.length];
+			Arrays.fill( BREW.probs, 0 );
+
+			ELIXIR.classes = new Class<?>[]{
+					ElixirOfAquaticRejuvenation.class,
+					ElixirOfArcaneArmor.class,
+					ElixirOfDragonsBlood.class,
+					ElixirOfHoneyedHealing.class,
+					ElixirOfIcyTouch.class,
+					ElixirOfMight.class,
+					ElixirOfToxicEssence.class
+			};
+			ELIXIR.probs = new float[ELIXIR.classes.length];
+			Arrays.fill( ELIXIR.probs, 0 );
+
+			BAGS.classes = new Class<?>[]{
+					MagicalHolster.class,
+					PotionBandolier.class,
+					ScrollHolder.class,
+					VelvetPouch.class
+			};
+			BAGS.probs = new float[BAGS.classes.length];
+			Arrays.fill( BAGS.probs, 0 );
 		}
 	}
 

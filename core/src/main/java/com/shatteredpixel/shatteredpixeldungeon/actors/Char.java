@@ -150,7 +150,7 @@ public abstract class Char extends Actor {
 	public boolean[] fieldOfView = null;
 	
 	private HashSet<Buff> buffs = new HashSet<>();
-	
+
 	@Override
 	protected boolean act() {
 		if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()){
@@ -174,6 +174,10 @@ public abstract class Char extends Actor {
 			} while (!Dungeon.level.passable[n] && !Dungeon.level.avoid[n]);
 			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop(pos());
 		}
+	}
+
+	public void clearPath(){
+		path = null;
 	}
 
 	public String name(){

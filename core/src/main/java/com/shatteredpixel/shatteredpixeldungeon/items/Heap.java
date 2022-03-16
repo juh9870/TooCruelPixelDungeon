@@ -37,17 +37,21 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.FrozenCarpaccio;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.DocumentPage;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.Guidebook;
+import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.keys.GoldenKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Currency;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.function.Predicate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,16 +59,26 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 public class Heap implements Bundlable {
-	
+
 	public enum Type {
 		HEAP,
 		FOR_SALE,
-		CHEST,
-		LOCKED_CHEST,
-		CRYSTAL_CHEST,
-		TOMB,
-		SKELETON,
-		REMAINS
+		CHEST( true ),
+		LOCKED_CHEST( true ),
+		CRYSTAL_CHEST( true ),
+		TOMB( true ),
+		SKELETON( true ),
+		REMAINS( true );
+
+		public final boolean needUnlock;
+
+		Type() {
+			needUnlock = false;
+		}
+
+		Type( boolean needUnlock ) {
+			this.needUnlock = needUnlock;
+		}
 	}
 	public Type type = Type.HEAP;
 	
@@ -124,6 +138,14 @@ public class Heap implements Bundlable {
 		}
 		return this;
 	}
+
+	public boolean canUnlock(){
+		if ( type == Type.LOCKED_CHEST )
+			return Notes.keyCount( new GoldenKey( Dungeon.depth() ) ) > 0;
+		if ( type == Type.CRYSTAL_CHEST )
+			return Notes.keyCount( new CrystalKey( Dungeon.depth() ) ) > 0;
+		return true;
+	}
 	
 	public int size() {
 		return items.size();
@@ -147,6 +169,13 @@ public class Heap implements Bundlable {
 	
 	public Item peek() {
 		return items.peek();
+	}
+
+	public Item get( Predicate<Item> filter ) {
+		for (Item item : items) {
+			if ( filter.test( item ) ) return item;
+		}
+		return null;
 	}
 	
 	public void drop( Item item ) {

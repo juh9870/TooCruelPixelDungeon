@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -100,6 +101,41 @@ public final class ListUtils {
 		}
 
 		return combination;
+	}
+
+	public static <T> void sort( List<T> list, Function<T, Integer> keyExtractor ) {
+		Collections.sort( list, ( a, b ) -> {
+			return keyExtractor.apply( a ) - keyExtractor.apply( b );
+		} );
+	}
+
+	public static <T> void sortF( List<T> list, Function<T, Float> keyExtractor ) {
+		Collections.sort( list, ( a, b ) -> {
+			return (int) Math.signum( keyExtractor.apply( a ) - keyExtractor.apply( b ) );
+		} );
+	}
+
+	public static <T> void filter( List<T> list, Predicate<T> filter ) {
+		List<T> toRemove = new ArrayList<>();
+		for (T t : list) {
+			if ( !filter.test( t ) ) toRemove.add( t );
+		}
+		list.removeAll( toRemove );
+	}
+
+	public static <T> boolean any( List<T> list, Predicate<T> filter ) {
+		for (T t : list) {
+			if ( filter.test( t ) ) return true;
+		}
+		return false;
+	}
+
+	public static <T> boolean all( List<T> list, Predicate<T> filter ) {
+		if ( list.isEmpty() ) return false;
+		for (T t : list) {
+			if ( !filter.test( t ) ) return false;
+		}
+		return true;
 	}
 
 	private static void checkIndex( int size, int index, String message ) {

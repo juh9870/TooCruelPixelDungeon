@@ -138,7 +138,7 @@ public class DesktopLauncher {
 		} else if (SharedLibraryLoader.isLinux) {
 			basePath = ".shatteredpixel/too-cruel-pixel-dungeon/";
 		}
-		if (Game.version.toLowerCase(Locale.ROOT).endsWith("dev"))
+		if (Game.version.toLowerCase(Locale.ROOT).contains("dev"))
 			basePath += "dev/";
 
 		//copy over prefs from old file location from legacy desktop codebase

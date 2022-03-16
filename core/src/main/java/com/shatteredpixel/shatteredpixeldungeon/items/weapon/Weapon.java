@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
@@ -515,7 +516,7 @@ abstract public class Weapon extends KindOfWeapon {
 			// Assume we can only attack targets in Fov
 			for (Char ch : attacker.fastGetCharsInFov()) {
 				if (ch == attacker) continue;
-				if (validator.test(ch)) {
+				if (validator.test(ch) && Actor.findChar( ch.pos() ) == ch ) {
 					chars.add(ch);
 				}
 			}
