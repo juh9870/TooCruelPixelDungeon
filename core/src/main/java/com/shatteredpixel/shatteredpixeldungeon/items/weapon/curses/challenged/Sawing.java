@@ -31,6 +31,7 @@ public class Sawing extends Weapon.Enchantment {
 
 	private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
 	private static final float DAMAGE_SCALE = 0.75f;
+	private static final float TURNS_LIMIT = 50;
 
 
 	boolean processing = false;
@@ -45,7 +46,7 @@ public class Sawing extends Weapon.Enchantment {
 			do {
 				hit = attacker.attack( defender );
 				duration += weapon.delayFactor( attacker );
-			} while (hit && defender.isAlive());
+			} while (hit && defender.isAlive() && duration < TURNS_LIMIT);
 
 			if ( duration > 0 ) {
 				Buff.prolong( attacker, Disabled.class, duration );
