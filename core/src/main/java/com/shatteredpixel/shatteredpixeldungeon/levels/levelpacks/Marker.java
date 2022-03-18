@@ -22,7 +22,7 @@ public abstract class Marker implements Bundlable, Comparable<Marker> {
 	public abstract int scalingDepth();
 
 	public int scalingChapter() {
-		return scalingChapter();
+		return scalingDepth() / 5;
 	}
 
 	public abstract int legacyLevelgenMapping();
