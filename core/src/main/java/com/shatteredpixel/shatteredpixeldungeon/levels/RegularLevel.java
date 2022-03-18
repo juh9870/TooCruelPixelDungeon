@@ -268,7 +268,7 @@ public abstract class RegularLevel extends Level {
 		} else if (Challenges.EXTREME_DANGER.enabled()) {
             return (int) (Random.NormalIntRange(1 + (Dungeon.scalingFactor() / 6), 3 + (Dungeon.scalingFactor() / 3)) * Challenges.nTrapsMultiplier());
         } else
-            return (int) (Random.NormalIntRange(2, 3 + (Dungeon.depth().chapterId())) * Challenges.nTrapsMultiplier());
+            return (int) (Random.NormalIntRange(2, 3 + (Dungeon.scalingChapter())) * Challenges.nTrapsMultiplier());
 	}
 	
 	protected Class<?>[] trapClasses(){

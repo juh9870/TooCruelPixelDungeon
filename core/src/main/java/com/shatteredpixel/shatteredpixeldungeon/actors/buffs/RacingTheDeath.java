@@ -62,7 +62,7 @@ public class RacingTheDeath extends Buff implements Hero.Doom {
             lastDepth = Dungeon.depth();
         }
 
-        int damage = (Statistics.deepestFloor.scalingDepth() / 5 + 1) * 3;
+        int damage = (Statistics.deepestFloor.scalingChapter() + 1) * 3;
 
         trailCells.remove(TRAIL_LENGTH - 1);
 

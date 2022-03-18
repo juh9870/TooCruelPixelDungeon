@@ -80,7 +80,7 @@ public class Zealot extends Weapon.Enchantment {
 	private static boolean actEnemy( Hero hero ) {
 		if ( hero.heroClass == HeroClass.HUNTRESS && actBowEnemy( hero ) ) return true;
 
-		boolean canMove = !hero.rooted;
+		boolean canMove = hero.rooted <= 0;
 		Set<Char> targets = getValidTargetsInFov( hero,
 				( c ) -> !hero.isCharmedBy( c ) &&
 						!c.isInvulnerable( hero.getClass() ) &&
@@ -164,7 +164,7 @@ public class Zealot extends Weapon.Enchantment {
 	}
 
 	private static boolean actExplore( Hero hero ) {
-		if ( hero.rooted ) return false;
+		if ( hero.rooted > 0 ) return false;
 
 		List<Pair<Integer, Integer>> interestingCells = new ArrayList<>();
 

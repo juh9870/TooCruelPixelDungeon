@@ -215,12 +215,15 @@ public class WandOfRegrowth extends Wand {
 	}
 	
 	private int chargeLimit( int heroLvl ){
-		if (level() >= 10){
+		return chargeLimit( heroLvl, level() );
+	}
+	public static int chargeLimit( int heroLvl, int wandLevel ){
+		if (wandLevel >= 10){
 			return Integer.MAX_VALUE;
 		} else {
 			//8 charges at base, plus:
 			//2/3.33/5/7/10/14/20/30/50/110/infinite charges per hero level, based on wand level
-			float lvl = level();
+			float lvl = wandLevel;
 			return Math.round(8 + heroLvl * (2+lvl) * (1f + (lvl/(10 - lvl))));
 		}
 	}

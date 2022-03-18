@@ -475,7 +475,7 @@ public abstract class ChampionEnemy extends Buff implements DamageAmplificationB
 
         @Override
         public float damageTakenFactor() {
-            return Math.max(Math.max(0.1f, 0.5f - Dungeon.depth().chapterId() / 5f), (target.HP * 1f / target.HT));
+            return Math.max(Math.max(0.1f, 0.5f - Dungeon.scalingChapter()f), (target.HP * 1f / target.HT));
         }
     }
 

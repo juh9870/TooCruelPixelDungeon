@@ -124,7 +124,7 @@ public abstract class Char extends Actor {
 	protected PathFinder.Path path;
 
 	public int paralysed	    = 0;
-	public boolean rooted		= false;
+	public int rooted		    = 0;
 	public boolean flying		= false;
 	public int invisible		= 0;
 
@@ -227,7 +227,7 @@ public abstract class Char extends Actor {
 		}
 
 		//can't swap places if one char has restricted movement
-		if (rooted || c.rooted || buff(Vertigo.class) != null || c.buff(Vertigo.class) != null){
+		if (rooted>0 || c.rooted>0 || buff(Vertigo.class) != null || c.buff(Vertigo.class) != null){
 			return true;
 		}
 

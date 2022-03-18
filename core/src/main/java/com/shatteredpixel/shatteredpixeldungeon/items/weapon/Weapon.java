@@ -389,7 +389,7 @@ abstract public class Weapon extends KindOfWeapon {
 		if (ench == null || !ench.curse()) curseInfusionBonus = false;
 		if (enchantment != null && isEquipped(Dungeon.hero)) enchantment.deactivate(Dungeon.hero);
 		enchantment = ench;
-		if (isEquipped(Dungeon.hero)) enchantment.activate(Dungeon.hero);
+		if ( isEquipped( Dungeon.hero ) && enchantment != null ) enchantment.activate( Dungeon.hero );
 		updateQuickslot();
 		return this;
 	}

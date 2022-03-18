@@ -37,7 +37,7 @@ public class RoomSeal extends Buff implements Hero.Doom {
     public boolean act() {
         if (!cells.isEmpty()) {
             if (!cells.contains(target.pos())) {
-                target.damage((Statistics.deepestFloor.scalingDepth() / 5 + 1) * 3, this);
+                target.damage((Statistics.deepestFloor.scalingChapter() + 1) * 3, this);
                 if(target instanceof Hero){
                     ((Hero) target).interrupt();
                 }

@@ -155,6 +155,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.CircularTriWand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.FluidTriWand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.ThermalTriWand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.TriWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AssassinsBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BattleAxe;
@@ -252,6 +256,8 @@ public class Generator {
 		SCROLL	( 8, 8, Scroll.class ),
 		STONE   ( 1, 1, Runestone.class),
 
+		GOLD	( 10, 10,   Gold.class ),
+
 		BOMBS	( 0, 0, Bomb.class),
 		SPELLS	( 0, 0, Spell.class),
 		MISC	( 0, 0, Item.class),
@@ -260,7 +266,8 @@ public class Generator {
 		BREW	( 0, 0, Brew.class ),
 		ELIXIR	( 0, 0, Elixir.class ),
 
-		GOLD	( 10, 10,   Gold.class );
+		TRI_WAND( 0, 0, TriWand.class ),
+		;
 		
 		public Class<?>[] classes;
 
@@ -601,6 +608,13 @@ public class Generator {
 			};
 			BAGS.probs = new float[BAGS.classes.length];
 			Arrays.fill( BAGS.probs, 0 );
+
+			TRI_WAND.classes = new Class<?>[]{
+					CircularTriWand.class,
+					FluidTriWand.class,
+					ThermalTriWand.class
+			};
+			TRI_WAND.probs = new float[]{ 3, 3, 3 };
 		}
 	}
 
@@ -702,7 +716,7 @@ public class Generator {
 	};
 
 	public static MeleeWeapon randomWeapon(){
-		return randomWeapon(Dungeon.depth().chapterId());
+		return randomWeapon( Dungeon.scalingChapter() );
 	}
 	
 	public static MeleeWeapon randomWeapon(int floorSet) {

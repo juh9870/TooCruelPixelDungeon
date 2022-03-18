@@ -73,9 +73,9 @@ public class TrapsRoom extends SpecialRoom {
 		//1 floor set higher in probability, never cursed
 		do {
 			if (Random.Int(2) == 0) {
-				prize = Generator.randomWeapon((Dungeon.depth().chapterId()) + 1);
+				prize = Generator.randomWeapon((Dungeon.scalingChapter()) + 1);
 			} else {
-				prize = Generator.randomArmor((Dungeon.depth().chapterId()) + 1);
+				prize = Generator.randomArmor((Dungeon.scalingChapter()) + 1);
 			}
 			prize.cursed = false;
 		} while (Challenges.isItemBlocked(prize));

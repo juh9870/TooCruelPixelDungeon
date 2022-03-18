@@ -67,7 +67,7 @@ public abstract class SecretRoom extends SpecialRoom {
 	public static int secretsForFloor(Marker depth){
 		if (depth.firstLevel()) return 0;
 		
-		int region = depth.chapterId();
+		int region = depth.scalingChapter();
 		int floor = depth.chapterProgression()-1;
 		
 		int floorsLeft = 5 - floor;

@@ -189,7 +189,7 @@ public class YogDzewa extends Mob {
 			boolean terrainAffected = false;
 			HashSet<Char> affected = new HashSet<>();
 			//delay fire on a rooted hero
-			if (!Dungeon.hero.rooted) {
+			if (Dungeon.hero.rooted<=0) {
 				for (int i : targetedCells) {
 					Ballistica b = new Ballistica(pos(), i, Ballistica.WONT_STOP);
 					//shoot beams

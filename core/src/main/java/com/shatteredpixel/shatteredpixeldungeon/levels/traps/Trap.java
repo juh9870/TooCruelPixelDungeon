@@ -105,13 +105,14 @@ public abstract class Trap implements Bundlable {
 
 	public static Trap adjustTrap( Trap t ) {
 		Marker m = Dungeon.depth();
+		int chapter = m.scalingChapter();
 		// No grim trap before halls
-		if ( m.chapter() != Chapter.HALLS && t instanceof GrimTrap ) t = new DisintegrationTrap();
+		if ( chapter < 4 && t instanceof GrimTrap ) t = new DisintegrationTrap();
 		// No disintegration and distortion before city
-		if ( m.chapterId() < Chapter.CITY.id() && t instanceof DisintegrationTrap ) t = new CursedWandTrap();
-		if ( m.chapterId() < Chapter.CITY.id() && t instanceof DistortionTrap ) t = new SummoningTrap();
+		if ( chapter < 3 && t instanceof DisintegrationTrap ) t = new CursedWandTrap();
+		if ( chapter < 3 && t instanceof DistortionTrap ) t = new SummoningTrap();
 		// No tengu traps before caves
-		if ( m.chapterId() < Chapter.CAVES.id() && t instanceof TenguDartTrap ) t = new CursedWandTrap();
+		if ( chapter < 2 && t instanceof TenguDartTrap ) t = new CursedWandTrap();
 
 		// Gateway doesn't work with randomization
 		if ( t instanceof GatewayTrap ) t = new TeleportationTrap();

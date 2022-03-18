@@ -140,7 +140,7 @@ public class RipperDemon extends Mob {
 				Ballistica b = new Ballistica(pos(), leapPos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
 
 				//check if leap pos is not obstructed by terrain
-				if (rooted || b.collisionPos != leapPos){
+				if (rooted>0 || b.collisionPos != leapPos){
 					leapPos = -1;
 					return true;
 				}
@@ -208,7 +208,7 @@ public class RipperDemon extends Mob {
 					return true;
 				}
 
-				if (leapCooldown <= 0 && enemyInFOV && !rooted
+				if (leapCooldown <= 0 && enemyInFOV && rooted<=0
 						&& Dungeon.level.distance(pos(), enemy.pos()) >= 3) {
 
 					int targetPos = enemy.pos();

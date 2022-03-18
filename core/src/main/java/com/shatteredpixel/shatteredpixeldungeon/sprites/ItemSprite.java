@@ -71,6 +71,7 @@ public class ItemSprite extends MovieClip {
 	protected float shadowWidth     = 1f;
 	protected float shadowHeight    = 0.25f;
 	protected float shadowOffset    = 0.5f;
+	private String textureName = Assets.Sprites.ITEMS;
 	
 	public ItemSprite() {
 		this( ItemSpriteSheet.SOMETHING, null );
@@ -229,9 +230,13 @@ public class ItemSprite extends MovieClip {
 	}
 
 	public void frame( int image ){
-		frame( ItemSpriteSheet.film.get( image ));
+		if ( !textureName.equals( ItemSpriteSheet.texture( image ) ) ) {
+			texture( textureName = ItemSpriteSheet.texture( image ) );
+		}
+		int newImage = ItemSpriteSheet.frame( image );
+		frame( ItemSpriteSheet.film(image).get( newImage ));
 
-		float height = ItemSpriteSheet.film.height( image );
+		float height = ItemSpriteSheet.film(image).height( newImage );
 		//adds extra raise to very short items, so they are visible
 		if (height < 8f){
 			perspectiveRaise =  (5 + 8 - height) / 16f;

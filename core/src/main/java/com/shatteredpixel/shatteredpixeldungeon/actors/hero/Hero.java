@@ -1072,7 +1072,7 @@ public class Hero extends Char {
 	private boolean actDescend(HeroAction.Descend action) {
 		int stairs = action.dst;
 
-		if (rooted) {
+		if (rooted>0) {
 			Camera.main.shake(1, 1f);
 			ready();
 			return false;
@@ -1143,7 +1143,7 @@ public class Hero extends Char {
 		int stairs = action.dst;
 
 
-		if (rooted) {
+		if (rooted>0) {
 			Camera.main.shake(1, 1f);
 			ready();
 			return false;
@@ -1467,7 +1467,7 @@ public class Hero extends Char {
 		if (target == pos())
 			return false;
 
-		if (rooted) {
+		if (rooted>0) {
 			Camera.main.shake(1, 1f);
 			return false;
 		}

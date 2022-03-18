@@ -259,4 +259,13 @@ public class Blob extends Actor {
 			return gas.cur[cell];
 		}
 	}
+
+	public static void cleatAt(int cell, Class<? extends Blob> type){
+		Blob gas = Dungeon.level.blobs.get( type );
+		if (gas == null || gas.volume == 0) {
+			return;
+		} else {
+			gas.clear( cell );
+		}
+	}
 }

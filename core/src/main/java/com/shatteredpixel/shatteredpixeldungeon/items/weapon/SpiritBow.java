@@ -220,7 +220,16 @@ public class SpiritBow extends Weapon {
 	public int targetingPos(Hero user, int dst) {
 		return knockArrow().targetingPos(user, dst);
 	}
-	
+
+	@Override
+	public Weapon enchant( Enchantment ench ) {
+		super.enchant( ench );
+		if ( Dungeon.hero != null && Dungeon.hero.belongings.contains( this ) && enchantment != null ) {
+			enchantment.activate( Dungeon.hero );
+		}
+		return this;
+	}
+
 	private int targetPos;
 	
 	@Override

@@ -293,7 +293,7 @@ public class Preparation extends Buff implements ActionIndicator.Action {
 
 				}
 
-				if (dest == -1 || PathFinder.distance[dest] == Integer.MAX_VALUE || Dungeon.hero.rooted){
+				if (dest == -1 || PathFinder.distance[dest] == Integer.MAX_VALUE || Dungeon.hero.rooted>0){
 					GLog.w(Messages.get(Preparation.class, "out_of_reach"));
 					return;
 				}

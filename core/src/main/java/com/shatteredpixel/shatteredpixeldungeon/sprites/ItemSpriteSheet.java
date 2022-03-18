@@ -33,14 +33,22 @@ public class ItemSpriteSheet {
 	private static final int WIDTH = 16;
 	public static final int SIZE = 16;
 
-	public static TextureFilm film = new TextureFilm( Assets.Sprites.ITEMS, SIZE, SIZE );
+	private static TextureFilm film = new TextureFilm( Assets.Sprites.ITEMS, SIZE, SIZE );
+	private static TextureFilm film_TCPD = new TextureFilm( Assets.Sprites.ITEMS_TCPD, SIZE, SIZE );
 
-	private static int xy(int x, int y){
+	private static int xy( int x, int y ) {
+		return xy( 0, x, y );
+	}
+	private static int xy(int offset, int x, int y){
 		x -= 1; y -= 1;
-		return x + WIDTH*y;
+		return x + WIDTH*y + offset;
 	}
 
 	private static void assignItemRect( int item, int width, int height ){
+		TextureFilm film = ItemSpriteSheet.film;
+		if ( item >= TCPD ) {
+			film = film_TCPD;
+		}
 		int x = (item % WIDTH) * SIZE;
 		int y = (item / WIDTH) * SIZE;
 		film.add( item, x, y, x+width, y+height);
@@ -55,6 +63,27 @@ public class ItemSpriteSheet {
 	public static float weaponAngle( int sprite ) {
 		return Misc.or( angles.get( sprite ), 45f );
 	}
+
+	public static String texture( int sprite ) {
+		if ( sprite > TCPD ) {
+			return Assets.Sprites.ITEMS_TCPD;
+		}
+		return Assets.Sprites.ITEMS;
+	}
+
+	public static int frame( int sprite ) {
+		if ( sprite > TCPD ) {
+			return sprite - TCPD;
+		}
+		return sprite;
+	}
+
+	public static TextureFilm film( int sprite ) {
+		if ( sprite < TCPD ) return film;
+		return film_TCPD;
+	}
+
+	public static final int TCPD = xy( 16, 32 );
 
 	private static final int PLACEHOLDERS   =                               xy(1, 1);   //16 slots
 	//SOMETHING is the default item sprite at position 0. May show up ingame if there are bugs.
@@ -482,7 +511,6 @@ public class ItemSpriteSheet {
 	public static final int SCROLL_BERKANAN = SCROLLS+9;
 	public static final int SCROLL_ODAL     = SCROLLS+10;
 	public static final int SCROLL_TIWAZ    = SCROLLS+11;
-	public static final int SCROLL_UNKNOWN  = SCROLLS+12;
 	
 	public static final int SCROLL_CATALYST = SCROLLS+13;
 	public static final int ARCANE_RESIN    = SCROLLS+14;
@@ -506,7 +534,6 @@ public class ItemSpriteSheet {
 	public static final int EXOTIC_BERKANAN = EXOTIC_SCROLLS+9;
 	public static final int EXOTIC_ODAL     = EXOTIC_SCROLLS+10;
 	public static final int EXOTIC_TIWAZ    = EXOTIC_SCROLLS+11;
-	public static final int EXOTIC_UNKNOWN  = EXOTIC_SCROLLS+12;
 	static {
 		for (int i = EXOTIC_SCROLLS; i < EXOTIC_SCROLLS+16; i++)
 			assignItemRect(i, 15, 14);
@@ -685,7 +712,6 @@ public class ItemSpriteSheet {
 	public static final int BLOB    = QUEST+7;
 	public static final int SHARD   = QUEST+8;
 
-	public static final int POKER_TOKEN   = QUEST+15;
 	static{
 		assignItemRect(SKULL,   16, 11);
 		assignItemRect(DUST,    12, 11);
@@ -696,7 +722,6 @@ public class ItemSpriteSheet {
 		assignItemRect(TOKEN,   12, 12);
 		assignItemRect(BLOB,    10,  9);
 		assignItemRect(SHARD,    8, 10);
-		assignItemRect(POKER_TOKEN,    15, 13);
 	}
 
 	private static final int BAGS       =                                   xy(1, 31);  //16 slots
@@ -718,6 +743,35 @@ public class ItemSpriteSheet {
 	}
 
 	                                                                                    //16 free slots
+
+
+	private static final int PLACEHOLDERS_TCPD =                            xy(TCPD, 1, 1);  //16 slots
+
+	private static final int MISC_TCPD      =                               xy(TCPD, 1, 2);  //16 slots
+	public static final int POKER_TOKEN     = MISC_TCPD+0;
+	public static final int SCROLL_UNKNOWN  = MISC_TCPD+1;
+	public static final int EXOTIC_UNKNOWN  = MISC_TCPD+2;
+	static {
+		assignItemRect( POKER_TOKEN, 15, 13 );
+		assignItemRect( SCROLL_UNKNOWN, 15, 14 );
+		assignItemRect( EXOTIC_UNKNOWN, 15, 14 );
+	}
+
+																						//16 free slots
+
+	private static final int WANDS_TCPD      =                              xy(TCPD, 1, 4);  //16 slots
+	public static final int WAND_MAGIC_MISSILE_TCPD     = WANDS_TCPD+0;
+	public static final int WAND_FLUID                  = WANDS_TCPD+1;
+	public static final int WAND_CIRCULAR               = WANDS_TCPD+2;
+	public static final int WAND_THERMAL                = WANDS_TCPD+3;
+	public static final int WAND_DISINTEGRATION_TCPD    = WANDS_TCPD+4;
+	static {
+		assignItemRect(WAND_MAGIC_MISSILE_TCPD,  14, 13);
+		assignItemRect(WAND_FLUID,               15, 15);
+		assignItemRect(WAND_CIRCULAR,            15, 13);
+		assignItemRect(WAND_THERMAL,             14, 14);
+		assignItemRect(WAND_DISINTEGRATION_TCPD, 15, 16);
+	}
 
 	//for smaller 8x8 icons that often accompany an item sprite
 	public static class Icons {

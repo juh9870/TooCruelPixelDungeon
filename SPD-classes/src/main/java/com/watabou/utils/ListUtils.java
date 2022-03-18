@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -116,11 +117,11 @@ public final class ListUtils {
 	}
 
 	public static <T> void filter( List<T> list, Predicate<T> filter ) {
-		List<T> toRemove = new ArrayList<>();
-		for (T t : list) {
-			if ( !filter.test( t ) ) toRemove.add( t );
+		for (Iterator<T> iterator = list.iterator(); iterator.hasNext(); ) {
+			T t = iterator.next();
+			if ( !filter.test( t ) )
+				iterator.remove();
 		}
-		list.removeAll( toRemove );
 	}
 
 	public static <T> boolean any( List<T> list, Predicate<T> filter ) {

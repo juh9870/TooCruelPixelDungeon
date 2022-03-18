@@ -199,7 +199,7 @@ public class EtherealChains extends Artifact {
 	private void chainLocation( Ballistica chain, final Hero hero ){
 
 		//don't pull if rooted
-		if (hero.rooted){
+		if (hero.rooted>0){
 			GLog.w( Messages.get(EtherealChains.class, "rooted") );
 			return;
 		}

@@ -118,6 +118,17 @@ public class Random {
 		return generators.peek().nextBoolean();
 	}
 
+
+	//return number rounded randomly up or down
+	public static int round( float num ) {
+		return (int) (Boolean() ? Math.floor( num ) : Math.ceil( num ));
+	}
+
+	//return number rounded randomly up or down, the closer the number to integer the higher chance that it will be rounded to it.
+	public static int roundWeighted( float num ) {
+		return (int) (Math.copySign( Float(), num ) < num % 1 ? Math.ceil( num ) : Math.floor( num ));
+	}
+
 	//returns an index from chances, the probability of each index is the weight values in changes
 	public static int chances( float... chances ) {
 		

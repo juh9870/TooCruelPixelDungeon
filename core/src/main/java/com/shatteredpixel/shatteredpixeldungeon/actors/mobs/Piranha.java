@@ -121,7 +121,7 @@ public class Piranha extends Mob {
 	@Override
 	protected boolean getCloser( int target ) {
 		
-		if (rooted) {
+		if (rooted>0) {
 			return false;
 		}
 		

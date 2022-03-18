@@ -126,7 +126,7 @@ public class WandOfBlastWave extends DamageWand {
 		boolean collided = dist == trajectory.dist;
 
 		if (dist == 0
-				|| ch.rooted
+				|| ch.rooted>0
 				|| ch.properties().contains(Char.Property.IMMOVABLE)) return;
 
 		//large characters cannot be moved into non-open space
@@ -209,6 +209,7 @@ public class WandOfBlastWave extends DamageWand {
 		private static final float TIME_TO_FADE = 0.2f;
 
 		private float time;
+		private float size;
 
 		public BlastWave(){
 			super(Effects.get(Effects.Type.RIPPLE));
@@ -233,13 +234,17 @@ public class WandOfBlastWave extends DamageWand {
 			} else {
 				float p = time / TIME_TO_FADE;
 				alpha(p);
-				scale.y = scale.x = (1-p)*3;
+				scale.y = scale.x = (1-p)*size;
 			}
 		}
 
 		public static void blast(int pos) {
+			blast(pos, 3);
+		}
+		public static void blast(int pos, float size) {
 			Group parent = Dungeon.hero.sprite.parent;
 			BlastWave b = (BlastWave) parent.recycle(BlastWave.class);
+			b.size = size;
 			parent.bringToFront(b);
 			b.reset(pos);
 		}

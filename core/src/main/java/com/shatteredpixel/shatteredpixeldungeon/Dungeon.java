@@ -314,6 +314,9 @@ public class Dungeon {
 	public static int scalingFactor(){
 		return levelPack.scalingFactor();
 	}
+	public static int scalingChapter(){
+		return levelPack.curLvl.scalingChapter();
+	}
 	public static int legacyDepth(){
 		return levelPack.curLvl.legacyLevelgenMapping();
 	}

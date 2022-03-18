@@ -401,7 +401,7 @@ public class Item implements Bundlable {
 		
 		return this;
 	}
-	
+
 	final public Item degrade( int n ) {
 		for (int i=0; i < n; i++) {
 			degrade();

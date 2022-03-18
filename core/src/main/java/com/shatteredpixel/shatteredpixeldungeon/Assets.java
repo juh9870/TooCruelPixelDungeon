@@ -230,6 +230,7 @@ public class Assets {
 
 	public static class Sprites {
 		public static final String ITEMS	    = "sprites/items.png";
+		public static final String ITEMS_TCPD	= "sprites/items_tcpd.png";
 		public static final String ITEM_ICONS   = "sprites/item_icons.png";
 
 		public static final String WARRIOR	= "sprites/warrior.png";
