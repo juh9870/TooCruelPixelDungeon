@@ -19,6 +19,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMappi
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Dreamfoil;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Fadeleaf;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Starflower;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Stormvine;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
@@ -47,6 +54,11 @@ public class CircularTriWand extends TriWand {
 
 	private class StormEffect extends WandEffect {
 
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Stormvine.Seed.class;
+		}
+
 		public int strength( int level ) {
 			float strength = 2 + level;
 			if ( augmented() ) strength *= 4 / 3f;
@@ -72,6 +84,11 @@ public class CircularTriWand extends TriWand {
 	}
 
 	private class LightEffect extends DamageWandEffect {
+
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Fadeleaf.Seed.class;
+		}
 
 		private static final int DIST = 8;
 
@@ -179,6 +196,11 @@ public class CircularTriWand extends TriWand {
 	}
 
 	private class NormalEffect extends WandEffect {
+
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Dreamfoil.Seed.class;
+		}
 
 		@Override
 		public void onZap( Ballistica target ) {

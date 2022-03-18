@@ -21,6 +21,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Firebloom;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Icecap;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
@@ -88,6 +92,11 @@ public class ThermalTriWand extends TriWand {
 	private class FireEffect extends NormalEffect {
 
 		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Firebloom.Seed.class;
+		}
+
+		@Override
 		public void onZap( Ballistica target ) {
 			boolean augmented = augmented();
 			int damage = damageRoll();
@@ -146,6 +155,11 @@ public class ThermalTriWand extends TriWand {
 	}
 
 	private class FrostEffect extends NormalEffect {
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Icecap.Seed.class;
+		}
+
 		@Override
 		public void onZap( Ballistica target ) {
 			boolean augmented = augmented();
@@ -217,6 +231,11 @@ public class ThermalTriWand extends TriWand {
 	}
 
 	private class NormalEffect extends DamageWandEffect {
+
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Blindweed.Seed.class;
+		}
 
 		public int min( int lvl ) {
 			return 1 + lvl;

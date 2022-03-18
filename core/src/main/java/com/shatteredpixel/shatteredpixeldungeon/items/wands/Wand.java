@@ -452,6 +452,10 @@ public abstract class Wand extends Item {
 		return new ItemSprite.Glowing(0xFFFFFF, 1f/(float)resinBonus);
 	}
 
+	public boolean canImbueStaff(){
+		return true;
+	}
+
 	@Override
 	public int value() {
 		int price = 75;

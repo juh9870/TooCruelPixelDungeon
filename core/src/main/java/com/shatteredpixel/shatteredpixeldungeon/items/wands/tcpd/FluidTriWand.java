@@ -16,6 +16,12 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Fadeleaf;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Sorrowmoss;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Bundle;
@@ -86,6 +92,11 @@ public class FluidTriWand extends TriWand {
 	private class RootEffect extends NormalEffect {
 
 		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Earthroot.Seed.class;
+		}
+
+		@Override
 		public String desc() {
 			return Messages.get( this, "desc", strength( visiblyUpgraded() ), damage( visiblyUpgraded() ) );
 		}
@@ -118,6 +129,11 @@ public class FluidTriWand extends TriWand {
 	}
 
 	private class GasEffect extends NormalEffect {
+
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Sungrass.Seed.class;
+		}
 
 		@Override
 		public String desc() {
@@ -153,6 +169,11 @@ public class FluidTriWand extends TriWand {
 		List<Integer> affectedCells;
 		List<Integer> grassCells;
 		float furrowedChance = 0;
+
+		@Override
+		public Class<? extends Plant.Seed> catalyst() {
+			return Sorrowmoss.Seed.class;
+		}
 
 		@Override
 		protected void fx( Ballistica bolt, Callback callback ) {

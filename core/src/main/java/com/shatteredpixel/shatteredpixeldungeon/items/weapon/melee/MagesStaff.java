@@ -393,7 +393,7 @@ public class MagesStaff extends MeleeWeapon {
 
 		@Override
 		public boolean itemSelectable(Item item) {
-			return item instanceof Wand;
+			return item instanceof Wand && ((Wand) item).canImbueStaff();
 		}
 
 		@Override

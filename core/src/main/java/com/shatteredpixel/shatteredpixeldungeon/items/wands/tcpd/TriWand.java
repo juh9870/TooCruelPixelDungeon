@@ -5,22 +5,27 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class TriWand extends Wand {
-
-	public static final String AC_IMBUE = "augment";
-
 	private static final float MAX_DISBALANCE = 4f;
 	public WandEffect firstEffect;
 	public WandEffect secondEffect;
@@ -32,24 +37,6 @@ public abstract class TriWand extends Wand {
 	// < 0 augment second
 	public float augment = 0;
 	public WandEffect curEffect;
-
-	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_IMBUE );
-		return actions;
-	}
-
-	@Override
-	public void execute( Hero hero, String action ) {
-
-		super.execute( hero, action );
-
-		if ( action.equals( AC_IMBUE ) ) {
-//			if ( imbue == 1 ) imbue = 2;
-//			else imbue = 1;
-		}
-	}
 
 	@Override
 	protected void wandUsed() {
@@ -145,6 +132,11 @@ public abstract class TriWand extends Wand {
 		return sb.toString();
 	}
 
+	@Override
+	public boolean canImbueStaff() {
+		return false;
+	}
+
 	private static final String CURRENT_EFFECT = "cureffect";
 	private static final String BALANCE = "balance";
 
@@ -192,6 +184,8 @@ public abstract class TriWand extends Wand {
 		protected int collisionProperties = Ballistica.MAGIC_BOLT;
 
 		public abstract void onZap( Ballistica target );
+
+		public abstract Class<? extends Item> catalyst();
 
 		protected void fx( Ballistica bolt, Callback callback ) {
 			MagicMissile.boltFromChar( curUser.sprite.parent,
@@ -254,6 +248,179 @@ public abstract class TriWand extends Wand {
 		public void onDeath() {
 			Dungeon.fail( getClass() );
 			GLog.n( Messages.get( this, "ondeath" ) );
+		}
+	}
+
+	public static class Augmentation extends Recipe {
+		@Override
+		public boolean testIngredients( ArrayList<Item> ingredients ) {
+			if ( ingredients.size() != 3 ) return false;
+			if ( !(ingredients.get( 0 ) instanceof TriWand) ) {
+				return false;
+			}
+			TriWand wand = (TriWand) ingredients.get( 0 );
+			if ( !wand.isIdentified() ) return false;
+			if ( wand.augment != 0 ) return false;
+			boolean hasNeutral = false;
+			boolean hasEffect = false;
+			for (int i = 1; i < ingredients.size(); i++) {
+				Class<? extends Item> itemClass = ingredients.get( i ).getClass();
+				if ( itemClass == wand.neutralEffect.catalyst() ) {
+					hasEffect = true;
+				}
+				if ( itemClass == wand.firstEffect.catalyst() || itemClass == wand.secondEffect.catalyst() ) {
+					hasNeutral = true;
+				}
+			}
+			return hasEffect && hasNeutral;
+		}
+
+		@Override
+		public int cost( ArrayList<Item> ingredients ) {
+			return 0;
+		}
+
+		@Override
+		public Item brew( ArrayList<Item> ingredients ) {
+			TriWand wand = (TriWand) ingredients.get( 0 );
+			wand.augment = getAugment( ingredients );
+			for (Item ingredient : ingredients) {
+				if ( ingredient != wand ) ingredient.quantity( ingredient.quantity() - 1 );
+			}
+			return wand;
+		}
+
+		@Override
+		public Item sampleOutput( ArrayList<Item> ingredients ) {
+			TriWand clone = (TriWand) ingredients.get( 0 ).clone();
+			clone.augment = getAugment( ingredients );
+			return clone;
+		}
+
+		private static int getAugment( ArrayList<Item> ingredients ) {
+			TriWand wand = (TriWand) ingredients.get( 0 );
+			for (Item i : ingredients) {
+				if ( i.getClass() == wand.firstEffect.catalyst() ) return 1;
+				if ( i.getClass() == wand.secondEffect.catalyst() ) return -1;
+			}
+			throw new IllegalArgumentException( "Invalid ingredients" );
+		}
+	}
+
+	public static class ClearAugment extends Recipe {
+
+		@Override
+		public boolean testIngredients( ArrayList<Item> ingredients ) {
+			if ( ingredients.size() != 2 ) return false;
+			if ( !(ingredients.get( 0 ) instanceof TriWand) ) {
+				return false;
+			}
+			TriWand wand = (TriWand) ingredients.get( 0 );
+			if ( !wand.isIdentified() ) return false;
+			if ( wand.augment == 0 ) return false;
+			return ingredients.get( 1 ).getClass() == wand.neutralEffect.catalyst();
+		}
+
+		@Override
+		public int cost( ArrayList<Item> ingredients ) {
+			return 0;
+		}
+
+		@Override
+		public Item brew( ArrayList<Item> ingredients ) {
+			TriWand wand = (TriWand) ingredients.get( 0 );
+			wand.augment = 0;
+
+			for (Item ingredient : ingredients) {
+				if ( ingredient != wand ) ingredient.quantity( ingredient.quantity() - 1 );
+			}
+			return wand;
+		}
+
+		@Override
+		public Item sampleOutput( ArrayList<Item> ingredients ) {
+			if ( !testIngredients( ingredients ) ) return null;
+			TriWand clone = (TriWand) ingredients.get( 0 ).clone();
+			clone.augment = 0;
+			return clone;
+		}
+	}
+
+	public static class CraftingRecipe extends Recipe {
+
+		private static final Map<Set<Class<? extends Item>>, Class<? extends TriWand>> recipes = new HashMap();
+
+		private static void recipeFor( TriWand wand ) {
+			Set<Class<? extends Item>> catalysts = new HashSet<>();
+			catalysts.add( wand.firstEffect.catalyst() );
+			catalysts.add( wand.secondEffect.catalyst() );
+			catalysts.add( wand.neutralEffect.catalyst() );
+			recipes.put( catalysts, wand.getClass() );
+		}
+
+		static {
+			recipeFor( new ThermalTriWand() );
+			recipeFor( new FluidTriWand() );
+			recipeFor( new CircularTriWand() );
+		}
+
+		private static Class<? extends TriWand> getResult( ArrayList<Item> ingredients ) {
+			for (Set<Class<? extends Item>> catalysts : recipes.keySet()) {
+				if ( catalysts.contains( ingredients.get( 1 ).getClass() ) &&
+						catalysts.contains( ingredients.get( 2 ).getClass() ) ) {
+					return recipes.get( catalysts );
+				}
+			}
+			return null;
+		}
+
+		@Override
+		public boolean testIngredients( ArrayList<Item> ingredients ) {
+			if ( ingredients.size() != 3 ) return false;
+			if ( !(ingredients.get( 0 ) instanceof BasisWand) ) return false;
+			if ( !ingredients.get( 0 ).isIdentified() ) return false;
+			if ( ingredients.get( 1 ).getClass() == ingredients.get( 2 ).getClass() ) return false;
+			return getResult( ingredients ) != null;
+		}
+
+		@Override
+		public int cost( ArrayList<Item> ingredients ) {
+			return 0;
+		}
+
+		@Override
+		public Item brew( ArrayList<Item> ingredients ) {
+			if ( !testIngredients( ingredients ) ) return null;
+			TriWand wand = sampleOutput( ingredients );
+			for (Item ingredient : ingredients) {
+				ingredient.quantity( ingredient.quantity() - 1 );
+			}
+			return wand;
+		}
+
+		@Override
+		public TriWand sampleOutput( ArrayList<Item> ingredients ) {
+			if ( !testIngredients( ingredients ) ) return null;
+			Wand basis = (Wand) ingredients.get( 0 );
+
+			TriWand wand = Reflection.newInstance( getResult( ingredients ) );
+
+			wand.level( 0 );
+			int level = basis.level();
+			if ( basis.curseInfusionBonus ) level--;
+			level -= basis.resinBonus;
+			wand.upgrade( level );
+
+			wand.levelKnown = basis.levelKnown;
+			wand.curChargeKnown = basis.curChargeKnown;
+			wand.cursedKnown = basis.cursedKnown;
+			wand.cursed = basis.cursed;
+			wand.curseInfusionBonus = basis.curseInfusionBonus;
+			wand.resinBonus = basis.resinBonus;
+
+			wand.curCharges = basis.curCharges;
+			wand.updateLevel();
+			return wand;
 		}
 	}
 }
