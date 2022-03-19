@@ -302,13 +302,15 @@ public class Wandmaker extends NPC {
 
 				spawned = true;
 
+				Generator.Category category = Challenges.MOONSHINE_WANDS.enabled() ? Generator.Category.TRI_WAND : Generator.Category.WAND;
+
 				given = false;
-				wand1 = (Wand) Generator.random(Generator.Category.WAND);
+				wand1 = (Wand) Generator.random(category);
 				wand1.cursed = Challenges.CURSED.enabled();
 				wand1.upgrade();
 
 				do {
-					wand2 = (Wand) Generator.random(Generator.Category.WAND);
+					wand2 = (Wand) Generator.random(category);
 				} while (wand2.getClass().equals(wand1.getClass()));
 				wand2.cursed = Challenges.CURSED.enabled();
 				wand2.upgrade();

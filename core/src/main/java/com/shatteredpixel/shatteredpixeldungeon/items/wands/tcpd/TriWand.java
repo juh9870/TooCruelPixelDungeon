@@ -207,6 +207,12 @@ public abstract class TriWand extends Wand {
 	}
 
 	@Override
+	public Item upgrade() {
+		augment( Effect.NONE );
+		return super.upgrade();
+	}
+
+	@Override
 	public void onZap( Ballistica attack ) {
 		curEffect.onZap( attack );
 	}
@@ -360,7 +366,7 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public int cost( ArrayList<Item> ingredients ) {
-			return 0;
+			return 12;
 		}
 
 		@Override
@@ -390,7 +396,7 @@ public abstract class TriWand extends Wand {
 			}
 			throw new IllegalArgumentException( "Invalid ingredients" );
 		}
-		
+
 		@Override
 		public boolean clearInput() {
 			return true;
@@ -413,7 +419,7 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public int cost( ArrayList<Item> ingredients ) {
-			return 0;
+			return 12;
 		}
 
 		@Override
@@ -480,7 +486,7 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public int cost( ArrayList<Item> ingredients ) {
-			return 0;
+			return 24;
 		}
 
 		@Override

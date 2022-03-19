@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.journal;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Bundle;
@@ -66,7 +67,7 @@ public enum Document {
 
 	public boolean pageAvailable( String page ) {
 		if ( page.equals( ALCHEMY_WANDS ) ) return false;
-		return true;
+		return Challenges.MOONSHINE_WANDS.enabled();
 	}
 
 	public boolean pageAvailable( int pageIdx ) {

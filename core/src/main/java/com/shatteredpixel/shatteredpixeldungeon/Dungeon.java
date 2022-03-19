@@ -199,24 +199,25 @@ public class Dungeon {
 
         seed = DungeonSeed.randomSeed();
 
-		Generator.Category.hardReset();
+		modifiers = SPDSettings.modifiers();
+		extraData.init();
+		challengesInform = false;
+		if (!modifiers.isChallenged()) {
+			modifiers.randomize(seed);
+			challengesInform = true;
+		}
+		SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
 
 //		if (DeviceCompat.isDebug()) {
 //			seed = Long.parseLong("2lq439du", 36);
 //		}
 
-        modifiers = SPDSettings.modifiers();
-        extraData.init();
-        challengesInform = false;
-        if (!modifiers.isChallenged()) {
-            modifiers.randomize(seed);
-            challengesInform = true;
-        }
-
 //        if(DeviceCompat.isDebug()){
 //        	modifiers.fromBigIntString("axq5j8k4jb9hsf0g");
 //		}
-        SPDSettings.modifiers(new Modifiers(modifiers).setDynasty(""));
+		
+		Generator.Category.hardReset();
+
 		levelPack = new DefaultLevelPack();
 		levelPack.init();
 

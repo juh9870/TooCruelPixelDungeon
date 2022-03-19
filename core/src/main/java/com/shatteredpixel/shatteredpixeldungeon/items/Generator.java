@@ -88,6 +88,15 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfHo
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfIcyTouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfToxicEssence;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.CeremonialCandle;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.DarkGold;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.DwarfToken;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.RatSkull;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfElements;
@@ -155,6 +164,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.BasisWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.CircularTriWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.FluidTriWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.ThermalTriWand;
@@ -267,6 +277,7 @@ public class Generator {
 		ELIXIR	( 0, 0, Elixir.class ),
 
 		TRI_WAND( 0, 0, TriWand.class ),
+		QUEST( 0, 0, Item.class ),
 		;
 		
 		public Class<?>[] classes;
@@ -392,8 +403,14 @@ public class Generator {
 					WandOfWarding.class,
 					WandOfTransfusion.class,
 					WandOfCorruption.class,
-					WandOfRegrowth.class };
-			WAND.probs = new float[]{ 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3 };
+					WandOfRegrowth.class,
+
+					BasisWand.class,
+			};
+			WAND.probs = new float[]{ 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 0 };
+			if ( Challenges.MOONSHINE_WANDS.enabled() ) {
+				WAND.probs[WAND.probs.length - 1] = 44;
+			}
 			
 			//see generator.randomWeapon
 			WEAPON.classes = new Class<?>[]{};
@@ -614,7 +631,22 @@ public class Generator {
 					FluidTriWand.class,
 					ThermalTriWand.class
 			};
-			TRI_WAND.probs = new float[]{ 3, 3, 3 };
+			TRI_WAND.probs = new float[]{ 1, 1, 1 };
+
+			QUEST.classes = new Class<?>[]{
+					CeremonialCandle.class,
+					CorpseDust.class,
+					DarkGold.class,
+					DwarfToken.class,
+					Embers.class,
+					GooBlob.class,
+					MetalShard.class,
+					Pickaxe.class,
+					RatSkull.class,
+					Rotberry.Seed.class
+			};
+			QUEST.probs = new float[QUEST.classes.length];
+			Arrays.fill( QUEST.probs, 0 );
 		}
 	}
 

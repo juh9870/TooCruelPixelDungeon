@@ -372,7 +372,7 @@ public class WndChallenges extends Window {
             this.challenge = challenge;
             if (!filter.test(challenge)) icon.alpha(0.3f);
             text(Messages.get(Challenges.class, challenge.name));
-            if (challenge.tier > 1) {
+            if (challenge.tier > 1 && !challenge.isModifier()) {
                 text.hardlight(TIER_COLORS[challenge.tier - 2]);
             }
 

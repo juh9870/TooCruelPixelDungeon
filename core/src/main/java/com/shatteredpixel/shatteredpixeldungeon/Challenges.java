@@ -242,6 +242,7 @@ public enum Challenges implements Hero.Doom {
 
 
 	//region Modifiers
+	MOONSHINE_WANDS( 103, 5, 0 ),
 	ARCHERY_SCHOOL( 78, 5, -2f ),
 	SNIPER_TRAINING( 79, 5, -7f, ARCHERY_SCHOOL ),
 	BIOCHIP( 90, 5, 0 ) {
