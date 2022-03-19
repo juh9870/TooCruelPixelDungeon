@@ -687,6 +687,12 @@ public abstract class Level implements Bundlable {
 		}
 	}
 
+	protected void applyThunderstruck(){
+		for (Trap trap : traps().valueList()) {
+			trap.reveal();
+		}
+	}
+
     protected void postCreate(){
     	if(!Dungeon.bossLevel() && Challenges.SECOND_TRY.enabled()){
 			applySecondTry();
@@ -697,6 +703,9 @@ public abstract class Level implements Bundlable {
     	if(!Dungeon.bossLevel() && Challenges.MIMICS.enabled()){
     		mimicsHeaps();
 		}
+    	if(Challenges.THUNDERSTRUCK.enabled()){
+			applyThunderstruck();
+	    }
 	}
 	public void seal(){
 		if (!locked) {
