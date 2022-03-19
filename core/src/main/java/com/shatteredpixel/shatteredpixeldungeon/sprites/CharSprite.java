@@ -143,7 +143,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		customVisuals = new SparseArray<>();
 	}
 
-	private boolean noFast = false;
+	private boolean noFast = true;
 	public boolean fast(){
 		return !noFast && !(this instanceof HeroSprite) && SPDSettings.fastAnimations();
 	}
@@ -178,6 +178,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
 		if (ch.properties().contains(Char.Property.BOSS) || ch.properties().contains(Char.Property.MINIBOSS)) {
 			noFast = true;
+		} else {
+			noFast = false;
 		}
 		
 		this.ch = ch;

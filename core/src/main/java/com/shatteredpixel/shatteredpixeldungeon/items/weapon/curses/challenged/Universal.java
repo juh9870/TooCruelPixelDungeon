@@ -10,6 +10,7 @@ import com.watabou.utils.ListUtils;
 import com.watabou.utils.UnorderedPair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Universal extends Weapon.Enchantment {
@@ -34,6 +35,11 @@ public class Universal extends Weapon.Enchantment {
 					incompatibles( false )
 			) );
 		}
+	}
+
+	public void set( Weapon.Enchantment... enchants ){
+		additional.clear();
+		additional.addAll( Arrays.asList( enchants ) );
 	}
 
 	@SuppressWarnings("SameParameterValue")

@@ -620,7 +620,7 @@ public abstract class Mob extends Char {
 	protected boolean doAttack( Char enemy ) {
 
 		boolean skipAnimation = SPDSettings.fastAnimations() && enemy != Dungeon.hero;
-		if (sprite != null && (sprite.visible || enemy.sprite.visible) && !skipAnimation) {
+		if (sprite != null && (sprite.visible || enemy.sprite.visible) && (!skipAnimation || !sprite.fast())) {
 			sprite.attack( enemy.pos() );
 			return false;
 			

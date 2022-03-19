@@ -65,7 +65,7 @@ public class DM201 extends DM200 {
 				&& threatened && !Dungeon.level.adjacent(pos(), enemy.pos()) && fieldOfView[enemy.pos()]){
 			enemySeen = enemy.isAlive() && fieldOfView[enemy.pos()] && enemy.invisible <= 0;
 			boolean skipAnimation = SPDSettings.fastAnimations() && enemy != Dungeon.hero;
-			if (sprite != null && (sprite.visible || enemy.sprite.visible) && !skipAnimation) {
+			if (sprite != null && (sprite.visible || enemy.sprite.visible) && (!skipAnimation || !sprite.fast())) {
 				sprite.zap(enemy.pos());
 				return false;
 			} else {
