@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.AlchemyPredicate;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.LiquidMetal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
@@ -74,11 +75,11 @@ public class AlchemyScene extends PixelScene {
 	private static final InputButton[] inputs = new InputButton[3];
 	private static final CombineButton[] combines = new CombineButton[3];
 	private static final OutputSlot[] outputs = new OutputSlot[3];
-	
+
 	private Emitter smokeEmitter;
 	private Emitter bubbleEmitter;
 	private Emitter sparkEmitter;
-	
+
 	private Emitter lowerBubbles;
 	private SkinnedBlock water;
 
@@ -91,20 +92,20 @@ public class AlchemyScene extends PixelScene {
 	{
 		inGameScene = true;
 	}
-	
+
 	@Override
 	public void create() {
 		super.create();
-		
+
 		water = new SkinnedBlock(
 				Camera.main.width, Camera.main.height,
 				Dungeon.level.waterTex() ){
-			
+
 			@Override
 			protected NoosaScript script() {
 				return NoosaScriptNoLighting.get();
 			}
-			
+
 			@Override
 			public void draw() {
 				//water has no alpha component, this improves performance
@@ -115,7 +116,7 @@ public class AlchemyScene extends PixelScene {
 		};
 		water.autoAdjust = true;
 		add(water);
-		
+
 		Image im = new Image(TextureCache.createGradient(0x66000000, 0x88000000, 0xAA000000, 0xCC000000, 0xFF000000));
 		im.angle = 90;
 		im.x = Camera.main.width;
@@ -130,7 +131,7 @@ public class AlchemyScene extends PixelScene {
 
 		lowerBubbles = new Emitter();
 		add(lowerBubbles);
-		
+
 		RenderedTextBlock title = PixelScene.renderTextBlock( Messages.get(this, "title"), 9 );
 		title.hardlight(Window.TITLE_COLOR);
 		title.setPos(
@@ -139,18 +140,18 @@ public class AlchemyScene extends PixelScene {
 		);
 		align(title);
 		add(title);
-		
+
 		int w = 50 + Camera.main.width/2;
 		int left = (Camera.main.width - w)/2;
-		
+
 		int pos = (Camera.main.height - 100)/2;
-		
+
 		RenderedTextBlock desc = PixelScene.renderTextBlock(6);
 		desc.maxWidth(w);
 		desc.text( Messages.get(AlchemyScene.class, "text") );
 		desc.setPos(left + (w - desc.width())/2, pos);
 		add(desc);
-		
+
 		pos += desc.height() + 6;
 
 		NinePatch inputBG = Chrome.get(Chrome.Type.TOAST_TR);
@@ -194,12 +195,12 @@ public class AlchemyScene extends PixelScene {
 		smokeEmitter.pos(outputs[0].left() + (BTN_SIZE-16)/2f, outputs[0].top() + (BTN_SIZE-16)/2f, 16, 16);
 		smokeEmitter.autoKill = false;
 		add(smokeEmitter);
-		
+
 		pos += 10;
 
 		lowerBubbles.pos(0, pos, Camera.main.width, Math.max(0, Camera.main.height-pos));
 		lowerBubbles.pour(Speck.factory( Speck.BUBBLE ), 0.1f );
-		
+
 		ExitButton btnExit = new ExitButton(){
 			@Override
 			public void onClick() {
@@ -208,7 +209,7 @@ public class AlchemyScene extends PixelScene {
 		};
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
-		
+
 		IconButton btnGuide = new IconButton( new ItemSprite(ItemSpriteSheet.ALCH_PAGE, null)){
 			@Override
 			public void onClick() {
@@ -216,7 +217,7 @@ public class AlchemyScene extends PixelScene {
 				clearSlots();
 				updateState();
 				AlchemyScene.this.addToFront(new Window(){
-				
+
 					{
 						WndJournal.AlchemyTab t = new WndJournal.AlchemyTab();
 						int w, h;
@@ -229,7 +230,7 @@ public class AlchemyScene extends PixelScene {
 						add(t);
 						t.setRect(0, 0, w, h);
 					}
-				
+
 				});
 			}
 		};
@@ -269,9 +270,9 @@ public class AlchemyScene extends PixelScene {
 		sparkEmitter.pos(energyLeft.left(), energyLeft.top(), energyLeft.width(), energyLeft.height());
 		sparkEmitter.autoKill = false;
 		add(sparkEmitter);
-		
+
 		fadeIn();
-		
+
 		try {
 			Dungeon.saveAll();
 			Badges.saveGlobal();
@@ -280,18 +281,18 @@ public class AlchemyScene extends PixelScene {
 			ShatteredPixelDungeon.reportException(e);
 		}
 	}
-	
+
 	@Override
 	public void update() {
 		super.update();
 		water.offset( 0, -5 * Game.elapsed );
 	}
-	
+
 	@Override
 	protected void onBackPressed() {
 		Game.switchScene(GameScene.class);
 	}
-	
+
 	protected WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
 
 		@Override
@@ -323,7 +324,7 @@ public class AlchemyScene extends PixelScene {
 			}
 		}
 	};
-	
+
 	private<T extends Item> ArrayList<T> filterInput(Class<? extends T> itemClass){
 		ArrayList<T> filtered = new ArrayList<>();
 		for (int i = 0; i < inputs.length; i++){
@@ -334,9 +335,9 @@ public class AlchemyScene extends PixelScene {
 		}
 		return filtered;
 	}
-	
+
 	private void updateState(){
-		
+
 		ArrayList<Item> ingredients = filterInput(Item.class);
 		ArrayList<Recipe> recipes = Recipe.findRecipes(ingredients);
 
@@ -386,19 +387,19 @@ public class AlchemyScene extends PixelScene {
 			combines[i].enable(cost <= availableEnergy, cost);
 
 		}
-		
+
 	}
-	
+
 	private void combine( int slot ){
-		
+
 		ArrayList<Item> ingredients = filterInput(Item.class);
 
 		if (ingredients.isEmpty()) return;
 
 		Recipe recipe = Recipe.findRecipes(ingredients).get(slot);
-		
+
 		Item result = null;
-		
+
 		if (recipe != null){
 			int cost = recipe.cost(ingredients);
 			if (toolkit != null){
@@ -421,10 +422,10 @@ public class AlchemyScene extends PixelScene {
 
 			energyAdd.setPos(energyLeft.right(), energyAdd.top());
 			align(energyAdd);
-			
+
 			result = recipe.brew(ingredients);
 		}
-		
+
 		if (result != null){
 			bubbleEmitter.start(Speck.factory( Speck.BUBBLE ), 0.01f, 100 );
 			smokeEmitter.burst(Speck.factory( Speck.WOOL ), 10 );
@@ -436,41 +437,47 @@ public class AlchemyScene extends PixelScene {
 
 			Statistics.itemsCrafted++;
 			Badges.validateItemsCrafted();
-			
+
 			try {
 				Dungeon.saveAll();
 			} catch (IOException e) {
 				ShatteredPixelDungeon.reportException(e);
 			}
-			
-			synchronized (inputs) {
-				for (int i = 0; i < inputs.length; i++) {
-					if (inputs[i] != null && inputs[i].item() != null) {
-						Item item = inputs[i].item();
-						if (item.quantity() <= 0) {
-							inputs[i].item(null);
-						} else {
-							inputs[i].slot.updateText();
+
+			if ( recipe.clearInput() ) clearSlots();
+			else {
+				synchronized (inputs) {
+					for (int i = 0; i < inputs.length; i++) {
+						if ( inputs[i] != null && inputs[i].item() != null ) {
+							Item item = inputs[i].item();
+							if ( item.quantity() <= 0 ) {
+								inputs[i].item( null );
+							} else {
+								inputs[i].slot.item( inputs[i].item() );
+							}
 						}
 					}
 				}
 			}
-			
+
 			updateState();
 			//we reset the quantity in case the result was merged into another stack in the backpack
 			result.quantity(resultQuantity);
 			outputs[0].item(result);
 		}
-		
+
 	}
-	
+
 	public void populate(ArrayList<Item> toFind, Belongings inventory){
 		clearSlots();
-		
+
 		int curslot = 0;
 		for (Item finding : toFind){
 			int needed = finding.quantity();
 			ArrayList<Item> found = inventory.getAllSimilar(finding);
+			if(finding instanceof AlchemyPredicate ){
+				found.addAll( inventory.getAllFiltered( ((AlchemyPredicate) finding)::test ) );
+			}
 			while (!found.isEmpty() && needed > 0){
 				Item detached;
 				if (finding instanceof LiquidMetal) {
@@ -478,6 +485,7 @@ public class AlchemyScene extends PixelScene {
 				} else {
 					detached = found.get(0).detach(inventory.backpack);
 				}
+				if ( detached == null ) return;
 				inputs[curslot].item(detached);
 				curslot++;
 				needed -= detached.quantity();
@@ -488,7 +496,7 @@ public class AlchemyScene extends PixelScene {
 		}
 		updateState();
 	}
-	
+
 	@Override
 	public void destroy() {
 		synchronized ( inputs ) {
@@ -497,7 +505,7 @@ public class AlchemyScene extends PixelScene {
 				inputs[i] = null;
 			}
 		}
-		
+
 		try {
 			Dungeon.saveAll();
 			Badges.saveGlobal();
@@ -507,7 +515,7 @@ public class AlchemyScene extends PixelScene {
 		}
 		super.destroy();
 	}
-	
+
 	public void clearSlots(){
 		synchronized ( inputs ) {
 			for (int i = 0; i < inputs.length; i++) {
@@ -545,21 +553,21 @@ public class AlchemyScene extends PixelScene {
 
 		updateState();
 	}
-	
+
 	private class InputButton extends Component {
-		
+
 		protected NinePatch bg;
 		protected ItemSlot slot;
-		
+
 		private Item item = null;
-		
+
 		@Override
 		protected void createChildren() {
 			super.createChildren();
-			
+
 			bg = Chrome.get( Chrome.Type.RED_BUTTON);
 			add( bg );
-			
+
 			slot = new ItemSlot() {
 				@Override
 				protected void onPointerDown() {
@@ -601,11 +609,11 @@ public class AlchemyScene extends PixelScene {
 		@Override
 		protected void layout() {
 			super.layout();
-			
+
 			bg.x = x;
 			bg.y = y;
 			bg.size( width, height );
-			
+
 			slot.setRect( x + 2, y + 2, width - 4, height - 4 );
 		}
 

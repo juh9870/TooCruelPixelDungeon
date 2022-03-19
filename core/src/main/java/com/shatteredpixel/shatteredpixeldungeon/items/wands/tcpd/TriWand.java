@@ -5,27 +5,40 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.items.AlchemyPredicate;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.QuickRecipe;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.ListUtils;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
+import com.watabou.utils.UnorderedPair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class TriWand extends Wand {
+	public enum Effect {
+		NONE,
+		FIRST,
+		SECOND
+	}
+
 	private static final float MAX_DISBALANCE = 4f;
 	public WandEffect firstEffect;
 	public WandEffect secondEffect;
@@ -124,12 +137,45 @@ public abstract class TriWand extends Wand {
 					.append( "%):_ " )
 					.append( wandEffect.desc() );
 			if ( wandEffect.augmented() ) {
-				sb.append( " _" )
+				sb.append( "\n_" )
 						.append( Messages.get( this, "augment" ) )
 						.append( "_: " ).append( wandEffect.augmentDesc() );
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public ItemSprite.Glowing glowing() {
+		if ( firstEffect.augmented() ) return firstEffect.augmentGlow();
+		if ( secondEffect.augmented() ) return secondEffect.augmentGlow();
+		return null;
+	}
+
+	public TriWand augment( Effect effect ) {
+		if ( effect == Effect.FIRST ) {
+			augment = 1;
+		} else if ( effect == Effect.SECOND ) {
+			augment = -1;
+		} else if ( effect == Effect.NONE ) {
+			augment = 0;
+		}
+		return this;
+	}
+
+	public Effect augment() {
+		if ( augment > 0 ) return Effect.FIRST;
+		if ( augment < 0 ) return Effect.SECOND;
+		return Effect.NONE;
+	}
+
+	@Override
+	public boolean isSimilar( Item item ) {
+		return super.isSimilar( item ) && augment() == ((TriWand) item).augment();
+	}
+
+	private AlchemyPredicate predicate() {
+		return new AlchemyPredicate( this, ( i ) -> i.getClass() == getClass() && ((TriWand) i).augment() == augment() );
 	}
 
 	@Override
@@ -205,10 +251,12 @@ public abstract class TriWand extends Wand {
 		}
 
 		public boolean augmented() {
-			if ( this == firstEffect ) return augment > 0;
-			if ( this == secondEffect ) return augment < 0;
+			if ( this == firstEffect ) return augment() == Effect.FIRST;
+			if ( this == secondEffect ) return augment() == Effect.SECOND;
 			return false;
 		}
+
+		public abstract ItemSprite.Glowing augmentGlow();
 
 		public String name() {
 			return Messages.get( this, "name" );
@@ -251,6 +299,41 @@ public abstract class TriWand extends Wand {
 		}
 	}
 
+	public static ArrayList<QuickRecipe> recipes() {
+		BasisWand basis = new BasisWand();
+		basis.identify();
+		basis.hideCharges();
+
+		CraftingRecipe craft = new CraftingRecipe();
+		Augmentation augment = new Augmentation();
+		ClearAugment clearAugment = new ClearAugment();
+
+		ArrayList<QuickRecipe> recipes = new ArrayList<>();
+
+		for (Set<Class<? extends Item>> catalysts : CraftingRecipe.recipes.keySet()) {
+
+			TriWand wand = Reflection.newInstance( CraftingRecipe.recipes.get( catalysts ) );
+			wand.identify();
+			wand.hideCharges();
+			List<Item> items = ListUtils.map( new ArrayList<>( catalysts ), Reflection::newInstance );
+
+			for (UnorderedPair<Item> pair : ListUtils.pairs( items )) {
+				if ( pair.first == pair.second ) continue;
+				recipes.add( new QuickRecipe( craft, new ArrayList<>( Arrays.asList( basis, pair.first, pair.second ) ) ) );
+			}
+
+			Item neutral = Reflection.newInstance( wand.neutralEffect.catalyst() );
+			Item first = Reflection.newInstance( wand.firstEffect.catalyst() );
+			Item second = Reflection.newInstance( wand.secondEffect.catalyst() );
+			TriWand augmented = ((TriWand) wand.clone()).augment( Effect.FIRST );
+
+			recipes.add( new QuickRecipe( augment, new ArrayList<>( Arrays.asList( wand.predicate(), neutral, first ) ) ) );
+			recipes.add( new QuickRecipe( augment, new ArrayList<>( Arrays.asList( wand.predicate(), neutral, second ) ) ) );
+			recipes.add( new QuickRecipe( clearAugment, new ArrayList<>( Arrays.asList( augmented.predicate(), neutral ) ) ) );
+		}
+		return recipes;
+	}
+
 	public static class Augmentation extends Recipe {
 		@Override
 		public boolean testIngredients( ArrayList<Item> ingredients ) {
@@ -282,8 +365,9 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public Item brew( ArrayList<Item> ingredients ) {
+			if ( !testIngredients( ingredients ) ) return null;
 			TriWand wand = (TriWand) ingredients.get( 0 );
-			wand.augment = getAugment( ingredients );
+			wand.augment( getAugment( ingredients ) );
 			for (Item ingredient : ingredients) {
 				if ( ingredient != wand ) ingredient.quantity( ingredient.quantity() - 1 );
 			}
@@ -292,18 +376,24 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public Item sampleOutput( ArrayList<Item> ingredients ) {
+			if ( !testIngredients( ingredients ) ) return null;
 			TriWand clone = (TriWand) ingredients.get( 0 ).clone();
-			clone.augment = getAugment( ingredients );
+			clone.augment( getAugment( ingredients ) );
 			return clone;
 		}
 
-		private static int getAugment( ArrayList<Item> ingredients ) {
+		private static Effect getAugment( ArrayList<Item> ingredients ) {
 			TriWand wand = (TriWand) ingredients.get( 0 );
 			for (Item i : ingredients) {
-				if ( i.getClass() == wand.firstEffect.catalyst() ) return 1;
-				if ( i.getClass() == wand.secondEffect.catalyst() ) return -1;
+				if ( i.getClass() == wand.firstEffect.catalyst() ) return Effect.FIRST;
+				if ( i.getClass() == wand.secondEffect.catalyst() ) return Effect.SECOND;
 			}
 			throw new IllegalArgumentException( "Invalid ingredients" );
+		}
+		
+		@Override
+		public boolean clearInput() {
+			return true;
 		}
 	}
 
@@ -317,7 +407,7 @@ public abstract class TriWand extends Wand {
 			}
 			TriWand wand = (TriWand) ingredients.get( 0 );
 			if ( !wand.isIdentified() ) return false;
-			if ( wand.augment == 0 ) return false;
+			if ( wand.augment() == Effect.NONE ) return false;
 			return ingredients.get( 1 ).getClass() == wand.neutralEffect.catalyst();
 		}
 
@@ -329,7 +419,7 @@ public abstract class TriWand extends Wand {
 		@Override
 		public Item brew( ArrayList<Item> ingredients ) {
 			TriWand wand = (TriWand) ingredients.get( 0 );
-			wand.augment = 0;
+			wand.augment( Effect.NONE );
 
 			for (Item ingredient : ingredients) {
 				if ( ingredient != wand ) ingredient.quantity( ingredient.quantity() - 1 );
@@ -341,14 +431,19 @@ public abstract class TriWand extends Wand {
 		public Item sampleOutput( ArrayList<Item> ingredients ) {
 			if ( !testIngredients( ingredients ) ) return null;
 			TriWand clone = (TriWand) ingredients.get( 0 ).clone();
-			clone.augment = 0;
+			clone.augment( Effect.NONE );
 			return clone;
+		}
+
+		@Override
+		public boolean clearInput() {
+			return true;
 		}
 	}
 
 	public static class CraftingRecipe extends Recipe {
 
-		private static final Map<Set<Class<? extends Item>>, Class<? extends TriWand>> recipes = new HashMap();
+		private static final Map<Set<Class<? extends Item>>, Class<? extends TriWand>> recipes = new LinkedHashMap<>();
 
 		private static void recipeFor( TriWand wand ) {
 			Set<Class<? extends Item>> catalysts = new HashSet<>();
@@ -419,6 +514,7 @@ public abstract class TriWand extends Wand {
 			wand.resinBonus = basis.resinBonus;
 
 			wand.curCharges = basis.curCharges;
+			wand.hideCharges = basis.hideCharges;
 			wand.updateLevel();
 			return wand;
 		}

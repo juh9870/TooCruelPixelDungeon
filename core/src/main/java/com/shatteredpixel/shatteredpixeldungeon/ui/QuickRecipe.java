@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.AlchemyPredicate;
 import com.shatteredpixel.shatteredpixeldungeon.items.ArcaneResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -67,6 +68,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.spells.TelekineticGrab;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.WildEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd.TriWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -97,8 +99,11 @@ public class QuickRecipe extends Component {
 		this(r, r.getIngredients(), r.sampleOutput(null));
 	}
 	
+	public QuickRecipe(Recipe r, ArrayList<Item> inputs) {
+		this(r, inputs, r.sampleOutput( AlchemyPredicate.extract( inputs ) ));
+	}
 	public QuickRecipe(Recipe r, ArrayList<Item> inputs, final Item output) {
-		
+
 		ingredients = inputs;
 		int cost = r.cost(inputs);
 		boolean hasInputs = true;
@@ -118,6 +123,9 @@ public class QuickRecipe extends Component {
 			};
 			
 			ArrayList<Item> similar = Dungeon.hero.belongings.getAllSimilar(in);
+			if(in instanceof AlchemyPredicate ){
+				similar.addAll( Dungeon.hero.belongings.getAllFiltered( ((AlchemyPredicate) in)::test ) );
+			}
 			int quantity = 0;
 			for (Item sim : similar) {
 				//if we are looking for a specific item, it must be IDed
@@ -391,6 +399,9 @@ public class QuickRecipe extends Component {
 				result.add(new QuickRecipe(new MagicalInfusion.Recipe()));
 				result.add(new QuickRecipe(new CurseInfusion.Recipe()));
 				result.add(new QuickRecipe(new Recycle.Recipe()));
+				return result;
+			case 10:
+				result.addAll( TriWand.recipes() );
 				return result;
 		}
 	}

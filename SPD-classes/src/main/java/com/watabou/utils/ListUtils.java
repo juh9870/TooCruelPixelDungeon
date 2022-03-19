@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public final class ListUtils {
 
@@ -87,6 +89,20 @@ public final class ListUtils {
 			list.add( t );
 		}
 		return list;
+	}
+
+	public static <T> Set<UnorderedPair<T>> pairs( Collection<T> items ) {
+		return pairs( new ArrayList<>( items ) );
+	}
+
+	public static <T> Set<UnorderedPair<T>> pairs( List<T> items ) {
+		Set<UnorderedPair<T>> set = new HashSet<>();
+		for (int i = 0; i < items.size(); i++) {
+			for (int j = i; j < items.size(); j++) {
+				set.add( new UnorderedPair<>( items.get( i ), items.get( j ) ) );
+			}
+		}
+		return set;
 	}
 
 	public static <T> T[] combine( T[]... arrays ) {

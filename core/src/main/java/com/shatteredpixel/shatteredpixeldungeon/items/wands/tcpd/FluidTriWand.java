@@ -12,6 +12,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Chilling;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -23,6 +24,7 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sorrowmoss;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -44,6 +46,8 @@ public class FluidTriWand extends TriWand {
 
 		collisionProperties = Ballistica.PROJECTILE;
 	}
+	private static ItemSprite.Glowing GREEN = new ItemSprite.Glowing( 0x008811 );
+	private static ItemSprite.Glowing BROWN = new ItemSprite.Glowing( 0x663300 );
 
 	private final int SNAKES_NUM = 3;
 	private int totChrgUsed = 0;
@@ -90,6 +94,10 @@ public class FluidTriWand extends TriWand {
 	}
 
 	private class RootEffect extends NormalEffect {
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return BROWN;
+		}
 
 		@Override
 		public Class<? extends Plant.Seed> catalyst() {
@@ -131,6 +139,11 @@ public class FluidTriWand extends TriWand {
 	private class GasEffect extends NormalEffect {
 
 		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return GREEN;
+		}
+
+		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Sungrass.Seed.class;
 		}
@@ -164,6 +177,11 @@ public class FluidTriWand extends TriWand {
 	}
 
 	private class NormalEffect extends WandEffect {
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return null;
+		}
 
 		int completedNum = 0;
 		List<Integer> affectedCells;

@@ -64,6 +64,15 @@ public enum Document {
 		return isPageFound( pagesStates.keySet().toArray(new String[0])[pageIdx] );
 	}
 
+	public boolean pageAvailable( String page ) {
+		if ( page.equals( ALCHEMY_WANDS ) ) return false;
+		return true;
+	}
+
+	public boolean pageAvailable( int pageIdx ) {
+		return pageAvailable( pagesStates.keySet().toArray(new String[0])[pageIdx] );
+	}
+
 	public boolean readPage( String page ) {
 		if (pagesStates.containsKey(page) && pagesStates.get(page) == FOUND){
 			pagesStates.put(page, READ);
@@ -133,6 +142,8 @@ public enum Document {
 	public static final String GUIDE_DIEING         = "Dieing";
 	public static final String GUIDE_SEARCHING      = "Searching";
 
+	public static final String ALCHEMY_WANDS        = "TriWands";
+
 	//pages and default states
 	static {
 		boolean debug = DeviceCompat.isDebug();
@@ -164,6 +175,9 @@ public enum Document {
 		ALCHEMY_GUIDE.pagesStates.put("Catalysts",            debug ? READ : NOT_FOUND);
 		ALCHEMY_GUIDE.pagesStates.put("Brews_Elixirs",        debug ? READ : NOT_FOUND);
 		ALCHEMY_GUIDE.pagesStates.put("Spells",               debug ? READ : NOT_FOUND);
+
+		//given by default, but only visible conditionally
+		ALCHEMY_GUIDE.pagesStates.put(ALCHEMY_WANDS,          debug ? READ : FOUND);
 	}
 	
 	private static final String DOCUMENTS = "documents";

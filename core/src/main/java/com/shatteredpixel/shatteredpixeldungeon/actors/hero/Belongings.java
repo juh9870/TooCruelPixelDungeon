@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+import com.watabou.utils.function.Predicate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -262,11 +263,27 @@ public class Belongings implements Iterable<Item> {
 		return null;
 	}
 	
+	public ArrayList<Item> getAllFiltered( Predicate<Item> filter ){
+		ArrayList<Item> result = new ArrayList<>();
+
+		boolean lostInvent = owner != null && owner.buff(LostInventory.class) != null;
+
+		for (Item item : this) {
+			if (filter.test( item )) {
+				if (!lostInvent || item.keptThoughLostInvent) {
+					result.add(item);
+				}
+			}
+		}
+
+		return result;
+	}
+
 	public ArrayList<Item> getAllSimilar( Item similar ){
 		ArrayList<Item> result = new ArrayList<>();
 
 		boolean lostInvent = owner != null && owner.buff(LostInventory.class) != null;
-		
+
 		for (Item item : this) {
 			if (item != similar && similar.isSimilar(item)) {
 				if (!lostInvent || item.keptThoughLostInvent) {
@@ -274,7 +291,7 @@ public class Belongings implements Iterable<Item> {
 				}
 			}
 		}
-		
+
 		return result;
 	}
 

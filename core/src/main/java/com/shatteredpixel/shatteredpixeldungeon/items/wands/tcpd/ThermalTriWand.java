@@ -17,6 +17,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blazing;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Chilling;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -26,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Firebloom;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Icecap;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -50,6 +53,8 @@ public class ThermalTriWand extends TriWand {
 		randomizeEffect();
 		image = ItemSpriteSheet.WAND_THERMAL;
 	}
+	private static ItemSprite.Glowing ORANGE = new ItemSprite.Glowing( 0xFF4400 );
+	private static ItemSprite.Glowing TEAL = new ItemSprite.Glowing( 0x00FFFF );
 
 	private static final int aoeBallisticaParams = Ballistica.STOP_TARGET | Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID;
 
@@ -90,6 +95,11 @@ public class ThermalTriWand extends TriWand {
 	}
 
 	private class FireEffect extends NormalEffect {
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return ORANGE;
+		}
 
 		@Override
 		public Class<? extends Plant.Seed> catalyst() {
@@ -155,6 +165,12 @@ public class ThermalTriWand extends TriWand {
 	}
 
 	private class FrostEffect extends NormalEffect {
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return TEAL;
+		}
+
 		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Icecap.Seed.class;
@@ -231,6 +247,11 @@ public class ThermalTriWand extends TriWand {
 	}
 
 	private class NormalEffect extends DamageWandEffect {
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return null;
+		}
 
 		@Override
 		public Class<? extends Plant.Seed> catalyst() {

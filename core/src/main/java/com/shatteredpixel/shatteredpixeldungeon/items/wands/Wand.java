@@ -262,7 +262,14 @@ public abstract class Wand extends Item {
 	public String statsDesc(){
 		return Messages.get(this, "stats_desc");
 	}
-	
+
+	public boolean hideCharges = false;
+	public Wand hideCharges(){
+		identify();
+		hideCharges = true;
+		return this;
+	}
+
 	@Override
 	public boolean isIdentified() {
 		return super.isIdentified() && curChargeKnown;
@@ -270,7 +277,7 @@ public abstract class Wand extends Item {
 	
 	@Override
 	public String status() {
-		if (levelKnown) {
+		if (levelKnown && !hideCharges) {
 			return (curChargeKnown ? curCharges : "?") + "/" + maxCharges;
 		} else {
 			return null;
@@ -314,6 +321,13 @@ public abstract class Wand extends Item {
 		updateQuickslot();
 		
 		return this;
+	}
+
+	@Override
+	public Wand clone() {
+		Wand clone = (Wand) super.clone();
+		clone.hideCharges = hideCharges;
+		return clone;
 	}
 
 	@Override

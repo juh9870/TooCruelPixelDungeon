@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Stormvine;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -38,6 +39,8 @@ public class CircularTriWand extends TriWand {
 	//Light damage source for resistances
 	public static class Light {
 	}
+	private static ItemSprite.Glowing GOLDEN = new ItemSprite.Glowing( 0xFFD700 );
+	private static ItemSprite.Glowing BLUE = new ItemSprite.Glowing( 0x0000FF );
 
 	{
 		neutralEffect = new NormalEffect();
@@ -53,6 +56,11 @@ public class CircularTriWand extends TriWand {
 	private static final float UNDEAD_BONUS = 4 / 3f;
 
 	private class StormEffect extends WandEffect {
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return BLUE;
+		}
 
 		@Override
 		public Class<? extends Plant.Seed> catalyst() {
@@ -84,6 +92,11 @@ public class CircularTriWand extends TriWand {
 	}
 
 	private class LightEffect extends DamageWandEffect {
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return GOLDEN;
+		}
 
 		@Override
 		public Class<? extends Plant.Seed> catalyst() {
@@ -210,6 +223,11 @@ public class CircularTriWand extends TriWand {
 		@Override
 		protected void fx( Ballistica bolt, Callback callback ) {
 			MagicMissile.boltFromChar( curUser.sprite.parent, MagicMissile.BEACON, curUser.sprite, bolt.collisionPos, callback );
+		}
+
+		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return null;
 		}
 	}
 }
