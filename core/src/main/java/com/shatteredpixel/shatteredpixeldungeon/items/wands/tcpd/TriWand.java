@@ -5,6 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.TriWandIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.items.AlchemyPredicate;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
@@ -25,7 +26,6 @@ import com.watabou.utils.UnorderedPair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,6 +51,21 @@ public abstract class TriWand extends Wand {
 	public float augment = 0;
 	public WandEffect curEffect;
 
+
+	private TriWandIndicator indicator;
+
+	@Override
+	protected void showAimVisuals() {
+		super.showAimVisuals();
+		indicator = TriWandIndicator.show( curUser, this );
+	}
+
+	@Override
+	protected void hideAimVisuals() {
+		super.hideAimVisuals();
+		if ( indicator != null ) indicator.hide();
+	}
+
 	@Override
 	protected void wandUsed() {
 		if ( curEffect == firstEffect ) {
@@ -58,8 +73,16 @@ public abstract class TriWand extends Wand {
 		} else if ( curEffect == secondEffect ) {
 			balance--;
 		}
-		randomizeEffect();
 		super.wandUsed();
+	}
+
+	@Override
+	public boolean tryToZap( Hero owner, int target ) {
+		if ( super.tryToZap( owner, target ) ) {
+			randomizeEffect();
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -93,16 +116,12 @@ public abstract class TriWand extends Wand {
 
 	public float weightNeutral() {
 		if ( level() >= 12 ) return 0;
+		if ( curEffect == neutralEffect ) return 0f;
 		return (float) Math.pow( 0.85, level() );
 	}
 
 	protected void randomizeEffect() {
 		int effect = Random.chances( effectsChances() );
-
-		if ( effect == 2 && curEffect == neutralEffect ) {
-			randomizeEffect();
-			return;
-		}
 
 		curEffect = new WandEffect[]{
 				firstEffect,
@@ -232,7 +251,7 @@ public abstract class TriWand extends Wand {
 		// TODO: do something on hit
 	}
 
-	protected abstract class WandEffect {
+	public abstract class WandEffect {
 		protected int collisionProperties = Ballistica.MAGIC_BOLT;
 
 		public abstract void onZap( Ballistica target );
@@ -263,6 +282,11 @@ public abstract class TriWand extends Wand {
 		}
 
 		public abstract ItemSprite.Glowing augmentGlow();
+
+		public int indicatorColor() {
+			if ( augmentGlow() != null ) return augmentGlow().color;
+			return 0xffffff;
+		}
 
 		public String name() {
 			return Messages.get( this, "name" );

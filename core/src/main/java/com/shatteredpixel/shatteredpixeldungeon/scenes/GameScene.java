@@ -1010,7 +1010,10 @@ public class GameScene extends PixelScene {
 	public static void effectOverFog( Visual effect ) {
 		scene.overFogEffects.add( effect );
 	}
-	
+	public static <T extends Gizmo> T recycleOverFog( Class<T> c ) {
+		return (T) scene.overFogEffects.recycle( c );
+	}
+
 	public static Ripple ripple( int pos ) {
 		if (scene != null) {
 			Ripple ripple = (Ripple) scene.ripples.recycle(Ripple.class);

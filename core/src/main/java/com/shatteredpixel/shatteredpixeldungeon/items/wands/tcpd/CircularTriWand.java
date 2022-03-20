@@ -39,8 +39,9 @@ public class CircularTriWand extends TriWand {
 	//Light damage source for resistances
 	public static class Light {
 	}
-	private static ItemSprite.Glowing GOLDEN = new ItemSprite.Glowing( 0xFFD700 );
-	private static ItemSprite.Glowing BLUE = new ItemSprite.Glowing( 0x0000FF );
+
+	private static final ItemSprite.Glowing GOLDEN = new ItemSprite.Glowing( 0xFFD700 );
+	private static final ItemSprite.Glowing BLUE = new ItemSprite.Glowing( 0x0000FF );
 
 	{
 		neutralEffect = new NormalEffect();
@@ -63,6 +64,11 @@ public class CircularTriWand extends TriWand {
 		}
 
 		@Override
+		public int indicatorColor() {
+			return 0x00AAFF;
+		}
+
+		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Stormvine.Seed.class;
 		}
@@ -79,7 +85,7 @@ public class CircularTriWand extends TriWand {
 			neutralEffect.onZap( target );
 			((DewGas) Dungeon.level.blobs.get( DewGas.class )).storm( target.collisionPos );
 			StormGas sg = (StormGas) Dungeon.level.blobs.get( StormGas.class );
-			sg.setStrength( strength(buffedLvl()) );
+			sg.setStrength( strength( buffedLvl() ) );
 
 		}
 
@@ -96,6 +102,11 @@ public class CircularTriWand extends TriWand {
 		@Override
 		public ItemSprite.Glowing augmentGlow() {
 			return GOLDEN;
+		}
+
+		@Override
+		public int indicatorColor() {
+			return 0xffff00;
 		}
 
 		@Override
@@ -211,6 +222,16 @@ public class CircularTriWand extends TriWand {
 	private class NormalEffect extends WandEffect {
 
 		@Override
+		public ItemSprite.Glowing augmentGlow() {
+			return null;
+		}
+
+		@Override
+		public int indicatorColor() {
+			return 0XBEBEBE;
+		}
+
+		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Dreamfoil.Seed.class;
 		}
@@ -223,11 +244,6 @@ public class CircularTriWand extends TriWand {
 		@Override
 		protected void fx( Ballistica bolt, Callback callback ) {
 			MagicMissile.boltFromChar( curUser.sprite.parent, MagicMissile.BEACON, curUser.sprite, bolt.collisionPos, callback );
-		}
-
-		@Override
-		public ItemSprite.Glowing augmentGlow() {
-			return null;
 		}
 	}
 }

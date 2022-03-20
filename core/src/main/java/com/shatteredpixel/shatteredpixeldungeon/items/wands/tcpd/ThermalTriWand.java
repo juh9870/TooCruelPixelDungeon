@@ -102,6 +102,11 @@ public class ThermalTriWand extends TriWand {
 		}
 
 		@Override
+		public int indicatorColor() {
+			return ORANGE.color;
+		}
+
+		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Firebloom.Seed.class;
 		}
@@ -169,6 +174,11 @@ public class ThermalTriWand extends TriWand {
 		@Override
 		public ItemSprite.Glowing augmentGlow() {
 			return TEAL;
+		}
+
+		@Override
+		public int indicatorColor() {
+			return TEAL.color;
 		}
 
 		@Override
@@ -251,6 +261,11 @@ public class ThermalTriWand extends TriWand {
 		@Override
 		public ItemSprite.Glowing augmentGlow() {
 			return null;
+		}
+
+		@Override
+		public int indicatorColor() {
+			return 0x330000;
 		}
 
 		@Override

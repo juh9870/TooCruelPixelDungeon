@@ -111,9 +111,15 @@ public abstract class Wand extends Item {
 			
 			curUser = hero;
 			curItem = this;
+			showAimVisuals();
 			GameScene.selectCell( zapper );
 			
 		}
+	}
+
+	protected void showAimVisuals(){
+	}
+	protected void hideAimVisuals(){
 	}
 
 	@Override
@@ -560,17 +566,17 @@ public abstract class Wand extends Item {
 		
 		@Override
 		public void onSelect( Integer target ) {
-			
+
+			//FIXME this safety check shouldn't be necessary
+			//it would be better to eliminate the curItem static variable.
+			final Wand curWand;
+			if (curItem instanceof Wand) {
+				curWand = (Wand) Wand.curItem;
+			} else {
+				return;
+			}
+			curWand.hideAimVisuals();
 			if (target != null) {
-				
-				//FIXME this safety check shouldn't be necessary
-				//it would be better to eliminate the curItem static variable.
-				final Wand curWand;
-				if (curItem instanceof Wand) {
-					curWand = (Wand) Wand.curItem;
-				} else {
-					return;
-				}
 
 				final Ballistica shot = new Ballistica(curUser.pos(), target, curWand.collisionProperties(target));
 				int cell = shot.collisionPos;

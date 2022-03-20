@@ -71,6 +71,7 @@ public enum Icons {
 	ENERGY,
 	COIN_SML,
 	ENERGY_SML,
+	GOLDEN_RING,
 	
 	//hero & rankings icons
 	DEPTH,
@@ -317,6 +318,10 @@ public enum Icons {
 		case NOTES:
 			icon = tcpd();
 			icon.frame( icon.texture.uvRect( 11, 12, 21, 23 ) );
+			break;
+		case GOLDEN_RING:
+			icon = tcpd();
+			icon.frame( icon.texture.uvRect( 0, 35, 18, 53 ) );
 			break;
 		}
 		return icon;

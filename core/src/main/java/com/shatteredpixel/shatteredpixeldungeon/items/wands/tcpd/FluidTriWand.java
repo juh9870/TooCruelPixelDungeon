@@ -12,14 +12,11 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Chilling;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Fadeleaf;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sorrowmoss;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
@@ -100,6 +97,11 @@ public class FluidTriWand extends TriWand {
 		}
 
 		@Override
+		public int indicatorColor() {
+			return 0xFFAA00;
+		}
+
+		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Earthroot.Seed.class;
 		}
@@ -144,6 +146,11 @@ public class FluidTriWand extends TriWand {
 		}
 
 		@Override
+		public int indicatorColor() {
+			return 0x00FF00;
+		}
+
+		@Override
 		public Class<? extends Plant.Seed> catalyst() {
 			return Sungrass.Seed.class;
 		}
@@ -181,6 +188,11 @@ public class FluidTriWand extends TriWand {
 		@Override
 		public ItemSprite.Glowing augmentGlow() {
 			return null;
+		}
+
+		@Override
+		public int indicatorColor() {
+			return 0x003300;
 		}
 
 		int completedNum = 0;
