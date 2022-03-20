@@ -11,7 +11,9 @@ import com.watabou.utils.UnorderedPair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Universal extends Weapon.Enchantment {
 	private static final ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
@@ -30,23 +32,33 @@ public class Universal extends Weapon.Enchantment {
 
 	private void generateEnchantments() {
 		additional.clear();
-		for (int i = 0; i < 3; i++) {
-			additional.add( Weapon.Enchantment.randomCurse(
-					incompatibles( false )
-			) );
+		int limit = 3;
+		for (int i = 0; i < limit; i++) {
+			Set<Class<? extends Weapon.Enchantment>> conflicts = incompatibles( false );
+			Weapon.Enchantment enchantment = Weapon.Enchantment.randomCurse(
+					conflicts
+			);
+			if ( conflicts.contains( enchantment.getClass() ) ) return;
+			if ( enchantment instanceof Universal ) {
+				limit += 3;
+				// Just for display
+				((Universal) enchantment).set();
+			}
+			additional.add( enchantment );
 		}
 	}
 
-	public void set( Weapon.Enchantment... enchants ){
+	public Universal set( Weapon.Enchantment... enchants ) {
 		additional.clear();
 		additional.addAll( Arrays.asList( enchants ) );
+		return this;
 	}
 
 	@SuppressWarnings("SameParameterValue")
-	private List<Class<? extends Weapon.Enchantment>> incompatibles( boolean allowDuplicates ) {
+	private Set<Class<? extends Weapon.Enchantment>> incompatibles( boolean allowDuplicates ) {
 
 		List<Class<? extends Weapon.Enchantment>> classes = ListUtils.map( additional, Weapon.Enchantment::getClass );
-		List<Class<? extends Weapon.Enchantment>> banned = new ArrayList<>();
+		Set<Class<? extends Weapon.Enchantment>> banned = new HashSet<>();
 		if ( !allowDuplicates ) banned.addAll( classes );
 
 		for (UnorderedPair<Class<? extends Weapon.Enchantment>> conflict : incompatibles) {
