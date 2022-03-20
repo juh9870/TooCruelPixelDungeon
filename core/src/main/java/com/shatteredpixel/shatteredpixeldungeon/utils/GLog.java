@@ -67,4 +67,8 @@ public class GLog {
 	public static void h( String text, Object... args ) {
 		i( HIGHLIGHT + text, args );
 	}
+	public static void debug( String text, Object... args ) {
+		if ( DeviceCompat.isDebug() )
+			h( text, args );
+	}
 }
