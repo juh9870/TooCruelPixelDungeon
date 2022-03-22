@@ -104,7 +104,7 @@ public class Shopkeeper extends NPC {
 
     @Override
     public void add(Buff buff) {
-        if (!buff.visualOnly) {
+        if (!buff.challengeBuff ) {
             flee();
         } else {
             super.add(buff);

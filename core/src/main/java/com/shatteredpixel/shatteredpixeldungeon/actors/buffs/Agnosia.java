@@ -17,7 +17,7 @@ public class Agnosia extends Buff {
     private Image image;
 
     {
-        visualOnly = true;
+        challengeBuff = true;
     }
 
     private void reset() {

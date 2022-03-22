@@ -69,7 +69,7 @@ public class Sheep extends NPC {
 
 	@Override
 	public void add( Buff buff ) {
-		if (buff.visualOnly) super.add(buff);
+		if (buff.challengeBuff ) super.add(buff);
 	}
 
 	@Override

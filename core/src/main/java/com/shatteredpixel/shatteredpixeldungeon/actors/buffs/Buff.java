@@ -49,8 +49,8 @@ public class Buff extends Actor {
 	//whether a buff should persist through revive effects for the hero
 	public boolean revivePersists = false;
 
-	//whether a buff is only visual, and can be safely applied to sheep/shopkeeper/etc
-	public boolean visualOnly = false;
+	//whether a buff is applied via challenge, and can be safely applied to sheep/shopkeeper/etc
+	public boolean challengeBuff = false;
 	
 	protected HashSet<Class> resistances = new HashSet<>();
 	

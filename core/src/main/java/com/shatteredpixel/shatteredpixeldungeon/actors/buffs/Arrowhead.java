@@ -72,6 +72,9 @@ public class Arrowhead extends Buff implements DamageAmplificationBuff {
 	}
 
 	public static class MobArrowhead extends Buff implements DamageAmplificationBuff {
+		{
+			challengeBuff = true;
+		}
 
 		@Override
 		public float damageMultiplier( Object source ) {

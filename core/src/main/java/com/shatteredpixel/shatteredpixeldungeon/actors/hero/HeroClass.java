@@ -209,15 +209,16 @@ public enum HeroClass {
         }
 
         if (DeviceCompat.isDebug() || Challenges.DEBUG.enabled()) {
-			new ScrollOfDebug().identify().collect();
-			new PotionOfDebug().identify().collect();
-			new PotionOfMindVision().quantity(64).identify().collect();
-			new PotionOfInvisibility().quantity(64).identify().collect();
-            new ScrollOfMagicMapping().quantity(64).identify().collect();
-			new Amulet().collect();
+            new ScrollOfDebug().identify().collect();
+            new PotionOfDebug().identify().collect();
 		}
         if (DeviceCompat.isDebug()) {
             new ScrollOfIdentify().identify();
+
+            new PotionOfMindVision().quantity(64).identify().collect();
+            new PotionOfInvisibility().quantity(64).identify().collect();
+            new ScrollOfMagicMapping().quantity(64).identify().collect();
+            new Amulet().collect();
 
             new ScrollOfRage().quantity(64).identify().collect();
 //			new ScrollOfUpgrade().quantity(100).identify().collect();
