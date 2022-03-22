@@ -53,7 +53,7 @@ public class DefaultLevelPack extends LinearLevelPack<Marker.Custom> {
 				.amuletLevel();
 
 		builder.forEach( ( m ) -> {
-			if ( m.chapter() != Chapter.SEWERS && m.chapterProgression() == 1 ) {
+			if ( m.chapter() != Chapter.SEWERS && m.chapter() != Chapter.HALLS && m.chapterProgression() == 1 ) {
 				m.setShop( true );
 			}
 		} );
