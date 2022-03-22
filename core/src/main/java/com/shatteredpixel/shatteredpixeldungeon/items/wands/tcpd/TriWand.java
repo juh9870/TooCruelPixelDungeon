@@ -1,6 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.wands.tcpd;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -19,6 +20,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.ListUtils;
 import com.watabou.utils.Random;
 import com.watabou.utils.Reflection;
@@ -33,6 +35,10 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class TriWand extends Wand {
+
+	public static final String AC_TOGGLE_RANDOM = "TOGGLE_FLOATING";
+	public static final String AC_TOGGLE_PITY = "TOGGLE_PITY";
+
 	public enum Effect {
 		NONE,
 		FIRST,
@@ -50,6 +56,8 @@ public abstract class TriWand extends Wand {
 	// < 0 augment second
 	public float augment = 0;
 	public WandEffect curEffect;
+	private boolean fixedChances = false;
+	private boolean noNeutralPity = false;
 
 
 	private TriWandIndicator indicator;
@@ -67,11 +75,35 @@ public abstract class TriWand extends Wand {
 	}
 
 	@Override
+	public ArrayList<String> actions( Hero hero ) {
+		ArrayList<String> actions = super.actions( hero );
+		if ( DeviceCompat.isDebug() || Challenges.DEBUG.enabled() ) {
+			actions.add( AC_TOGGLE_PITY );
+			actions.add( AC_TOGGLE_RANDOM );
+		}
+		return actions;
+	}
+
+	@Override
+	public void execute( Hero hero, String action ) {
+		super.execute( hero, action );
+		if ( action.equals( AC_TOGGLE_RANDOM ) ) {
+			fixedChances = !fixedChances;
+			if ( fixedChances ) balance = 0;
+		}
+		if ( action.equals( AC_TOGGLE_PITY ) ) {
+			noNeutralPity = !noNeutralPity;
+		}
+	}
+
+	@Override
 	protected void wandUsed() {
-		if ( curEffect == firstEffect ) {
-			balance++;
-		} else if ( curEffect == secondEffect ) {
-			balance--;
+		if ( !fixedChances ) {
+			if ( curEffect == firstEffect ) {
+				balance++;
+			} else if ( curEffect == secondEffect ) {
+				balance--;
+			}
 		}
 		super.wandUsed();
 	}
@@ -116,7 +148,7 @@ public abstract class TriWand extends Wand {
 
 	public float weightNeutral() {
 		if ( level() >= 12 ) return 0;
-		if ( curEffect == neutralEffect ) return 0f;
+		if ( curEffect == neutralEffect && !noNeutralPity ) return 0f;
 		return (float) Math.pow( 0.85, level() );
 	}
 
@@ -147,7 +179,7 @@ public abstract class TriWand extends Wand {
 		for (int i = 0, wandEffectsLength = wandEffects.length; i < wandEffectsLength; i++) {
 			WandEffect wandEffect = wandEffects[i];
 			if ( first ) first = false;
-			else sb.append( "\n" );
+			else sb.append( "\n\n" );
 			int chance = Math.round( chances[i] * 100 );
 			sb.append( "_" )
 					.append( wandEffect.name() )
@@ -160,6 +192,11 @@ public abstract class TriWand extends Wand {
 						.append( Messages.get( this, "augment" ) )
 						.append( "_: " ).append( wandEffect.augmentDesc() );
 			}
+		}
+		if ( DeviceCompat.isDebug() || Challenges.DEBUG.enabled() ) {
+			sb.append( "\n" );
+			sb.append( "\nFloating effect chances: " ).append( fixedChances ? "OFF" : "ON" );
+			sb.append( "\nNeutral effect pity: " ).append( noNeutralPity ? "OFF" : "ON" );
 		}
 		return sb.toString();
 	}
@@ -204,6 +241,8 @@ public abstract class TriWand extends Wand {
 
 	private static final String CURRENT_EFFECT = "cureffect";
 	private static final String BALANCE = "balance";
+	private static final String CHANCE_TYPE = "chnaceType";
+	private static final String PITY = "pity";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -212,6 +251,8 @@ public abstract class TriWand extends Wand {
 		else if ( curEffect == secondEffect ) bundle.put( CURRENT_EFFECT, 1 );
 		else bundle.put( CURRENT_EFFECT, 2 );
 		bundle.put( BALANCE, balance );
+		bundle.put( CHANCE_TYPE, fixedChances );
+		bundle.put( PITY, noNeutralPity );
 	}
 
 	@Override
@@ -223,6 +264,8 @@ public abstract class TriWand extends Wand {
 				neutralEffect
 		}[bundle.getInt( CURRENT_EFFECT )];
 		balance = bundle.getInt( BALANCE );
+		fixedChances = bundle.getBoolean( CHANCE_TYPE );
+		noNeutralPity = bundle.getBoolean( PITY );
 	}
 
 	@Override
