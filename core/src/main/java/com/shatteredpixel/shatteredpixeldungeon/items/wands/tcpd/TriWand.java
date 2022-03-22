@@ -390,7 +390,7 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public int cost( ArrayList<Item> ingredients ) {
-			return 12;
+			return 6;
 		}
 
 		@Override
@@ -443,7 +443,7 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public int cost( ArrayList<Item> ingredients ) {
-			return 12;
+			return 6;
 		}
 
 		@Override
@@ -510,7 +510,7 @@ public abstract class TriWand extends Wand {
 
 		@Override
 		public int cost( ArrayList<Item> ingredients ) {
-			return 24;
+			return 12;
 		}
 
 		@Override
